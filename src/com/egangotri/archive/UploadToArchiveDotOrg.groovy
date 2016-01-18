@@ -1,5 +1,7 @@
 package com.egangotri.archive
 
+import com.egangotri.util.PDFUtil
+
 /**
  * Follow all Instructions at this URL:
  * https://github.com/jjjake/internetarchive
@@ -13,7 +15,8 @@ class UploadToArchiveDotOrg {
     static List ignoreList = []
 
     static main(args) {
-        def metaDataMap = loadProperties()
+        def metaDataMap = PDFUtil.loadProperties("${PDFUtil.HOME}/archiveProj/Metadata.properties")
+
         uploadFiles(metaDataMap)
     }
 
@@ -69,17 +72,5 @@ class UploadToArchiveDotOrg {
     }
 
 
-    public static Hashtable loadProperties() {
-        Properties properties = new Properties()
-        File propertiesFile = new File('src/Metadata.properties')
-        propertiesFile.withInputStream {
-            properties.load(it)
-        }
-        Hashtable metaDataMap = [:]
-        properties.enumerate(metaDataMap)
-        metaDataMap.each { k, v ->
-            println "$k $v"
-        }
-        return metaDataMap
-    }
+
 }

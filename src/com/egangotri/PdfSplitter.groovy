@@ -11,13 +11,13 @@ import groovyx.gpars.GParsPool
 class PdfSplitter {
     static String SPLIT_FOLDER_NAME = "split"
     static String PDF = ".pdf"
-    static String FOLDER_NAME = "C:\\hw\\megha\\Rack-4"
+    static String FOLDER_NAME = "C:\\hw\\megha"
     static List ignoreList = [SPLIT_FOLDER_NAME]
 
     static Float THRESHOLD = 95.00
     static Float BYTES_IN_A_KILO = 1024.0
 
-    static boolean onlyRootDirAndNoSubDirs = false
+    static boolean onlyRootDirAndNoSubDirs = true
 
     int totalFilesSplittable = 0
     boolean allSplitFilesInPlace = true

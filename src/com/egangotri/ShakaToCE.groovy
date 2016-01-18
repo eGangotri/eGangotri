@@ -7,7 +7,7 @@ class ShakaToCE {
     public static final int yearDiff = 78
 
     static main(args) {
-        int shakaYear = 1810
+        int shakaYear = 1859
         println "${shakaYear + yearDiff} CE"
     }
 }
