@@ -38,8 +38,11 @@ class ArchiveURLGeneratorWithMetadata {
 
     public static String generateURL() {
         def metaDataMap = PDFUtil.loadProperties("${PDFUtil.HOME}/archiveProj/URLGeneratorMetadata.properties")
+        String fullURL = baseUrl + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.subjects"  + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.language" + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.description" + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.creator"
+        if(metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.collection"){
+            fullURL+=ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.collection"
+        }
 
-        String fullURL = baseUrl + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.subjects" + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.language" + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.description" + ampersand + metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.creator" + ampersand + license_picker
         println fullURL
         return fullURL
     }
