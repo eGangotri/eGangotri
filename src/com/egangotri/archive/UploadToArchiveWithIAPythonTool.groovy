@@ -10,7 +10,7 @@ import com.egangotri.util.PDFUtil
  * ia configure
  *
  */
-class UploadToArchiveDotOrg {
+class UploadToArchiveWithIAPythonTool {
     static String PDF = ".pdf"
     static List ignoreList = []
 

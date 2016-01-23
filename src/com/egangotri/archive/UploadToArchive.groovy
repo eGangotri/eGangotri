@@ -28,7 +28,7 @@ import org.openqa.selenium.support.ui.Select;
  * use VM Argument -Dwebdriver.chrome.driver=c:/chromedriver.exe
 
  */
-class LoginToArchive {
+class UploadToArchive {
     static String FOLDER_NAME = "C:\\hw\\avn\\AvnManuscripts\\GopinathKavirajTantricSahityaList"
     static String ARCHIVE_URL = "http://archive.org/account/login.php"
 

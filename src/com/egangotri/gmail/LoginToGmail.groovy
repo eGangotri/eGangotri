@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
  * Only Logs In
  */
 class LoginToGmail {
-    static final String LOGIN_PROFILE = "jm" // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij"
+    static final String LOGIN_PROFILE = "sr" // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij"
 
     static main(args) {
         println "start"
