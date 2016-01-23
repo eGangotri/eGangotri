@@ -1,4 +1,4 @@
-package com.egangotri.util
+package com.egangotri.upload.util
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -8,15 +8,7 @@ import java.awt.event.KeyEvent
 /**
  * Created by user on 1/16/2016.
  */
-class PDFUtil {
-
-    static enum PROFILE_ENUMS {
-        ib,dt,rk,jg
-    }
-
-    static final String ARCHIVE_PROFILE = PROFILE_ENUMS.dt.toString() //ib/dt/jg/rk
-    static final String HOME = System.getProperty('user.home')
-    static String PDF = ".pdf"
+class UploadUtils {
 
     public static Hashtable loadProperties(String fileName) {
         Properties properties = new Properties()

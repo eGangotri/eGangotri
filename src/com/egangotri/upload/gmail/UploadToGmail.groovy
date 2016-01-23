@@ -1,7 +1,6 @@
-package com.egangotri.gmail
+package com.egangotri.upload.gmail
 
-import com.egangotri.util.PDFUtil
-import org.openqa.selenium.By
+import com.egangotri.upload.util.UploadUtils
 
 /**
  * Created by user on 1/22/2016.
@@ -17,7 +16,7 @@ class UploadToGmail {
     }
     static main(args) {
         println "start"
-        def metaDataMap = PDFUtil.loadProperties("${PDFUtil.HOME}/archiveProj/GmailData.properties")
+        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
         GmailHandler.loginAndUpload(metaDataMap,LOGIN_PROFILE, true, (LOGIN_PROFILE == UPLOAD_PROFILE_ENUMS.mm.toString() ? MANUSCRIPT_MASTER_FOLDER_NAME : BOOK_MASTER_FOLDER_NAME))
     }
 

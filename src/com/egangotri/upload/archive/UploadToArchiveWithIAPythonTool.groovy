@@ -1,6 +1,6 @@
-package com.egangotri.archive
+package com.egangotri.upload.archive
 
-import com.egangotri.util.PDFUtil
+import com.egangotri.upload.util.UploadUtils
 
 /**
  * Follow all Instructions at this URL:
@@ -10,12 +10,13 @@ import com.egangotri.util.PDFUtil
  * ia configure
  *
  */
+@Deprecated
 class UploadToArchiveWithIAPythonTool {
     static String PDF = ".pdf"
     static List ignoreList = []
 
     static main(args) {
-        def metaDataMap = PDFUtil.loadProperties("${PDFUtil.HOME}/archiveProj/Metadata.properties")
+        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/Metadata.properties")
 
         uploadFiles(metaDataMap)
     }

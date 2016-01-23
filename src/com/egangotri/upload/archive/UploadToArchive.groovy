@@ -1,25 +1,13 @@
-package com.egangotri.archive
+package com.egangotri.upload.archive
 
-import com.egangotri.util.PDFUtil
-import org.apache.bcel.generic.Select
+import com.egangotri.upload.util.UploadUtils
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.remote.LocalFileDetector
-import org.openqa.selenium.remote.RemoteWebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import org.w3c.dom.html.HTMLSelectElement
-
-import java.awt.Robot
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
-import java.awt.event.KeyEvent
-import java.util.concurrent.TimeUnit
-import org.openqa.selenium.support.ui.Select;
-
 
 /**
  * Created by user on 1/18/2016.
@@ -29,13 +17,24 @@ import org.openqa.selenium.support.ui.Select;
 
  */
 class UploadToArchive {
-    static String FOLDER_NAME = "C:\\hw\\avn\\AvnManuscripts\\GopinathKavirajTantricSahityaList"
-    static String ARCHIVE_URL = "http://archive.org/account/login.php"
 
+    static enum PROFILE_ENUMS {
+        dt, ib, rk, jg
+    }
+
+    static final String ARCHV_PRFL = PROFILE_ENUMS.dt
+    static String FOLDER_NAME = "C:\\hw\\ib"
+
+    static String ARCHIVE_URL = "http://archive.org/account/login.php"
+    static final String baseUrl = "http://archive.org/upload/?"
+    static String PDF = ".pdf"
+    static final String ampersand = "&"
+    static final String HOME = System.getProperty('user.home')
+    static final String ARCHIVE_PROFILE = ARCHV_PRFL.toString()
 
     static main(args) {
         println "start"
-        def metaDataMap = PDFUtil.loadProperties("${PDFUtil.HOME}/archiveProj/UserIdsMetadata.properties")
+        def metaDataMap = UploadUtils.loadProperties("${HOME}/archiveProj/UserIdsMetadata.properties")
         try {
             WebDriver driver = new ChromeDriver()
             driver.get(ARCHIVE_URL);
@@ -45,18 +44,18 @@ class UploadToArchive {
             WebElement pass = driver.findElement(By.id("password"));
             WebElement button = driver.findElement(By.id("submit"));
 
-            id.sendKeys(metaDataMap."${PDFUtil.ARCHIVE_PROFILE}.username");
+            id.sendKeys(metaDataMap."${ARCHIVE_PROFILE}.username");
             pass.sendKeys(metaDataMap."kuta");
             button.click();
 
             //Fetch uploadable Files
-            List<String> uploadables = PDFUtil.getFiles(FOLDER_NAME)
+            List<String> uploadables = UploadUtils.getFiles(pickFolderBasedOnArchiveProfile())
 
             //Get Upload Link
-            String uploadLink = ArchiveURLGeneratorWithMetadata.generateURL()
+            String uploadLink = generateURL()
 
             //Start Upload of First File in Root Tab
-            upload(driver,uploadables[0],uploadLink)
+            upload(driver, uploadables[0], uploadLink)
 
             // Upload Remaining Files by generating New Tabs
             if (uploadables.size() > 1) {
@@ -69,7 +68,7 @@ class UploadToArchive {
                     driver.switchTo().window(tabs.get(tabNo + 1));
 
                     //Start Upload
-                    upload(driver,fileName,uploadLink)
+                    upload(driver, fileName, uploadLink)
                 }
             }
         }
@@ -87,7 +86,7 @@ class UploadToArchive {
         WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"));
         //((RemoteWebElement) fileButtonInitial).setFileDetector(new LocalFileDetector());
         fileButtonInitial.click();
-        PDFUtil.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
+        UploadUtils.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
 
         new WebDriverWait(driver, 3).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")));
 
@@ -98,8 +97,8 @@ class UploadToArchive {
         radioBtn.click();
 
         //remove this junk value that pops-up for profiles with Collections
-        if(uploadLink.contains("collection=")) {
-           driver.findElement(By.className("additional_meta_remove_link")).click()
+        if (uploadLink.contains("collection=")) {
+            driver.findElement(By.className("additional_meta_remove_link")).click()
         }
 
         WebDriverWait wait = new WebDriverWait(driver, 8);
@@ -109,7 +108,30 @@ class UploadToArchive {
         uploadButton.click();
     }
 
+    public static String generateURL() {
+        def metaDataMap = UploadUtils.loadProperties("${HOME}/archiveProj/URLGeneratorMetadata.properties")
+        String fullURL = baseUrl + metaDataMap."${ARCHIVE_PROFILE}.subjects" + ampersand + metaDataMap."${ARCHIVE_PROFILE}.language" + ampersand + metaDataMap."${ARCHIVE_PROFILE}.description" + ampersand + metaDataMap."${ARCHIVE_PROFILE}.creator"
+        if (metaDataMap."${ARCHIVE_PROFILE}.collection") {
+            fullURL += ampersand + metaDataMap."${ARCHIVE_PROFILE}.collection"
+        }
 
+        println fullURL
+        return fullURL
+    }
+
+    public static String pickFolderBasedOnArchiveProfile(){
+        if(ARCHV_PRFL == PROFILE_ENUMS.dt){
+             FOLDER_NAME = "C:\\hw\\avn\\AvnManuscripts\\GopinathKavirajTantricSahityaList"
+        }
+        else if(ARCHV_PRFL == PROFILE_ENUMS.rk){
+            FOLDER_NAME = "C:\\hw\\megha"
+        }
+        else if(ARCHV_PRFL == PROFILE_ENUMS.jg){
+            FOLDER_NAME = "C:\\hw\\amit"
+        }
+
+        return FOLDER_NAME
+    }
 
 }
 

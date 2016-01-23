@@ -1,6 +1,6 @@
-package com.egangotri.gmail
+package com.egangotri.upload.gmail
 
-import com.egangotri.util.PDFUtil
+import com.egangotri.upload.util.UploadUtils
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -17,7 +17,7 @@ class GmailHandler {
     static void uploadToDrive(def driver, String folderName) {
         driver.findElement(By.xpath("//div[contains(text(),'New')]")).click()
         driver.findElement(By.xpath("//div[contains(text(),'Folder upload')]")).click()
-        PDFUtil.tabPasteFolderNameAndCloseUploadPopup(folderName)
+        UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
     }
 
     def static void login(def metaDataMap, String loginProfile) {
