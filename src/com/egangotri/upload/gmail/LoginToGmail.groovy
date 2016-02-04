@@ -7,12 +7,13 @@ import com.egangotri.upload.util.UploadUtils
  * Only Logs In
  */
 class LoginToGmail {
-    static final String LOGIN_PROFILE = "sr" // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij"
+    static final String LOGIN_PROFILES = ["jm"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
 
     static main(args) {
         println "start"
-        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
-        GmailHandler.login(metaDataMap,LOGIN_PROFILE)
+        LOGIN_PROFILES.each {
+            def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
+            GmailHandler.login(metaDataMap, it)
+        }
     }
-
 }
