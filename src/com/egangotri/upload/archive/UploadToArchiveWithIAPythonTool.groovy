@@ -12,7 +12,6 @@ import com.egangotri.upload.util.UploadUtils
  */
 @Deprecated
 class UploadToArchiveWithIAPythonTool {
-    static String PDF = ".pdf"
     static List ignoreList = []
 
     static main(args) {
@@ -26,7 +25,7 @@ class UploadToArchiveWithIAPythonTool {
         println "processFolder $directory"
         def files = directory.listFiles()
         files.each { File file ->
-            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
+            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(UploadUtils.PDF)) {
                 println "****"
                 String identifier = generateIdentifier(file.name)
                 metaDataMap.file = file.name
@@ -59,7 +58,7 @@ class UploadToArchiveWithIAPythonTool {
      *  Identifiers must be unique across the entirety of Internet Archive, not simply unique within a single collection
      */
     public static String generateIdentifier(String fileName) {
-        def filteredString = (fileName - PDF).findAll {
+        def filteredString = (fileName - UploadUtils.PDF).findAll {
             it =~ /[0-9a-zA-Z_-]/
         }
 

@@ -1,9 +1,13 @@
 package com.egangotri
 
+@Grapes([
+        @Grab(group = 'com.itextpdf', module = 'itext-xtra', version = '5.1.3'),
+        @Grab(group = 'com.itextpdf', module = 'itext-xtra', version = '5.1.3')]
+)
+
 import com.itextpdf.text.Document
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfReader
-import groovyx.gpars.GParsPool
 
 /**
  * This Class takes in a Folder and splits all pdfs that are above 100 MB.
@@ -23,7 +27,7 @@ class PdfSplitter {
     boolean allSplitFilesInPlace = true
 
     static main(args) {
-        String args0 = args?args[0]:null
+        String args0 = args ? args[0] : null
         println "args0:$args0"
 //        if(args0){
 //            FOLDER_NAME = args0
@@ -43,11 +47,11 @@ class PdfSplitter {
         totalFilesSplittable = 0
         def files = directory.listFiles()
         //GParsPool.withPool {
-            files.each { File file ->
-                if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
-                    splitPdfIfGreaterThanThreshold(folderAbsolutePath, file)
-                }
+        files.each { File file ->
+            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
+                splitPdfIfGreaterThanThreshold(folderAbsolutePath, file)
             }
+        }
 
         //}
         println "***Total Files Split: ${totalFilesSplittable}"

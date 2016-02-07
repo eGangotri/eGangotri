@@ -13,13 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
  */
 class GmailHandler {
 
-
-    static void uploadToDrive(def driver, String folderName) {
-        driver.findElement(By.xpath("//div[contains(text(),'New')]")).click()
-        driver.findElement(By.xpath("//div[contains(text(),'Folder upload')]")).click()
-        UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
-    }
-
     def static void login(def metaDataMap, String loginProfile) {
         loginAndUpload(metaDataMap, loginProfile)
     }
@@ -28,7 +21,8 @@ class GmailHandler {
         loginAndUpload(metaDataMap, loginProfile, true, folderName)
     }
 
-    def static void loginAndUpload(def metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
+    def static void loginAndUpload(
+            def metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
         try {
             WebDriver driver = new ChromeDriver()
             driver.get("http://accounts.google.com");
@@ -60,4 +54,11 @@ class GmailHandler {
         }
         println "done"
     }
+
+    static void uploadToDrive(def driver, String folderName) {
+        driver.findElement(By.xpath("//div[contains(text(),'New')]")).click()
+        driver.findElement(By.xpath("//div[contains(text(),'Folder upload')]")).click()
+        UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
+    }
+
 }

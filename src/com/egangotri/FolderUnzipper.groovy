@@ -6,10 +6,10 @@ import groovyx.gpars.GParsPool
  * Created by user on 7/11/2015.
  */
 class FolderUnzipper {
-    static String FOLDER_NAME = "KashmirUniHindiBooks - Copy"
-    static List ZIP = [".zip", ".rar"]
+    static String FOLDER_NAME = "C:\\hw\\amit"
+    static List<String> ZIP = [".zip", ".rar"]
     static List ignoreList = []
-    static boolean inSeparateFolder = true
+    static boolean inSeparateFolder = false
     static boolean multiThreaded = false
 
     static main(args) {
@@ -32,17 +32,18 @@ class FolderUnzipper {
 
     public static unZip(File file) {
         String destDir = FOLDER_NAME
-        if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) &&  ZIP.find{"ram.zip".endsWith(it.toString())}) {
-            if (inSeparateFolder) {
-                destDir = FOLDER_NAME + File.separator + (file.name - ZIP)
-                new File(destDir).mkdir()
-            }
-            def ant = new AntBuilder()   // create an antbuilder
-            println "${file.absolutePath}"
-            ant.unzip(src: file.absolutePath,
-                    dest: destDir,
-                    overwrite: "false")
-        }
+        if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && ( file.name.endsWith(ZIP[0]) || (file.name.endsWith(ZIP[1])) ) )
+                {
+                    if (inSeparateFolder) {
+                        destDir = FOLDER_NAME + File.separator + (file.name - ZIP)
+                        new File(destDir).mkdir()
+                    }
+                    def ant = new AntBuilder()   // create an antbuilder
+                    println "${file.absolutePath}"
+                    ant.unzip(src: file.absolutePath,
+                            dest: destDir,
+                            overwrite: "false")
+                }
     }
 }
 
