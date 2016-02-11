@@ -33,6 +33,10 @@ class UploadUtils {
         return metaDataMap
     }
 
+    static boolean hasAtleastOnePdf(List<File> directories) {
+       return directories.any {hasAtleastOnePdf(it)}
+    }
+
     static boolean hasAtleastOnePdf(File directory) {
         if (directory && directory.list().any { it.endsWith(PDF) }) {
             return true

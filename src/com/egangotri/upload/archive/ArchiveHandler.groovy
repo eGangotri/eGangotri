@@ -139,10 +139,54 @@ class ArchiveHandler {
                 break
 
             case PROFILE_ENUMS.ib.toString():
-                folderName = [(FileUtil.JG_DEFAULT + File.separator + FileUtil.PRE_57), (FileUtil.RK_DEFAULT + File.separator + FileUtil.PRE_57)]
+                folderName = []
+
+                pre57SubFolders(FileUtil.RK_DEFAULT + File.separator + FileUtil.PRE_57).each {
+                    folderName << it
+                }
+
+                pre57SubFolders(FileUtil.JG_DEFAULT + File.separator + FileUtil.PRE_57).each {
+                    folderName << it
+                }
                 break
         }
         println "folderName: $folderName archiveProfile: " + archiveProfile
         return folderName
+    }
+
+    static List pre57SubFolders(File directory) {
+        List subFolders = []
+        List<File> subDirs = directory.listFiles()?.toList()
+        if (anyPre57Folder(subDirs)) {
+            File _fl
+            subFolders << subDirs.find { _fl.name.equals(FileUtil.PRE_57) }.absolutePath
+        } else {
+            //Go One Level Deep
+            if (subDirs) {
+                for (int i = 0; i < subDirs.size(); i++) {
+                    File oneLevelDeep = subDirs[i]
+                    if (oneLevelDeep.isDirectory()) {
+                        if (anyPre57Folder(oneLevelDeep.listFiles().toList())) {
+                            subFolders << (oneLevelDeep.listFiles().find { File _sbFl -> _sbFl.name.equals(FileUtil.PRE_57) }).absolutePath
+                        }
+                    }
+                }
+            }
+        }
+        return subFolders
+    }
+
+    static boolean anyPre57Folder(List<File> subDirs) {
+        if (subDirs) {
+            if (subDirs.any { it.isDirectory() && it.name.equals(FileUtil.PRE_57) }) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    static List pre57SubFolders(String folderName) {
+        return pre57SubFolders(new File(folderName))
     }
 }

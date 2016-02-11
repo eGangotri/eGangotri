@@ -12,12 +12,11 @@ class FileMover {
 
     //"C:\\Treasures6\\megha\\Alm-2"
     static Map<String, List<String>> srcDestMap
-    static List profiles = [/*"jg", "dt", */"sr"]
+    static List profiles = ["dt", "jg"] //"sr", "dt", "jg"
 
     static main(args) {
         def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/SrcDestData.properties")
         profiles.each {  profile ->
-        //String srcDir, String destDir ->
             FileUtil.moveDir(metaDataMap["${profile}.src"], metaDataMap["${profile}.dest"]);
         }
     }

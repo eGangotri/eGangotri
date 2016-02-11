@@ -19,18 +19,25 @@ class UploadToGmail {
 
     static main(args) {
         println "start"
-        LOGIN_PROFILES*.toString().each { String profile ->
-            def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
+        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
+        execute(LOGIN_PROFILES, metaDataMap)
+    }
+
+    public static void execute(List profiles, Map metaDataMap) {
+        println "Start uploading to Gmail"
+        profiles*.toString().each { String profile ->
             def folders = (profile == UPLOAD_PROFILE_ENUMS.mm.toString() ? MANUSCRIPT_MASTER_FOLDER_NAME : BOOK_MASTER_FOLDER_NAME)
             folders.each { String folder ->
                 File directory = new File(folder)
-                println "Processing directory: $directory"
                 if (UploadUtils.hasAtleastOnePdf(directory)) {
+                    println "Processing directory: $directory"
                     GmailHandler.loginAndUpload(metaDataMap, profile, folder)
+                } else {
+                    println "No Files uploadable to Google Drive for Profile $profile"
                 }
             }
         }
+        println "***Gmail Upload Browser Launches Done"
     }
-
 }
 

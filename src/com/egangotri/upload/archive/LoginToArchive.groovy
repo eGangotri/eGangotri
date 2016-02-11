@@ -5,8 +5,8 @@ import com.egangotri.upload.util.UploadUtils
 /**
  * Created by user on 2/7/2016.
  */
-class LognToArchive {
-    static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.dt, ArchiveHandler.PROFILE_ENUMS.jg, */ArchiveHandler.PROFILE_ENUMS.rk]
+class LoginToArchive {
+    static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.dt, ArchiveHandler.PROFILE_ENUMS.jg, */ArchiveHandler.PROFILE_ENUMS.ib]
 
 
     static main(args) {

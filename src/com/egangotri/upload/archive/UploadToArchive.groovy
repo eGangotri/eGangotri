@@ -19,19 +19,24 @@ import org.openqa.selenium.support.ui.ExpectedConditions
  */
 class UploadToArchive {
 
-
-
-    static final List ARCHIVE_PROFILES = [/* ArchiveHandler.PROFILE_ENUMS.dt,*/ ArchiveHandler.PROFILE_ENUMS.rk,ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
-
-
+    static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.dt ,ArchiveHandler.PROFILE_ENUMS.rk,*/ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
     static main(args) {
+        Map metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/UserIdsMetadata.properties")
+        execute(ARCHIVE_PROFILES, metaDataMap)
+    }
+
+    public static void execute(List profiles, Map metaDataMap){
         println "Start uploading to Archive"
-        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/UserIdsMetadata.properties")
-        ARCHIVE_PROFILES*.toString().each { String archiveProfile ->
+        profiles*.toString().each { String archiveProfile ->
             println "Uploading for Profile $archiveProfile"
-            ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+            if(UploadUtils.hasAtleastOnePdf(ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile))){
+                ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+            }else{
+                println "No Files uploadable for Profile $archiveProfile"
+
+            }
         }
-        println "***Browser Launches Done"
+        println "***Browser for Archive Upload Launches Done"
     }
 
 

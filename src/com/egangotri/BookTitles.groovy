@@ -1,7 +1,6 @@
 package com.egangotri
 
 import com.itextpdf.text.pdf.PdfReader
-import groovyx.gpars.GParsPool
 
 import static groovyx.gpars.actor.Actors.actor
 

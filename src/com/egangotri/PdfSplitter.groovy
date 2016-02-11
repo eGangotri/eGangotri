@@ -1,9 +1,11 @@
 package com.egangotri
 
+/*
 @Grapes([
         @Grab(group = 'com.itextpdf', module = 'itext-xtra', version = '5.1.3'),
         @Grab(group = 'com.itextpdf', module = 'itext-xtra', version = '5.1.3')]
 )
+*/
 
 import com.itextpdf.text.Document
 import com.itextpdf.text.pdf.PdfCopy

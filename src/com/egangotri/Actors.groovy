@@ -1,7 +1,5 @@
 package com.egangotri
 
-import java.util.concurrent.TimeUnit
-
 import static groovyx.gpars.actor.Actors.*
 
 class Actors {
