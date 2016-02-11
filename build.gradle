@@ -7,10 +7,6 @@ applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('us
 
 repositories {
     mavenCentral()
-   /* maven {
-        //url "http://repo.jenkins-ci.org/"
-        //url "https://repository.mulesoft.org/nexus/content/repositories/public/"
-    }*/
 }
 
 sourceSets {
