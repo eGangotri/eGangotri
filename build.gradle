@@ -7,6 +7,9 @@ applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('us
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://repo.jenkins-ci.org/releases/org/seleniumhq/selenium/selenium-server-standalone/2.39.0/"
+    }
 }
 
 sourceSets {
@@ -33,4 +36,7 @@ dependencies {
     compile 'org.codehaus.geb:geb-core:0.7.2'
     compile 'commons-io:commons-io:2.4'
     compile files('lib/selenium-server-standalone-2.39.0.jar')
+
+    testCompile 'junit:junit:4.12'
+
 }

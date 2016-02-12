@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: selenium-server-standalone-2.39.0">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/selenium-server-standalone-2.39.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
