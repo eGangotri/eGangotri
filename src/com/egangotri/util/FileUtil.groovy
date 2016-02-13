@@ -1,29 +1,33 @@
 package com.egangotri.util
 
+import org.slf4j.LoggerFactory
+
 /**
  * Created by user on 2/6/2016.
  */
 
 
 class FileUtil {
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+
     static final String HOME_DEFAULT = "C:\\hw"
-
-
     static final String JG_DEFAULT = HOME_DEFAULT + File.separator + "amit"
     static final String DT_DEFAULT = HOME_DEFAULT + File.separator + "avn\\AvnManuscripts"
     static final String RK_DEFAULT = HOME_DEFAULT + File.separator + "megha"
     static final String PRE_57 = "pre57"
+    static final List ELIGIBLE_FOLDERS_FOR_PRE57_FILTERING = [RK_DEFAULT, JG_DEFAULT]
 
     public static moveDir(String srcDir, String destDir) {
         // create an ant-builder
         def ant = new AntBuilder()
-        println("Src $srcDir " + "dst: $destDir")
+        Log.info("Src $srcDir " + "dst: $destDir")
 
-        ant.move(todir: destDir, verbose:'true', overwrite: 'false', preservelastmodified:'true') {
+        ant.move(todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true') {
             fileset(dir: srcDir) {
                 include(name: "**/*.*")
             }
         }
     }
-
 }
+
+

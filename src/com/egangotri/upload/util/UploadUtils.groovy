@@ -1,6 +1,13 @@
 package com.egangotri.upload.util
 
+import com.egangotri.filter.DirectoryFileFilter
+import com.egangotri.filter.PdfFileFilter
+import com.egangotri.filter.NonPre57DirectoryFilter
+import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.util.FileUtil
+import org.apache.commons.logging.LogFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -11,6 +18,8 @@ import java.awt.event.KeyEvent
  * Created by user on 1/16/2016.
  */
 class UploadUtils {
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
 
@@ -28,79 +37,81 @@ class UploadUtils {
             metaDataMap.put(key, val);
         }
         metaDataMap.each { k, v ->
-            // println "$k $v"
+            // Log.info "$k $v"
         }
         return metaDataMap
     }
 
-    static boolean hasAtleastOnePdf(List<File> directories) {
-       return directories.any {hasAtleastOnePdf(it)}
+    static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
+        List folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile)
+        folders.each {
+            if (hasAtleastOnePdf(it.toString())) {
+                return true
+            }
+        }
     }
 
-    static boolean hasAtleastOnePdf(File directory) {
-        if (directory && directory.list().any { it.endsWith(PDF) }) {
+    static boolean hasAtleastOnePdf(File directory, boolean excludePre57 = true) {
+        Log.info("hasAtleastOnePdf($directory)")
+        if (hasAtleastOnePdf(directory.absolutePath)) {
             return true
         }
+        //Check Recursively
+        return hasAtleastOnePdfRec(directory.listFiles(excludePre57 ? new NonPre57DirectoryFilter() : new DirectoryFileFilter()))
+    }
 
-        //if directory has sub-directories
-        List<File> subDirs = directory.listFiles()
-        if (subDirs && subDirs.any { it.isDirectory() }) {
-            for (int i = 0; i < subDirs.size(); i++) {
-                if (subDirs[i].isDirectory()) {
-                    if (hasAtleastOnePdf(subDirs[i])) {
-                        return true
-                    }
+
+    static boolean hasAtleastOnePdfRec(File[] directories, boolean excludePre57 = true) {
+        boolean hasPdf = false
+        //Check One Level Deep
+        if(directories){
+            directories.each {
+                if (hasAtleastOnePdf(it.absolutePath)) {
+                    hasPdf = true
+                } else {
+                    hasPdf = hasAtleastOnePdfRec(it.listFiles(excludePre57 ? new NonPre57DirectoryFilter() : new DirectoryFileFilter()))
                 }
             }
         }
-        return false
+        return hasPdf
     }
 
     static boolean hasAtleastOnePdf(String dirName) {
-        return hasAtleastOnePdf(new File(dirName))
+        File directory = new File(dirName)
+        return (directory && directory.list(new PdfFileFilter()));
     }
 
-    static boolean isFilePdf(File file) {
-        return !file.isDirectory() && file.name.endsWith(PDF)
-    }
-
-    static boolean isFilePdf(String fileName) {
-        return isFilePdf(new File(fileName))
-    }
-
-    static List<String> getFiles(List folderPaths) {
+    // pre57's inside will be automatically ignored. but not a pre57 folder itself
+    static List<String> getFiles(List<String> folderPaths) {
         List<String> uploadables = []
         folderPaths.each { String folder ->
-            if (hasAtleastOnePdf(folder)) {
-                getPdfFiles(folder).each { String file ->
-                    uploadables << file
-                }
+            if (hasAtleastOnePdf(new File(folder))) {
+                uploadables.addAll(getPdfFiles(folder))
             }
         }
+        Log.info "uploadables:$uploadables"
         return uploadables
     }
 
     //Goes One Level Deep
     static List<String> getPdfFiles(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        println "getPdfFiles in Dir $directory"
-        def files = directory.listFiles()
+        File[] pdfs = directory.listFiles(new PdfFileFilter())
+
         List<String> uploadables = []
-        files.each { File file ->
-            if (isFilePdf(file)) {
-                uploadables << file.absolutePath
-            }
+        if (pdfs) {
+            uploadables.addAll(pdfs.toList()*.absolutePath)
+        }
 
-            if (file.isDirectory()) {
-                println "getPdfFiles in Sub-Directory $file"
+        File[] deepDir1 = directory.listFiles(new NonPre57DirectoryFilter())
 
-                if (!file.name.equals(FileUtil.PRE_57) && hasAtleastOnePdf(file)) {
-                    List pdfs = file.listFiles().findAll { isFilePdf(it) }
-                    pdfs.each { File _fl -> uploadables << _fl.absolutePath }
-                }
+        deepDir1.each { File deepDir2 ->
+            File[] deepDir2List = deepDir2.listFiles(new PdfFileFilter())
+            if (deepDir2List) {
+                uploadables.addAll(deepDir2List.toList()*.absolutePath)
             }
         }
-        println "***Total Files uploadables: ${uploadables.size()}"
+        Log.info "***Total Files uploadables in $folderAbsolutePath: ${uploadables.size()}"
         return uploadables
     }
 
@@ -120,7 +131,7 @@ class UploadUtils {
     }
 
     public static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
-        println "$fileName  being pasted"
+        Log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         Thread.sleep(1000);
         setClipboardData(fileName);
@@ -142,4 +153,26 @@ class UploadUtils {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
     }
 
+    static List<String> pre57SubFolders(File directory) {
+        List<String> subFolders = []
+        File[] subDirs = directory.listFiles(new NonPre57DirectoryFilter(false))
+        if (subDirs) {
+            subFolders << subDirs[0].absolutePath
+        }
+
+        //Go One Level Deep
+        File[] oneLevelDeepDirs = directory.listFiles(new NonPre57DirectoryFilter())?.toList()
+        for (int i = 0; i < oneLevelDeepDirs.size(); i++) {
+            File[] level2Files = oneLevelDeepDirs[i].listFiles(new NonPre57DirectoryFilter(false))
+            if (level2Files) {
+                subFolders << level2Files[0].absolutePath
+            }
+        }
+        Log.info "pre57SubFolders in Directory : $directory: $subFolders"
+        return subFolders
+    }
+
+    static List pre57SubFolders(String folderName) {
+        return pre57SubFolders(new File(folderName))
+    }
 }

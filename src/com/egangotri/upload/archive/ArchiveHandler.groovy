@@ -1,7 +1,9 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.filter.NonPre57DirectoryFilter
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.FileUtil
+import org.apache.commons.logging.LogFactory
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
@@ -9,11 +11,14 @@ import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import org.slf4j.LoggerFactory
 
 /**
  * Created by user on 2/7/2016.
  */
 class ArchiveHandler {
+
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
 
     static enum PROFILE_ENUMS {
         dt, ib, rk, jg
@@ -49,7 +54,7 @@ class ArchiveHandler {
             if (upload) {
                 List<String> uploadables = UploadUtils.getFiles(pickFolderBasedOnArchiveProfile(archiveProfile))
                 if (uploadables) {
-                    println "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
+                    Log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = generateURL(archiveProfile)
 
@@ -59,7 +64,7 @@ class ArchiveHandler {
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
                         uploadables.drop(1).eachWithIndex { fileName, tabNo ->
-                            println "Uploading: $fileName @ tabNo:$tabNo"
+                            Log.info "Uploading: $fileName @ tabNo:$tabNo"
                             // Open new tab
                             driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
                             //Switch to new Tab
@@ -71,7 +76,7 @@ class ArchiveHandler {
                         }
                     }
                 } else {
-                    println "No File uploadable for profile $archiveProfile"
+                    Log.info "No File uploadable for profile $archiveProfile"
                 }
             }
 
@@ -118,11 +123,10 @@ class ArchiveHandler {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
 
-        println fullURL
+        Log.info "generateURL($archiveProfile):fullURL"
         return fullURL
     }
-
-    public static List pickFolderBasedOnArchiveProfile(String archiveProfile) {
+    public static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
         List folderName
 
         switch (archiveProfile) {
@@ -141,52 +145,15 @@ class ArchiveHandler {
             case PROFILE_ENUMS.ib.toString():
                 folderName = []
 
-                pre57SubFolders(FileUtil.RK_DEFAULT + File.separator + FileUtil.PRE_57).each {
+                FileUtil.ELIGIBLE_FOLDERS_FOR_PRE57_FILTERING.collect { UploadUtils.pre57SubFolders(it) }.each {
                     folderName << it
                 }
-
-                pre57SubFolders(FileUtil.JG_DEFAULT + File.separator + FileUtil.PRE_57).each {
-                    folderName << it
-                }
+                folderName = folderName.flatten()
                 break
         }
-        println "folderName: $folderName archiveProfile: " + archiveProfile
+        Log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
         return folderName
     }
 
-    static List pre57SubFolders(File directory) {
-        List subFolders = []
-        List<File> subDirs = directory.listFiles()?.toList()
-        if (anyPre57Folder(subDirs)) {
-            File _fl
-            subFolders << subDirs.find { _fl.name.equals(FileUtil.PRE_57) }.absolutePath
-        } else {
-            //Go One Level Deep
-            if (subDirs) {
-                for (int i = 0; i < subDirs.size(); i++) {
-                    File oneLevelDeep = subDirs[i]
-                    if (oneLevelDeep.isDirectory()) {
-                        if (anyPre57Folder(oneLevelDeep.listFiles().toList())) {
-                            subFolders << (oneLevelDeep.listFiles().find { File _sbFl -> _sbFl.name.equals(FileUtil.PRE_57) }).absolutePath
-                        }
-                    }
-                }
-            }
-        }
-        return subFolders
-    }
 
-    static boolean anyPre57Folder(List<File> subDirs) {
-        if (subDirs) {
-            if (subDirs.any { it.isDirectory() && it.name.equals(FileUtil.PRE_57) }) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    static List pre57SubFolders(String folderName) {
-        return pre57SubFolders(new File(folderName))
-    }
 }

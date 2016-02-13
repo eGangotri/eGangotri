@@ -1,14 +1,7 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.util.FileUtil
-import org.openqa.selenium.support.ui.WebDriverWait
 import com.egangotri.upload.util.UploadUtils
-import org.openqa.selenium.By
-import org.openqa.selenium.Keys
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.support.ui.ExpectedConditions
+import org.slf4j.LoggerFactory
 
 /**
  * Created by user on 1/18/2016.
@@ -18,28 +11,35 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 
  */
 class UploadToArchive {
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
 
-    static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.dt ,ArchiveHandler.PROFILE_ENUMS.rk,*/ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
+    static
+    final List ARCHIVE_PROFILES = [ArchiveHandler.PROFILE_ENUMS.dt, ArchiveHandler.PROFILE_ENUMS.rk, ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
+
     static main(args) {
+        List archiveProfiles = ARCHIVE_PROFILES
+        if (args) {
+            Log.info "args $args"
+            archiveProfiles = args.toList()
+        }
+
         Map metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/UserIdsMetadata.properties")
-        execute(ARCHIVE_PROFILES, metaDataMap)
+        execute(archiveProfiles, metaDataMap)
     }
 
-    public static void execute(List profiles, Map metaDataMap){
-        println "Start uploading to Archive"
+    public static void execute(List profiles, Map metaDataMap) {
+        Log.info "Start uploading to Archive"
         profiles*.toString().each { String archiveProfile ->
-            println "Uploading for Profile $archiveProfile"
-            if(UploadUtils.hasAtleastOnePdf(ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile))){
-                ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
-            }else{
-                println "No Files uploadable for Profile $archiveProfile"
+            Log.info "Uploading for Profile $archiveProfile"
+            if (UploadUtils.hasAtleastOneUploadablePdfForProfile(archiveProfile)) {
+                //ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+            } else {
+                Log.info "No Files uploadable for Profile $archiveProfile"
 
             }
         }
-        println "***Browser for Archive Upload Launches Done"
+        Log.info "***Browser for Archive Upload Launches Done"
     }
-
-
 }
 
 

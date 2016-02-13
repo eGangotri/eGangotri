@@ -7,11 +7,13 @@ import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
+import org.slf4j.LoggerFactory
 
 /**
  * Created by user on 1/22/2016.
  */
 class GmailHandler {
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
 
     def static void login(def metaDataMap, String loginProfile) {
         loginAndUpload(metaDataMap, loginProfile)
@@ -52,7 +54,7 @@ class GmailHandler {
         catch (Exception e) {
             e.printStackTrace()
         }
-        println "done"
+        Log.info "done"
     }
 
     static void uploadToDrive(def driver, String folderName) {

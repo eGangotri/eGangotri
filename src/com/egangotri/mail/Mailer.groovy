@@ -1,5 +1,7 @@
 package com.egangotri.mail
 
+import org.slf4j.LoggerFactory
+
 /*
 @Grapes([
         @Grab(group = 'javax.mail', module = 'mail', version = '1.4',classLoader='groovy.lang.GroovyClassLoader')
@@ -14,12 +16,14 @@ import static javax.mail.Message.RecipientType.TO
  */
 
 class Mailer {
+    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+
     private static String username= "indicjournals@gmail.com"
     private static String password= "a@hBmsep123"
     private static String host = "smtp.gmail.com"
 
     static main(args) {
-        println "Hi"
+        Log.info "Hi"
         //sendMail("pandey78@gmail.com", "Test", "Hello")
     }
 
@@ -42,7 +46,7 @@ class Mailer {
             transport.sendMessage(msg, msg.getAllRecipients())
         }
         catch (Exception e) {
-            println "Error"
+            Log.info "Error"
         }
     }
 }
