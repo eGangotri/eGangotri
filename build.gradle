@@ -57,7 +57,21 @@ task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
     args = ["rk", "jg", "ib", "dt"]
 }
 
+task UploadToArchiveAndGmail(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    println "UploadToArchiveAndGmail: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.upload.UploadToArchiveAndGmail"
+    jvmArgs = applicationDefaultJvmArgs
+    args = [ "-u=dt, rk, ib, jg", "-a=bm, mm"]
+}
 
+task FileMover(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    println "FileMover: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.mover.FileMover"
+    jvmArgs = applicationDefaultJvmArgs
+    args = ["dt", "sr", "jg"]
+}
 configurations {
     tests
 }
@@ -70,11 +84,10 @@ dependencies {
     compile 'com.itextpdf:itext-xtra:5.1.3'
     compile 'org.codehaus.geb:geb-core:0.7.2'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
+    compile 'org.apache.ant:ant:1.9.6'
     compile 'org.slf4j:slf4j-simple:1.7.16'
     compile 'org.slf4j:slf4j-api:1.7.16'
-
-
+    compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
 
 
     //The Only reason we are keeping this local
