@@ -35,7 +35,6 @@ class UploadToArchive {
                 //ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
             } else {
                 Log.info "No Files uploadable for Profile $archiveProfile"
-
             }
         }
         Log.info "***Browser for Archive Upload Launches Done"

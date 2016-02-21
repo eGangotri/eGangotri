@@ -52,7 +52,7 @@ class ArchiveHandler {
             button.click();
 
             if (upload) {
-                List<String> uploadables = UploadUtils.getFiles(pickFolderBasedOnArchiveProfile(archiveProfile))
+                List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile) //   .getFiles(pickFolderBasedOnArchiveProfile(archiveProfile))
                 if (uploadables) {
                     Log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
@@ -146,12 +146,7 @@ class ArchiveHandler {
                 break
 
             case PROFILE_ENUMS.ib.toString():
-                folderName = []
-
-                FileUtil.ALL_FOLDERS.values().collect { UploadUtils.pre57SubFolders(it) }.each {
-                    folderName << it
-                }
-                folderName = folderName.flatten()
+                folderName = FileUtil.ALL_FOLDERS.values().toList()
                 break
         }
         Log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"

@@ -36,7 +36,7 @@ sourceSets {
 task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args = ["sr", "lk", "jm"] //["jm", "lk", "sr"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =  ["mm", "bm"] // ["sr", "lk", "jm"] //["jm", "lk", "sr"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 

@@ -25,10 +25,10 @@ class UploadToArchiveAndGoogleDrive {
             args.toList().each { String arg ->
                 String[] argVals = arg.split("=")
                 if (argVals[0] == "-u") {
-                    uploadProfiles = argVals[1].split(",").toList()
+                    uploadProfiles = argVals[1].split(",").collect{it.trim()}
                 }
                 else if (argVals[0] == "-a") {
-                    archiveProfiles = argVals[1].split(",").toList()
+                    archiveProfiles = argVals[1].split(",").collect{it.trim()}
                 }
             }
 
@@ -38,8 +38,11 @@ class UploadToArchiveAndGoogleDrive {
 
         Log.info "UploadToArchiveAndGmail"
         Map metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/UserIdsMetadata.properties")
-
+        Log.error "***1****"
         UploadToArchive.execute(archiveProfiles, metaDataMap)
+
+        Log.error "***2****"
+
         UploadToGoogleDrive.execute(uploadProfiles, metaDataMap)
     }
 }
