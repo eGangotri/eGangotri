@@ -1,11 +1,10 @@
 package com.egangotri.upload.util
 
-import com.egangotri.filter.DirectoryFileFilter
 import com.egangotri.filter.PdfFileFilter
 import com.egangotri.filter.NonPre57DirectoryFilter
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.util.FileUtil
-import org.apache.commons.logging.LogFactory
+import groovy.io.FileType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -18,7 +17,7 @@ import java.awt.event.KeyEvent
  * Created by user on 1/16/2016.
  */
 class UploadUtils {
-    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
@@ -43,44 +42,64 @@ class UploadUtils {
     }
 
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
-        List folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile)
-        folders.each {
-            if (hasAtleastOnePdf(it.toString())) {
-                return true
+        List<String> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile)
+        boolean atlestOne = false
+        for(String fileName : folders){
+            if(archiveProfile == ArchiveHandler.PROFILE_ENUMS.ib.toString() && hasAtleastOnePdf(fileName)){
+                atlestOne = true
+                break
+            }
+            else if (hasAtleastOnePdfExcludePre57(fileName)) {
+                atlestOne = true
+                break
             }
         }
+        Log.info "atlestOne[$archiveProfile]: $atlestOne"
+        return atlestOne
     }
 
-    static boolean hasAtleastOnePdf(File directory, boolean excludePre57 = true) {
-        Log.info("hasAtleastOnePdf($directory)")
-        if (hasAtleastOnePdf(directory.absolutePath)) {
-            return true
+    static boolean hasAtleastOnePdf(String folderPath) {
+        return hasAtleastOnePdf(new File(folderPath), false)
+    }
+
+    static boolean hasAtleastOnePdfExcludePre57(String folderPath) {
+        return hasAtleastOnePdf(new File(folderPath), true)
+    }
+
+    static boolean hasAtleastOnePdf(File folder) {
+        return hasAtleastOnePdf(folder, false)
+    }
+
+    static boolean hasAtleastOnePdf(File folder, boolean excludePre57) {
+        return getAllPdfs(folder, excludePre57)?.size()
+    }
+
+    static boolean hasAtleastOnePdfExcludePre57(File folder) {
+        return hasAtleastOnePdf(folder, true)
+    }
+
+    static List<String> getAllPdfs(File folder) {
+        getAllPdfs(folder, false)
+    }
+
+    static List<String> getAllPdfs(File folder, boolean excludePre57) {
+        List<String> pdfs = []
+        Map optionsMap = [type      : FileType.ANY,
+                          nameFilter: ~(FileUtil.PDF_REGEX)
+        ]
+        if (excludePre57) {
+            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_57) })
         }
-        //Check Recursively
-        return hasAtleastOnePdfRec(directory.listFiles(excludePre57 ? new NonPre57DirectoryFilter() : new DirectoryFileFilter()))
-    }
-
-
-    static boolean hasAtleastOnePdfRec(File[] directories, boolean excludePre57 = true) {
-        boolean hasPdf = false
-        //Check One Level Deep
-        if(directories){
-            directories.each {
-                if (hasAtleastOnePdf(it.absolutePath)) {
-                    hasPdf = true
-                } else {
-                    hasPdf = hasAtleastOnePdfRec(it.listFiles(excludePre57 ? new NonPre57DirectoryFilter() : new DirectoryFileFilter()))
-                }
-            }
+        folder.traverse(optionsMap) {
+            Log.info ">>" + it
+            pdfs << it.absolutePath
         }
-        return hasPdf
+        return pdfs
     }
 
-    static boolean hasAtleastOnePdf(String dirName) {
-        File directory = new File(dirName)
-        return (directory && directory.list(new PdfFileFilter()));
+    static List<String> getAllPdfsBarringPre57(File folder) {
+        getAllPdfs(folder, true)
     }
-
     // pre57's inside will be automatically ignored. but not a pre57 folder itself
     static List<String> getFiles(List<String> folderPaths) {
         List<String> uploadables = []

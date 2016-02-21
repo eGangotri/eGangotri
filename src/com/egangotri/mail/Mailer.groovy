@@ -1,13 +1,6 @@
 package com.egangotri.mail
 
-import org.slf4j.LoggerFactory
-
-/*
-@Grapes([
-        @Grab(group = 'javax.mail', module = 'mail', version = '1.4',classLoader='groovy.lang.GroovyClassLoader')
-        ])
-*/
-
+import org.slf4j.*
 import javax.mail.*
 import javax.mail.internet.*
 import static javax.mail.Message.RecipientType.TO
@@ -16,7 +9,7 @@ import static javax.mail.Message.RecipientType.TO
  */
 
 class Mailer {
-    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
     private static String username= "indicjournals@gmail.com"
     private static String password= "a@hBmsep123"

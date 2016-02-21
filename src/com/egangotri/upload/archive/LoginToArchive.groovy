@@ -1,13 +1,14 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
  * Created by user on 2/7/2016.
  */
 class LoginToArchive {
-    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
     static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.dt, ArchiveHandler.PROFILE_ENUMS.jg, */ArchiveHandler.PROFILE_ENUMS.ib]
 

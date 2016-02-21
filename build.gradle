@@ -33,36 +33,33 @@ sourceSets {
  *  With Gradle: gradle loginToGmail is enough
  * //Arguments will be picked from args below
  */
-task LoginToGmail(dependsOn: 'classes', type: JavaExec) {
+task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    println "loginToGmail: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.upload.gmail.LoginToGmail"
+    main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
     args = ["sr", "lk", "jm"] //["jm", "lk", "sr"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
-task UploadToGmail(dependsOn: 'classes', type: JavaExec) {
+task UploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    println "loginToGmail: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.upload.gmail.UploadToGmail"
+    main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
     args = ["mm", "bm"]
     jvmArgs = applicationDefaultJvmArgs
 }
 
 task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    println "uploadToArchive: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
     args = ["rk", "jg", "ib", "dt"]
 }
 
-task UploadToArchiveAndGmail(dependsOn: 'classes', type: JavaExec) {
+task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    println "UploadToArchiveAndGmail: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.upload.UploadToArchiveAndGmail"
+    println "UploadToArchiveAndGoogleDrive: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.upload.UploadToArchiveAndGoogleDrive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "-u=dt, rk, ib, jg", "-a=bm, mm"]
+    args = [ "-a=dt, rk, ib, jg", "-u=bm, mm"]
 }
 
 task FileMover(dependsOn: 'classes', type: JavaExec) {

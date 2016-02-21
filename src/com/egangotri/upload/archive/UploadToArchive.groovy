@@ -1,7 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
-import org.slf4j.LoggerFactory
+import org.slf4j.*
 
 /**
  * Created by user on 1/18/2016.
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 
  */
 class UploadToArchive {
-    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
     static
     final List ARCHIVE_PROFILES = [ArchiveHandler.PROFILE_ENUMS.dt, ArchiveHandler.PROFILE_ENUMS.rk, ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
@@ -27,10 +27,10 @@ class UploadToArchive {
         execute(archiveProfiles, metaDataMap)
     }
 
-    public static void execute(List profiles, Map metaDataMap) {
+    public static boolean execute(List profiles, Map metaDataMap) {
         Log.info "Start uploading to Archive"
-        profiles*.toString().each { String archiveProfile ->
-            Log.info "Uploading for Profile $archiveProfile"
+        profiles*.toString().eachWithIndex { archiveProfile,  index ->
+            Log.info "${index+1}). Uploading to archive.org for Profile $archiveProfile"
             if (UploadUtils.hasAtleastOneUploadablePdfForProfile(archiveProfile)) {
                 //ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
             } else {
@@ -39,6 +39,7 @@ class UploadToArchive {
             }
         }
         Log.info "***Browser for Archive Upload Launches Done"
+        return true
     }
 }
 

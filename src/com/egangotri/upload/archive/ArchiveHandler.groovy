@@ -11,14 +11,14 @@ import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
-import org.slf4j.LoggerFactory
+import org.slf4j.*
 
 /**
  * Created by user on 2/7/2016.
  */
 class ArchiveHandler {
 
-    final static org.slf4j.Logger Log = LoggerFactory.getLogger(this.class);
+    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
     static enum PROFILE_ENUMS {
         dt, ib, rk, jg
@@ -112,6 +112,9 @@ class ArchiveHandler {
         WebDriverWait wait = new WebDriverWait(driver, 8);
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")));
 
+        String identifier = driver.findElement( By.id("page_url")).getText() //By.xpath("//span[contains(@class, 'gray') and @id='page_url']"))
+        println "identifier: $identifier"
+
         WebElement uploadButton = driver.findElement(By.id("upload_button"));
         uploadButton.click();
     }
@@ -127,7 +130,7 @@ class ArchiveHandler {
         return fullURL
     }
     public static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
-        List folderName
+        List folderName = []
 
         switch (archiveProfile) {
             case PROFILE_ENUMS.dt.toString():
@@ -145,7 +148,7 @@ class ArchiveHandler {
             case PROFILE_ENUMS.ib.toString():
                 folderName = []
 
-                FileUtil.ELIGIBLE_FOLDERS_FOR_PRE57_FILTERING.collect { UploadUtils.pre57SubFolders(it) }.each {
+                FileUtil.ALL_FOLDERS.values().collect { UploadUtils.pre57SubFolders(it) }.each {
                     folderName << it
                 }
                 folderName = folderName.flatten()
