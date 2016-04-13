@@ -4,6 +4,7 @@ import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.gmail.UploadToGoogleDrive
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.util.EGangotriUtil
 import org.slf4j.*
 
 /**
@@ -13,8 +14,8 @@ class UploadToArchiveAndGoogleDrive {
     final static Logger Log = LoggerFactory.getLogger(UploadToArchiveAndGoogleDrive.class);
 
     static
-    final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.dt ,ArchiveHandler.PROFILE_ENUMS.rk,*/ ArchiveHandler.PROFILE_ENUMS.ib, ArchiveHandler.PROFILE_ENUMS.jg]
-    static final List UPLOAD_PROFILES = [UploadToGoogleDrive.UPLOAD_PROFILE_ENUMS.bm, UploadToGoogleDrive.UPLOAD_PROFILE_ENUMS.mm]
+    final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.DT ,ArchiveHandler.PROFILE_ENUMS.RK,*/ ArchiveHandler.ARCHIVE_PROFILE.IB, ArchiveHandler.ARCHIVE_PROFILE.JG]
+    static final List UPLOAD_PROFILES = [UploadToGoogleDrive.UPLOAD_PROFILE.BM, UploadToGoogleDrive.UPLOAD_PROFILE.MM]
 
     static main(args) {
         List archiveProfiles = ARCHIVE_PROFILES
@@ -37,12 +38,8 @@ class UploadToArchiveAndGoogleDrive {
         }
 
         Log.info "UploadToArchiveAndGmail"
-        Map metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/UserIdsMetadata.properties")
-        Log.error "***1****"
+        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         UploadToArchive.execute(archiveProfiles, metaDataMap)
-
-        Log.error "***2****"
-
         UploadToGoogleDrive.execute(uploadProfiles, metaDataMap)
     }
 }

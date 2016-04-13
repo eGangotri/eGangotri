@@ -15,16 +15,16 @@ import org.slf4j.*
 class GoogleDriveHandler {
     final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
-    def static void login(def metaDataMap, String loginProfile) {
+    def static void login(Hashtable<String, String> metaDataMap, String loginProfile) {
         loginAndUpload(metaDataMap, loginProfile)
     }
 
-    def static void loginAndUpload(def metaDataMap, String loginProfile, String folderName) {
+    def static void loginAndUpload(Hashtable<String, String> metaDataMap, String loginProfile, String folderName) {
         loginAndUpload(metaDataMap, loginProfile, true, folderName)
     }
 
     def static void loginAndUpload(
-            def metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
+            Hashtable<String, String> metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
         try {
             WebDriver driver = new ChromeDriver()
             driver.get("http://accounts.google.com");

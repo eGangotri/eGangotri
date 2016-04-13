@@ -1,8 +1,7 @@
 package com.egangotri.upload.util
 
-import com.egangotri.filter.PdfFileFilter
-import com.egangotri.filter.NonPre57DirectoryFilter
 import com.egangotri.upload.archive.ArchiveHandler
+import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
 import org.slf4j.Logger
@@ -19,10 +18,8 @@ import java.awt.event.KeyEvent
 class UploadUtils {
     final static Logger Log = LoggerFactory.getLogger(this.simpleName)
 
-    static final String HOME = System.getProperty('user.home')
-    static final String PDF = ".pdf"
 
-    public static Hashtable loadProperties(String fileName) {
+    public static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
         propertiesFile.withInputStream {
@@ -44,9 +41,10 @@ class UploadUtils {
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
         List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
-        if (archiveProfile == ArchiveHandler.PROFILE_ENUMS.ib.toString() && hasAtleastOnePdfInPre57Folders(folders)) {
+        println "folders: $folders"
+        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOnePdfInPreCutOffFolders(folders)) {
             atlestOne = true
-        } else if (hasAtleastOnePdfExcludePre57(folders)) {
+        } else if (hasAtleastOnePdfExcludePreCutOff(folders)) {
             atlestOne = true
         }
         Log.info "atlestOne[$archiveProfile]: $atlestOne"
@@ -56,93 +54,95 @@ class UploadUtils {
     static List<String> getUploadablePdfsForProfile(String archiveProfile) {
         List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         List<String> pdfs = []
-        if (archiveProfile == ArchiveHandler.PROFILE_ENUMS.ib.toString()) {
-            pdfs = getPdfsInPre57Folders(folders)
+        println "getUploadablePdfsForProfile: $archiveProfile"
+        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
+            pdfs = getPdfsInPreCutOffFolders(folders)
         } else {
-            pdfs = getAllPdfsExceptPre57(folders)
+            pdfs = getAllPdfsExceptPreCutOff(folders)
         }
         return pdfs
     }
 
+    static int getCountOfUploadablePdfsForProfile(String archiveProfile) {
+        return getUploadablePdfsForProfile(archiveProfile)?.size()
+    }
 
     static boolean hasAtleastOnePdf(File folder) {
         return hasAtleastOnePdf(folder, false)
     }
 
-    static boolean hasAtleastOnePdf(File folder, boolean excludePre57) {
-        return getAllPdfs(folder, excludePre57)?.size()
+    static boolean hasAtleastOnePdf(File folder, boolean excludePreCutOff) {
+        return getAllPdfs(folder, excludePreCutOff)?.size()
     }
 
-    static boolean hasAtleastOnePdfExcludePre57(File folder) {
+    static boolean hasAtleastOnePdfExcludePreCutOff(File folder) {
         return hasAtleastOnePdf(folder, true)
     }
 
-    static boolean hasAtleastOnePdfExcludePre57(List<File> folders) {
+    static boolean hasAtleastOnePdfExcludePreCutOff(List<File> folders) {
         boolean atlestOne = false
         folders.each { folder ->
-            if (hasAtleastOnePdfExcludePre57(folder)) {
+            if (hasAtleastOnePdfExcludePreCutOff(folder)) {
                 atlestOne = true
             }
         }
         return atlestOne
     }
 
-    static boolean hasAtleastOnePdfInPre57Folders(List<File> folders) {
+    static boolean hasAtleastOnePdfInPreCutOffFolders(List<File> folders) {
         boolean atlestOne = false
-        if(getPdfsInPre57Folders(folders)) {
+        if (getPdfsInPreCutOffFolders(folders)) {
             atlestOne = true
         }
         return atlestOne
     }
 
-    static List<String> getAllPdfs(File folder) {
-        getAllPdfs(folder, false)
+    static List<String> getAllPdfsExceptPreCutOff(File folder) {
+        getAllPdfs(folder, true)
     }
 
-    static List<String> getAllPdfsExceptPre57(File folder) {
-        getAllPdfs(folder, false)
-    }
-
-    static List<String> getAllPdfsExceptPre57(List<File> folders) {
+    static List<String> getAllPdfsExceptPreCutOff(List<File> folders) {
         List<String> pdfs = []
         folders.each { folder ->
-            pdfs.addAll(getAllPdfsExceptPre57(folder))
+            pdfs.addAll(getAllPdfsExceptPreCutOff(folder))
         }
         return pdfs
     }
 
-    static List<String> getAllPdfs(File folder, boolean excludePre57) {
+    static List<String> getAllPdfs(File folder, boolean excludePreCutOff) {
         List<String> pdfs = []
         Map optionsMap = [type      : FileType.ANY,
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
-        if (excludePre57) {
-            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_57) })
+        if (excludePreCutOff) {
+            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) })
         }
         folder.traverse(optionsMap) {
-            Log.info ">>" + it
+            Log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
         }
         return pdfs
     }
 
-    static List<String> getPdfsInPre57Folder(File folder) {
+    static List<String> getPdfsInPreCutOffFolder(File folder) {
         List<String> pdfs = []
-        Map optionsMap = [type         : FileType.ANY,
-                          nameFilter   : ~(FileUtil.PDF_REGEX),
-                          excludeFilter: { !it.absolutePath.contains(FileUtil.PRE_57) }
+        Map optionsMap = [type  : FileType.ANY,
+                          filter: {
+                              it.absolutePath.contains(FileUtil.PRE_CUTOFF) && it.name.endsWith(EGangotriUtil.PDF)
+                          }
         ]
         folder.traverse(optionsMap) {
-            Log.info ">>" + it
+            Log.info ">>>" + it
+            Log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
             pdfs << it.absolutePath
         }
         return pdfs
     }
 
-    static List<String> getPdfsInPre57Folders(List<File> folders) {
+    static List<String> getPdfsInPreCutOffFolders(List<File> folders) {
         List<String> pdfs = []
         folders.each { folder ->
-            pdfs.addAll(getPdfsInPre57Folder(folder))
+            pdfs.addAll(getPdfsInPreCutOffFolder(folder))
         }
         return pdfs
     }

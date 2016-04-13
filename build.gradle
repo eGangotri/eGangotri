@@ -36,14 +36,14 @@ sourceSets {
 task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =  ["mm", "bm"] // ["sr", "lk", "jm"] //["jm", "lk", "sr"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   ["JM", "LK", "SR", "DD"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
 task UploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = ["mm", "bm"]
+    args = ["MM", "BM"]
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -51,7 +51,7 @@ task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["rk", "jg", "ib", "dt"]
+   args = ["JG","IB", "RK", "DT" ,"NK",  "DD" ]
 }
 
 task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
@@ -59,7 +59,7 @@ task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     println "UploadToArchiveAndGoogleDrive: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.upload.UploadToArchiveAndGoogleDrive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "-a=dt, rk, ib, jg", "-u=bm, mm"]
+    args = [ "-a=DT, RK, IB, JG", "-u=BM, MM"]
 }
 
 task FileMover(dependsOn: 'classes', type: JavaExec) {
@@ -67,7 +67,7 @@ task FileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["dt", "sr", "jg"]
+    args = ["DT", "SR", "JG", "NK", "DD"]
 }
 configurations {
     tests
@@ -85,7 +85,7 @@ dependencies {
     compile 'org.slf4j:slf4j-simple:1.7.16'
     compile 'org.slf4j:slf4j-api:1.7.16'
     compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
-
+    compile 'org.apache.poi:poi:3.13'
 
     //The Only reason we are keeping this local
     //which has the META-INF\LICENSE Folder deleted is because during fat-jar
@@ -96,6 +96,7 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 task fatJar(type: Jar) {

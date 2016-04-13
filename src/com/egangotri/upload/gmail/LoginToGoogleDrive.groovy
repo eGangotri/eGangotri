@@ -1,6 +1,7 @@
 package com.egangotri.upload.gmail
 
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.util.EGangotriUtil
 import org.apache.commons.logging.LogFactory
 
 /**
@@ -10,19 +11,19 @@ import org.apache.commons.logging.LogFactory
 class LoginToGoogleDrive {
     static org.apache.commons.logging.Log Log = LogFactory.getLog(this.class)
 
-    static final List LOGIN_PROFILES = ["jm", "lk", "sr"] // "bm", "mm", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    static final List<String> LOGIN_PROFILES = ["jm", "lk", "sr"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
 
     static main(args) {
         Log.info "start$args"
-        List loginProfiles = LOGIN_PROFILES
+        List<String> loginProfiles = LOGIN_PROFILES
         if (args) {
             Log.info "args $args"
             loginProfiles = args.toList()
         }
 
-        loginProfiles.each { profile ->
+        loginProfiles.each { String profile ->
             Log.info "profile: $profile"
-            def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/GmailData.properties")
+            Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.GOOGLE_DRIVE_PROPERTIES_FILE)
             GoogleDriveHandler.login(metaDataMap, profile)
         }
     }

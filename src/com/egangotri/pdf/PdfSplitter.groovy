@@ -1,4 +1,4 @@
-package com.egangotri
+package com.egangotri.pdf
 
 /*
 @Grapes([
@@ -8,8 +8,10 @@ package com.egangotri
 */
 
 import com.itextpdf.text.Document
+import com.itextpdf.text.DocumentException
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.text.pdf.PdfSmartCopy
 
 /**
  * This Class takes in a Folder and splits all pdfs that are above 100 MB.
@@ -146,6 +148,7 @@ class PdfSplitter {
             e.printStackTrace();
         }
     }
+
 
     def creteSplitFolder(String folderName = null) {
         File splitFolder = new File(getSplitFolder(folderName))

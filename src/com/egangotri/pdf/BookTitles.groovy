@@ -1,8 +1,6 @@
-package com.egangotri
+package com.egangotri.pdf
 
 import com.itextpdf.text.pdf.PdfReader
-
-import static groovyx.gpars.actor.Actors.actor
 
 /**
  * All Titles of PDF's in a Folder and SubFolders

@@ -1,6 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.util.EGangotriUtil
 
 /**
  * Follow all Instructions at this URL:
@@ -15,17 +16,17 @@ class UploadToArchiveWithIAPythonTool {
     static List ignoreList = []
 
     static main(args) {
-        def metaDataMap = UploadUtils.loadProperties("${UploadUtils.HOME}/archiveProj/Metadata.properties")
+        def metaDataMap = UploadUtils.loadProperties("${EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator}Metadata.properties")
 
         uploadFiles(metaDataMap)
     }
 
     public static void uploadFiles(def metaDataMap) {
-        File directory = new File(metaDataMap.uploadable_files_dir)
+        File directory = new File(metaDataMap.uploadable_files_dir as String)
         println "processFolder $directory"
         def files = directory.listFiles()
         files.each { File file ->
-            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(UploadUtils.PDF)) {
+            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(EGangotriUtil.PDF)) {
                 println "****"
                 String identifier = generateIdentifier(file.name)
                 metaDataMap.file = file.name
@@ -58,7 +59,7 @@ class UploadToArchiveWithIAPythonTool {
      *  Identifiers must be unique across the entirety of Internet Archive, not simply unique within a single collection
      */
     public static String generateIdentifier(String fileName) {
-        def filteredString = (fileName - UploadUtils.PDF).findAll {
+        def filteredString = (fileName - EGangotriUtil.PDF).findAll {
             it =~ /[0-9a-zA-Z_-]/
         }
 
