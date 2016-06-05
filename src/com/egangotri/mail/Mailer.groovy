@@ -1,5 +1,6 @@
 package com.egangotri.mail
 
+import groovy.util.logging.Slf4j
 import org.slf4j.*
 import javax.mail.*
 import javax.mail.internet.*
@@ -7,16 +8,14 @@ import static javax.mail.Message.RecipientType.TO
 /**
  * Created by user on 2/7/2016.
  */
-
+@Slf4j
 class Mailer {
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
-
     private static String username= "indicjournals@gmail.com"
     private static String password= "a@hBmsep123"
     private static String host = "smtp.gmail.com"
 
     static main(args) {
-        Log.info "Hi"
+       log.info "Hi"
         //sendMail("pandey78@gmail.com", "Test", "Hello")
     }
 
@@ -39,7 +38,7 @@ class Mailer {
             transport.sendMessage(msg, msg.getAllRecipients())
         }
         catch (Exception e) {
-            Log.info "Error"
+           log.info "Error"
         }
     }
 }

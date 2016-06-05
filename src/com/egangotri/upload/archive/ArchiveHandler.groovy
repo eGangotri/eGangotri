@@ -4,6 +4,7 @@ import com.egangotri.csv.WriteToExcel
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
+import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
@@ -13,15 +14,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.*
 
-/**
- * Created by user on 2/7/2016.
- */
+@Slf4j
 class ArchiveHandler {
-
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
     static ARCHIVE_WAITING_PERIOD = 8
     static enum ARCHIVE_PROFILE {
-        DT, IB, RK, JG, NK, DD
+        DT, IB, RK, JG, NK, UR, SR
     }
 
     static String ARCHIVE_URL = "http://archive.org/account/login.php"
@@ -57,7 +54,7 @@ class ArchiveHandler {
             if (upload) {
                 List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
                 if (uploadables) {
-                    Log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
+                   log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = generateURL(archiveProfile)
 
@@ -68,7 +65,7 @@ class ArchiveHandler {
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
                         uploadables.drop(1).eachWithIndex { fileName, tabNo ->
-                            Log.info "Uploading: $fileName @ tabNo:$tabNo"
+                           log.info "Uploading: $fileName @ tabNo:$tabNo"
                             // Open new tab
                             driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
                             //Switch to new Tab
@@ -82,7 +79,7 @@ class ArchiveHandler {
                         }
                     }
                 } else {
-                    Log.info "No File uploadable for profile $archiveProfile"
+                   log.info "No File uploadable for profile $archiveProfile"
                 }
             }
 
@@ -97,7 +94,7 @@ class ArchiveHandler {
 
 
     public static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
-        Log.info("$fileNameWIthPath goes to $uploadLink")
+       log.info("$fileNameWIthPath goes to $uploadLink")
         //Go to URL
         driver.get(uploadLink);
 
@@ -137,7 +134,7 @@ class ArchiveHandler {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
 
-        Log.info "generateURL($archiveProfile):fullURL"
+       log.info "generateURL($archiveProfile):fullURL"
         return fullURL
     }
     public static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
@@ -150,7 +147,7 @@ class ArchiveHandler {
             folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
         }
 
-        Log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
+       log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
         return folderName
     }
 

@@ -16,6 +16,9 @@ sourceSets {
         groovy {
             srcDirs = ['src']
         }
+        resources {
+            srcDirs = ['resources']
+        }
     }
 
     test {
@@ -36,14 +39,14 @@ sourceSets {
 task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   ["JM", "LK", "SR", "DD"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   ["JM", "LK", "RK", "DD"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
 task UploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = ["MM", "BM"]
+//    args = ["MM", "BM"]
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -51,7 +54,8 @@ task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-   args = ["JG","IB", "RK", "DT" ,"NK",  "DD" ]
+  // args = [ "DT", "JG" ,"RK","IB" ,"NK", "UR", "SR"  ]
+   args = [  "DT"  ]
 }
 
 task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
@@ -67,8 +71,9 @@ task FileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["DT", "SR", "JG", "NK", "DD"]
+    args = [ "RK","DT", "JG", "NK", "UR", "SR"]
 }
+
 configurations {
     tests
 }
@@ -82,11 +87,13 @@ dependencies {
     compile 'org.codehaus.geb:geb-core:0.7.2'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.ant:ant:1.9.6'
-    compile 'org.slf4j:slf4j-simple:1.7.16'
-    compile 'org.slf4j:slf4j-api:1.7.16'
     compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
     compile 'org.apache.poi:poi:3.13'
-
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    //compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.5'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'
     //The Only reason we are keeping this local
     //which has the META-INF\LICENSE Folder deleted is because during fat-jar
     //task the unzipping has conflicts.

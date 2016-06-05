@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/eGangotri.iml" filepath="$PROJECT_DIR$/eGangotri.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eGangotri.iml" filepath="$PROJECT_DIR$/.idea/modules/eGangotri.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eGangotri_main.iml" filepath="$PROJECT_DIR$/.idea/modules/eGangotri_main.iml" group="eGangotri" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eGangotri_test.iml" filepath="$PROJECT_DIR$/.idea/modules/eGangotri_test.iml" group="eGangotri" />
     </modules>
   </component>
 </project>

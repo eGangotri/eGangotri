@@ -4,6 +4,7 @@ import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
+import groovy.util.logging.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -12,13 +13,8 @@ import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
-/**
- * Created by user on 1/16/2016.
- */
+@Slf4j
 class UploadUtils {
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
-
-
     public static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
@@ -33,7 +29,7 @@ class UploadUtils {
             metaDataMap.put(key, val);
         }
         metaDataMap.each { k, v ->
-            // Log.info "$k $v"
+            //log.info "$k $v"
         }
         return metaDataMap
     }
@@ -47,7 +43,7 @@ class UploadUtils {
         } else if (hasAtleastOnePdfExcludePreCutOff(folders)) {
             atlestOne = true
         }
-        Log.info "atlestOne[$archiveProfile]: $atlestOne"
+       log.info "atlestOne[$archiveProfile]: $atlestOne"
         return atlestOne
     }
 
@@ -109,7 +105,7 @@ class UploadUtils {
         return pdfs
     }
 
-    static List<String> getAllPdfs(File folder, boolean excludePreCutOff) {
+    static List<String> getAllPdfs(File folder, Boolean excludePreCutOff) {
         List<String> pdfs = []
         Map optionsMap = [type      : FileType.ANY,
                           nameFilter: ~(FileUtil.PDF_REGEX)
@@ -118,10 +114,14 @@ class UploadUtils {
             optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) })
         }
         folder.traverse(optionsMap) {
-            Log.info "getAllPdfs>>" + it
+           //log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
         }
         return pdfs
+    }
+
+    static List<String> getAllPdfs(File folder){
+        return getAllPdfs(folder, false)
     }
 
     static List<String> getPdfsInPreCutOffFolder(File folder) {
@@ -132,8 +132,8 @@ class UploadUtils {
                           }
         ]
         folder.traverse(optionsMap) {
-            Log.info ">>>" + it
-            Log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
+           log.info ">>>" + it
+           log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
             pdfs << it.absolutePath
         }
         return pdfs
@@ -162,7 +162,7 @@ class UploadUtils {
     }
 
     public static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
-        Log.info "$fileName  being pasted"
+       log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         Thread.sleep(1000);
         setClipboardData(fileName);

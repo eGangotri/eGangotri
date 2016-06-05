@@ -2,52 +2,63 @@ package com.egangotri.upload.gmail
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import groovy.util.logging.Slf4j
 import org.slf4j.*
 
-/**
- * Created by user on 1/22/2016.
- */
-
+@Slf4j
 class UploadToGoogleDrive {
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
-
     static final List UPLOAD_PROFILES = [UPLOAD_PROFILE.BM, UPLOAD_PROFILE.MM]
     static enum UPLOAD_PROFILE {
         BM, MM
     }
 
     static main(args) {
-        Log.info("start")
+        log.info("start")
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.GOOGLE_DRIVE_PROPERTIES_FILE)
         List uploadProfiles = UPLOAD_PROFILES
         if (args) {
-            Log.info("args $args")
+            log.info("args $args")
             uploadProfiles = args.toList()
         }
         execute(uploadProfiles, metaDataMap)
     }
 
     public static void execute(List profiles, Hashtable<String, String> metaDataMap) {
-        Log.info "Start uploading to Google Drive"
+        log.info "Start uploading to Google Drive"
+        Map<String, String> uploadSuccessCheckingMatrix = [:]
         profiles*.toString().eachWithIndex { uploadProfile, index ->
+
             List<String> folders = resolveFolderBasedOnGoogleDriveProfile(uploadProfile)
-            Log.info("folders: $folders")
-            Log.info "${index + 1}). Uploading to Google Drive for Profile $uploadProfile"
+            log.info("folders: $folders")
+            log.info "${index + 1}). Uploading to Google Drive for Profile $uploadProfile"
+
             folders.eachWithIndex { String folder, idx ->
+                log.info("folder: $folder")
                 File directory = new File(folder)
-                if (UploadUtils.hasAtleastOnePdf(directory)) {
-                    Log.info "UploadToGoogleDrive: Processing directory for Upload: $directory"
-                    GoogleDriveHandler.loginAndUpload(metaDataMap, uploadProfile, folder)
+                int countOfUploadablePdfs = UploadUtils.getAllPdfs(directory)?.size()
+                if (countOfUploadablePdfs) {
+                    log.info "UploadToGoogleDrive: Upload $countOfUploadablePdfs docs to $directory"
+                    boolean success = GoogleDriveHandler.loginAndUpload(metaDataMap, uploadProfile, folder)
+                    uploadSuccessCheckingMatrix.put("${index+1}.${idx+1}", "$uploadProfile[$folder] \t $countOfUploadablePdfs Docs uploaded with  Exception Reported ${success?'None':' YES !!!!'}")
+
                 } else {
-                    Log.info "No Files uploadable to Google Drive for folder $folder in Profile $uploadProfile"
+                    log.info "No Files uploadable to Google Drive for folder $folder in Profile $uploadProfile"
+                    uploadSuccessCheckingMatrix.put("${index+1}.${idx+1}", "$uploadProfile[$folder] \t $countOfUploadablePdfs Docs. nothing to upload ")
                 }
             }
         }
-        Log.info "***UploadToGoogleDrive Browser Launches Done"
+
+        log.info "Upload Report:\n"
+
+        uploadSuccessCheckingMatrix.each { k,v ->
+            log.info "$k) $v"
+        }
+
+        log.info "***UploadToGoogleDrive Browser Launches Done"
     }
 
     static List<String> resolveFolderBasedOnGoogleDriveProfile(String uploadProfile) {
-        if(uploadProfile == UPLOAD_PROFILE.MM.toString()){
+        if (uploadProfile == UPLOAD_PROFILE.MM.toString()) {
             return EGangotriUtil.manuscriptFolders()
         } else {
             return EGangotriUtil.nonManuscriptFolders()

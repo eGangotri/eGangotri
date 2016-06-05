@@ -1,6 +1,7 @@
 package com.egangotri.upload.gmail
 
 import com.egangotri.upload.util.UploadUtils
+import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
@@ -9,22 +10,19 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.*
 
-/**
- * Created by user on 1/22/2016.
- */
+@Slf4j
 class GoogleDriveHandler {
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
-
-    def static void login(Hashtable<String, String> metaDataMap, String loginProfile) {
-        loginAndUpload(metaDataMap, loginProfile)
+    def static boolean login(Hashtable<String, String> metaDataMap, String loginProfile) {
+        return loginAndUpload(metaDataMap, loginProfile)
     }
 
-    def static void loginAndUpload(Hashtable<String, String> metaDataMap, String loginProfile, String folderName) {
-        loginAndUpload(metaDataMap, loginProfile, true, folderName)
+    def static boolean loginAndUpload(Hashtable<String, String> metaDataMap, String loginProfile, String folderName) {
+        return loginAndUpload(metaDataMap, loginProfile, true, folderName)
     }
 
-    def static void loginAndUpload(
+    def static boolean loginAndUpload(
             Hashtable<String, String> metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
+        boolean res = false
         try {
             WebDriver driver = new ChromeDriver()
             driver.get("http://accounts.google.com");
@@ -50,11 +48,12 @@ class GoogleDriveHandler {
             if (upload) {
                 uploadToDrive(driver, folderName)
             }
+            res = true
         }
         catch (Exception e) {
             e.printStackTrace()
         }
-        Log.info "done"
+        return res
     }
 
     static void uploadToDrive(def driver, String folderName) {

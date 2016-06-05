@@ -1,20 +1,20 @@
 package com.egangotri.mover
 
+
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
-import org.slf4j.*
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class FileMover {
     static String DEST_ROOT_DIR = "C:\\Treasures6"
     static Map<String, List<String>> srcDestMap
-    final static Logger Log = LoggerFactory.getLogger(this.simpleName)
-
     static List profiles = ["DT", "SR", "JG", "NK"] //"SR", "DT", "JG"
 
     static main(args) {
         if (args) {
-            Log.info "args $args"
+            log.info "args $args"
             profiles = args.toList()
         }
         new FileMover().move()
@@ -28,30 +28,27 @@ class FileMover {
         profiles.each { profile ->
             String srcDir = metaDataMap["${profile}.src"]
             String destDir = metaDataMap["${profile}.dest"]
-            FilenameFilter fileNameFilter = new PDFFileNameFilter()
 
-            int srcFlesCount = new File(srcDir).list(new PDFFileNameFilter()).size()
-            int dirFlesCountBeforeMove = new File(destDir).list(new PDFFileNameFilter()).size()
+            Integer srcFilesCount = noOfFiles(srcDir)
+            Integer dirFlesCountBeforeMove = noOfFiles(destDir)
             FileUtil.moveDir(srcDir, destDir);
-            int dirFlesCountAfterMove = new File(destDir).list(new PDFFileNameFilter()).size()
+            Integer dirFlesCountAfterMove = noOfFiles(destDir)
 
-            int diff = dirFlesCountAfterMove - dirFlesCountBeforeMove
-            String rep = "$srcDir, \t $srcFlesCount,\t $destDir,\t ${diff} \t" + (srcFlesCount == diff ? 'Success' : 'Failure!!!!')
+            Integer diff = Math.subtractExact(dirFlesCountAfterMove, dirFlesCountBeforeMove)
+            String rep = "$srcDir, \t $srcFilesCount,\t $destDir[bef:$dirFlesCountBeforeMove after:$dirFlesCountAfterMove],\t ${diff} \t"
+            if(srcFilesCount) {
+                rep += (srcFilesCount == diff ? 'Success' : 'Failure!!!!')
+            }
+
             uploadSuccessCheckingMatrix.put((index++), rep)
         }
 
         uploadSuccessCheckingMatrix.each { k, v ->
-            Log.info "$k) $v"
+            log.info "$k) $v"
         }
     }
 
-    class PDFFileNameFilter implements FilenameFilter {
-
-        @Override
-        boolean accept(File dir, String name) {
-            if (name.endsWith(EGangotriUtil.PDF)) {
-                return true
-            }
-        }
+    static Integer noOfFiles(String dirName) {
+        return UploadUtils.getAllPdfs(new File(dirName))?.size()
     }
 }
