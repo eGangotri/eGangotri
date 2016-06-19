@@ -35,10 +35,15 @@ class FileMover {
             Integer dirFlesCountAfterMove = noOfFiles(destDir)
 
             Integer diff = Math.subtractExact(dirFlesCountAfterMove, dirFlesCountBeforeMove)
-            String rep = "$srcDir, \t $srcFilesCount,\t $destDir[bef:$dirFlesCountBeforeMove after:$dirFlesCountAfterMove],\t ${diff} \t"
-            if(srcFilesCount) {
+            String rep = "$srcDir"
+            if(!srcFilesCount){
+                rep += ":\tNothing to Move"
+            }
+            else {
+                rep +=", \t $srcFilesCount,\t $destDir[bef:$dirFlesCountBeforeMove after:$dirFlesCountAfterMove],\t ${diff} \t"
                 rep += (srcFilesCount == diff ? 'Success' : 'Failure!!!!')
             }
+
 
             uploadSuccessCheckingMatrix.put((index++), rep)
         }

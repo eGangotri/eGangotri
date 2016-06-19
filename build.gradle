@@ -11,6 +11,10 @@ repositories {
     }
 }
 
+compileJava.options.encoding = 'UTF-8'
+compileGroovy.options.encoding = 'UTF-8'
+
+
 sourceSets {
     main {
         groovy {
@@ -46,7 +50,7 @@ task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
 task UploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-//    args = ["MM", "BM"]
+   args = ["MM", "BM"]
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -54,8 +58,7 @@ task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  // args = [ "DT", "JG" ,"RK","IB" ,"NK", "UR", "SR"  ]
-   args = [  "DT"  ]
+  args = [ "DT" , "JG" ,"RK","IB" ,"NK", "UR", "SR"  ]
 }
 
 task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
@@ -71,6 +74,7 @@ task FileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
+  //  args = [ "RK","DT", "JG", "NK", "UR", "SR"]
     args = [ "RK","DT", "JG", "NK", "UR", "SR"]
 }
 
