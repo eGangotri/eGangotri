@@ -6,7 +6,7 @@ import groovyx.gpars.GParsPool
  * Created by user on 7/11/2015.
  */
 class FolderUnzipper {
-    static String FOLDER_NAME = "C:\\hw\\amit"
+    static String FOLDER_NAME = "C:\\hw\\amit\\zipp"
     static List<String> ZIP = [".zip", ".rar"]
     static List ignoreList = []
     static boolean inSeparateFolder = false

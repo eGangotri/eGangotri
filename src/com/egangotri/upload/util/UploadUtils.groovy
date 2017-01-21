@@ -5,8 +5,6 @@ import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
 import groovy.util.logging.Slf4j
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -23,17 +21,32 @@ class UploadUtils {
         }
 
         Hashtable<String, String> metaDataMap = [:]
-        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
-            String val = new String(properties.get(key).getBytes("ISO-8859-1"), "UTF-8")
+
+        properties.entrySet().each { entry ->
+            String key = entry.key
+            String val = new String(entry.value.getBytes("ISO-8859-1"), "UTF-8")
+            if (key.endsWith(".description")) {
+                val = encodeString(val)
+            }
             metaDataMap.put(key, val);
         }
-        metaDataMap.each { k, v ->
-            //log.info "$k $v"
+
+        metaDataMap.each {
+            k, v ->
+                //log.info "$k $v"
         }
         return metaDataMap
     }
 
+    def static encodeString(def stringToEncode){
+
+        def reservedCharacters = [32:1, 33:1, 42:1, 34:1, 39:1, 40:1, 41:1, 59:1, 58:1, 64:1, 38:1, /*61:1,*/ 43:1, 36:1, 33:1, 47:1, 63:1, 37:1, 91:1, 93:1, 35:1]
+
+        def encoded =  stringToEncode.collect { letter ->
+            reservedCharacters[(int)letter] ? "%" +Integer.toHexString((int)letter).toString().toUpperCase() : letter
+        }
+        return encoded.join("")
+    }
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
         List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
@@ -43,12 +56,12 @@ class UploadUtils {
         } else if (hasAtleastOnePdfExcludePreCutOff(folders)) {
             atlestOne = true
         }
-       log.info "atlestOne[$archiveProfile]: $atlestOne"
+        log.info "atlestOne[$archiveProfile]: $atlestOne"
         return atlestOne
     }
 
     static List<String> getUploadablePdfsForProfile(String archiveProfile) {
-        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
+        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> new File(fileName) }
         List<String> pdfs = []
         println "getUploadablePdfsForProfile: $archiveProfile"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
@@ -114,13 +127,13 @@ class UploadUtils {
             optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) })
         }
         folder.traverse(optionsMap) {
-           //log.info "getAllPdfs>>" + it
+            //log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
         }
         return pdfs
     }
 
-    static List<String> getAllPdfs(File folder){
+    static List<String> getAllPdfs(File folder) {
         return getAllPdfs(folder, false)
     }
 
@@ -132,8 +145,8 @@ class UploadUtils {
                           }
         ]
         folder.traverse(optionsMap) {
-           log.info ">>>" + it
-           log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
+            log.info ">>>" + it
+            log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
             pdfs << it.absolutePath
         }
         return pdfs
@@ -162,7 +175,7 @@ class UploadUtils {
     }
 
     public static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
-       log.info "$fileName  being pasted"
+        log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         Thread.sleep(1000);
         setClipboardData(fileName);
@@ -183,4 +196,5 @@ class UploadUtils {
         StringSelection stringSelection = new StringSelection(string);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
     }
+
 }

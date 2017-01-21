@@ -2,7 +2,8 @@ apply plugin: 'application'
 apply plugin: 'groovy'
 
 mainClassName = "com.egangotri.upload.gmail.LoginToGmail"
-applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}/chromedriver/chromedriver.exe"]
+applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}/chromedriver/chromedriver.exe"
+/*, "-Dwebdriver.firefox.driver=${System.getProperty('user.home')}/firefoxdriver/geckodriver.exe"*/]
 version=1.0
 repositories {
     mavenCentral()
@@ -36,46 +37,45 @@ sourceSets {
  * To use Aguments
  * With JAR use: java -jar eGangotri-all-1.0.jar  lk jk
  * From Command Line: 'groovy com/egangotri/upload/gmail/LoginToGmail.groovy lk jk'
-    Command Line should also have the vm argument for the Selenium jar path
+    Command Line should also have the vm argumen for the Selenium jar path
  *  With Gradle: gradle loginToGmail is enough
  * //Arguments will be picked from args below
  */
-task LoginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
+task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   ["JM", "LK", "RK", "DD"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   [  "JM", "LK", "DD"] //, "RK" "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
-task UploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
+task uploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-   args = ["MM", "BM"]
+    args = ["MM","BM" ]
     jvmArgs = applicationDefaultJvmArgs
 }
 
-task UploadToArchive(dependsOn: 'classes', type: JavaExec) {
+task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [ "DT" , "JG" ,"RK","IB" ,"NK", "UR", "SR"  ]
+  args = [ /*"AJG" */"JG","DT"/*,"NK", "UPSS",   "UR",  "ANON" , "MS", "SBLK" ,"SR" ,"IB","RK", "SBLK2"*/]
 }
 
-task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    println "UploadToArchiveAndGoogleDrive: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.upload.UploadToArchiveAndGoogleDrive"
-    jvmArgs = applicationDefaultJvmArgs
-    args = [ "-a=DT, RK, IB, JG", "-u=BM, MM"]
-}
+//task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
+//    classpath = sourceSets.main.runtimeClasspath
+//    println "UploadToArchiveAndGoogleDrive: ${sourceSets.main.runtimeClasspath}"
+//    main = "com.egangotri.upload.UploadToArchiveAndGoogleDrive"
+//    jvmArgs = applicationDefaultJvmArgs
+//    args = [ "-a=DT, RK, IB, JG", "-u=BM, MM"]
+//}
 
-task FileMover(dependsOn: 'classes', type: JavaExec) {
+task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-  //  args = [ "RK","DT", "JG", "NK", "UR", "SR"]
-    args = [ "RK","DT", "JG", "NK", "UR", "SR"]
+    args = ["ANON","SR", "KECSS" ,"RK","DT", "NK", "UR",  "MS", "NR","UPSS" , "SBLK", "SBLK2"]
 }
 
 configurations {
@@ -87,7 +87,9 @@ dependencies {
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile 'javax.mail:mail:1.4'
     compile 'com.itextpdf:itextpdf:5.5.8'
-    compile 'com.itextpdf:itext-xtra:5.1.3'
+/*
+    compile 'com.itextpdf:itext-xta:5.1.3'
+*/
     compile 'org.codehaus.geb:geb-core:0.7.2'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.ant:ant:1.9.6'
@@ -103,6 +105,10 @@ dependencies {
     //task the unzipping has conflicts.
     //For all other purposes best to use, maven repo standalone;commented below
     //compile files('lib/sss.jar')
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-firefox-driver', version: '3.0.1'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '3.0.1'
+    compile group: 'org.codehaus.geb', name: 'geb-core', version: '0.7.2'
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'

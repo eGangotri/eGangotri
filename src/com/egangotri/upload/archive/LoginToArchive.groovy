@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 
 @Slf4j
 class LoginToArchive {
-    static final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.IB, ArchiveHandler.PROFILE_ENUMS.DT, ArchiveHandler.PROFILE_ENUMS.JG, */ArchiveHandler.ARCHIVE_PROFILE.IB]
+    static final List ARCHIVE_PROFILES = []
 
 
     static main(args) {

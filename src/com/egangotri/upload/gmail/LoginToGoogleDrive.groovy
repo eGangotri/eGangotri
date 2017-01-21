@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class LoginToGoogleDrive {
 
-    static final List<String> LOGIN_PROFILES = ["jm", "lk", "sr"] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    static final List<String> LOGIN_PROFILES = EGangotriUtil.GOOGLE_PROFILES
 
     static main(args) {
        log.info "start$args"

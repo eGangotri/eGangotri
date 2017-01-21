@@ -3,7 +3,6 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-import org.slf4j.*
 
 /**
  * Created by user on 1/18/2016.
@@ -14,13 +13,11 @@ import org.slf4j.*
  */
 @Slf4j
 class UploadToArchive {
-    static
-    final List ARCHIVE_PROFILES = [ArchiveHandler.ARCHIVE_PROFILE.DT, ArchiveHandler.ARCHIVE_PROFILE.RK, ArchiveHandler.ARCHIVE_PROFILE.IB, ArchiveHandler.ARCHIVE_PROFILE.JG]
 
     static main(args) {
-        List archiveProfiles = ARCHIVE_PROFILES
+        List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
-           log.info "args $args"
+            log.info "args $args"
             archiveProfiles = args.toList()
         }
 
@@ -29,31 +26,31 @@ class UploadToArchive {
     }
 
     public static boolean execute(List profiles, Map metaDataMap) {
-        Map<Integer,String> uploadSuccessCheckingMatrix = [:]
-       log.info "Start uploading to Archive"
-        profiles*.toString().eachWithIndex { archiveProfile,  index ->
-           log.info "${index+1}). Test Uploadables in archive.org Profile $archiveProfile"
+        Map<Integer, String> uploadSuccessCheckingMatrix = [:]
+        log.info "Start uploading to Archive"
+        profiles*.toString().eachWithIndex { archiveProfile, index ->
+            log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
             int countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
             int countOfUploadedItems = 0
-           log.info ("CountOfUploadablePdfs: $countOfUploadablePdfs")
+            log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
             if (countOfUploadablePdfs) {
                 countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
-               log.info("Uploaded $countOfUploadedItems docs for $archiveProfile")
+                log.info("Uploaded $countOfUploadedItems docs for $archiveProfile")
 
-                String rep = "$archiveProfile, \t $countOfUploadablePdfs,\t $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems?'Success':'Failure!!!!')
-                uploadSuccessCheckingMatrix.put((index+1),rep )
+                String rep = "$archiveProfile, \t $countOfUploadablePdfs,\t $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success' : 'Failure!!!!')
+                uploadSuccessCheckingMatrix.put((index + 1), rep)
             } else {
-               log.info "No Files uploadable for Profile $archiveProfile"
+                log.info "No Files uploadable for Profile $archiveProfile"
             }
         }
 
-       log.info "Upload Report:\n"
+        log.info "Upload Report:\n"
 
-        uploadSuccessCheckingMatrix.each { k,v ->
-           log.info "$k) $v"
+        uploadSuccessCheckingMatrix.each { k, v ->
+            log.info "$k) $v"
         }
 
-       log.info "***Browser for Archive Upload Launches Done"
+        log.info "***Browser for Archive Upload Launches Done"
         return true
     }
 }

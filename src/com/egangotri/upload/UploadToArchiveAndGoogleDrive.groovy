@@ -14,7 +14,7 @@ import org.slf4j.*
 @Slf4j
 class UploadToArchiveAndGoogleDrive {
     static
-    final List ARCHIVE_PROFILES = [/*ArchiveHandler.PROFILE_ENUMS.DT ,ArchiveHandler.PROFILE_ENUMS.RK,*/ ArchiveHandler.ARCHIVE_PROFILE.IB, ArchiveHandler.ARCHIVE_PROFILE.JG]
+    final List ARCHIVE_PROFILES = []
     static final List UPLOAD_PROFILES = [UploadToGoogleDrive.UPLOAD_PROFILE.BM, UploadToGoogleDrive.UPLOAD_PROFILE.MM]
 
     static main(args) {

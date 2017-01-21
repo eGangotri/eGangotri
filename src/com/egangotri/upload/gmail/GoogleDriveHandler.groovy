@@ -24,8 +24,13 @@ class GoogleDriveHandler {
             Hashtable<String, String> metaDataMap, String loginProfile, boolean upload = null, String folderName = null) {
         boolean res = false
         try {
+            String userHome = System.getProperty('user.home')
+            println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
+            System.setProperty("webdriver.chrome.driver","${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe");
+           // println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
+
             WebDriver driver = new ChromeDriver()
-            driver.get("http://accounts.google.com");
+            driver.get("https://accounts.google.com");
             WebElement id = driver.findElement(By.id("Email"));
 
             WebElement next = driver.findElement(By.id("next"));
@@ -51,6 +56,7 @@ class GoogleDriveHandler {
             res = true
         }
         catch (Exception e) {
+            log.info ("drive log error",e)
             e.printStackTrace()
         }
         return res

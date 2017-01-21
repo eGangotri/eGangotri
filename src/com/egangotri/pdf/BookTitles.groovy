@@ -7,7 +7,7 @@ import com.itextpdf.text.pdf.PdfReader
  */
 class BookTitles {
 
-    static String FOLDER_NAME = "C:\\hw\\megha\\rack 4"
+    static String FOLDER_NAME = "C:\\hw\\amit\\UPSS"
 
     static String SPLIT_FOLDER_NAME = "split"
     static List ignoreList = [SPLIT_FOLDER_NAME]

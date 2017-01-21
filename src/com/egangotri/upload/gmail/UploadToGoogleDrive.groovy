@@ -7,10 +7,7 @@ import org.slf4j.*
 
 @Slf4j
 class UploadToGoogleDrive {
-    static final List UPLOAD_PROFILES = [UPLOAD_PROFILE.BM, UPLOAD_PROFILE.MM]
-    static enum UPLOAD_PROFILE {
-        BM, MM
-    }
+    static final List UPLOAD_PROFILES = EGangotriUtil.getAllUploadProfiles()
 
     static main(args) {
         log.info("start")
@@ -58,7 +55,7 @@ class UploadToGoogleDrive {
     }
 
     static List<String> resolveFolderBasedOnGoogleDriveProfile(String uploadProfile) {
-        if (uploadProfile == UPLOAD_PROFILE.MM.toString()) {
+        if (EGangotriUtil.isAManuscriptProfile(uploadProfile)) {
             return EGangotriUtil.manuscriptFolders()
         } else {
             return EGangotriUtil.nonManuscriptFolders()
