@@ -59,7 +59,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [ /*"AJG" */"JG","DT"/*,"NK", "UPSS",   "UR",  "ANON" , "MS", "SBLK" ,"SR" ,"IB","RK", "SBLK2"*/]
+  args = [ /*"AJG", "JG","DT", "NK", "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"IB","RK",*/ "SBLK" ,"SBLK2"]
 }
 
 //task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
