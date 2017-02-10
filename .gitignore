@@ -15,6 +15,7 @@ gradle-app.setting
 /.idea
 .gradletasknamecache
 
+*.log
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
 # Created by .ignore support plugin (hsz.mobi)
