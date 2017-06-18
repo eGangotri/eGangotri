@@ -38,15 +38,16 @@ class UploadUtils {
         return metaDataMap
     }
 
-    def static encodeString(def stringToEncode){
+    def static encodeString(def stringToEncode) {
 
-        def reservedCharacters = [32:1, 33:1, 42:1, 34:1, 39:1, 40:1, 41:1, 59:1, 58:1, 64:1, 38:1, /*61:1,*/ 43:1, 36:1, 33:1, 47:1, 63:1, 37:1, 91:1, 93:1, 35:1]
+        def reservedCharacters = [32: 1, 33: 1, 42: 1, 34: 1, 39: 1, 40: 1, 41: 1, 59: 1, 58: 1, 64: 1, 38: 1, /*61:1,*/ 43: 1, 36: 1, 33: 1, 47: 1, 63: 1, 37: 1, 91: 1, 93: 1, 35: 1]
 
-        def encoded =  stringToEncode.collect { letter ->
-            reservedCharacters[(int)letter] ? "%" +Integer.toHexString((int)letter).toString().toUpperCase() : letter
+        def encoded = stringToEncode.collect { letter ->
+            reservedCharacters[(int) letter] ? "%" + Integer.toHexString((int) letter).toString().toUpperCase() : letter
         }
         return encoded.join("")
     }
+
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
         List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
@@ -75,6 +76,7 @@ class UploadUtils {
     static int getCountOfUploadablePdfsForProfile(String archiveProfile) {
         return getUploadablePdfsForProfile(archiveProfile)?.size()
     }
+
 
     static boolean hasAtleastOnePdf(File folder) {
         return hasAtleastOnePdf(folder, false)
@@ -197,4 +199,57 @@ class UploadUtils {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
     }
 
+    static List getAStashOfFilesForUpload(String src) {
+        List<String> filterables = getFilterables()
+        List<String> allPdfs = getAllPdfs(new File(src))
+        if (filterables) {
+            log.info("filterables.size():${filterables.size()} '${filterables[0]}'")
+            log.info("allPdfs2.size() before:${allPdfs.size()} '${allPdfs.first()}'")
+            int count = 0
+
+            def x = ['nnn', 'E:\\bngl2\\85685712 Jennings Vedantic Buddhism Of The Buddha.pdf']
+            def y = "85685712 Jennings Vedantic Buddhism Of The Buddha.pdf"
+            println(x.findIndexOf { it =~ /($y)$/ })
+            filterables.each { String filterable ->
+                int count2 = 0
+                try {
+                    int idx = allPdfs.findIndexOf { pdf ->
+                        String y2 = pdf.substring(src.length() + 1)
+
+                        if(count2++ <10){
+                            println( "$filterable == ${y2} ($pdf) " +  filterable.equals(y2))
+                        }
+                        filterable.equals(y2)
+                    }
+
+                    if (idx >= 0) {
+                        println("${count++}).idx:$idx, $filterable == ${allPdfs.get(idx)}")
+                        allPdfs.remove(idx)
+                    }
+                }
+
+                catch (Exception e) {
+                    log.error(e.message)
+                }
+
+            }
+            log.info("\nallPdfs2.size() after:${allPdfs.size()} '${allPdfs.first()}'")
+        }
+        if (allPdfs?.size() > 100) {
+            return allPdfs[0..100]
+        } else {
+            return allPdfs[0..allPdfs?.size()]
+        }
+
+    }
+
+    static List<String> getFilterables() {
+        String fileName = System.getProperty("user.home") + "${File.separator}eGangotri${File.separator}archiveFileName.txt"
+        List<String> list = new File(fileName).readLines()
+        List<String> filterables = []
+        if (list) {
+            filterables = list[0].split(",").collect { "${it}.pdf" }
+        }
+        return filterables
+    }
 }

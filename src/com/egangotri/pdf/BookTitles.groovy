@@ -7,22 +7,22 @@ import com.itextpdf.text.pdf.PdfReader
  */
 class BookTitles {
 
-    static String FOLDER_NAME = "C:\\hw\\amit\\UPSS"
+    static String FOLDER_NAME = "C:\\hw\\nk"
 
-    static String SPLIT_FOLDER_NAME = "split"
-    static List ignoreList = [SPLIT_FOLDER_NAME]
+    static List ignoreList = []
 
     static String PDF = "pdf"
-    static boolean includeNumberOfPages = false
-    static boolean includeIndex = false
+    static boolean includeNumberOfPages = true
+    static boolean includeIndex = true
     static boolean onlyRootDirAndNoSubDirs = false
-
-
-    int totalFilesSplittable = 0
-    boolean allSplitFilesInPlace = true
-
+    static int TOTAL_FILES = 0
+    static int TOTAL_NUM_PAGES = 0
+    static List<Integer> kriIds = []
     static main(args) {
-        String args0 = ""//args[0]
+        String args0 = ""
+        if(args?.size() >0){
+            args0 = args[0]
+        }
         println "args0:$args0"
         //new BookTitles().actor.start()
         //if only the directory specified
@@ -32,6 +32,8 @@ class BookTitles {
             //if everything
             new BookTitles().procAdInfinitum(args0 ?: BookTitles.FOLDER_NAME)
         }
+        println kriIds.sort()
+        println "Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}"
     }
 
     void processOneFolder(String folderAbsolutePath) {
@@ -41,8 +43,17 @@ class BookTitles {
         int index = 0
         for (File file : directory.listFiles()) {
             if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
-                printFileName(folderAbsolutePath, file, ++index)
+                getIds(file)
+                //printFileName(folderAbsolutePath, file, ++index)
             }
+        }
+    }
+
+    void getIds(File file){
+        def kri = (file.name  =~ "KRI(-)\\d+")
+        if(kri){
+            println "***${kri[0][0]}"
+            kriIds << kri[0][0].toString().replaceFirst("KRI-","").toInteger()
         }
     }
 
@@ -71,8 +82,19 @@ class BookTitles {
 
     void printFileName(String folderAbsolutePath, File file, int index) {
         PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
+
         int numberOfPages = pdfReader.getNumberOfPages()
         println "${includeIndex ? index + ').' : ''} ${file.name} ${includeNumberOfPages ? ', ' + numberOfPages + ' Pages' : ''}"
+        incrementTotalPageCount(numberOfPages)
+        incrementFileCount()
+    }
+
+    void incrementFileCount(){
+        TOTAL_FILES++
+    }
+
+    void incrementTotalPageCount(int numPagesToIncrement){
+        TOTAL_NUM_PAGES += numPagesToIncrement
     }
 
 }

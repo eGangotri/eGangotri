@@ -3,6 +3,7 @@ package com.egangotri.upload.gmail
 import com.egangotri.upload.util.UploadUtils
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -26,29 +27,27 @@ class GoogleDriveHandler {
         try {
             String userHome = System.getProperty('user.home')
             println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
-            System.setProperty("webdriver.chrome.driver","${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe");
-           // println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
+            System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe");
+            // println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
             WebDriver driver = new ChromeDriver()
             driver.get("https://accounts.google.com");
-            WebElement id = driver.findElement(By.id("Email"));
+            WebElement id = driver.findElement(By.id("identifierId"));
 
-            WebElement next = driver.findElement(By.id("next"));
             id.sendKeys(metaDataMap."${loginProfile}.userId");
-            next.click();
+//            WebElement next = driver.findElement(By.id("identifierNext"));
+//            next.click();
+            id.sendKeys(Keys.RETURN);
 
 
-            WebDriverWait wait = new WebDriverWait(driver, 2);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("Passwd")));
+            WebDriverWait wait = new WebDriverWait(driver, 5);
+            wait.until(ExpectedConditions.elementToBeClickable(By.name("password")));
 
-            WebElement pass = driver.findElement(By.id("Passwd"));
-            WebElement button = driver.findElement(By.id("signIn"));
-
+            WebElement pass = driver.findElement(By.name("password"));
             String kuta = metaDataMap."${loginProfile}.kuta" ?: metaDataMap."kuta"
-
             pass.sendKeys(metaDataMap."${loginProfile}.kuta");
-            button.click();
-
+            pass.sendKeys(Keys.RETURN);
+            Thread.sleep(1000)
             driver.get("http://drive.google.com");
             if (upload) {
                 uploadToDrive(driver, folderName)
@@ -56,15 +55,18 @@ class GoogleDriveHandler {
             res = true
         }
         catch (Exception e) {
-            log.info ("drive log error",e)
+            log.info("drive log error", e)
             e.printStackTrace()
         }
         return res
     }
 
     static void uploadToDrive(def driver, String folderName) {
-        driver.findElement(By.xpath("//div[contains(text(),'New')]")).click()
-        driver.findElement(By.xpath("//div[contains(text(),'Folder upload')]")).click()
+        driver.findElement(By.xpath("//div[contains(text(),'My Drive')]")).click()
+        driver.findElement(By.xpath("/html/body/div[12]")).click()
+        ///html/body/div[13] ///html/body/div[13]
+        //driver.findElement(By.xpath("//div[contains(text(),'Upload folder...')]")).click()
+        //driver.findElement(By.className('.h-w a-w h-w a-w-Xi')).click() // a-w-Mr
         UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
     }
 

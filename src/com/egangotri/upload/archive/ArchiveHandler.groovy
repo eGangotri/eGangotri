@@ -33,7 +33,8 @@ class ArchiveHandler {
         return uploadToArchive(metaDataMap, archiveUrl, archiveProfile, true)
     }
 
-    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
+    public static int uploadToArchive(
+            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
@@ -53,7 +54,6 @@ class ArchiveHandler {
             button.click()
             log.info("after click")
             if (upload) {
-                List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
@@ -106,6 +106,53 @@ class ArchiveHandler {
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
+    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
+        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+        uploadToArchive(metaDataMap,archiveUrl,archiveProfile, upload, uploadables)
+
+    }
+
+    public static int bulkUploadToArchive(
+            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
+        int countOfUploadedItems = 0
+        Thread.sleep(4000)
+        // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
+        try {
+
+            WebDriver driver = new ChromeDriver()
+            driver.get(archiveUrl)
+
+            //Login
+            WebElement id = driver.findElement(By.id("username"))
+            WebElement pass = driver.findElement(By.id("password"))
+            WebElement button = driver.findElement(By.id("submit"))
+
+            id.sendKeys(metaDataMap."${archiveProfile}.username")
+            pass.sendKeys(metaDataMap."kuta")
+            log.info("before click")
+            button.click()
+            log.info("after click")
+            if (upload) {
+                if (uploadables) {
+                    log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
+                    //Get Upload Link
+                    String uploadLink = generateURL(archiveProfile)
+                    //Start Upload of First File in Root Tab
+                    ArchiveHandler.upload(driver, uploadables.collect { "\"$it\"" }.join(" "), uploadLink)
+                }
+            } else {
+                log.info "No File uploadable for profile $archiveProfile"
+            }
+        }
+
+
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+
+        return countOfUploadedItems
+//WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
+    }
 
     public static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
         log.info("$fileNameWIthPath goes to $uploadLink")

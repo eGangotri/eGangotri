@@ -14,12 +14,10 @@ class EGangotriUtil {
 
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
-    static
-    final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
-    static
-    final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
-    static
-    final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    static final String BULK_UPLOAD_ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "bulkUploadArchiveLogins" + PROPERTIES
+    static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
+    static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
+    static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
 
 
     static
@@ -54,6 +52,11 @@ class EGangotriUtil {
     }
 
     static List getAllArchiveProfiles() {
+        return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
+    }
+
+
+    static List getAllBulkUploadArchiveProfiles() {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
     }
 

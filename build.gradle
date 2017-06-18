@@ -44,22 +44,43 @@ sourceSets {
 task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   [  "JM", "LK"/*, "DD"*/] //, "RK" "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   [  "JM", "LK","DD", "RK" ] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
 task uploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = ["MM","BM" ]
+    args = ["MM"/*,"MM"*/ ]
     jvmArgs = applicationDefaultJvmArgs
+}
+
+
+task bulkUploadToArchive(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.BulkUploadToArchive"
+    jvmArgs = applicationDefaultJvmArgs
+    args = [  "BNGL"]
+}
+
+task uploadToArchiveRepetitionSafe(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.UploadToArchiveRepetitionSafe"
+    jvmArgs = applicationDefaultJvmArgs
+    args = [  "RAMS"]
 }
 
 task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [  "JG","DT", "NK", "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2", "IB"]
+  args = [ "DT"/*"IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
+}
+
+task bookTitles(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.pdf.BookTitles"
+    args = [ "C:\\Treasures12\\kri"]
 }
 
 //task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
@@ -75,9 +96,10 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["ANON","SR", "KECSS" ,"RK","DT", "NK", "UR",  "MS", "NR","UPSS" , "SBLK", "SBLK2"]
-}
+    args = [  "DT" /*"UPSS" ,"KRI_UR","KRI", "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
 
+}
+    
 configurations {
     tests
 }
