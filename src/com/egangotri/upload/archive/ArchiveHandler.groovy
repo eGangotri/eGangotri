@@ -33,14 +33,8 @@ class ArchiveHandler {
         return uploadToArchive(metaDataMap, archiveUrl, archiveProfile, true)
     }
 
-    public static int uploadToArchive(
-            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
-        int countOfUploadedItems = 0
-        Thread.sleep(4000)
-        // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
+    public static void archiveLogger(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
         try {
-
-            WebDriver driver = new ChromeDriver()
             driver.get(archiveUrl)
 
             //Login
@@ -53,6 +47,22 @@ class ArchiveHandler {
             log.info("before click")
             button.click()
             log.info("after click")
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+
+    }
+
+    public static int uploadToArchive(
+            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
+        int countOfUploadedItems = 0
+        Thread.sleep(4000)
+        // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
+        try {
+
+            WebDriver driver = new ChromeDriver()
+            archiveLogger(driver, metaDataMap, archiveUrl, archiveProfile)
             if (upload) {
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
@@ -106,52 +116,48 @@ class ArchiveHandler {
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
-    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
-        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
-        uploadToArchive(metaDataMap,archiveUrl,archiveProfile, upload, uploadables)
-
-    }
-
-    public static int bulkUploadToArchive(
-            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
+    public static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
-        // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
 
             WebDriver driver = new ChromeDriver()
             driver.get(archiveUrl)
+            def results = []
+            if (fileNames) {
+                fileNames.each { fileName ->
+                    log.info("Check for $fileName")
+                    //Go to URL
+                    driver.get(archiveUrl)
 
-            //Login
-            WebElement id = driver.findElement(By.id("username"))
-            WebElement pass = driver.findElement(By.id("password"))
-            WebElement button = driver.findElement(By.id("submit"))
+                    WebElement searchList = driver.findElement(By.className("searchlist"))
+                    searchList.sendKeys(fileName)
+                    searchList.submit()
 
-            id.sendKeys(metaDataMap."${archiveProfile}.username")
-            pass.sendKeys(metaDataMap."kuta")
-            log.info("before click")
-            button.click()
-            log.info("after click")
-            if (upload) {
-                if (uploadables) {
-                    log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
-                    //Get Upload Link
-                    String uploadLink = generateURL(archiveProfile)
-                    //Start Upload of First File in Root Tab
-                    ArchiveHandler.upload(driver, uploadables.collect { "\"$it\"" }.join(" "), uploadLink)
+                    //new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.textToBePresentInElement(By.cssSelector("h3.co-top-row")))
+                    String numOfUploads = driver.findElement(By.cssSelector("h3.co-top-row")).text
+                    println "$numOfUploads $fileName"
+                    results << [numOfUploads, fileName]
                 }
+
             } else {
-                log.info "No File uploadable for profile $archiveProfile"
+                log.info "No Filenames"
             }
+
         }
-
-
         catch (Exception e) {
             e.printStackTrace()
         }
 
         return countOfUploadedItems
-//WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
+        //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
+    }
+
+
+    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
+        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+        uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
+
     }
 
     public static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
@@ -173,9 +179,9 @@ class ArchiveHandler {
         radioBtn.click()
 
         //remove this junk value that pops-up for profiles with Collections
-        if (uploadLink.contains("collection=")) {
-            driver.findElement(By.className("additional_meta_remove_link")).click()
-        }
+        /* if (uploadLink.contains("collection=")) {
+             driver.findElement(By.className("additional_meta_remove_link")).click()
+         }*/
 
         WebDriverWait wait = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")))

@@ -17,7 +17,7 @@ class UploadToArchive {
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
-            log.info "args $args"
+            println "args $args"
             archiveProfiles = args.toList()
         }
 

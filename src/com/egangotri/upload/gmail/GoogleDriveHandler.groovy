@@ -45,7 +45,8 @@ class GoogleDriveHandler {
 
             WebElement pass = driver.findElement(By.name("password"));
             String kuta = metaDataMap."${loginProfile}.kuta" ?: metaDataMap."kuta"
-            pass.sendKeys(metaDataMap."${loginProfile}.kuta");
+            println "kuta:$kuta"
+            pass.sendKeys(kuta);
             pass.sendKeys(Keys.RETURN);
             Thread.sleep(1000)
             driver.get("http://drive.google.com");

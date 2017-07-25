@@ -1,10 +1,10 @@
 apply plugin: 'application'
 apply plugin: 'groovy'
 
-mainClassName = "com.egangotri.upload.gmail.LoginToGmail"
+mainClassName = "com.egangotri.upload.archive.UploadToArchive"
 applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}/chromedriver/chromedriver.exe"
 /*, "-Dwebdriver.firefox.driver=${System.getProperty('user.home')}/firefoxdriver/geckodriver.exe"*/]
-version=1.0
+version=""
 repositories {
     mavenCentral()
     maven {
@@ -44,43 +44,43 @@ sourceSets {
 task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   [  "JM", "LK","DD", "RK" ] // "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   [  "im", "im2", "im3", "im4" ] //"JM", "LK","DD", "RK", "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
 task uploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = ["MM"/*,"MM"*/ ]
+    args = ["BM"/*,"MM"*/ ]
     jvmArgs = applicationDefaultJvmArgs
 }
 
-
-task bulkUploadToArchive(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.BulkUploadToArchive"
-    jvmArgs = applicationDefaultJvmArgs
-    args = [  "BNGL"]
-}
-
-task uploadToArchiveRepetitionSafe(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.UploadToArchiveRepetitionSafe"
-    jvmArgs = applicationDefaultJvmArgs
-    args = [  "RAMS"]
-}
 
 task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [ "DT"/*"IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
+  args = [ "UPSS_MANU"]
+  // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
+}
+
+task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.CheckForMissingTextsInArchive"
+    jvmArgs = applicationDefaultJvmArgs
+    args = []// "TMKN"/*"TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.BookTitles"
     args = [ "C:\\Treasures12\\kri"]
+}
+
+task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.pdf.GetFirstAndLastPages"
+    args = [""]
 }
 
 //task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
@@ -96,7 +96,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  "DT" /*"UPSS" ,"KRI_UR","KRI", "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
+    args = [  "DT", "UPSS"/* ,"KRI_UR","KRI", "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
 
 }
     
@@ -115,12 +115,12 @@ dependencies {
     compile 'org.codehaus.geb:geb-core:0.7.2'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.ant:ant:1.9.6'
-    compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
+   compile 'org.seleniumhq.selenium:selenium-server-standalone:2.48.2'
     compile 'org.apache.poi:poi:3.13'
-/*    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    /*   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.5'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'*/
+       compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.5'
+       compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'*/
 
     compile "ch.qos.logback:logback-classic:1.1.3"
     compile "org.slf4j:log4j-over-slf4j:1.7.13"
@@ -142,7 +142,8 @@ dependencies {
 
 
 task fatJar(type: Jar) {
-    baseName = project.name + '-all'
+    //delete "$buildDir/tmp/expandedArchives"
+    baseName = project.name /*+ '-all'*/
     from { (configurations.compile + configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
     manifest {

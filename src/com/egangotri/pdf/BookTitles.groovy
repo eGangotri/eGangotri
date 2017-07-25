@@ -7,7 +7,7 @@ import com.itextpdf.text.pdf.PdfReader
  */
 class BookTitles {
 
-    static String FOLDER_NAME = "C:\\hw\\nk"
+    static String FOLDER_NAME = "H:\\Otro\\ORL manuscripts (complete)\\pdf"
 
     static List ignoreList = []
 
@@ -43,20 +43,20 @@ class BookTitles {
         int index = 0
         for (File file : directory.listFiles()) {
             if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
-                getIds(file)
-                //printFileName(folderAbsolutePath, file, ++index)
+                //getIds(file)
+                printFileName(folderAbsolutePath, file, ++index)
             }
         }
     }
 
-    void getIds(File file){
+ /*   void getIds(File file){
         def kri = (file.name  =~ "KRI(-)\\d+")
         if(kri){
             println "***${kri[0][0]}"
             kriIds << kri[0][0].toString().replaceFirst("KRI-","").toInteger()
         }
     }
-
+*/
     /**
      * if you have one folder and you want it to go one level deep to process multiple foldrs within
      */

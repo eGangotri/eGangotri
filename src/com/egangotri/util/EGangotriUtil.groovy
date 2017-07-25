@@ -1,7 +1,9 @@
 package com.egangotri.util
 
 import com.egangotri.upload.util.UploadUtils
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class EGangotriUtil {
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
@@ -32,6 +34,12 @@ class EGangotriUtil {
     static List getAllProfiles(String filePath, String textDiscarder) {
         Properties properties = new Properties()
         File propertiesFile = new File(filePath)
+
+        if(!propertiesFile.exists()){
+            println("$filePath not found.")
+            return []
+        }
+
         propertiesFile.withInputStream { stream ->
             properties.load(stream)
         }
