@@ -62,7 +62,7 @@ class UploadUtils {
     }
 
     static List<String> getUploadablePdfsForProfile(String archiveProfile) {
-        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> new File(fileName) }
+        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
         List<String> pdfs = []
         println "getUploadablePdfsForProfile: $archiveProfile"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
@@ -164,7 +164,7 @@ class UploadUtils {
 
     public static void pasteFileNameAndCloseUploadPopup(String fileName) {
         // A short pause, just to be sure that OK is selected
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         setClipboardData(fileName);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();

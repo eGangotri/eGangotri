@@ -2,8 +2,8 @@ apply plugin: 'application'
 apply plugin: 'groovy'
 
 mainClassName = "com.egangotri.upload.archive.UploadToArchive"
-applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}/chromedriver/chromedriver.exe"
-/*, "-Dwebdriver.firefox.driver=${System.getProperty('user.home')}/firefoxdriver/geckodriver.exe"*/]
+applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}chromedriver${File.separator}chromedriver.exe"]
+/*, "-Dwebdriver.firefox.driver=${System.getProperty('user.home')}/firefoxdriver/geckodriver.exe"*/
 version=""
 repositories {
     mavenCentral()
@@ -36,7 +36,7 @@ sourceSets {
 /**
  * To use Aguments
  * With JAR use: java -jar eGangotri-all-1.0.jar  lk jk
- * From Command Line: 'groovy com/egangotri/upload/gmail/LoginToGmail.groovy lk jk'
+ * From Command Line: 'groovy com/egangotri/ upload/gmail/LoginToGmail.groovy lk jk'
     Command Line should also have the vm argumen for the Selenium jar path
  *  With Gradle: gradle loginToGmail is enough
  * //Arguments will be picked from args below
@@ -51,7 +51,7 @@ task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
 task uploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = ["BM"/*,"MM"*/ ]
+    args = ["MM"/*,"BM"*/ ]
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -60,7 +60,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [ "UPSS_MANU"]
+  args = ["ANON"]
   // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
 }
 
@@ -96,7 +96,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  "DT", "UPSS"/* ,"KRI_UR","KRI", "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
+    args = [  "DT", "UPSS" ,"KRI_UR","KRI"/*, "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
 
 }
     
@@ -141,7 +141,7 @@ dependencies {
 
 
 
-task fatJar(type: Jar) {
+task fatJareGangotri(type: Jar) {
     //delete "$buildDir/tmp/expandedArchives"
     baseName = project.name /*+ '-all'*/
     from { (configurations.compile + configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
@@ -149,5 +149,16 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'eGangotri Programming Tools', 'Implementation-Version': version
         attributes 'Main-Class': mainClassName
+    }
+}
+
+task fatJar(dependsOn:[fatJareGangotri]){
+    doLast {
+        println 'jarring'
+        copy {
+            from "build/libs/"
+            into 'latestJarForUse'
+            include '*.jar'
+        }
     }
 }

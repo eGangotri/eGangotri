@@ -8,7 +8,11 @@ import groovy.util.logging.Slf4j
  * Created by user on 1/18/2016.
  * Make sure
  * The chromedriver binary is in the system path, or
- * use VM Argument -Dwebdriver.chrome.driver=c:/chromedriver.exe
+ * use VM Argument -Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}chromedriver${File.separator}chromedriver.exe
+ * chromedriver.exe
+ C:\ws\eGangotri>java -Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}chromedriver${File.separator}chromedriver.exe -jar ./build/libs/eGangotri.jar "DT"
+ java -Dwebdriver.chrome.driver=/Users/user/chromedriver\chromedriver.exe -jar ./build/libs/eGangotri.jar "DT"
+ ** Dont use \ followeb by a U
 
  */
 @Slf4j
@@ -21,6 +25,7 @@ class UploadToArchive {
             archiveProfiles = args.toList()
         }
 
+       // System.setProperty("webdriver.chrome.driver", getClass().getResource("chromedriver.exe").toURI().toString())
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         execute(archiveProfiles, metaDataMap)
     }

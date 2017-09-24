@@ -3,14 +3,11 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
-import geb.Browser
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
-import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -21,9 +18,10 @@ import java.awt.event.KeyEvent
 class ArchiveHandler {
     static ARCHIVE_WAITING_PERIOD = 50
 
-    static String ARCHIVE_URL = "http://archive.org/account/login.php"
-    static final String baseUrl = "http://archive.org/upload/?"
+    static String ARCHIVE_URL = "https://archive.org/account/login.php"
+    static final String baseUrl = "https://archive.org/upload/?"
     static final String ampersand = "&"
+    static final int DEFAULT_SLEEP_TIME = 1000
 
     public static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
         uploadToArchive(metaDataMap, archiveUrl, archiveProfile, false)
@@ -33,10 +31,10 @@ class ArchiveHandler {
         return uploadToArchive(metaDataMap, archiveUrl, archiveProfile, true)
     }
 
-    public static void archiveLogger(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
+    public static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
         try {
             driver.get(archiveUrl)
-
+            log.info("Login to Archive URL $archiveUrl")
             //Login
             WebElement id = driver.findElement(By.id("username"))
             WebElement pass = driver.findElement(By.id("password"))
@@ -62,12 +60,13 @@ class ArchiveHandler {
         try {
 
             WebDriver driver = new ChromeDriver()
-            archiveLogger(driver, metaDataMap, archiveUrl, archiveProfile)
+
+            logInToArchiveOrg(driver, metaDataMap, archiveUrl, archiveProfile)
             if (upload) {
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
-                    String uploadLink = generateURL(archiveProfile)
+                    String uploadLink = generateURL(archiveProfile, uploadables[0])
 
                     //Start Upload of First File in Root Tab
                     ArchiveHandler.upload(driver, uploadables[0], uploadLink)
@@ -87,14 +86,18 @@ class ArchiveHandler {
                             //ele.sendKeys(Keys.CONTROL + "t")
                             //driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
 
-                            openNewTab()
+                            openNewTab(DEFAULT_SLEEP_TIME)
 
                             //Switch to new Tab
                             ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles())
-                            println "tabs.size(): ${tabs.size()}"
+                            println "tabs.size(): ${tabs.size()} , tabNo:$tabNo"
 
-
+                            if(tabs.size() -1 != (tabNo + 1)){
+                                println "tabs.size() was not equal to $tabNo + 1"
+                                openNewTab(DEFAULT_SLEEP_TIME)
+                            }
                             driver.switchTo().window(tabs.get(tabNo + 1))
+                            uploadLink = generateURL(archiveProfile, fileName)
 
                             //Start Upload
                             String rchvIdntfr = ArchiveHandler.upload(driver, fileName, uploadLink)
@@ -195,15 +198,20 @@ class ArchiveHandler {
         return identifier
     }
 
-    public static String generateURL(String archiveProfile) {
+    public static String generateURL(String archiveProfile, String uniqueDescription = "") {
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" + ampersand + metaDataMap."${archiveProfile}.creator"
+        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" +  ", '${removeAmpersand(uniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
         if (metaDataMap."${archiveProfile}.collection") {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
 
-        log.info "generateURL($archiveProfile):fullURL"
+        log.info "generateURL($archiveProfile):$fullURL"
         return fullURL
+    }
+
+    public static String removeAmpersand(String title){
+        title = title.replaceAll(ampersand, "")
+        return title.drop(title.lastIndexOf(File.separator)+1)
     }
 
     public static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
@@ -219,13 +227,15 @@ class ArchiveHandler {
         return folderName
     }
 
-
-    public static void openNewTab() {
+    public static void openNewTab(int sleepTime = 0) {
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);
-        r.keyRelease(KeyEvent.VK_CONTROL);
         r.keyRelease(KeyEvent.VK_T);
+        r.keyRelease(KeyEvent.VK_CONTROL);
+        if(sleepTime >0 ) {
+            Thread.sleep(sleepTime)
+        }
     }
 
 }
