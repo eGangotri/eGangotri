@@ -60,7 +60,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = ["ANON"]
+  args = [  "ISHWAR2"]
   // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
 }
 
@@ -141,7 +141,7 @@ dependencies {
 
 
 
-task fatJareGangotri(type: Jar) {
+task fatJarEGangotri(type: Jar) {
     //delete "$buildDir/tmp/expandedArchives"
     baseName = project.name /*+ '-all'*/
     from { (configurations.compile + configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
@@ -152,7 +152,7 @@ task fatJareGangotri(type: Jar) {
     }
 }
 
-task fatJar(dependsOn:[fatJareGangotri]){
+task fatJar(dependsOn:[fatJarEGangotri]){
     doLast {
         println 'jarring'
         copy {
