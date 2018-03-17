@@ -24,7 +24,7 @@ class ArchiveHandler {
     static final int DEFAULT_SLEEP_TIME = 1000
 
     public static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
-        uploadToArchive(metaDataMap, archiveUrl, archiveProfile, false)
+        logInToArchiveOrg( new ChromeDriver() ,metaDataMap, archiveUrl, archiveProfile)
     }
 
     public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
@@ -47,7 +47,9 @@ class ArchiveHandler {
             log.info("after click")
         }
         catch (Exception e) {
+            log.info("Exeption in logInToArchiveOrg ${e.message}")
             e.printStackTrace()
+            throw e
         }
 
     }
@@ -199,6 +201,12 @@ class ArchiveHandler {
     }
 
     public static String generateURL(String archiveProfile, String uniqueDescription = "") {
+        if(uniqueDescription.endsWith(EGangotriUtil.PDF)){
+            uniqueDescription = uniqueDescription.replace(EGangotriUtil.PDF,"")
+        }
+
+        log.info "uniqueDescription:$uniqueDescription"
+
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
         String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" +  ", '${removeAmpersand(uniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
         if (metaDataMap."${archiveProfile}.collection") {

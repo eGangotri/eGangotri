@@ -37,4 +37,9 @@ In Home Directory ( for Windows this is typically
   ** PRFL1 PRFL2 -> Read about how to setup Profile in the Main README
   https://github.com/eGangotri/eGangotri/blob/master/README.md
  
+ In case Chromedriver gets outdated, get latest from 
+ https://sites.google.com/a/chromium.org/chromedriver/downloads
+ 
+ and dump it in Home Directory\chromedriver\chromedriver.exe and use this as the path in 
+ java -Dwebdriver.chrome.driver....
  

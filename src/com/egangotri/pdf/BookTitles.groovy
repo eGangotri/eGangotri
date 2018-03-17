@@ -7,7 +7,7 @@ import com.itextpdf.text.pdf.PdfReader
  */
 class BookTitles {
 
-    static String FOLDER_NAME = "H:\\Otro\\ORL manuscripts (complete)\\pdf"
+    static String FOLDER_NAME = "C:\\Users\\user\\Desktop\\Manuscript PDF"
 
     static List ignoreList = []
 
