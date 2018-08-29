@@ -1,13 +1,15 @@
 package com.egangotri.pdf
 
 import com.itextpdf.text.pdf.PdfReader
+import groovy.util.logging.Slf4j
 
 /**
  * All Titles of PDF's in a Folder and SubFolders
  */
+@Slf4j
 class BookTitles {
 
-    static String FOLDER_NAME = "C:\\Users\\user\\Desktop\\Manuscript PDF"
+    static String FOLDER_NAME = "C:\\Treasures19\\KRI"
 
     static List ignoreList = []
 
@@ -23,7 +25,9 @@ class BookTitles {
         if(args?.size() >0){
             args0 = args[0]
         }
-        println "args0:$args0"
+        //println "args0:$args0"
+        log.info("args0:$args0")
+
         //new BookTitles().actor.start()
         //if only the directory specified
         if (BookTitles.onlyRootDirAndNoSubDirs) {
@@ -32,14 +36,15 @@ class BookTitles {
             //if everything
             new BookTitles().procAdInfinitum(args0 ?: BookTitles.FOLDER_NAME)
         }
-        println kriIds.sort()
-        println "Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}"
+        log.info("${ kriIds.sort()}")
+        log.info( "Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}")
+
     }
 
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
 
-        println "processAFolder $directory"
+        log.info( "reading Folder $directory")
         int index = 0
         for (File file : directory.listFiles()) {
             if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
@@ -49,14 +54,6 @@ class BookTitles {
         }
     }
 
- /*   void getIds(File file){
-        def kri = (file.name  =~ "KRI(-)\\d+")
-        if(kri){
-            println "***${kri[0][0]}"
-            kriIds << kri[0][0].toString().replaceFirst("KRI-","").toInteger()
-        }
-    }
-*/
     /**
      * if you have one folder and you want it to go one level deep to process multiple foldrs within
      */
@@ -81,11 +78,15 @@ class BookTitles {
     }
 
     void printFileName(String folderAbsolutePath, File file, int index) {
-        PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
+        int numberOfPages = 0
 
-        int numberOfPages = pdfReader.getNumberOfPages()
-        println "${includeIndex ? index + ').' : ''} ${file.name} ${includeNumberOfPages ? ', ' + numberOfPages + ' Pages' : ''}"
-        incrementTotalPageCount(numberOfPages)
+        if(includeNumberOfPages) {
+            PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
+            numberOfPages = pdfReader.getNumberOfPages()
+            incrementTotalPageCount(numberOfPages)
+        }
+
+        log.info( "${includeIndex ? index + ').' : ''} ${file.name} ${includeNumberOfPages ? ', ' + numberOfPages + ' Pages' : ''}")
         incrementFileCount()
     }
 

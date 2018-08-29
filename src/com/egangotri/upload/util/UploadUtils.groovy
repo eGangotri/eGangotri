@@ -132,7 +132,7 @@ class UploadUtils {
             //log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
         }
-        return pdfs
+        return pdfs.sort()
     }
 
     static List<String> getAllPdfs(File folder) {
@@ -252,4 +252,20 @@ class UploadUtils {
         }
         return filterables
     }
+
+
+    static def partition(List<String> partitionableList, int size) {
+        def partitions = []
+        int partitionCount = partitionableList.size() / size
+
+        partitionCount.times { partitionNumber ->
+            def start = partitionNumber * size
+            def end = start + size - 1
+            partitions << partitionableList[start..end]
+        }
+
+        if (partitionableList.size() % size) partitions << partitionableList[partitionCount * size..-1]
+        return partitions
+    }
+
 }

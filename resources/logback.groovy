@@ -10,14 +10,16 @@ import static ch.qos.logback.classic.Level.INFO
 def LOG_PATH = "target"
 appender("Console-Appender", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
-        pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
+        //pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
+        pattern = "%msg%n"
     }
 }
 appender("File-Appender", FileAppender) {
     file = "${LOG_PATH}/egangotri.log"
     encoder(PatternLayoutEncoder) {
-        pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
-        outputPatternAsHeader = true
+        //pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
+        pattern = "%msg%n"
+        outputPatternAsHeader = false
     }
 }
 logger("com.egangotri", INFO, ["Console-Appender", "File-Appender" ], false)

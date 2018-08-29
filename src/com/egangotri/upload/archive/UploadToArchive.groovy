@@ -18,6 +18,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class UploadToArchive {
 
+    static Boolean GENERATE_ONLY_URLS = false
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
@@ -37,13 +38,20 @@ class UploadToArchive {
             log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
             int countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
             int countOfUploadedItems = 0
+
             log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
             if (countOfUploadablePdfs) {
-                countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
-                log.info("Uploaded $countOfUploadedItems docs for $archiveProfile")
+                if(GENERATE_ONLY_URLS){
+                    List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+                    ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
+                }
+                else{
+                    countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+                    log.info("Uploaded $countOfUploadedItems docs for Profile: $archiveProfile")
 
-                String rep = "$archiveProfile, \t $countOfUploadablePdfs,\t $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success' : 'Failure!!!!')
-                uploadSuccessCheckingMatrix.put((index + 1), rep)
+                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Successful Upload Count $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success.All Uploaded' : 'Some Failed!')
+                    uploadSuccessCheckingMatrix.put((index + 1), rep)
+                }
             } else {
                 log.info "No Files uploadable for Profile $archiveProfile"
             }

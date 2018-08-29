@@ -16,22 +16,23 @@ import java.awt.event.KeyEvent
 
 @Slf4j
 class ArchiveHandler {
-    static ARCHIVE_WAITING_PERIOD = 50
+    static final int ARCHIVE_WAITING_PERIOD = 200
+    static final int PARTITION_SIZE = 100
 
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
     static final String ampersand = "&"
     static final int DEFAULT_SLEEP_TIME = 1000
 
-    public static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
-        logInToArchiveOrg( new ChromeDriver() ,metaDataMap, archiveUrl, archiveProfile)
+     static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
+        logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveUrl, archiveProfile)
     }
 
-    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
+     static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
         return uploadToArchive(metaDataMap, archiveUrl, archiveProfile, true)
     }
 
-    public static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
+     static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
         try {
             driver.get(archiveUrl)
             log.info("Login to Archive URL $archiveUrl")
@@ -54,7 +55,8 @@ class ArchiveHandler {
 
     }
 
-    public static int uploadToArchive(
+
+     static int uploadToArchive(
             def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
@@ -71,38 +73,33 @@ class ArchiveHandler {
                     String uploadLink = generateURL(archiveProfile, uploadables[0])
 
                     //Start Upload of First File in Root Tab
+                    log.info "Uploading: ${uploadables[0]}"
                     ArchiveHandler.upload(driver, uploadables[0], uploadLink)
                     countOfUploadedItems++
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
-                        uploadables.drop(1).eachWithIndex { fileName, tabNo ->
-                            log.info "Uploading: $fileName @ tabNo:$tabNo"
-                            // Open new tab
-                            //driver.findElement(By.cssSelector("body")).sendKeys)
-                            def ele = driver.findElement(By.id("wrap"))
-
-                            println "ele $ele"
-                            println driver.findElement(By.cssSelector("body"))
-                            println driver.findElement(By.id("wrap"))
-                            //ele.sendKeys(Keys.CONTROL + "t")
-                            //driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL + "t");
-
+                        int tabIndex = 1
+                        for (uploadableFile in uploadables.drop(1)){
+                            log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
                             openNewTab(DEFAULT_SLEEP_TIME)
 
                             //Switch to new Tab
-                            ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles())
-                            println "tabs.size(): ${tabs.size()} , tabNo:$tabNo"
-
-                            if(tabs.size() -1 != (tabNo + 1)){
-                                println "tabs.size() was not equal to $tabNo + 1"
-                                openNewTab(DEFAULT_SLEEP_TIME)
+                            ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
+                            //there is a bug in retrieving the size of chromeTabsList in Selenium.
+                            //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
+                            println "${chromeTabsList.last()} chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
+                            try {
+                                driver.switchTo().window(chromeTabsList.last())
+                                tabIndex++
                             }
-                            driver.switchTo().window(tabs.get(tabNo + 1))
-                            uploadLink = generateURL(archiveProfile, fileName)
+                            catch (Exception e) {
+                                log.info("Exception while switching to new Tab", e)
+                            }
+                            uploadLink = generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
-                            String rchvIdntfr = ArchiveHandler.upload(driver, fileName, uploadLink)
+                            String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
                             countOfUploadedItems++
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
                         }
@@ -121,7 +118,7 @@ class ArchiveHandler {
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
-    public static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
+     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
         try {
@@ -159,13 +156,32 @@ class ArchiveHandler {
     }
 
 
-    public static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
-        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
-        uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
-
+     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
+        uploadables.eachWithIndex { fileName, tabIndex ->
+            String uploadLink = generateURL(archiveProfile, fileName)
+            println("$tabIndex) $uploadLink")
+        }
     }
 
-    public static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
+
+    static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
+        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+
+        if(uploadables.size > PARTITION_SIZE){
+            def partitions = UploadUtils.partition(uploadables, PARTITION_SIZE)
+            println("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
+
+            partitions.forEach { List<String> partitionedUploadables ->
+                uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, partitionedUploadables)
+            }
+        }
+        else {
+            uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
+        }
+    }
+
+
+     static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
         log.info("$fileNameWIthPath goes to $uploadLink")
         //Go to URL
         driver.get(uploadLink)
@@ -200,29 +216,29 @@ class ArchiveHandler {
         return identifier
     }
 
-    public static String generateURL(String archiveProfile, String uniqueDescription = "") {
-        if(uniqueDescription.endsWith(EGangotriUtil.PDF)){
-            uniqueDescription = uniqueDescription.replace(EGangotriUtil.PDF,"")
+     static String generateURL(String archiveProfile, String uniqueDescription = "") {
+        if (uniqueDescription.endsWith(EGangotriUtil.PDF)) {
+            uniqueDescription = uniqueDescription.replace(EGangotriUtil.PDF, "")
         }
 
         log.info "uniqueDescription:$uniqueDescription"
 
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" +  ", '${removeAmpersand(uniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
+        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" + ", '${removeAmpersand(uniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
         if (metaDataMap."${archiveProfile}.collection") {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
 
-        log.info "generateURL($archiveProfile):$fullURL"
+        log.info "generateURL($archiveProfile):  $fullURL"
         return fullURL
     }
 
-    public static String removeAmpersand(String title){
+     static String removeAmpersand(String title) {
         title = title.replaceAll(ampersand, "")
-        return title.drop(title.lastIndexOf(File.separator)+1)
+        return title.drop(title.lastIndexOf(File.separator) + 1)
     }
 
-    public static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
+     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
         List folderName = []
 
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
@@ -235,13 +251,13 @@ class ArchiveHandler {
         return folderName
     }
 
-    public static void openNewTab(int sleepTime = 0) {
+     static void openNewTab(int sleepTime = 0) {
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);
         r.keyRelease(KeyEvent.VK_T);
         r.keyRelease(KeyEvent.VK_CONTROL);
-        if(sleepTime >0 ) {
+        if (sleepTime > 0) {
             Thread.sleep(sleepTime)
         }
     }
