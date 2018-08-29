@@ -2,11 +2,13 @@
 
 - Must have Java 8 installed and in PATH also
 
-- Dump this entire Folder into your Home Directory 
+- Dump this entire Folder into your Home Directory ( typically in Windows C:\User\<windows_login_id>)
 
 - change the userids and passwords in archiveLogins.properties.
 
 - Dump the Chromedriver folder as is into your Home Folder also
+//the chromedriver folder here has the Windows Version. Get appropriate version for your OS from
+//http://chromedriver.chromium.org/downloads
 
 - Run project using the following command from command prompt:
 
