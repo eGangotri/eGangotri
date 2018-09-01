@@ -16,10 +16,16 @@ class EGangotriUtil {
 
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
+    static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
+
     static final String BULK_UPLOAD_ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "bulkUploadArchiveLogins" + PROPERTIES
     static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+
+    static Boolean GENERATE_ONLY_URLS = false
+    static int PARTITION_SIZE = 250
+    static boolean PARTITIONING_ENABLED = false
 
 
     static

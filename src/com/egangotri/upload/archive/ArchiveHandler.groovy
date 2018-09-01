@@ -17,13 +17,11 @@ import java.awt.event.KeyEvent
 @Slf4j
 class ArchiveHandler {
     static final int ARCHIVE_WAITING_PERIOD = 200
-    static final int PARTITION_SIZE = 100
+    static final int DEFAULT_SLEEP_TIME = 1000
 
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
     static final String ampersand = "&"
-    static final int DEFAULT_SLEEP_TIME = 1000
-    static final boolean PARTITIONING_ENABLED = false
 
      static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveUrl, archiveProfile)
@@ -160,7 +158,7 @@ class ArchiveHandler {
      static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
             String uploadLink = generateURL(archiveProfile, fileName)
-            println("$tabIndex) $uploadLink")
+            log.info("$tabIndex) $uploadLink")
         }
     }
 
@@ -168,17 +166,21 @@ class ArchiveHandler {
     static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
-        if(uploadables.size > PARTITION_SIZE && PARTITIONING_ENABLED){
-            def partitions = UploadUtils.partition(uploadables, PARTITION_SIZE)
-            println("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
+        int uploadCount = 0
+        if(EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE ){
+            def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
+            log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
 
-            partitions.forEach { List<String> partitionedUploadables ->
-                uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, partitionedUploadables)
+            for( List<String> partitionedUploadables : partitions){
+                log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
+                uploadCount += uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, partitionedUploadables)
             }
         }
         else {
-            uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
+            log.info("No partitioning")
+            uploadCount = uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
         }
+        uploadCount
     }
 
 

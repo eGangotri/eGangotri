@@ -16,24 +16,27 @@ class UploadUtils {
     public static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
-        propertiesFile.withInputStream {
-            properties.load(it)
-        }
-
         Hashtable<String, String> metaDataMap = [:]
 
-        properties.entrySet().each { entry ->
-            String key = entry.key
-            String val = new String(entry.value.getBytes("ISO-8859-1"), "UTF-8")
-            if (key.endsWith(".description")) {
-                val = encodeString(val)
+        if(propertiesFile.exists()){
+            propertiesFile.withInputStream {
+                properties.load(it)
             }
-            metaDataMap.put(key, val);
-        }
 
-        metaDataMap.each {
-            k, v ->
-                //log.info "$k $v"
+
+            properties.entrySet().each { entry ->
+                String key = entry.key
+                String val = new String(entry.value.getBytes("ISO-8859-1"), "UTF-8")
+                if (key.endsWith(".description")) {
+                    val = encodeString(val)
+                }
+                metaDataMap.put(key, val);
+            }
+
+            metaDataMap.each {
+                k, v ->
+                    //log.info "$k $v"
+            }
         }
         return metaDataMap
     }

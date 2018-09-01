@@ -18,7 +18,6 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class UploadToArchive {
 
-    static Boolean GENERATE_ONLY_URLS = false
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
@@ -28,6 +27,15 @@ class UploadToArchive {
 
        // System.setProperty("webdriver.chrome.driver", getClass().getResource("chromedriver.exe").toURI().toString())
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
+        if(settingsMetaDataMap){
+            println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
+            if(settingsMetaDataMap.PARTITION_SIZE>0){
+                EGangotriUtil.PARTITION_SIZE = settingsMetaDataMap.PARTITION_SIZE.toInteger()
+                EGangotriUtil.PARTITIONING_ENABLED = true
+            }
+        }
+
         execute(archiveProfiles, metaDataMap)
     }
 
@@ -36,12 +44,12 @@ class UploadToArchive {
         log.info "Start uploading to Archive"
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
-            int countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
-            int countOfUploadedItems = 0
+            Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
+            Integer countOfUploadedItems = 0
 
             log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
             if (countOfUploadablePdfs) {
-                if(GENERATE_ONLY_URLS){
+                if(EGangotriUtil.GENERATE_ONLY_URLS){
                     List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
