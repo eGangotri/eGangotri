@@ -44,7 +44,7 @@ sourceSets {
 task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   [ "BM"  ] //"JM", "LK","DD", "RK", "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
+    args =   [ "MM"  ] //"JM", "LK","DD", "RK", "BM", "MM", "jm" , "lk", "sr", "srCP" , "ij", "srb1", gb11
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -67,7 +67,8 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [ /*"DT", "KRI_UR",*/ "KURU" ]
+  args = [  "DT"]
+
 
   // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
 }
@@ -77,7 +78,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  /*"UPSS", "NR",*/  "DT"/*"DT", "EGANGOTRI_EBOOKS"*//**//*, "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
+    args = [  /*"UPSS", "NR",*/  "PU"/*"DT", "EGANGOTRI_EBOOKS"*//**//*, "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {

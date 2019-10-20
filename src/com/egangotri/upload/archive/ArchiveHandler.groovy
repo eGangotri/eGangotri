@@ -36,9 +36,9 @@ class ArchiveHandler {
             driver.get(archiveUrl)
             log.info("Login to Archive URL $archiveUrl")
             //Login
-            WebElement id = driver.findElement(By.id("username"))
-            WebElement pass = driver.findElement(By.id("password"))
-            WebElement button = driver.findElement(By.id("submit"))
+            WebElement id = driver.findElement(By.name("username"))
+            WebElement pass = driver.findElement(By.name("password"))
+            WebElement button = driver.findElement(By.name("submit-to-login"))
 
             id.sendKeys(metaDataMap."${archiveProfile}.username")
             pass.sendKeys(metaDataMap."kuta")
@@ -188,6 +188,9 @@ class ArchiveHandler {
         log.info("$fileNameWIthPath goes to $uploadLink")
         //Go to URL
         driver.get(uploadLink)
+
+         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
+         waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
         WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
         //((RemoteWebElement) fileButtonInitial).setFileDetector(new LocalFileDetector())
