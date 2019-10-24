@@ -75,7 +75,7 @@ class ArchiveHandler {
 
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
-                    //Thread.sleep(ARCHIVE_WAITING_PERIOD)
+                    Thread.sleep(ARCHIVE_WAITING_PERIOD)
                     ArchiveHandler.upload(driver, uploadables[0], uploadLink)
                     countOfUploadedItems++
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
