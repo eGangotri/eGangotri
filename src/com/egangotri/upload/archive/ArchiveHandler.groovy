@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.awt.Robot
@@ -209,10 +210,20 @@ class ArchiveHandler {
         WebElement radioBtn = driver.findElement(By.id("license_radio_CC0"))
         radioBtn.click()
 
+         if(!fileNameWIthPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
+             WebElement collectionSpan = driver.findElement(By.id("collection"))
+             new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+
+             collectionSpan.click()
+             Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
+             collDropDown.selectByValue("data:opensource_media");
+         }
+
         //remove this junk value that pops-up for profiles with Collections
         /* if (uploadLink.contains("collection=")) {
              driver.findElement(By.className("additional_meta_remove_link")).click()
          }*/
+
 
         WebDriverWait wait = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")))
@@ -226,18 +237,24 @@ class ArchiveHandler {
         return identifier
     }
 
-     static String generateURL(String archiveProfile, String uniqueDescription = "") {
-        if (uniqueDescription.endsWith(EGangotriUtil.PDF)) {
-            uniqueDescription = uniqueDescription.replace(EGangotriUtil.PDF, "")
+     static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
+        boolean isPDF = fileNameToBeUsedAsUniqueDescription.endsWith(EGangotriUtil.PDF)
+        if (isPDF) {
+            fileNameToBeUsedAsUniqueDescription = fileNameToBeUsedAsUniqueDescription.replace(EGangotriUtil.PDF, "")
         }
 
-        log.info "uniqueDescription:$uniqueDescription"
+        log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
 
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" + ", '${removeAmpersand(uniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
+        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" + ", '${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
         if (metaDataMap."${archiveProfile}.collection") {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
+        /* else {
+            if (!isPDF) {
+                fullURL += ampersand + "collection=Community%20data"
+            }
+        }*/
 
         log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL

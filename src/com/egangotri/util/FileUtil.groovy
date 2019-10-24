@@ -29,7 +29,8 @@ class FileUtil {
     static final Map<String, String> ALL_FOLDERS = getFoldersCorrespondingToProfile()
 
     static final String PRE_CUTOFF = "pre57"
-    static String PDF_REGEX = /.*.pdf/
+    //static String PDF_REGEX = /.*.pdf/
+    static String PDF_REGEX = /.*/
 
     public static moveDir(String srcDir, String destDir) {
         // create an ant-builder

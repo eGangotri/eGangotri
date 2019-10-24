@@ -125,7 +125,7 @@ class UploadUtils {
 
     static List<String> getAllPdfs(File folder, Boolean excludePreCutOff) {
         List<String> pdfs = []
-        Map optionsMap = [type      : FileType.ANY,
+        Map optionsMap = [type      : FileType.FILES,
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
         if (excludePreCutOff) {
@@ -144,9 +144,10 @@ class UploadUtils {
 
     static List<String> getPdfsInPreCutOffFolder(File folder) {
         List<String> pdfs = []
-        Map optionsMap = [type  : FileType.ANY,
+        Map optionsMap = [type  : FileType.FILES,
                           filter: {
-                              it.absolutePath.contains(FileUtil.PRE_CUTOFF) && it.name.endsWith(EGangotriUtil.PDF)
+                              it.absolutePath.contains(FileUtil.PRE_CUTOFF) /*&&
+                                      it.name.endsWith(EGangotriUtil.PDF)*/
                           }
         ]
         folder.traverse(optionsMap) {
