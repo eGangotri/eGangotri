@@ -43,7 +43,9 @@ class ArchiveHandler {
             id.sendKeys(metaDataMap."${archiveProfile}.username")
             pass.sendKeys(metaDataMap."kuta")
             log.info("before click")
-            button.click()
+            //button.click doesnt work
+            button.submit()
+            //pass.click()
             log.info("after click")
         }
         catch (Exception e) {
@@ -73,6 +75,7 @@ class ArchiveHandler {
 
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
+                    //Thread.sleep(ARCHIVE_WAITING_PERIOD)
                     ArchiveHandler.upload(driver, uploadables[0], uploadLink)
                     countOfUploadedItems++
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
@@ -185,9 +188,10 @@ class ArchiveHandler {
 
 
      static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
-        log.info("$fileNameWIthPath goes to $uploadLink")
-        //Go to URL
-        driver.get(uploadLink)
+        log.info("fileNameWIthPath:$fileNameWIthPath ready for upload")
+         //Go to URL
+         driver.navigate().to(uploadLink);
+         driver.get(uploadLink);
 
          WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
          waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
@@ -235,7 +239,7 @@ class ArchiveHandler {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
 
-        log.info "generateURL($archiveProfile):  $fullURL"
+        log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL
     }
 

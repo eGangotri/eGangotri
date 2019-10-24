@@ -67,7 +67,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [  "DT"]
+  args = [  "PU"]
 
 
   // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
