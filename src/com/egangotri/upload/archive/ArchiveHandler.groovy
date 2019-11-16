@@ -68,6 +68,8 @@ class ArchiveHandler {
             WebDriver driver = new ChromeDriver()
 
             logInToArchiveOrg(driver, metaDataMap, archiveUrl, archiveProfile)
+            Thread.sleep(ARCHIVE_WAITING_PERIOD)
+
             if (upload) {
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
