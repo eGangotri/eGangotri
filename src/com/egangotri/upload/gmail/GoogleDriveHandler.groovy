@@ -1,6 +1,7 @@
 package com.egangotri.upload.gmail
 
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
@@ -40,7 +41,7 @@ class GoogleDriveHandler {
             id.sendKeys(Keys.RETURN);
 
 
-            WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.name("password")));
 
             WebElement pass = driver.findElement(By.name("password"));

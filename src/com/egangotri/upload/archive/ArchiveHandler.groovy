@@ -24,25 +24,28 @@ class ArchiveHandler {
     static final String baseUrl = "https://archive.org/upload/?"
     static final String ampersand = "&"
 
-     static void loginToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
-        logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveUrl, archiveProfile)
+     static void loginToArchive(def metaDataMap, String archiveProfile) {
+        logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
     }
 
-     static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile) {
-        return uploadToArchive(metaDataMap, archiveUrl, archiveProfile, true)
+     static int uploadToArchive(def metaDataMap, String archiveProfile) {
+        return uploadToArchive(metaDataMap, archiveProfile, true)
     }
 
-     static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveUrl, String archiveProfile) {
+     static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
         try {
-            driver.get(archiveUrl)
-            log.info("Login to Archive URL $archiveUrl")
+            driver.get(ARCHIVE_URL)
+            log.info("Login to Archive URL $ARCHIVE_URL")
             //Login
             WebElement id = driver.findElement(By.name("username"))
             WebElement pass = driver.findElement(By.name("password"))
             WebElement button = driver.findElement(By.name("submit-to-login"))
 
-            id.sendKeys(metaDataMap."${archiveProfile}.username")
-            pass.sendKeys(metaDataMap."kuta")
+            String username = metaDataMap."${archiveProfile}.username"
+            id.sendKeys(username)
+            String kuta = metaDataMap."${archiveProfile}.kuta" ?: metaDataMap."kuta"
+            //println "username:$username kuta:$kuta"
+            pass.sendKeys(kuta)
             log.info("before click")
             //button.click doesnt work
             button.submit()
@@ -59,7 +62,7 @@ class ArchiveHandler {
 
 
      static int uploadToArchive(
-            def metaDataMap, String archiveUrl, String archiveProfile, boolean upload, List<String> uploadables) {
+            def metaDataMap, String archiveProfile, boolean upload, List<String> uploadables) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
@@ -67,8 +70,10 @@ class ArchiveHandler {
 
             WebDriver driver = new ChromeDriver()
 
-            logInToArchiveOrg(driver, metaDataMap, archiveUrl, archiveProfile)
-            Thread.sleep(ARCHIVE_WAITING_PERIOD)
+            logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+            //Thread.sleep(ARCHIVE_WAITING_PERIOD*2)
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS);
+            wait.until(ExpectedConditions.elementToBeClickable(By.className("nav-upload")));
 
             if (upload) {
                 if (uploadables) {
@@ -169,7 +174,7 @@ class ArchiveHandler {
     }
 
 
-    static int uploadToArchive(def metaDataMap, String archiveUrl, String archiveProfile, boolean upload) {
+    static int uploadToArchive(def metaDataMap, String archiveProfile, boolean upload) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         int uploadCount = 0
@@ -179,12 +184,12 @@ class ArchiveHandler {
 
             for( List<String> partitionedUploadables : partitions){
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                uploadCount += uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, partitionedUploadables)
+                uploadCount += uploadToArchive(metaDataMap, archiveProfile, upload, partitionedUploadables)
             }
         }
         else {
             log.info("No partitioning")
-            uploadCount = uploadToArchive(metaDataMap, archiveUrl, archiveProfile, upload, uploadables)
+            uploadCount = uploadToArchive(metaDataMap, archiveProfile, upload, uploadables)
         }
         uploadCount
     }
@@ -196,7 +201,7 @@ class ArchiveHandler {
          driver.navigate().to(uploadLink);
          driver.get(uploadLink);
 
-         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
+         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS)
          waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
         WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
@@ -204,7 +209,7 @@ class ArchiveHandler {
         fileButtonInitial.click()
         UploadUtils.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
 
-        new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
 
         WebElement licPicker = driver.findElement(By.id("license_picker_row"))
         licPicker.click()
@@ -214,7 +219,7 @@ class ArchiveHandler {
 
          if(!fileNameWIthPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
              WebElement collectionSpan = driver.findElement(By.id("collection"))
-             new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
 
              collectionSpan.click()
              Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
@@ -227,7 +232,7 @@ class ArchiveHandler {
          }*/
 
 
-        WebDriverWait wait = new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD)
+        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS)
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")))
 
         String identifier = ""

@@ -2,6 +2,7 @@ package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 
 /**
@@ -30,9 +31,16 @@ class UploadToArchive {
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if(settingsMetaDataMap){
             println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
+            println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
+
             if(settingsMetaDataMap.PARTITION_SIZE>0){
                 EGangotriUtil.PARTITION_SIZE = settingsMetaDataMap.PARTITION_SIZE.toInteger()
                 EGangotriUtil.PARTITIONING_ENABLED = true
+            }
+            if(settingsMetaDataMap.PDF_ONLY){
+                FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
+                FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
+                println("EGangotriUtil.PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
         }
 
@@ -54,7 +62,7 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
-                    countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+                    countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
                     log.info("Uploaded $countOfUploadedItems docs for Profile: $archiveProfile")
 
                     String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Successful Upload Count $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success.All Uploaded' : 'Some Failed!')

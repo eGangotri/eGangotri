@@ -30,6 +30,7 @@ class EGangotriUtil {
 
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
+    static final int TIMEOUT_IN_SECONDS = 5
 
     static final String USER_ID = "userId"
     static final String USER_NAME = "username"

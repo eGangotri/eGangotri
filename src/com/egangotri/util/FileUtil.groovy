@@ -29,8 +29,11 @@ class FileUtil {
     static final Map<String, String> ALL_FOLDERS = getFoldersCorrespondingToProfile()
 
     static final String PRE_CUTOFF = "pre57"
+    //can be overridden by making PDF_ONLY key in settings.properties = true
+    static Boolean PDF_ONLY = false
+
     //static String PDF_REGEX = /.*.pdf/
-    static String PDF_REGEX = /.*/
+    static String PDF_REGEX = PDF_ONLY == true ? /.*.pdf/ : /.*/
 
     public static moveDir(String srcDir, String destDir) {
         // create an ant-builder
