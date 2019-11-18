@@ -60,17 +60,13 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
     args = [  "DT", "KRI", "IB", "DT2", "EGANGOTRI_MANU" , "EGANGOTRI_EBOOKS"]
-    // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
 }
 
 task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [  "PU"]
-
-
-  // /* "UPSS2" , "TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
+  args = [  "RAZDAN"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -161,7 +157,7 @@ task fatJarEGangotri(type: Jar) {
     }
 }
 
-task fatJar(dependsOn:[fatJarEGangotri]){
+task fatJar(dependsOn:[fatJarEGangotri]) {
     doLast {
         println 'jarring'
         copy {

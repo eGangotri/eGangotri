@@ -98,7 +98,7 @@ class ArchiveHandler {
                             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
                             //there is a bug in retrieving the size of chromeTabsList in Selenium.
                             //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
-                            println "${chromeTabsList.last()} chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
+                            println "chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
                             try {
                                 driver.switchTo().window(chromeTabsList.last())
                                 tabIndex++

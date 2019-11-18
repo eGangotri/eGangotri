@@ -33,7 +33,7 @@ class UploadToArchive {
             println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
             println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
 
-            if(settingsMetaDataMap.PARTITION_SIZE>0){
+            if(settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
                 EGangotriUtil.PARTITION_SIZE = settingsMetaDataMap.PARTITION_SIZE.toInteger()
                 EGangotriUtil.PARTITIONING_ENABLED = true
             }
