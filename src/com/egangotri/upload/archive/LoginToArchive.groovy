@@ -33,7 +33,7 @@ class LoginToArchive {
                 "RETRO_UPLOAD", "SCL_HYD", "ISHWAR", "MAHA_MUNI", "DATTA", "VIJAY", "VISIONARY_TUNES", "AJG")
 
         ARCHIVE_PROFILES.each { println("$it")}
-        println "Start uploading to Archive"
+        log.info "login to Archive"
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         ARCHIVE_PROFILES*.toString().each { String archiveProfile ->
             println "Logging for Profile $archiveProfile"

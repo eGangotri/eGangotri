@@ -66,7 +66,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [  "RAZDAN"]
+  args = [  "PU"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -74,14 +74,14 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  /*"UPSS", "NR",*/  "PU"/*"DT", "EGANGOTRI_EBOOKS"*//**//*, "KRI_19TH_CENT" ,"DT", "UPSS" ,"RK", "KALLA", "SBLK", "SBLK2" ,"NK", "UR",  "MS", "NR"*/]
+    args = [ "DT"]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.CheckForMissingTextsInArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = []// "TMKN"/*"TMKN","IB" , ,"KRI", "KRI_19TH_CENT" , "KRI_UR",,"DT" "ANON", "UPSS""DT" "RK" "NK","IB", "LCKN_POST57"   "RK","SR"   ,  "RK","IB","JG"*/ /*,,"DT", "KALLA",, "UPSS",   "UR",  "ANON" , "MS" ,"SR" ,"RK","SBLK" ,"SBLK2"*/]
+    args = []
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {

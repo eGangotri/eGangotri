@@ -131,6 +131,10 @@ class UploadUtils {
         if (excludePreCutOff) {
             optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) })
         }
+        if(!folder.exists()){
+            log.error("$folder doesnt exist. returning")
+            return []
+        }
         folder.traverse(optionsMap) {
             //log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
@@ -150,6 +154,10 @@ class UploadUtils {
                                       it.name.endsWith(EGangotriUtil.PDF)*/
                           }
         ]
+        if(!folder.exists()){
+            log.error("$folder doesnt exist. returning")
+            return []
+        }
         folder.traverse(optionsMap) {
             log.info ">>>" + it
             log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"

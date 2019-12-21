@@ -31,6 +31,7 @@ class EGangotriUtil {
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
     static final int TIMEOUT_IN_SECONDS = 5
+    static final int DOUBLE_TIMEOUT_IN_SECONDS = TIMEOUT_IN_SECONDS * 2
 
     static final String USER_ID = "userId"
     static final String USER_NAME = "username"
@@ -47,18 +48,12 @@ class EGangotriUtil {
             return []
         }
 
-        propertiesFile.withInputStream { stream ->
-            properties.load(stream)
-        }
+       List profiles = []
 
-        List profiles = []
-
-        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
-            if (key.contains(textDiscarder)) {
-                profiles << (key - textDiscarder)
-            }
-        }
+        properties.load(propertiesFile.newDataInputStream())
+        properties.each{ key, v -> if (key.contains(textDiscarder)) {
+            profiles << (key - textDiscarder)
+        } }
         return profiles
     }
 

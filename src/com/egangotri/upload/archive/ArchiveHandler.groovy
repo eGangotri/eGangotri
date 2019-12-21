@@ -71,7 +71,7 @@ class ArchiveHandler {
             WebDriver driver = new ChromeDriver()
 
             logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            //Thread.sleep(ARCHIVE_WAITING_PERIOD*2)
+            Thread.sleep(ARCHIVE_WAITING_PERIOD*2)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.className("nav-upload")));
 
@@ -232,12 +232,10 @@ class ArchiveHandler {
          }*/
 
 
-        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS)
+        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.DOUBLE_TIMEOUT_IN_SECONDS)
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")))
 
         String identifier = ""
-//driver.findElement( By.id("page_url")).getText() //By.xpath("//span[contains(@class, 'gray') and @id='page_url']"))
-        println "identifier: $identifier"
 
         WebElement uploadButton = driver.findElement(By.id("upload_button"))
         uploadButton.click()
