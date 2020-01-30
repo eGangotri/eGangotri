@@ -72,7 +72,7 @@ class ArchiveHandler {
 
             logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             Thread.sleep(ARCHIVE_WAITING_PERIOD*2)
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS);
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.className("nav-upload")));
 
             if (upload) {
@@ -92,7 +92,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)){
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
-                            openNewTab(DEFAULT_SLEEP_TIME)
+                            openNewTab(0)
 
                             //Switch to new Tab
                             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
@@ -201,7 +201,7 @@ class ArchiveHandler {
          driver.navigate().to(uploadLink);
          driver.get(uploadLink);
 
-         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS)
+         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
          waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
         WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
@@ -209,7 +209,7 @@ class ArchiveHandler {
         fileButtonInitial.click()
         UploadUtils.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
 
-        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+        new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
 
         WebElement licPicker = driver.findElement(By.id("license_picker_row"))
         licPicker.click()
@@ -219,7 +219,7 @@ class ArchiveHandler {
 
          if(!fileNameWIthPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
              WebElement collectionSpan = driver.findElement(By.id("collection"))
-             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+             new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
 
              collectionSpan.click()
              Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
@@ -232,7 +232,7 @@ class ArchiveHandler {
          }*/
 
 
-        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.DOUBLE_TIMEOUT_IN_SECONDS)
+        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait.until(ExpectedConditions.elementToBeClickable(By.id("upload_button")))
 
         String identifier = ""

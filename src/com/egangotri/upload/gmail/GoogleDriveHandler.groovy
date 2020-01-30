@@ -41,7 +41,7 @@ class GoogleDriveHandler {
             id.sendKeys(Keys.RETURN);
 
 
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_SECONDS);
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.name("password")));
 
             WebElement pass = driver.findElement(By.name("password"));
