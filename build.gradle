@@ -150,6 +150,7 @@ task fatJarEGangotri(type: Jar) {
     //delete "$buildDir/tmp/expandedArchives"
     baseName = project.name /*+ '-all'*/
     from { (configurations.compile + configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
+    println 'creating jar'
     with jar
     manifest {
         attributes 'Implementation-Title': 'eGangotri Programming Tools', 'Implementation-Version': version
@@ -159,7 +160,7 @@ task fatJarEGangotri(type: Jar) {
 
 task fatJar(dependsOn:[fatJarEGangotri]) {
     doLast {
-        println 'jarring'
+        println 'copying jar file from libs->latestJarForUse'
         copy {
             from "build/libs/"
             into 'latestJarForUse'
