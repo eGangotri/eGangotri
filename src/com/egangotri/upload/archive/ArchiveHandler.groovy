@@ -251,7 +251,15 @@ class ArchiveHandler {
         log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
 
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-        String fullURL = baseUrl + metaDataMap."${archiveProfile}.subjects" + ampersand + metaDataMap."${archiveProfile}.language" + ampersand + metaDataMap."${archiveProfile}.description" + ", '${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'" + ampersand + metaDataMap."${archiveProfile}.creator"
+         String _creator = metaDataMap."${archiveProfile}.creator"
+         String _subjects =  metaDataMap."${archiveProfile}.subjects"?:  "subject=" + _creator.replaceAll("creator=","")
+         String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
+         String _fileNameAsDesc = "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'"
+         String _desc =  metaDataMap."${archiveProfile}.description"
+         String desc_and_file_name = _desc ? "${_desc}, '${_fileNameAsDesc}'" :  "description=" + _fileNameAsDesc
+
+        String fullURL = baseUrl + _subjects + ampersand + _lang + ampersand + desc_and_file_name + ampersand + _creator
+
         if (metaDataMap."${archiveProfile}.collection") {
             fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
         }
