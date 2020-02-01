@@ -66,7 +66,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-  args = [  "PU"]
+  args = [  "ANON3"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
