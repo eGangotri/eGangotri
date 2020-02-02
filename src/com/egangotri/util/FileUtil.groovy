@@ -29,6 +29,7 @@ class FileUtil {
     static final Map<String, String> ALL_FOLDERS = getFoldersCorrespondingToProfile()
 
     static final String PRE_CUTOFF = "pre57"
+    static final String UPLOADED = "uploaded"
     //can be overridden by making PDF_ONLY key in settings.properties = true
     static Boolean PDF_ONLY = false
 

@@ -1,6 +1,6 @@
 apply plugin: 'application'
 apply plugin: 'groovy'
-apply from: 'upload.gradle'
+apply from: 'build_upload_task.gradle'
 
 mainClassName = "com.egangotri.upload.archive.UploadToArchive"
 version=""

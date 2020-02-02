@@ -205,7 +205,6 @@ class ArchiveHandler {
          waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
         WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
-        //((RemoteWebElement) fileButtonInitial).setFileDetector(new LocalFileDetector())
         fileButtonInitial.click()
         UploadUtils.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
 
