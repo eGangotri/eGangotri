@@ -20,20 +20,20 @@ import java.awt.event.KeyEvent
 class ArchiveHandler {
     static final int ARCHIVE_WAITING_PERIOD = 200
     static final int DEFAULT_SLEEP_TIME = 1000
-
+    static def SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
     static final String ampersand = "&"
 
-     static void loginToArchive(def metaDataMap, String archiveProfile) {
+    static void loginToArchive(def metaDataMap, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
     }
 
-     static int uploadToArchive(def metaDataMap, String archiveProfile) {
+    static int uploadToArchive(def metaDataMap, String archiveProfile) {
         return uploadToArchive(metaDataMap, archiveProfile, true)
     }
 
-     static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
+    static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
         try {
             driver.get(ARCHIVE_URL)
             log.info("Login to Archive URL $ARCHIVE_URL")
@@ -62,7 +62,7 @@ class ArchiveHandler {
     }
 
 
-     static int uploadToArchive(
+    static int uploadToArchive(
             def metaDataMap, String archiveProfile, boolean upload, List<String> uploadables) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
@@ -72,7 +72,7 @@ class ArchiveHandler {
             WebDriver driver = new ChromeDriver()
 
             logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            Thread.sleep(ARCHIVE_WAITING_PERIOD*2)
+            Thread.sleep(ARCHIVE_WAITING_PERIOD * 10)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.className("nav-upload")));
 
@@ -91,7 +91,7 @@ class ArchiveHandler {
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
                         int tabIndex = 1
-                        for (uploadableFile in uploadables.drop(1)){
+                        for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
                             openNewTab(0)
 
@@ -129,7 +129,7 @@ class ArchiveHandler {
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
-     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
+    static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
         try {
@@ -167,7 +167,7 @@ class ArchiveHandler {
     }
 
 
-     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
+    static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
             String uploadLink = generateURL(archiveProfile, fileName)
             log.info("$tabIndex) $uploadLink")
@@ -179,16 +179,15 @@ class ArchiveHandler {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         int uploadCount = 0
-        if(EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE ){
+        if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
             log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
 
-            for( List<String> partitionedUploadables : partitions){
+            for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
                 uploadCount += uploadToArchive(metaDataMap, archiveProfile, upload, partitionedUploadables)
             }
-        }
-        else {
+        } else {
             log.info("No partitioning")
             uploadCount = uploadToArchive(metaDataMap, archiveProfile, upload, uploadables)
         }
@@ -196,47 +195,47 @@ class ArchiveHandler {
     }
 
 
-     static String upload(WebDriver driver, String fileNameWithPath, String uploadLink) {
+    static String upload(WebDriver driver, String fileNameWithPath, String uploadLink) {
         log.info("fileNameWithPath:$fileNameWithPath ready for upload")
-         //Go to URL
-         driver.navigate().to(uploadLink);
-         driver.get(uploadLink);
+        //Go to URL
+        driver.navigate().to(uploadLink);
+        driver.get(uploadLink);
 
-         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-         waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
+        WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
-        UploadUtils.clickUploadLink(driver,fileNameWithPath)
+        UploadUtils.clickUploadLink(driver, fileNameWithPath)
 
         try {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
         }
 
-         catch(WebDriverException webDriverException){
-             UploadUtils.hitEscapeKey()
-             UploadUtils.clickUploadLink(driver,fileNameWithPath)
-             try {
-                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
-             }
-             catch(WebDriverException webDriverException2){
-                 UploadUtils.hitEscapeKey()
-                 UploadUtils.clickUploadLink(driver,fileNameWithPath)
-                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
-             }
-         }
+        catch (WebDriverException webDriverException) {
+            UploadUtils.hitEscapeKey()
+            UploadUtils.clickUploadLink(driver, fileNameWithPath)
+            try {
+                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+            }
+            catch (WebDriverException webDriverException2) {
+                UploadUtils.hitEscapeKey()
+                UploadUtils.clickUploadLink(driver, fileNameWithPath)
+                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+            }
+        }
         WebElement licPicker = driver.findElement(By.id("license_picker_row"))
         licPicker.click()
 
         WebElement radioBtn = driver.findElement(By.id("license_radio_CC0"))
         radioBtn.click()
 
-         if(!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
-             WebElement collectionSpan = driver.findElement(By.id("collection"))
-             new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+        if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
+            WebElement collectionSpan = driver.findElement(By.id("collection"))
+            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
 
-             collectionSpan.click()
-             Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
-             collDropDown.selectByValue("data:opensource_media");
-         }
+            collectionSpan.click()
+            Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
+            collDropDown.selectByValue("data:opensource_media");
+        }
 
         //remove this junk value that pops-up for profiles with Collections
         /* if (uploadLink.contains("collection=")) {
@@ -254,43 +253,48 @@ class ArchiveHandler {
         return identifier
     }
 
-     static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
+    static String getOrGenerateSupplementaryURL(String archiveProfile) {
+        if(!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)){
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
+        }
+        if(!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
+            def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
+            String _creator = metaDataMap."${archiveProfile}.creator"
+            String _subjects = metaDataMap."${archiveProfile}.subjects" ?: "subject=" + _creator.replaceAll("creator=", "")
+            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
+            String _fileNameAsDesc = '{0}'
+            String _desc = metaDataMap."${archiveProfile}.description"
+            String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
+            String supplementary_url = _subjects + ampersand + _lang + ampersand + desc_and_file_name + ampersand + _creator
+            if (metaDataMap."${archiveProfile}.collection") {
+                supplementary_url += ampersand + metaDataMap."${archiveProfile}.collection"
+            }
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
+        }
+        return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
+    }
+
+
+    static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
         boolean isPDF = fileNameToBeUsedAsUniqueDescription.endsWith(EGangotriUtil.PDF)
         if (isPDF) {
             fileNameToBeUsedAsUniqueDescription = fileNameToBeUsedAsUniqueDescription.replace(EGangotriUtil.PDF, "")
         }
-
         log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
 
-        def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-         String _creator = metaDataMap."${archiveProfile}.creator"
-         String _subjects =  metaDataMap."${archiveProfile}.subjects"?:  "subject=" + _creator.replaceAll("creator=","")
-         String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
-         String _fileNameAsDesc = "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'"
-         String _desc =  metaDataMap."${archiveProfile}.description"
-         String desc_and_file_name = _desc ? "${_desc}, '${_fileNameAsDesc}'" :  "description=" + _fileNameAsDesc
-
-        String fullURL = baseUrl + _subjects + ampersand + _lang + ampersand + desc_and_file_name + ampersand + _creator
-
-        if (metaDataMap."${archiveProfile}.collection") {
-            fullURL += ampersand + metaDataMap."${archiveProfile}.collection"
-        }
-        /* else {
-            if (!isPDF) {
-                fullURL += ampersand + "collection=Community%20data"
-            }
-        }*/
-
+        String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
+        supplementary_url = supplementary_url.replace('{0}', "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'")
+        String fullURL = baseUrl + supplementary_url
         log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL
     }
 
-     static String removeAmpersand(String title) {
+    static String removeAmpersand(String title) {
         title = title.replaceAll(ampersand, "")
         return title.drop(title.lastIndexOf(File.separator) + 1)
     }
 
-     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
+    static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
         List folderName = []
 
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
@@ -303,7 +307,7 @@ class ArchiveHandler {
         return folderName
     }
 
-     static void openNewTab(int sleepTime = 0) {
+    static void openNewTab(int sleepTime = 0) {
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);

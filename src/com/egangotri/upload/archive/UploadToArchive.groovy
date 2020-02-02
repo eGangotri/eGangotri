@@ -50,6 +50,7 @@ class UploadToArchive {
     public static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
+        //ArchiveHandler.generateSupplementaryUrlsForProfiles(profiles)
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)

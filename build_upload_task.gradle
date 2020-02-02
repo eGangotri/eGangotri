@@ -4,5 +4,5 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  "ANON3"]
+    args = [  "ANON3", "ANON2"]
 }
