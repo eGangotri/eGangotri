@@ -5,6 +5,9 @@ import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
 import groovy.util.logging.Slf4j
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -176,7 +179,7 @@ class UploadUtils {
 
     public static void pasteFileNameAndCloseUploadPopup(String fileName) {
         // A short pause, just to be sure that OK is selected
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         setClipboardData(fileName);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();
@@ -186,6 +189,18 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_CONTROL);
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+
+    public static void hitEscapeKey() {
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_ESCAPE);
+        robot.keyRelease(KeyEvent.VK_ESCAPE);
+    }
+
+    public static void clickUploadLink(WebDriver driver, String fileNameWithPath){
+        WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
+        fileButtonInitial.click()
+        pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
     public static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {

@@ -6,6 +6,7 @@ import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -195,8 +196,8 @@ class ArchiveHandler {
     }
 
 
-     static String upload(WebDriver driver, String fileNameWIthPath, String uploadLink) {
-        log.info("fileNameWIthPath:$fileNameWIthPath ready for upload")
+     static String upload(WebDriver driver, String fileNameWithPath, String uploadLink) {
+        log.info("fileNameWithPath:$fileNameWithPath ready for upload")
          //Go to URL
          driver.navigate().to(uploadLink);
          driver.get(uploadLink);
@@ -204,19 +205,31 @@ class ArchiveHandler {
          WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
          waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id("file_button_initial")))
 
-        WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
-        fileButtonInitial.click()
-        UploadUtils.pasteFileNameAndCloseUploadPopup(fileNameWIthPath)
+        UploadUtils.clickUploadLink(driver,fileNameWithPath)
 
-        new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+        try {
+            new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+        }
 
+         catch(WebDriverException webDriverException){
+             UploadUtils.hitEscapeKey()
+             UploadUtils.clickUploadLink(driver,fileNameWithPath)
+             try {
+                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+             }
+             catch(WebDriverException webDriverException2){
+                 UploadUtils.hitEscapeKey()
+                 UploadUtils.clickUploadLink(driver,fileNameWithPath)
+                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("license_picker_row")))
+             }
+         }
         WebElement licPicker = driver.findElement(By.id("license_picker_row"))
         licPicker.click()
 
         WebElement radioBtn = driver.findElement(By.id("license_radio_CC0"))
         radioBtn.click()
 
-         if(!fileNameWIthPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
+         if(!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")){
              WebElement collectionSpan = driver.findElement(By.id("collection"))
              new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
 
