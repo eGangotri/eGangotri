@@ -274,8 +274,7 @@ class ArchiveHandler {
             if (metaDataMap."${archiveProfile}.collection") {
                 supplementary_url += ampersand + metaDataMap."${archiveProfile}.collection"
             }
-            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
-        }
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_u
         return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
     }
 

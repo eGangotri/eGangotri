@@ -132,7 +132,7 @@ class UploadUtils {
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
         if (excludePreCutOff) {
-            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) || it.absolutePath.contains(FileUtil.UPLOADED)})
+            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) || it.absolutePath.contains(FileUtil.UPLOAD_KEY_WORD)})
         }
         if(!folder.exists()){
             log.error("$folder doesnt exist. returning")
