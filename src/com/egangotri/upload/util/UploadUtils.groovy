@@ -198,7 +198,7 @@ class UploadUtils {
     }
 
     public static void clickUploadLink(WebDriver driver, String fileNameWithPath){
-        WebElement fileButtonInitial = driver.findElement(By.id("file_button_initial"))
+        WebElement fileButtonInitial = driver.findElement(By.id(INITIATE_FILE_UPLOAD_BUTTON))
         fileButtonInitial.click()
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
