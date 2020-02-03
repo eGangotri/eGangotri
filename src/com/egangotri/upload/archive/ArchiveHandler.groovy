@@ -90,6 +90,7 @@ class ArchiveHandler {
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
+                        int uploadFailureCount = 0
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
@@ -115,6 +116,11 @@ class ArchiveHandler {
                             }
                             catch (Exception e) {
                                 log.info("Exception while uploading. willl proceed to next tab", e)
+                                uploadFailureCount++
+                                if(uploadFailureCount > 10){
+                                    println("Too many failures will now quit.")
+                                    throw new Exception("Too many upload Exceptions More than 10. Quittimg")
+                                }
                             }
                             countOfUploadedItems++
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
