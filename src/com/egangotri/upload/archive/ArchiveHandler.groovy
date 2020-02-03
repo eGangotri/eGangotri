@@ -27,6 +27,7 @@ class ArchiveHandler {
     static final String INITIATE_FILE_UPLOAD_BUTTON = "file_button_initial"
     static final String LICENSE_PICKER_CHECK_BOX = "license_picker_row"
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
+    static final int UPLOAD_FAILURE_THRESHOLD = 5
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
@@ -120,7 +121,7 @@ class ArchiveHandler {
                             catch (Exception e) {
                                 log.info("Exception while uploading. willl proceed to next tab", e)
                                 uploadFailureCount++
-                                if(uploadFailureCount > 10){
+                                if(uploadFailureCount > UPLOAD_FAILURE_THRESHOLD){
                                     println("Too many failures will now quit.")
                                     throw new Exception("Too many upload Exceptions More than 10. Quittimg")
                                 }
