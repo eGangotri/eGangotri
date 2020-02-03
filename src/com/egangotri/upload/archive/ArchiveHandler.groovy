@@ -23,7 +23,7 @@ class ArchiveHandler {
     static def SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
-    static final String ampersand = "&"
+    static final String AMPERSAND = "&"
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
@@ -259,10 +259,10 @@ class ArchiveHandler {
     }
 
     static String getOrGenerateSupplementaryURL(String archiveProfile) {
-        if(!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)){
+        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
         }
-        if(!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
+        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
             def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
             String _creator = metaDataMap."${archiveProfile}.creator"
             String _subjects = metaDataMap."${archiveProfile}.subjects" ?: "subject=" + _creator.replaceAll("creator=", "")
@@ -270,12 +270,13 @@ class ArchiveHandler {
             String _fileNameAsDesc = '{0}'
             String _desc = metaDataMap."${archiveProfile}.description"
             String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
-            String supplementary_url = _subjects + ampersand + _lang + ampersand + desc_and_file_name + ampersand + _creator
+            String supplementary_url = _subjects + AMPERSAND + _lang + AMPERSAND + desc_and_file_name + AMPERSAND + _creator
             if (metaDataMap."${archiveProfile}.collection") {
-                supplementary_url += ampersand + metaDataMap."${archiveProfile}.collection"
+                supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
             }
-            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_u
-        return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
+            return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
+        }
     }
 
 
@@ -294,7 +295,7 @@ class ArchiveHandler {
     }
 
     static String removeAmpersand(String title) {
-        title = title.replaceAll(ampersand, "")
+        title = title.replaceAll(AMPERSAND, "")
         return title.drop(title.lastIndexOf(File.separator) + 1)
     }
 
