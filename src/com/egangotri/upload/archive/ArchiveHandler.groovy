@@ -275,8 +275,8 @@ class ArchiveHandler {
                 supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
             }
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
-            return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
         }
+        return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
     }
 
 
