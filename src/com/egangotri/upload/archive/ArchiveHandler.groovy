@@ -110,7 +110,12 @@ class ArchiveHandler {
                             uploadLink = generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
-                            String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
+                            try {
+                                String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
+                            }
+                            catch (Exception e) {
+                                log.info("Exception while uploading. willl proceed to next tab", e)
+                            }
                             countOfUploadedItems++
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
                         }
