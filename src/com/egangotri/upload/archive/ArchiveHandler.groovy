@@ -24,9 +24,6 @@ class ArchiveHandler {
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
     static final String AMPERSAND = "&"
-    static final String INITIATE_FILE_UPLOAD_BUTTON = "file_button_initial"
-    static final String LICENSE_PICKER_CHECK_BOX = "license_picker_row"
-    static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final int UPLOAD_FAILURE_THRESHOLD = 5
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
@@ -218,7 +215,7 @@ class ArchiveHandler {
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         try{
-            waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(INITIATE_FILE_UPLOAD_BUTTON)))
+            waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.INITIATE_FILE_UPLOAD_BUTTON)))
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
@@ -228,25 +225,25 @@ class ArchiveHandler {
         UploadUtils.clickUploadLink(driver, fileNameWithPath)
 
         try {
-            new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(LICENSE_PICKER_CHECK_BOX)))
+            new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
 
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
             UploadUtils.clickUploadLink(driver, fileNameWithPath)
             try {
-                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(LICENSE_PICKER_CHECK_BOX)))
+                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
             }
             catch (WebDriverException webDriverException2) {
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickUploadLink(driver, fileNameWithPath)
-                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(LICENSE_PICKER_CHECK_BOX)))
+                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
             }
         }
-        WebElement licPicker = driver.findElement(By.id(LICENSE_PICKER_CHECK_BOX))
+        WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
 
-        WebElement radioBtn = driver.findElement(By.id("license_radio_CC0"))
+        WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()
 
         if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
@@ -265,11 +262,11 @@ class ArchiveHandler {
 
 
         WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        wait.until(ExpectedConditions.elementToBeClickable(By.id(UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
+        wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
 
         String identifier = ""
 
-        WebElement uploadButton = driver.findElement(By.id(UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
+        WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
         return identifier
     }
