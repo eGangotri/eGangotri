@@ -16,6 +16,7 @@ In Home Directory ( for Windows this is typically
  archiveLogins.properties
  archiveMetadata.properties
  localFolders.properties
+ settings.properties
  
  If you are using Google Uploader, then you need following files:
  googleDriveLogins.properties
@@ -43,3 +44,15 @@ In Home Directory ( for Windows this is typically
  and dump it in Home Directory\chromedriver\chromedriver.exe and use this as the path in 
  java -Dwebdriver.chrome.driver....
  
+ 
+ #Note:
+ Any Folder or File which contains 'upload' or 'pre57' in there names will be automatically filtered out.
+ 
+ This can be ingeniously used to continue uplaoding from a folder which may fail after a while. 
+ By not having to change the path, only move uploaded items to a filder with name such as 'uploaded'
+ containing the 'upload' text. This way they wont be picked up again
+  and you dont have to make changes in your localFolders.properties file
+  
+  'pre57' is also ignored but that is a different usage.
+  It is meant to be ignored by all accounts. 
+  Except ones which will specifically pick only pre57 folder. These accounts can be configured.

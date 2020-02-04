@@ -127,9 +127,9 @@ class ArchiveHandler {
                             catch (Exception e) {
                                 log.info("Exception while uploading. willl proceed to next tab", e)
                                 uploadFailureCount++
-                                if (uploadFailureCount > UPLOAD_FAILURE_THRESHOLD) {
-                                    println("Too many failures will now quit.")
-                                    throw new Exception("Too many upload Exceptions More than 10. Quittimg")
+                                if(uploadFailureCount > UPLOAD_FAILURE_THRESHOLD){
+                                    println("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                    throw new Exception("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                 }
                             }
                             countOfUploadedItems++
