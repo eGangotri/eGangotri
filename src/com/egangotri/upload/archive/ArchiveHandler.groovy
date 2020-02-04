@@ -69,7 +69,7 @@ class ArchiveHandler {
 
 
     static int uploadToArchive(
-            def metaDataMap, String archiveProfile, boolean upload, List<String> uploadables) {
+            def metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
         int countOfUploadedItems = 0
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
@@ -84,10 +84,8 @@ class ArchiveHandler {
                 println("Login failed for Second Time for ${archiveProfile}. will now quit")
                 throw new Exception("Not Continuing becuase of Login Failure twice")
             }
-            //WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
-            //wait.until(ExpectedConditions.elementToBeClickable(By.className(UploadUtils.NAV_UPLOAD_LINK)))
 
-            if (upload) {
+            if (uploadPermission) {
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
@@ -197,7 +195,7 @@ class ArchiveHandler {
     }
 
 
-    static int uploadToArchive(def metaDataMap, String archiveProfile, boolean upload) {
+    static int uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         int uploadCount = 0
@@ -207,11 +205,11 @@ class ArchiveHandler {
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                uploadCount += uploadToArchive(metaDataMap, archiveProfile, upload, partitionedUploadables)
+                uploadCount += uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
             }
         } else {
             log.info("No partitioning")
-            uploadCount = uploadToArchive(metaDataMap, archiveProfile, upload, uploadables)
+            uploadCount = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, uploadables)
         }
         uploadCount
     }
