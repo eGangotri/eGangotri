@@ -26,6 +26,18 @@ class UploadUtils {
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
 
+    public static readTextFileAndDumpToList(String fileName){
+        List list = []
+            File file = new File(fileName)
+            def line = ""
+            file.withReader { reader ->
+                while ((line = reader.readLine()) != null) {
+                    list << line
+                }
+            }
+            return list
+    }
+
     public static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)

@@ -21,6 +21,7 @@ class ArchiveHandler {
     static final int ARCHIVE_WAITING_PERIOD = 200
     static final int DEFAULT_SLEEP_TIME = 1000
     static def SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
+    static def RANDOM_CREATOR_BY_PROFILE_MAP = [:]
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
     static final String baseUrl = "https://archive.org/upload/?"
     static final String AMPERSAND = "&"
@@ -64,7 +65,7 @@ class ArchiveHandler {
             e.printStackTrace()
             throw e
         }
-    return loginSucess
+        return loginSucess
     }
 
 
@@ -76,11 +77,11 @@ class ArchiveHandler {
         try {
             WebDriver driver = new ChromeDriver()
             boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            if(!loginSuccess){
+            if (!loginSuccess) {
                 println("Login failed once for ${archiveProfile}. Will give it one more shot")
                 loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             }
-            if(!loginSuccess){
+            if (!loginSuccess) {
                 println("Login failed for Second Time for ${archiveProfile}. will now quit")
                 throw new Exception("Not Continuing becuase of Login Failure twice")
             }
@@ -126,7 +127,7 @@ class ArchiveHandler {
                             catch (Exception e) {
                                 log.info("Exception while uploading. willl proceed to next tab", e)
                                 uploadFailureCount++
-                                if(uploadFailureCount > UPLOAD_FAILURE_THRESHOLD){
+                                if (uploadFailureCount > UPLOAD_FAILURE_THRESHOLD) {
                                     println("Too many failures will now quit.")
                                     throw new Exception("Too many upload Exceptions More than 10. Quittimg")
                                 }
@@ -222,7 +223,7 @@ class ArchiveHandler {
         driver.get(uploadLink);
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        try{
+        try {
             waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.INITIATE_FILE_UPLOAD_BUTTON)))
         }
         catch (WebDriverException webDriverException) {
@@ -279,13 +280,33 @@ class ArchiveHandler {
         return identifier
     }
 
+    static String generateCreator(String archiveProfile) {
+        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
+            throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
+        }
+
+        if (!RANDOM_CREATOR_BY_PROFILE_MAP || !RANDOM_CREATOR_BY_PROFILE_MAP.containsKey(archiveProfile)) {
+            RANDOM_CREATOR_BY_PROFILE_MAP.put(archiveProfile, null)
+        }
+        if (!RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]) {
+            List firstNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
+            List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
+            Random rnd = new Random()
+            int idx1 = rnd.nextInt(firstNames.size)
+            int idx2 = rnd.nextInt(lastNames.size)
+            RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"] = "creator=${firstNames[idx1].trim()}_${lastNames[idx2].trim()}"
+        }
+        return RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
+    }
+
+
     static String getOrGenerateSupplementaryURL(String archiveProfile) {
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
         }
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
             def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-            String _creator = metaDataMap."${archiveProfile}.creator"
+            String _creator = metaDataMap."${archiveProfile}.creator" ?: generateCreator(archiveProfile)
             String _subjects = metaDataMap."${archiveProfile}.subjects" ?: "subject=" + _creator.replaceAll("creator=", "")
             String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
             String _fileNameAsDesc = '{0}'
