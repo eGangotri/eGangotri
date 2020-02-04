@@ -34,14 +34,15 @@ class ArchiveHandler {
         return uploadToArchive(metaDataMap, archiveProfile, true)
     }
 
-    static void logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
+    static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
+        boolean loginSucess = false
         try {
             driver.get(ARCHIVE_URL)
             log.info("Login to Archive URL $ARCHIVE_URL")
             //Login
-            WebElement id = driver.findElement(By.name("username"))
-            WebElement pass = driver.findElement(By.name("password"))
-            WebElement button = driver.findElement(By.name("submit-to-login"))
+            WebElement id = driver.findElement(By.name(UploadUtils.USERNAME_TEXTBOX_NAME))
+            WebElement pass = driver.findElement(By.name(UploadUtils.PASSWORD_TEXTBOX_NAME))
+            WebElement button = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
 
             String username = metaDataMap."${archiveProfile}.username"
             id.sendKeys(username)
@@ -53,13 +54,17 @@ class ArchiveHandler {
             button.submit()
             //pass.click()
             log.info("after click")
+            Thread.sleep(ARCHIVE_WAITING_PERIOD * 5)
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
+            wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)));
+            loginSucess = true
         }
         catch (Exception e) {
             log.info("Exeption in logInToArchiveOrg ${e.message}")
             e.printStackTrace()
             throw e
         }
-
+    return loginSucess
     }
 
 
@@ -69,13 +74,18 @@ class ArchiveHandler {
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
-
             WebDriver driver = new ChromeDriver()
-
-            logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            Thread.sleep(ARCHIVE_WAITING_PERIOD * 10)
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
-            wait.until(ExpectedConditions.elementToBeClickable(By.className("nav-upload")));
+            boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+            if(!loginSuccess){
+                println("Login failed once for ${archiveProfile}. Will give it one more shot")
+                loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+            }
+            if(!loginSuccess){
+                println("Login failed for Second Time for ${archiveProfile}. will now quit")
+                throw new Exception("Not Continuing becuase of Login Failure twice")
+            }
+            //WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
+            //wait.until(ExpectedConditions.elementToBeClickable(By.className(UploadUtils.NAV_UPLOAD_LINK)))
 
             if (upload) {
                 if (uploadables) {

@@ -16,6 +16,11 @@ import java.awt.event.KeyEvent
 
 @Slf4j
 class UploadUtils {
+
+    static final String USERNAME_TEXTBOX_NAME = "username"
+    static final String PASSWORD_TEXTBOX_NAME = "password"
+    static final String LOGIN_BUTTON_NAME = "submit-to-login"
+    static final String USER_MENU_ID = "user-menu" // only created when User is Signed In
     static final String INITIATE_FILE_UPLOAD_BUTTON = "file_button_initial"
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final String LICENSE_PICKER_DIV = "license_picker_row"
