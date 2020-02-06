@@ -12,7 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
-
+import org.openqa.selenium.UnhandledAlertException
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
@@ -124,9 +124,16 @@ class ArchiveHandler {
                             try {
                                 String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
                             }
+                            catch (UnhandledAlertException uae){
+                                log.info("UnhandledAlertException while uploading. willl proceed to next tab", uae)
+                                UploadUtils.hitEnterKey()
+                                uploadFailureCount++
+                            }
                             catch (Exception e) {
                                 log.info("Exception while uploading. willl proceed to next tab", e)
                                 uploadFailureCount++
+                            }
+                            finally{
                                 if(uploadFailureCount > UPLOAD_FAILURE_THRESHOLD){
                                     println("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                     throw new Exception("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")

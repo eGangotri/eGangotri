@@ -219,6 +219,12 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ESCAPE);
     }
 
+    public static void hitEnterKey() {
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+
     public static void clickUploadLink(WebDriver driver, String fileNameWithPath){
         WebElement fileButtonInitial = driver.findElement(By.id(INITIATE_FILE_UPLOAD_BUTTON))
         fileButtonInitial.click()
