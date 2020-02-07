@@ -1,6 +1,6 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.archive.ArchiveHandler
+
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
@@ -26,7 +26,13 @@ class UploadUtils {
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
 
-    public static readTextFileAndDumpToList(String fileName){
+    static final int DEFAULT_SLEEP_TIME = 1000
+    static Map<String,String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
+    static Map<String,List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
+    static final String baseUrl = "https://archive.org/upload/?"
+    static final String AMPERSAND = "&"
+
+    static readTextFileAndDumpToList(String fileName){
         List list = []
             File file = new File(fileName)
             def line = ""
@@ -38,7 +44,7 @@ class UploadUtils {
             return list
     }
 
-    public static Hashtable<String, String> loadProperties(String fileName) {
+    static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
         Hashtable<String, String> metaDataMap = [:]
@@ -77,7 +83,7 @@ class UploadUtils {
     }
 
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
-        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
+        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
         println "folders: $folders"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOnePdfInPreCutOffFolders(folders)) {
@@ -90,7 +96,7 @@ class UploadUtils {
     }
 
     static List<String> getUploadablePdfsForProfile(String archiveProfile) {
-        List<File> folders = ArchiveHandler.pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
+        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
         List<String> pdfs = []
         println "getUploadablePdfsForProfile: $archiveProfile"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
@@ -154,7 +160,7 @@ class UploadUtils {
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
         if (excludePreCutOff) {
-            optionsMap.put("excludeFilter", { it.absolutePath.contains(FileUtil.PRE_CUTOFF) || it.absolutePath.contains(FileUtil.UPLOAD_KEY_WORD)})
+            optionsMap.put("excludeFilter", { it.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) || it.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD)})
         }
         if(!folder.exists()){
             log.error("$folder doesnt exist. returning")
@@ -199,7 +205,7 @@ class UploadUtils {
         return pdfs
     }
 
-    public static void pasteFileNameAndCloseUploadPopup(String fileName) {
+    static void pasteFileNameAndCloseUploadPopup(String fileName) {
         // A short pause, just to be sure that OK is selected
         Thread.sleep(1000);
         setClipboardData(fileName);
@@ -213,25 +219,25 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    public static void hitEscapeKey() {
+    static void hitEscapeKey() {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_ESCAPE);
         robot.keyRelease(KeyEvent.VK_ESCAPE);
     }
 
-    public static void hitEnterKey() {
+    static void hitEnterKey() {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    public static void clickUploadLink(WebDriver driver, String fileNameWithPath){
+    static void clickUploadLink(WebDriver driver, String fileNameWithPath){
         WebElement fileButtonInitial = driver.findElement(By.id(INITIATE_FILE_UPLOAD_BUTTON))
         fileButtonInitial.click()
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
-    public static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
+    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         Thread.sleep(1000);
@@ -249,7 +255,7 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    public static void setClipboardData(String string) {
+    static void setClipboardData(String string) {
         StringSelection stringSelection = new StringSelection(string);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
     }
@@ -323,4 +329,125 @@ class UploadUtils {
         return partitions
     }
 
+    static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit(){
+        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
+            throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
+        }
+    }
+    static String generateCreatorsForProfileAndPickARandomOne(String archiveProfile) {
+        throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
+        if (!RANDOM_CREATOR_BY_PROFILE_MAP || !RANDOM_CREATOR_BY_PROFILE_MAP.containsKey(archiveProfile)) {
+            RANDOM_CREATOR_BY_PROFILE_MAP.put(archiveProfile, null)
+        }
+        if (!RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]) {
+            RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"] = randomCreators()
+        }
+        List randomCreators =  RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
+        String randomPick =  randomCreators[new Random().nextInt(randomCreators.size)]
+        return "creator=${randomPick}"
+    }
+
+    static List randomCreators() {
+        List firstNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
+        List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
+        Random rnd = new Random()
+        List creators = []
+        int MAX_CREATORS = 25
+        int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
+        (0..max).each {
+            int idx1 = rnd.nextInt(firstNames.size)
+            int idx2 = rnd.nextInt(lastNames.size)
+            creators << "${firstNames[idx1].trim()}_${lastNames[idx2].trim()}"
+        }
+        return creators
+    }
+
+    static String getOrGenerateSupplementaryURL(String archiveProfile) {
+        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
+        }
+        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
+            def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
+            String _creator = metaDataMap."${archiveProfile}.creator"
+            if(!_creator){
+                throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
+            }
+
+            String _subjects = metaDataMap."${archiveProfile}.subjects"
+            if(!_subjects){
+                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? "subject=" + _creator.replaceAll("creator=", ""): null
+            }
+
+            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
+            String _fileNameAsDesc = '{0}'
+            String _desc = metaDataMap."${archiveProfile}.description"
+            String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
+            String supplementary_url = _lang + AMPERSAND + desc_and_file_name
+            if (metaDataMap."${archiveProfile}.collection") {
+                supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
+            }
+            if(_subjects){
+                supplementary_url += AMPERSAND + _subjects
+            }
+            if(!EGangotriUtil.GENERATE_RANDOM_CREATOR){
+                supplementary_url += AMPERSAND +  _creator
+            }
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
+        }
+        String url = SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
+        if((EGangotriUtil.GENERATE_RANDOM_CREATOR)){
+            String _creator = generateCreatorsForProfileAndPickARandomOne(archiveProfile)
+            url += AMPERSAND +  _creator
+
+            if(!url.contains("subject=")){
+                String _subjects = "subject=" + _creator.replaceAll("creator=", "")
+                url += AMPERSAND + _subjects
+            }
+        }
+        return url
+    }
+
+
+    static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
+        boolean isPDF = fileNameToBeUsedAsUniqueDescription.endsWith(EGangotriUtil.PDF)
+        if (isPDF) {
+            fileNameToBeUsedAsUniqueDescription = fileNameToBeUsedAsUniqueDescription.replace(EGangotriUtil.PDF, "")
+        }
+        log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
+
+        String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
+        supplementary_url = supplementary_url.replace('{0}', "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'")
+        String fullURL = baseUrl + supplementary_url
+        log.info "generateURL($archiveProfile):  \n$fullURL"
+        return fullURL
+    }
+
+    static String removeAmpersand(String title) {
+        title = title.replaceAll(AMPERSAND, "")
+        return title.drop(title.lastIndexOf(File.separator) + 1)
+    }
+
+    static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
+        List folderName = []
+
+        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
+            folderName = FileUtil.ALL_FOLDERS.values().toList() - FileUtil.ALL_FOLDERS."DT"
+        } else {
+            folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
+        }
+
+        log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
+        return folderName
+    }
+
+    static void openNewTab(int sleepTime = 0) {
+        Robot r = new Robot();
+        r.keyPress(KeyEvent.VK_CONTROL);
+        r.keyPress(KeyEvent.VK_T);
+        r.keyRelease(KeyEvent.VK_T);
+        r.keyRelease(KeyEvent.VK_CONTROL);
+        if (sleepTime > 0) {
+            Thread.sleep(sleepTime)
+        }
+    }
 }

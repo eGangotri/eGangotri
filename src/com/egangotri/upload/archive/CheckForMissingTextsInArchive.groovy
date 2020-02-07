@@ -25,7 +25,7 @@ class CheckForMissingTextsInArchive {
         execute(archiveProfiles, metaDataMap)
     }
 
-    public static boolean execute(List profiles, Map metaDataMap) {
+    static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
 

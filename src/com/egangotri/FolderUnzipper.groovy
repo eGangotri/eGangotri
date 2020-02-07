@@ -30,7 +30,7 @@ class FolderUnzipper {
 
     }
 
-    public static unZip(File file) {
+    static unZip(File file) {
         String destDir = FOLDER_NAME
         if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && ( file.name.endsWith(ZIP[0]) || (file.name.endsWith(ZIP[1])) ) )
                 {

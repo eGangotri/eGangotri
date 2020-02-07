@@ -19,12 +19,8 @@ import java.awt.event.KeyEvent
 @Slf4j
 class ArchiveHandler {
     static final int ARCHIVE_WAITING_PERIOD = 200
-    static final int DEFAULT_SLEEP_TIME = 1000
-    static def SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
-    static def RANDOM_CREATOR_BY_PROFILE_MAP = [:]
+
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
-    static final String baseUrl = "https://archive.org/upload/?"
-    static final String AMPERSAND = "&"
     static final int UPLOAD_FAILURE_THRESHOLD = 5
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
@@ -48,13 +44,10 @@ class ArchiveHandler {
             String username = metaDataMap."${archiveProfile}.username"
             id.sendKeys(username)
             String kuta = metaDataMap."${archiveProfile}.kuta" ?: metaDataMap."kuta"
-            //println "username:$username kuta:$kuta"
             pass.sendKeys(kuta)
-            log.info("before click")
             //button.click doesnt work
             button.submit()
             //pass.click()
-            log.info("after click")
             Thread.sleep(ARCHIVE_WAITING_PERIOD * 5)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)));
@@ -92,7 +85,7 @@ class ArchiveHandler {
                 if (uploadables) {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
-                    String uploadLink = generateURL(archiveProfile, uploadables[0])
+                    String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
 
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
@@ -105,7 +98,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
-                            openNewTab(0)
+                            UploadUtils.openNewTab(0)
 
                             //Switch to new Tab
                             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
@@ -119,7 +112,7 @@ class ArchiveHandler {
                             catch (Exception e) {
                                 log.info("Exception while switching to new Tab", e)
                             }
-                            uploadLink = generateURL(archiveProfile, uploadableFile)
+                            uploadLink =  UploadUtils.generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
                             try {
@@ -198,7 +191,7 @@ class ArchiveHandler {
 
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
-            String uploadLink = generateURL(archiveProfile, fileName)
+            String uploadLink =  UploadUtils.generateURL(archiveProfile, fileName)
             log.info("$tabIndex) $uploadLink")
         }
     }
@@ -294,90 +287,4 @@ class ArchiveHandler {
         uploadButton.click()
         return identifier
     }
-
-    static String generateCreator(String archiveProfile) {
-        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
-            throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
-        }
-
-        if (!RANDOM_CREATOR_BY_PROFILE_MAP || !RANDOM_CREATOR_BY_PROFILE_MAP.containsKey(archiveProfile)) {
-            RANDOM_CREATOR_BY_PROFILE_MAP.put(archiveProfile, null)
-        }
-        if (!RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]) {
-            List firstNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
-            List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
-            Random rnd = new Random()
-            int idx1 = rnd.nextInt(firstNames.size)
-            int idx2 = rnd.nextInt(lastNames.size)
-            RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"] = "creator=${firstNames[idx1].trim()}_${lastNames[idx2].trim()}"
-        }
-        return RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
-    }
-
-
-    static String getOrGenerateSupplementaryURL(String archiveProfile) {
-        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
-            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
-        }
-        if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
-            def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-            String _creator = metaDataMap."${archiveProfile}.creator" ?: generateCreator(archiveProfile)
-            String _subjects = metaDataMap."${archiveProfile}.subjects" ?: "subject=" + _creator.replaceAll("creator=", "")
-            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
-            String _fileNameAsDesc = '{0}'
-            String _desc = metaDataMap."${archiveProfile}.description"
-            String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
-            String supplementary_url = _subjects + AMPERSAND + _lang + AMPERSAND + desc_and_file_name + AMPERSAND + _creator
-            if (metaDataMap."${archiveProfile}.collection") {
-                supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
-            }
-            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
-        }
-        return SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
-    }
-
-
-    static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
-        boolean isPDF = fileNameToBeUsedAsUniqueDescription.endsWith(EGangotriUtil.PDF)
-        if (isPDF) {
-            fileNameToBeUsedAsUniqueDescription = fileNameToBeUsedAsUniqueDescription.replace(EGangotriUtil.PDF, "")
-        }
-        log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
-
-        String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
-        supplementary_url = supplementary_url.replace('{0}', "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'")
-        String fullURL = baseUrl + supplementary_url
-        log.info "generateURL($archiveProfile):  \n$fullURL"
-        return fullURL
-    }
-
-    static String removeAmpersand(String title) {
-        title = title.replaceAll(AMPERSAND, "")
-        return title.drop(title.lastIndexOf(File.separator) + 1)
-    }
-
-    static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
-        List folderName = []
-
-        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
-            folderName = FileUtil.ALL_FOLDERS.values().toList() - FileUtil.ALL_FOLDERS."DT"
-        } else {
-            folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
-        }
-
-        log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
-        return folderName
-    }
-
-    static void openNewTab(int sleepTime = 0) {
-        Robot r = new Robot();
-        r.keyPress(KeyEvent.VK_CONTROL);
-        r.keyPress(KeyEvent.VK_T);
-        r.keyRelease(KeyEvent.VK_T);
-        r.keyRelease(KeyEvent.VK_CONTROL);
-        if (sleepTime > 0) {
-            Thread.sleep(sleepTime)
-        }
-    }
-
 }

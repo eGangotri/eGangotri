@@ -51,7 +51,7 @@ class UploadToArchive {
         execute(archiveProfiles, metaDataMap)
     }
 
-    public static boolean execute(List profiles, Map metaDataMap) {
+    static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
         //ArchiveHandler.generateSupplementaryUrlsForProfiles(profiles)
@@ -71,7 +71,7 @@ class UploadToArchive {
                     log.info("Uploaded $countOfUploadedItems docs with ${uploadStats[1]} Exceptions for Profile: $archiveProfile")
 
                     String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${uploadStats[1]} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
-                    rep += "\n ***All Items put for upload implies all were attempted usccesfully for upload. But there can be errors still after attempted upload. best to check manually."
+                    rep += "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
 
                 }

@@ -20,7 +20,7 @@ class UploadToGoogleDrive {
         execute(uploadProfiles, metaDataMap)
     }
 
-    public static void execute(List profiles, Hashtable<String, String> metaDataMap) {
+    static void execute(List profiles, Hashtable<String, String> metaDataMap) {
         log.info "Start uploading to Google Drive"
         Map<String, String> uploadSuccessCheckingMatrix = [:]
         profiles*.toString().eachWithIndex { uploadProfile, index ->

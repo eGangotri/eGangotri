@@ -11,13 +11,13 @@ import org.apache.poi.ss.usermodel.Sheet
 class WriteToExcel {
     static String ARCHIVE_IDENTIFIER = "archiveIdentifer.xls"
 
-    public static void toCSV(Map mapOfArchiveIdAndFileName) {
+    static void toCSV(Map mapOfArchiveIdAndFileName) {
         String filePath = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + ARCHIVE_IDENTIFIER
         int lastRowNum = getLastRowNum(filePath)
         write(filePath, lastRowNum)
     }
 
-    public static int getLastRowNum(String filePath) {
+    static int getLastRowNum(String filePath) {
         FileInputStream fis = null;
         HSSFWorkbook workbook
         int lastRowNum = 0
@@ -40,7 +40,7 @@ class WriteToExcel {
         return lastRowNum
     }
 
-    public static int write(String filePath, int lastRowNum){
+    static int write(String filePath, int lastRowNum){
         FileOutputStream fileOut = new FileOutputStream(filePath)
 
     }

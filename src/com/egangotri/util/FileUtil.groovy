@@ -36,7 +36,7 @@ class FileUtil {
     //static String PDF_REGEX = /.*.pdf/
     static String PDF_REGEX = PDF_ONLY == true ? /.*.pdf/ : /.*/
 
-    public static moveDir(String srcDir, String destDir) {
+    static moveDir(String srcDir, String destDir) {
         // create an ant-builder
         def ant = new AntBuilder()
         log.info("Src $srcDir " + "dst: $destDir")

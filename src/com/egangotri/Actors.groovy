@@ -19,7 +19,7 @@ class Actors {
         println "Repy is $reply1"
     }
 
-    public static void main(def args){
+    static void main(def args){
        // new Actors().test()
         List ZIP = [".zip", ".rar"]
         println ZIP.find{"ram.rar".endsWith(it.toString())}

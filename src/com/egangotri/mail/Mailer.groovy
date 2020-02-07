@@ -19,7 +19,7 @@ class Mailer {
         //sendMail("pandey78@gmail.com", "Test", "Hello")
     }
 
-    public static void sendMail(String to, String subject, String message) {
+    static void sendMail(String to, String subject, String message) {
         def props = new Properties()
         props.put "mail.smtps.auth", "true"
 

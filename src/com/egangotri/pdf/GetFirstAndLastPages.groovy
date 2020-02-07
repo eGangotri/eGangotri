@@ -19,11 +19,11 @@ class GetFirstAndLastPages {
     static String PDF = "pdf"
 
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         procAdInfinitum(FOLDER_NAME)
     }
 
-    public static void extractFirstAndLastPages(File directory)
+    static void extractFirstAndLastPages(File directory)
             throws DocumentException, IOException {
 
         for (File file : directory.listFiles()) {

@@ -12,8 +12,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 class PDFMerger {
 
 
-    public class ItextMerge {
-        public static void main(String[] args) {
+    class ItextMerge {
+        static void main(String[] args) {
             List<InputStream> list = new ArrayList<InputStream>();
             try {
                 // Source pdfs
@@ -42,7 +42,7 @@ class PDFMerger {
          * @param outputStream
          *            output file output stream
          */
-        public static void doMerge(List<InputStream> list, OutputStream outputStream)
+        static void doMerge(List<InputStream> list, OutputStream outputStream)
                 throws DocumentException, IOException {
             Document document = new Document();
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
