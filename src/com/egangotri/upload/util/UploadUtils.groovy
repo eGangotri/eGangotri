@@ -352,12 +352,12 @@ class UploadUtils {
         List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
         Random rnd = new Random()
         List creators = []
-        int MAX_CREATORS = 25
+        int MAX_CREATORS = 50
         int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
-        (0..max).each {
+        (1..max).each {
             int idx1 = rnd.nextInt(firstNames.size)
             int idx2 = rnd.nextInt(lastNames.size)
-            creators << "${firstNames[idx1].trim()}_${lastNames[idx2].trim()}"
+            creators << "${firstNames[idx1].trim().capitalize()} ${lastNames[idx2].trim().capitalize()}"
         }
         return creators
     }
