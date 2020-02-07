@@ -31,7 +31,7 @@ class ArchiveHandler {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
     }
 
-    static int uploadToArchive(def metaDataMap, String archiveProfile) {
+    static List<Integer> uploadToArchive(def metaDataMap, String archiveProfile) {
         return uploadToArchive(metaDataMap, archiveProfile, true)
     }
 
@@ -69,9 +69,11 @@ class ArchiveHandler {
     }
 
 
-    static int uploadToArchive(
+    static List<Integer> uploadToArchive(
             def metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
         int countOfUploadedItems = 0
+        int uploadFailureCount = 0
+
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
@@ -100,7 +102,6 @@ class ArchiveHandler {
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
-                        int uploadFailureCount = 0
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
@@ -153,7 +154,7 @@ class ArchiveHandler {
             e.printStackTrace()
         }
 
-        return countOfUploadedItems
+        return [countOfUploadedItems,uploadFailureCount]
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
@@ -203,23 +204,30 @@ class ArchiveHandler {
     }
 
 
-    static int uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
+    static List<Integer> uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         int uploadCount = 0
+        int uploadFailureCount = 0
+        List uploadStats = []
+
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
             log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                uploadCount += uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
+                 uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
+                uploadCount += uploadStats[0]
+                uploadFailureCount += uploadStats[1]
             }
         } else {
             log.info("No partitioning")
-            uploadCount = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, uploadables)
+            uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, uploadables)
+            uploadCount += uploadStats[0]
+            uploadFailureCount += uploadStats[1]
         }
-        uploadCount
+        [uploadCount,uploadFailureCount]
     }
 
 

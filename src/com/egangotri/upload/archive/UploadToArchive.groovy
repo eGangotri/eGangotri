@@ -58,7 +58,6 @@ class UploadToArchive {
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
-            Integer countOfUploadedItems = 0
 
             log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
             if (countOfUploadablePdfs) {
@@ -67,11 +66,14 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
-                    countOfUploadedItems = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
-                    log.info("Uploaded $countOfUploadedItems docs for Profile: $archiveProfile")
+                    List<Integer> uploadStats = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
+                    Integer countOfUploadedItems = uploadStats[0]
+                    log.info("Uploaded $countOfUploadedItems docs with ${uploadStats[1]} Exceptions for Profile: $archiveProfile")
 
-                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Successful Upload Count $countOfUploadedItems,\t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success.All Uploaded' : 'Some Failed!')
+                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${uploadStats[1]} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
+                    rep += "\n ***All Items put for upload implies all were attempted usccesfully for upload. But there can be errors still after attempted upload. best to check manually."
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
+
                 }
             } else {
                 log.info "No Files uploadable for Profile $archiveProfile"
