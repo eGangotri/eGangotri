@@ -4,10 +4,12 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
+import org.openqa.selenium.PageLoadStrategy
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -67,7 +69,10 @@ class ArchiveHandler {
         Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
-            WebDriver driver = new ChromeDriver()
+            ChromeOptions options = new ChromeOptions();
+            // This will disable [1581249040.339][SEVERE]: Timed out receiving message from renderer: 0.100E:\Sri Vatsa\Books\Buddhism\Bhikkhu Sujato\A-History-of-Mindfulness-How-Insight-Worsted-Tranquillity-in-the-Satipaṭṭhāna-Sutta Bhikkhu-Sujato.pdf
+            options.setPageLoadStrategy(PageLoadStrategy.NONE);
+            WebDriver driver = new ChromeDriver(options)
             boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             if (!loginSuccess) {
                 println("Login failed once for ${archiveProfile}. Will give it one more shot")
