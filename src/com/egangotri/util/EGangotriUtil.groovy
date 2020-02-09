@@ -29,6 +29,7 @@ class EGangotriUtil {
     static int PARTITION_SIZE = 250
     static boolean PARTITIONING_ENABLED = false
     static boolean GENERATE_RANDOM_CREATOR = false
+    static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []
 
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES

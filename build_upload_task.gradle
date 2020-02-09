@@ -5,11 +5,11 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
     /**
-     * For Single Profilef
+     * For Single Profile
        args = ["PRFL1"]
       For Multiple Profile
        args = ["PRFL1","PRFL2"]
       */
 
-    args = ["ANON3"]
+    args = ["PRFL1"]
 }

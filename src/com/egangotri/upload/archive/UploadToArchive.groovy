@@ -45,6 +45,9 @@ class UploadToArchive {
             if(generateRandomCreator){
                 if(generateRandomCreator.toLowerCase() != "false")
                 EGangotriUtil.GENERATE_RANDOM_CREATOR = true
+                if(generateRandomCreator.toLowerCase() != "true"){
+                    EGangotriUtil.ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = generateRandomCreator.split(",").collect{ -> it.trim()}
+                }
                 println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + generateRandomCreator)
             }
         }
