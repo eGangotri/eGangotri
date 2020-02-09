@@ -109,13 +109,13 @@ class ArchiveHandler {
                             catch (Exception e) {
                                 log.info("Exception while switching to new Tab", e)
                             }
-                            uploadLink =  UploadUtils.generateURL(archiveProfile, uploadableFile)
+                            uploadLink = UploadUtils.generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
                             try {
                                 String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
                             }
-                            catch (UnhandledAlertException uae){
+                            catch (UnhandledAlertException uae) {
                                 log.info("UnhandledAlertException while uploading. willl proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
@@ -124,8 +124,8 @@ class ArchiveHandler {
                                 log.info("Exception while uploading. willl proceed to next tab:${e.message}")
                                 uploadFailureCount++
                             }
-                            finally{
-                                if(uploadFailureCount > UPLOAD_FAILURE_THRESHOLD){
+                            finally {
+                                if (uploadFailureCount > UPLOAD_FAILURE_THRESHOLD) {
                                     println("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                     throw new Exception("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                 }
@@ -144,7 +144,7 @@ class ArchiveHandler {
             e.printStackTrace()
         }
 
-        return [countOfUploadedItems,uploadFailureCount]
+        return [countOfUploadedItems, uploadFailureCount]
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
@@ -188,7 +188,7 @@ class ArchiveHandler {
 
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
-            String uploadLink =  UploadUtils.generateURL(archiveProfile, fileName)
+            String uploadLink = UploadUtils.generateURL(archiveProfile, fileName)
             log.info("$tabIndex) $uploadLink")
         }
     }
@@ -207,7 +207,7 @@ class ArchiveHandler {
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                 uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
+                uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
                 uploadCount += uploadStats[0]
                 uploadFailureCount += uploadStats[1]
             }
@@ -217,7 +217,7 @@ class ArchiveHandler {
             uploadCount += uploadStats[0]
             uploadFailureCount += uploadStats[1]
         }
-        [uploadCount,uploadFailureCount]
+        [uploadCount, uploadFailureCount]
     }
 
 
