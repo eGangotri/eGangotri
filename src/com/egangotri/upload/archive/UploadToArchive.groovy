@@ -32,7 +32,7 @@ class UploadToArchive {
         if(settingsMetaDataMap){
             println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
             println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
-
+            def generateRandomCreator = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
             if(settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
                 EGangotriUtil.PARTITION_SIZE = settingsMetaDataMap.PARTITION_SIZE.toInteger()
                 EGangotriUtil.PARTITIONING_ENABLED = true
@@ -42,9 +42,10 @@ class UploadToArchive {
                 FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
                 println("EGangotriUtil.PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
-            if(settingsMetaDataMap.GENERATE_RANDOM_CREATOR && settingsMetaDataMap.GENERATE_RANDOM_CREATOR == "true"){
-                EGangotriUtil.GENERATE_RANDOM_CREATOR = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
-                println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + settingsMetaDataMap.GENERATE_RANDOM_CREATOR.toBoolean())
+            if(generateRandomCreator){
+                if(generateRandomCreator.toLowerCase() != "false")
+                EGangotriUtil.GENERATE_RANDOM_CREATOR = true
+                println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + generateRandomCreator)
             }
         }
 

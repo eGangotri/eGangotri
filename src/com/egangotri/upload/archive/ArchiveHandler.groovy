@@ -2,7 +2,6 @@ package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
-import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
@@ -13,8 +12,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.UnhandledAlertException
-import java.awt.Robot
-import java.awt.event.KeyEvent
 
 @Slf4j
 class ArchiveHandler {
@@ -119,12 +116,12 @@ class ArchiveHandler {
                                 String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae){
-                                log.info("UnhandledAlertException while uploading. willl proceed to next tab", uae)
+                                log.info("UnhandledAlertException while uploading. willl proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading. willl proceed to next tab", e)
+                                log.info("Exception while uploading. willl proceed to next tab:${e.message}")
                                 uploadFailureCount++
                             }
                             finally{
@@ -232,28 +229,31 @@ class ArchiveHandler {
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         try {
-            waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.INITIATE_FILE_UPLOAD_BUTTON)))
+            waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
-            println("Cannot find Upload Button. Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though")
-            throw new Exception("Cant click File Upload Button")
+            println("Cannot find Upload Button. " +
+                    "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though" + webDriverException.message)
+            throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
-        UploadUtils.clickUploadLink(driver, fileNameWithPath)
+        UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
 
         try {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
 
         catch (WebDriverException webDriverException) {
+            log.info("Exception while uploading. willl proceed to next tab", webDriverException.message)
             UploadUtils.hitEscapeKey()
-            UploadUtils.clickUploadLink(driver, fileNameWithPath)
+            UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
             try {
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
             }
             catch (WebDriverException webDriverException2) {
+                log.info("Exception while uploading. willl proceed to next tab", webDriverException2.message)
                 UploadUtils.hitEscapeKey()
-                UploadUtils.clickUploadLink(driver, fileNameWithPath)
+                UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
             }
         }
@@ -281,7 +281,7 @@ class ArchiveHandler {
         WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
 
-        String identifier = ""
+        String identifier = "" //driver.findElement(By.id("item_id")).innerHtml()
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
