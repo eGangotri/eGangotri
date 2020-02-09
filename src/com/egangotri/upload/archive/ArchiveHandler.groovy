@@ -72,7 +72,7 @@ class ArchiveHandler {
             ChromeOptions options = new ChromeOptions();
             // This will disable [1581249040.339][SEVERE]: Timed out receiving message from renderer: 0.100E:\Sri Vatsa\Books\Buddhism\Bhikkhu Sujato\A-History-of-Mindfulness-How-Insight-Worsted-Tranquillity-in-the-Satipaṭṭhāna-Sutta Bhikkhu-Sujato.pdf
             options.setPageLoadStrategy(PageLoadStrategy.NONE);
-            WebDriver driver = new ChromeDriver(options)
+            WebDriver driver = new ChromeDriver(/*options*/)
             boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             if (!loginSuccess) {
                 println("Login failed once for ${archiveProfile}. Will give it one more shot")
