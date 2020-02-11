@@ -100,7 +100,6 @@ class UploadToArchive {
                     log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
                     String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : 'Some Failed!')
-                    rep += "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }
             } else {
@@ -114,6 +113,7 @@ class UploadToArchive {
         uploadSuccessCheckingMatrix.each { k, v ->
             log.info "$k) $v"
         }
+        log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
 
         log.info "***Browser for Archive Upload Launches Done"
         return true
