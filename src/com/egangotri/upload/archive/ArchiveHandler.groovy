@@ -96,7 +96,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab(0.1)
+                            UploadUtils.openNewTab(0)
 
                             //Switch to new Tab
                             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
