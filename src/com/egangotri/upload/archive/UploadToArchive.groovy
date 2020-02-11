@@ -107,15 +107,15 @@ class UploadToArchive {
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-
-        log.info "Upload Report:\n"
-
-        uploadSuccessCheckingMatrix.each { k, v ->
-            log.info "$k) $v"
+        if(uploadSuccessCheckingMatrix){
+            log.info "Upload Report:\n"
+            uploadSuccessCheckingMatrix.each { k, v ->
+                log.info "$k) $v"
+            }
+            log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
         }
-        log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
 
-        log.info "***Browser for Archive Upload Launches Done"
+        log.info "***End of Upload to Archive Program"
         return true
     }
 }
