@@ -74,6 +74,7 @@ class UploadToArchive {
         }
 
         execute(archiveProfiles, metaDataMap)
+        System.exit(0)
     }
 
     static boolean execute(List profiles, Map metaDataMap) {
@@ -91,14 +92,14 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
-                    List<Integer> uploadStats = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
-                    Integer countOfUploadedItems = uploadStats[0]
-                    log.info("Uploaded $countOfUploadedItems docs with ${uploadStats[1]} Exceptions for Profile: $archiveProfile")
+                    List<List<Integer>> uploadStats = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
+                    Integer countOfUploadedItems = uploadStats.last()[0]
+                    Integer exceptionCount = uploadStats.last()[1]
+                    log.info("Uploaded $countOfUploadedItems docs with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
-                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${uploadStats[1]} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
+                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
                     rep += "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
-
                 }
             } else {
                 log.info "No Files uploadable for Profile $archiveProfile"

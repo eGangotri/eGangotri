@@ -195,12 +195,12 @@ class ArchiveHandler {
     }
 
 
-    static List<Integer> uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
+    static List<List<Integer>> uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
-        int uploadCount = 0
-        int uploadFailureCount = 0
-        List uploadStats = []
+        List<Integer> uploadCount = []
+        List<Integer> uploadFailureCount = []
+        List<Integer> uploadStats = []
 
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
@@ -209,14 +209,14 @@ class ArchiveHandler {
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
                 uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
-                uploadCount += uploadStats[0]
-                uploadFailureCount += uploadStats[1]
+                uploadCount << uploadStats[0]
+                uploadFailureCount << uploadStats[1]
             }
         } else {
             log.info("No partitioning")
             uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, uploadables)
-            uploadCount += uploadStats[0]
-            uploadFailureCount += uploadStats[1]
+            uploadCount << uploadStats[0]
+            uploadFailureCount << uploadStats[1]
         }
         [uploadCount, uploadFailureCount]
     }
