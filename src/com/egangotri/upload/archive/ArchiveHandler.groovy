@@ -23,8 +23,8 @@ class ArchiveHandler {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
     }
 
-    static List<Integer> uploadToArchive(def metaDataMap, String archiveProfile) {
-        return uploadToArchive(metaDataMap, archiveProfile, true)
+    static List<List<Integer>> performPartitioningAndUploadToArchive(def metaDataMap, String archiveProfile) {
+        return performPartitioningAndUploadToArchive(metaDataMap, archiveProfile, true)
     }
 
     static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
@@ -58,7 +58,7 @@ class ArchiveHandler {
     }
 
 
-    static List<Integer> uploadToArchive(
+    static List<Integer> uploadAllItemsToArchiveByProfile(
             def metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
@@ -88,7 +88,7 @@ class ArchiveHandler {
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
-                    ArchiveHandler.upload(driver, uploadables[0], uploadLink)
+                    ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
                     countOfUploadedItems++
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
@@ -114,7 +114,7 @@ class ArchiveHandler {
 
                             //Start Upload
                             try {
-                                String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
+                                String rchvIdntfr = ArchiveHandler.uploadOneItem(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
                                 log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae.message}")
@@ -195,34 +195,29 @@ class ArchiveHandler {
     }
 
 
-    static List<List<Integer>> uploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
+    static List<List<Integer>> performPartitioningAndUploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
-        List<Integer> uploadCount = []
-        List<Integer> uploadFailureCount = []
-        List<Integer> uploadStats = []
-
+        List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
             log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
-                uploadCount << uploadStats[0]
-                uploadFailureCount << uploadStats[1]
+                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
+                uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            uploadStats = uploadToArchive(metaDataMap, archiveProfile, uploadPermission, uploadables)
-            uploadCount << uploadStats[0]
-            uploadFailureCount << uploadStats[1]
+            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, archiveProfile, uploadPermission, uploadables)
+            uploadStatsList <<  uploadStats
         }
-        [uploadCount, uploadFailureCount]
+        uploadStatsList
     }
 
 
-    static String upload(WebDriver driver, String fileNameWithPath, String uploadLink) {
+    static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
         log.info("fileNameWithPath:$fileNameWithPath ready for upload")
         //Go to URL
         driver.navigate().to(uploadLink);

@@ -80,7 +80,6 @@ class UploadToArchive {
     static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
-        //ArchiveHandler.generateSupplementaryUrlsForProfiles(profiles)
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
@@ -92,10 +91,12 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
-                    List<List<Integer>> uploadStats = ArchiveHandler.uploadToArchive(metaDataMap, archiveProfile)
-                    Integer countOfUploadedItems = uploadStats.last()[0]
-                    Integer exceptionCount = uploadStats.last()[1]
-                    log.info("Uploaded $countOfUploadedItems docs with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
+                    List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
+                    String countOfUploadedItems = "(" + uploadStats.collect{ elem -> elem.first()}.join("+ ") + ") = " +
+                            uploadStats.collect{ elem -> elem.first()}.sum()
+                    String exceptionCount = "(" + uploadStats.collect{elem -> elem .last()}.join("+ ") + ") = " +
+                            uploadStats.collect{ elem  -> elem.last()}.sum()
+                    log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
                     String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
                     rep += "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
