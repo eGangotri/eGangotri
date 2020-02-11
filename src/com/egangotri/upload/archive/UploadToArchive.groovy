@@ -92,13 +92,14 @@ class UploadToArchive {
                 }
                 else{
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
-                    String countOfUploadedItems = "(" + uploadStats.collect{ elem -> elem.first()}.join("+ ") + ") = " +
-                            uploadStats.collect{ elem -> elem.first()}.sum()
-                    String exceptionCount = "(" + uploadStats.collect{elem -> elem .last()}.join("+ ") + ") = " +
+                    int uplddSum = uploadStats.collect{ elem -> elem.first()}.sum()
+                    String countOfUploadedItems = "(" + uploadStats.collect{ elem -> elem.first()}.join(" + ") + ") = " + uplddSum
+
+                    String exceptionCount = "(" + uploadStats.collect{elem -> elem .last()}.join(" + ") + ") = " +
                             uploadStats.collect{ elem  -> elem.last()}.sum()
                     log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
-                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == countOfUploadedItems ? 'Success. All items were put for upload.' : 'Some Failed!')
+                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : 'Some Failed!')
                     rep += "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }

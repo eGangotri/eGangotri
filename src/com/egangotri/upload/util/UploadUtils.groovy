@@ -207,7 +207,7 @@ class UploadUtils {
 
     static void pasteFileNameAndCloseUploadPopup(String fileName) {
         // A short pause, just to be sure that OK is selected
-        EGangotriUtil.sleepTimeInSeconds(1);
+        EGangotriUtil.sleepTimeInSeconds(1)
         setClipboardData(fileName);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();
