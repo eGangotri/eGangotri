@@ -49,7 +49,7 @@ class GoogleDriveHandler {
             println "kuta:$kuta"
             pass.sendKeys(kuta);
             pass.sendKeys(Keys.RETURN);
-            Thread.sleep(1000)
+            EGangotriUtil.sleepTimeInSeconds(1)
             driver.get("http://drive.google.com");
             if (upload) {
                 uploadToDrive(driver, folderName)

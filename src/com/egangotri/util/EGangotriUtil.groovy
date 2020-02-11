@@ -15,6 +15,9 @@ class EGangotriUtil {
     static final String MANUSCRIPTS = "MANUSCRIPTS"
 
 
+    static final int UPLOAD_FAILURE_THRESHOLD = 5
+    static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
+
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
 
@@ -70,7 +73,9 @@ class EGangotriUtil {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
     }
 
-
+    static void sleepTimeInSeconds(Float sleepTimeInSeconds){
+        Thread.sleep( (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
+    }
     static List getAllBulkUploadArchiveProfiles() {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
     }

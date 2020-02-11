@@ -33,9 +33,30 @@ class UploadToArchive {
             println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
             println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
             def generateRandomCreator = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
-            if(settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
-                EGangotriUtil.PARTITION_SIZE = settingsMetaDataMap.PARTITION_SIZE.toInteger()
-                EGangotriUtil.PARTITIONING_ENABLED = true
+            if(settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
+                try{
+                    Integer partitionSize = Integer.parseInt(settingsMetaDataMap.PARTITION_SIZE)
+                    if(partitionSize > 0){
+                        EGangotriUtil.PARTITION_SIZE = partitionSize
+                        EGangotriUtil.PARTITIONING_ENABLED = true
+                    }
+                }
+                catch(Exception e){
+                    println("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. Will not be considered")
+                }
+            }
+            //TAB_LAUNCH_TIME
+            if(settingsMetaDataMap.TAB_LAUNCH_TIME){
+                try{
+                    Float tabLaunchTime = Float.parseFloat(settingsMetaDataMap.TAB_LAUNCH_TIME)
+                    if(tabLaunchTime >= 0.1 && tabLaunchTime <= 5){
+                        EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= tabLaunchTime
+                    }
+                }
+                catch(Exception e){
+                    println("TAB_LAUNCH_TIME is not a valid decimal mumber. WIll not be considered")
+                }
+
             }
             if(settingsMetaDataMap.PDF_ONLY && settingsMetaDataMap.PDF_ONLY == "true"){
                 FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
@@ -82,6 +103,7 @@ class UploadToArchive {
             } else {
                 log.info "No Files uploadable for Profile $archiveProfile"
             }
+            EGangotriUtil.sleepTimeInSeconds(5)
         }
 
         log.info "Upload Report:\n"

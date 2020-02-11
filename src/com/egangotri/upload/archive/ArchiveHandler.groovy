@@ -17,10 +17,7 @@ import org.openqa.selenium.UnhandledAlertException
 
 @Slf4j
 class ArchiveHandler {
-    static final int ARCHIVE_WAITING_PERIOD = 200
-
     static String ARCHIVE_URL = "https://archive.org/account/login.php"
-    static final int UPLOAD_FAILURE_THRESHOLD = 5
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
@@ -47,7 +44,7 @@ class ArchiveHandler {
             //button.click doesnt work
             button.submit()
             //pass.click()
-            Thread.sleep(ARCHIVE_WAITING_PERIOD * 5)
+            EGangotriUtil.sleepTimeInSeconds( 0.2)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)));
             loginSucess = true
@@ -66,7 +63,6 @@ class ArchiveHandler {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
 
-        Thread.sleep(4000)
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
             ChromeOptions options = new ChromeOptions();
@@ -91,7 +87,7 @@ class ArchiveHandler {
 
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
-                    Thread.sleep(ARCHIVE_WAITING_PERIOD)
+                    EGangotriUtil.sleepTimeInSeconds(0.2)
                     ArchiveHandler.upload(driver, uploadables[0], uploadLink)
                     countOfUploadedItems++
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
@@ -100,7 +96,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab(0)
+                            UploadUtils.openNewTab(0.1)
 
                             //Switch to new Tab
                             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
@@ -121,18 +117,18 @@ class ArchiveHandler {
                                 String rchvIdntfr = ArchiveHandler.upload(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
-                                log.info("UnhandledAlertException while uploading. willl proceed to next tab: ${uae.message}")
+                                log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading. willl proceed to next tab:${e.message}")
+                                log.info("Exception while uploading($uploadableFile). willl proceed to next tab:${e.message}")
                                 uploadFailureCount++
                             }
                             finally {
-                                if (uploadFailureCount > UPLOAD_FAILURE_THRESHOLD) {
-                                    println("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                                    throw new Exception("Too many upload Exceptions More than ${UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
+                                    println("Too many upload Exceptions More than ${ EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                    throw new Exception("Too many upload Exceptions More than ${ EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                 }
                             }
                             countOfUploadedItems++
@@ -155,7 +151,7 @@ class ArchiveHandler {
 
     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
         int countOfUploadedItems = 0
-        Thread.sleep(4000)
+        EGangotriUtil.sleepTimeInSeconds(4)
         try {
 
             WebDriver driver = new ChromeDriver()
@@ -249,21 +245,24 @@ class ArchiveHandler {
         }
 
         catch (WebDriverException webDriverException) {
-            log.info("Exception while uploading. willl proceed to next tab", webDriverException.message)
+            log.info("webDriverException Attempt-2. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${ webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
             try {
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
+                log.info("${fileNameWithPath} must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.info("Exception while uploading. willl proceed to next tab", webDriverException2.message)
+                log.info("webDriverException Attempt-3. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${ webDriverException2.message}) ")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
+                log.info("${fileNameWithPath} must have succeeded if u see this")
             }
         }
         WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
+
 
         WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()

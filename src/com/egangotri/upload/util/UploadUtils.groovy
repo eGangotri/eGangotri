@@ -207,7 +207,7 @@ class UploadUtils {
 
     static void pasteFileNameAndCloseUploadPopup(String fileName) {
         // A short pause, just to be sure that OK is selected
-        Thread.sleep(1000);
+        EGangotriUtil.sleepTimeInSeconds(1);
         setClipboardData(fileName);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();
@@ -240,7 +240,7 @@ class UploadUtils {
     static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
-        Thread.sleep(1000);
+        EGangotriUtil.sleepTimeInSeconds(1);
         setClipboardData(fileName);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();
@@ -382,7 +382,7 @@ class UploadUtils {
             String _fileNameAsDesc = '{0}'
             String _desc = metaDataMap."${archiveProfile}.description"
             String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
-            String supplementary_url = _lang + AMPERSAND + desc_and_file_name
+            String supplementary_url = desc_and_file_name + AMPERSAND +  _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
             }
@@ -440,14 +440,14 @@ class UploadUtils {
         return folderName
     }
 
-    static void openNewTab(int sleepTime = 0) {
+    static void openNewTab(float sleepTimeInSeconds = 0) {
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);
         r.keyRelease(KeyEvent.VK_T);
         r.keyRelease(KeyEvent.VK_CONTROL);
-        if (sleepTime > 0) {
-            Thread.sleep(sleepTime)
+        if (sleepTimeInSeconds > 0) {
+            EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
         }
     }
 }
