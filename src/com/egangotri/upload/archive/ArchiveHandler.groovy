@@ -88,8 +88,14 @@ class ArchiveHandler {
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
-                    ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
-                    countOfUploadedItems++
+                    try{
+                        ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
+                        countOfUploadedItems++
+                    }
+                    catch (Exception e) {
+                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ?  'will proceed to next tab' : '' }:${e.message}")
+                        uploadFailureCount++
+                    }
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
@@ -116,7 +122,7 @@ class ArchiveHandler {
                                 String rchvIdntfr = uploadOneItem(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
-                                log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae.message}")
+                                log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
                                 log.info("Attempt-2 following UnhandledAlertException")
@@ -131,20 +137,20 @@ class ArchiveHandler {
                                     log.info("File $uploadableFile most likely uploaded if you see this")
                                 }
                                 catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae2.message}")
+                                    log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
                                     log.info("Attempt-2 following UnhandledAlertException failed")
                                     continue
                                 }
                                 catch (Exception e) {
-                                    log.info("Exception while uploading($uploadableFile). willl proceed to next tab:${e.message}")
+                                    log.info("Exception while uploading($uploadableFile). will proceed to next tab:${e.message}")
                                     uploadFailureCount++
                                     continue
                                 }
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading($uploadableFile). willl proceed to next tab:${e.message}")
+                                log.info("Exception while uploading($uploadableFile). will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
