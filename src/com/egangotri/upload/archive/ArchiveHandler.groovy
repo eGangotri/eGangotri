@@ -181,6 +181,9 @@ class ArchiveHandler {
         WebElement avatar = driver.findElementByClassName("avatar")
         String userName = avatar.getAttribute("alt")
         log.info("userName: ${userName}")
+        if(sentenceFragment == "UploadCompletionTime"){
+            UploadUtils.openNewTab(0)
+        }
         driver.get(ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase()))
         WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
