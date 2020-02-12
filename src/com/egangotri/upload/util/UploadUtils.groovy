@@ -8,6 +8,7 @@ import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.chrome.ChromeDriver
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -235,6 +236,17 @@ class UploadUtils {
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
+    }
+
+    static boolean openNewTab(ChromeDriver driver, List chromeTabsList){
+        try {
+            driver.switchTo().window(chromeTabsList.last())
+        }
+        catch (Exception e) {
+            log.info("Exception while switching to new Tab", e)
+            return false
+        }
+        return true
     }
 
     static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {

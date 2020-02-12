@@ -44,7 +44,7 @@ class ArchiveHandler {
             //button.click doesnt work
             button.submit()
             //pass.click()
-            EGangotriUtil.sleepTimeInSeconds( 0.2)
+            EGangotriUtil.sleepTimeInSeconds(0.2)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
             wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)));
             loginSucess = true
@@ -103,33 +103,54 @@ class ArchiveHandler {
                             //there is a bug in retrieving the size of chromeTabsList in Selenium.
                             //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
                             println "chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
-                            try {
-                                driver.switchTo().window(chromeTabsList.last())
+                            boolean _tabCreated = UploadUtils.openNewTab(driver,chromeTabsList)
+                            if(_tabCreated){
                                 tabIndex++
-                            }
-                            catch (Exception e) {
-                                log.info("Exception while switching to new Tab", e)
+                            } else{
+                                continue
                             }
                             uploadLink = UploadUtils.generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
                             try {
-                                String rchvIdntfr = ArchiveHandler.uploadOneItem(driver, uploadableFile, uploadLink)
+                                String rchvIdntfr = uploadOneItem(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
                                 log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
+                                log.info("Attempt-2 following UnhandledAlertException")
+                                try {
+                                    boolean tabCreated = UploadUtils.openNewTab(driver,chromeTabsList)
+                                    if(tabCreated){
+                                        tabIndex++
+                                    } else {
+                                        continue
+                                    }
+                                    uploadOneItem(driver, uploadableFile, uploadLink)
+                                    log.info("File $uploadableFile most likely uploaded if you see this")
+                                }
+                                catch (UnhandledAlertException uae2) {
+                                    log.info("UnhandledAlertException while uploading($uploadableFile). willl proceed to next tab: ${uae2.message}")
+                                    UploadUtils.hitEnterKey()
+                                    uploadFailureCount++
+                                    log.info("Attempt-2 following UnhandledAlertException failed")
+                                    continue
+                                }
+                                catch (Exception e) {
+                                    log.info("Exception while uploading($uploadableFile). willl proceed to next tab:${e.message}")
+                                    uploadFailureCount++
+                                    continue
+                                }
                             }
                             catch (Exception e) {
                                 log.info("Exception while uploading($uploadableFile). willl proceed to next tab:${e.message}")
                                 uploadFailureCount++
+                                continue
                             }
-                            finally {
-                                if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
-                                    println("Too many upload Exceptions More than ${ EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                                    throw new Exception("Too many upload Exceptions More than ${ EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                                }
+                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
+                                println("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                             }
                             countOfUploadedItems++
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
@@ -211,7 +232,7 @@ class ArchiveHandler {
         } else {
             log.info("No partitioning")
             List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, archiveProfile, uploadPermission, uploadables)
-            uploadStatsList <<  uploadStats
+            uploadStatsList << uploadStats
         }
         uploadStatsList
     }
@@ -238,17 +259,18 @@ class ArchiveHandler {
         try {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
-
         catch (WebDriverException webDriverException) {
-            log.info("webDriverException Attempt-2. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${ webDriverException.message}) ")
+            log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
             try {
+                log.info("Attempt-2")
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
                 log.info("${fileNameWithPath} must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.info("webDriverException Attempt-3. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${ webDriverException2.message}) ")
+                log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${webDriverException2.message}) ")
+                log.info("Attempt-3")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
