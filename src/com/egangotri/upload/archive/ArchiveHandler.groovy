@@ -189,7 +189,7 @@ class ArchiveHandler {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
         WebElement resultsCount = driver.findElementByClassName("results_count")
         if (resultsCount) {
-            log.info("Results Count at Login Time" + resultsCount.text)
+            log.info("Results Count at $sentenceFragment: " + resultsCount.text)
         }
     }
 
