@@ -96,8 +96,8 @@ class UploadToArchive {
                     String statsAsPlusSeparatedValues = uploadStats.collect{ elem -> elem.first()}.join(" + ")
                     String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum": uploadStats.first().first()
 
-                    int excSum = uploadStats.collect{elem -> elem .last()}.join(" + ")
-                    String excpsAsPlusSeparatedValues = uploadStats.collect{ elem  -> elem.last()}.sum()
+                    int excSum = uploadStats.collect{ elem  -> elem.last()}.sum()
+                    String excpsAsPlusSeparatedValues = uploadStats.collect{elem -> elem .last()}.join(" + ")
                     String exceptionCount = uploadStats.size() > 1 ? "($excSum) = $excpsAsPlusSeparatedValues" : uploadStats.first().last()
                     log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
