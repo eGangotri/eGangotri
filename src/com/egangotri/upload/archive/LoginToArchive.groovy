@@ -3,8 +3,6 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @Slf4j
 class LoginToArchive {
@@ -37,7 +35,7 @@ class LoginToArchive {
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         ARCHIVE_PROFILES*.toString().each { String archiveProfile ->
             println "Logging for Profile $archiveProfile"
-            ArchiveHandler.loginToArchive(metaDataMap, ArchiveHandler.ARCHIVE_URL, archiveProfile)
+            ArchiveHandler.loginToArchive(metaDataMap, ArchiveHandler.ARCHIVE_LOGIN_URL, archiveProfile)
         }
         println "***Browser Launches Done"
     }

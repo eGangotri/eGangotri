@@ -17,7 +17,8 @@ import org.openqa.selenium.UnhandledAlertException
 
 @Slf4j
 class ArchiveHandler {
-    static String ARCHIVE_URL = "https://archive.org/account/login.php"
+    static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
+    static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
 
     static void loginToArchive(def metaDataMap, String archiveProfile) {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
@@ -30,8 +31,8 @@ class ArchiveHandler {
     static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
         boolean loginSucess = false
         try {
-            driver.get(ARCHIVE_URL)
-            log.info("Login to Archive URL $ARCHIVE_URL")
+            driver.get(ARCHIVE_LOGIN_URL)
+            log.info("Login to Archive URL $ARCHIVE_LOGIN_URL")
             //Login
             WebElement id = driver.findElement(By.name(UploadUtils.USERNAME_TEXTBOX_NAME))
             WebElement pass = driver.findElement(By.name(UploadUtils.PASSWORD_TEXTBOX_NAME))
@@ -84,10 +85,10 @@ class ArchiveHandler {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
-                    getResultsCount(driver, "LoginTime")
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
+                    getResultsCount(driver, "LoginTime")
                     try {
                         ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
                         countOfUploadedItems++
@@ -177,6 +178,12 @@ class ArchiveHandler {
     }
 
     static void getResultsCount(WebDriver driver, String sentenceFragment) {
+        WebElement avatar = driver.findElementByClassName("avatar")
+        String userName = avatar.getAttribute("alt")
+        log.info("userName: ${userName}")
+        driver.get(ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase()))
+        WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
         WebElement resultsCount = driver.findElementByClassName("results_count")
         if (resultsCount) {
             log.info("Results Count at Login Time" + resultsCount.text)

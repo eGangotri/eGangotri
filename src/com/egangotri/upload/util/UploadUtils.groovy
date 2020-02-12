@@ -30,7 +30,7 @@ class UploadUtils {
     static final int DEFAULT_SLEEP_TIME = 1000
     static Map<String,String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static Map<String,List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
-    static final String baseUrl = "https://archive.org/upload/?"
+    static final String ARCHIVE_UPLOAD_URL = "https://archive.org/upload?"
     static final String AMPERSAND = "&"
 
     static readTextFileAndDumpToList(String fileName){
@@ -429,7 +429,7 @@ class UploadUtils {
 
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
         supplementary_url = supplementary_url.replace('{0}', "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'")
-        String fullURL = baseUrl + supplementary_url
+        String fullURL = ARCHIVE_UPLOAD_URL + supplementary_url
         log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL
     }
