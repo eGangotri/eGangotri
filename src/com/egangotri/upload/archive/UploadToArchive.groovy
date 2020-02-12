@@ -91,6 +91,7 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
+
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
                     int uplddSum = uploadStats.collect{ elem -> elem.first()}.sum()
                     String statsAsPlusSeparatedValues = uploadStats.collect{ elem -> elem.first()}.join(" + ")

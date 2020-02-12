@@ -84,16 +84,16 @@ class ArchiveHandler {
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
-
+                    getResultsCount(driver, "LoginTime")
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
-                    try{
+                    try {
                         ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
                         countOfUploadedItems++
                     }
                     catch (Exception e) {
-                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ?  'will proceed to next tab' : '' }:${e.message}")
+                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? 'will proceed to next tab' : ''}:${e.message}")
                         uploadFailureCount++
                     }
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
@@ -109,10 +109,10 @@ class ArchiveHandler {
                             //there is a bug in retrieving the size of chromeTabsList in Selenium.
                             //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
                             println "chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
-                            boolean _tabCreated = UploadUtils.openNewTab(driver,chromeTabsList)
-                            if(_tabCreated){
+                            boolean _tabCreated = UploadUtils.openNewTab(driver, chromeTabsList)
+                            if (_tabCreated) {
                                 tabIndex++
-                            } else{
+                            } else {
                                 continue
                             }
                             uploadLink = UploadUtils.generateURL(archiveProfile, uploadableFile)
@@ -127,8 +127,8 @@ class ArchiveHandler {
                                 uploadFailureCount++
                                 log.info("Attempt-2 following UnhandledAlertException")
                                 try {
-                                    boolean tabCreated = UploadUtils.openNewTab(driver,chromeTabsList)
-                                    if(tabCreated){
+                                    boolean tabCreated = UploadUtils.openNewTab(driver, chromeTabsList)
+                                    if (tabCreated) {
                                         tabIndex++
                                     } else {
                                         continue
@@ -162,11 +162,11 @@ class ArchiveHandler {
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
                         }
                     }
+                    getResultsCount(driver, "UploadCompletionTime")
                 } else {
                     log.info "No File uploadable for profile $archiveProfile"
                 }
             }
-
         }
         catch (Exception e) {
             e.printStackTrace()
@@ -174,6 +174,13 @@ class ArchiveHandler {
 
         return [countOfUploadedItems, uploadFailureCount]
         //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
+    }
+
+    static void getResultsCount(WebDriver driver, String sentenceFragment) {
+        WebElement resultsCount = driver.findElementByClassName("results_count")
+        if (resultsCount) {
+            log.info("Results Count at Login Time" + resultsCount.text)
+        }
     }
 
     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
