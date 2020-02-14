@@ -5,10 +5,13 @@ import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
 import groovy.util.logging.Slf4j
+import org.openqa.selenium.Alert
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.awt.Robot
 import java.awt.Toolkit
@@ -417,14 +420,17 @@ class UploadUtils {
         log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
 
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
-        supplementary_url = supplementary_url.replace('{0}', "'${removeAmpersand(fileNameToBeUsedAsUniqueDescription)}'")
+        supplementary_url = supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
         String fullURL = ARCHIVE_UPLOAD_URL + supplementary_url
         log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL
     }
 
-    static String removeAmpersand(String title) {
-        title = title.replaceAll(AMPERSAND, "")
+    static String _removeAmpersandAndFetchTitleOnly(String title) {
+        return getFileTitleOnly(title.replaceAll(AMPERSAND, ""))
+    }
+
+    static String getFileTitleOnly(String title) {
         return title.drop(title.lastIndexOf(File.separator) + 1)
     }
 
@@ -451,7 +457,7 @@ class UploadUtils {
             driver.switchTo().window(chromeTabsList.last())
         }
         catch (Exception e) {
-            log.info("Exception while switching to new Tab", e)
+            log.info("Exception while switching to new Tab ${e.message}")
             return false
         }
         return true
@@ -465,6 +471,18 @@ class UploadUtils {
         r.keyRelease(KeyEvent.VK_CONTROL);
         if (sleepTimeInSeconds > 0) {
             EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
+        }
+    }
+
+    static void checkAlert(WebDriver driver) {
+        try {
+            WebDriverWait webDriverWait = new WebDriverWait(driver, 1)
+            webDriverWait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            println("Alert Text: ${alert.getText()}")
+            //alert.accept();
+        } catch (Exception e) {
+            log.info("no alert detected")
         }
     }
 }

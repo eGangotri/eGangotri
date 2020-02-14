@@ -102,7 +102,7 @@ class ArchiveHandler {
                     if (uploadables.size() > 1) {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
-                            log.info "Uploading: $uploadableFile @ tabNo:$tabIndex"
+                            log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableFile)} @ tabNo:$tabIndex"
                             UploadUtils.openNewTab(0)
 
                             //Switch to new Tab
@@ -120,35 +120,37 @@ class ArchiveHandler {
                                 String rchvIdntfr = uploadOneItem(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
-                                log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae.message}")
+                                log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
+                                log.error("will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for ($uploadableFile).")
+                                log.info("Attempt-2 following UnhandledAlertException for (${UploadUtils.getFileTitleOnly(uploadableFile)}).")
                                 try {
                                     UploadUtils.openNewTab(0)
                                     tabIndex++
                                     boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                     if (!tabSwitched) {
+                                        log.error("tab not switched. contiuing to next")
                                         continue
                                     }
                                     uploadOneItem(driver, uploadableFile, uploadLink)
-                                    log.info("File $uploadableFile most likely uploaded if you see this")
+                                    log.info("File ${UploadUtils.getFileTitleOnly(uploadableFile)} most likely uploaded if you see this")
                                 }
                                 catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae2.message}")
+                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
-                                    log.info("Failed. Attempt-2 for ($uploadableFile). following UnhandledAlertException")
+                                    log.info("Failed. Attempt-2 for (${UploadUtils.getFileTitleOnly(uploadableFile)}). following UnhandledAlertException")
                                     continue
                                 }
                                 catch (Exception e) {
-                                    log.info("Exception while uploading($uploadableFile). will proceed to next tab:${e.message}")
+                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab:${e.message}")
                                     uploadFailureCount++
                                     continue
                                 }
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading($uploadableFile). will proceed to next tab:${e.message}")
+                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
@@ -304,6 +306,7 @@ class ArchiveHandler {
                 log.info("${fileNameWithPath} must have succeeded if u see this")
             }
         }
+        UploadUtils.checkAlert(driver)
         WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
 
