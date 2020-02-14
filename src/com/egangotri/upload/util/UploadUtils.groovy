@@ -238,17 +238,6 @@ class UploadUtils {
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
-    static boolean openNewTab(ChromeDriver driver, List chromeTabsList){
-        try {
-            driver.switchTo().window(chromeTabsList.last())
-        }
-        catch (Exception e) {
-            log.info("Exception while switching to new Tab", e)
-            return false
-        }
-        return true
-    }
-
     static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
@@ -450,6 +439,22 @@ class UploadUtils {
 
         log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
         return folderName
+    }
+
+    static boolean switchToLastOpenTab(ChromeDriver driver){
+        ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
+        //there is a bug in retrieving the size of chromeTabsList in Selenium.
+        //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
+        println "chromeTabsList.size(): ${chromeTabsList.size()}"
+        println "chromeTabsList: ${chromeTabsList}"
+        try {
+            driver.switchTo().window(chromeTabsList.last())
+        }
+        catch (Exception e) {
+            log.info("Exception while switching to new Tab", e)
+            return false
+        }
+        return true
     }
 
     static void openNewTab(float sleepTimeInSeconds = 0) {

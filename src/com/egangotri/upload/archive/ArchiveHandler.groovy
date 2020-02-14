@@ -106,14 +106,11 @@ class ArchiveHandler {
                             UploadUtils.openNewTab(0)
 
                             //Switch to new Tab
-                            ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
-                            //there is a bug in retrieving the size of chromeTabsList in Selenium.
-                            //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
-                            println "chromeTabsList.size(): ${chromeTabsList.size()} , tabIndex:$tabIndex"
-                            boolean _tabCreated = UploadUtils.openNewTab(driver, chromeTabsList)
-                            if (_tabCreated) {
+                            boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                            if (_tabSwitched) {
                                 tabIndex++
                             } else {
+                                log.info("Tab Creation Failed.")
                                 continue
                             }
                             uploadLink = UploadUtils.generateURL(archiveProfile, uploadableFile)
@@ -126,12 +123,12 @@ class ArchiveHandler {
                                 log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException")
+                                log.info("Attempt-2 following UnhandledAlertException for ($uploadableFile).")
                                 try {
-                                    boolean tabCreated = UploadUtils.openNewTab(driver, chromeTabsList)
-                                    if (tabCreated) {
-                                        tabIndex++
-                                    } else {
+                                    UploadUtils.openNewTab(0)
+                                    tabIndex++
+                                    boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                                    if (!tabSwitched) {
                                         continue
                                     }
                                     uploadOneItem(driver, uploadableFile, uploadLink)
@@ -141,7 +138,7 @@ class ArchiveHandler {
                                     log.info("UnhandledAlertException while uploading($uploadableFile). will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
-                                    log.info("Attempt-2 following UnhandledAlertException failed")
+                                    log.info("Failed. Attempt-2 for ($uploadableFile). following UnhandledAlertException")
                                     continue
                                 }
                                 catch (Exception e) {
@@ -181,15 +178,22 @@ class ArchiveHandler {
         WebElement avatar = driver.findElementByClassName("avatar")
         String userName = avatar.getAttribute("alt")
         log.info("userName: ${userName}")
+        String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
         if(sentenceFragment == "UploadCompletionTime"){
             UploadUtils.openNewTab(0)
+            UploadUtils.switchToLastOpenTab(driver)
+            driver.navigate().to(archiveUserAccountUrl);
+
         }
-        driver.get(ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase()))
+        driver.get(archiveUserAccountUrl)
         WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
         WebElement resultsCount = driver.findElementByClassName("results_count")
         if (resultsCount) {
             log.info("Results Count at $sentenceFragment: " + resultsCount.text)
+            if(sentenceFragment == "UploadCompletionTime"){
+                log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
+            }
         }
     }
 
