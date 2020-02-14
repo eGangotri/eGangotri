@@ -479,7 +479,7 @@ class UploadUtils {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)
             webDriverWait.until(ExpectedConditions.alertIsPresent());
             Alert alert = driver.switchTo().alert();
-            println("Alert Text: ${alert.getText()}")
+            println("found Alert Text: ${alert.getText()}")
             //alert.accept();
         } catch (Exception e) {
             log.info("no alert detected")
