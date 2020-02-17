@@ -45,16 +45,16 @@ class UploadToArchive {
                     println("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. Will not be considered")
                 }
             }
-            //TAB_LAUNCH_TIME
-            if(settingsMetaDataMap.TAB_LAUNCH_TIME){
+            //CALIBRATE_TIMES
+            if(settingsMetaDataMap.CALIBRATE_TIMES){
                 try{
-                    Float tabLaunchTime = Float.parseFloat(settingsMetaDataMap.TAB_LAUNCH_TIME)
-                    if(tabLaunchTime >= 0.1 && tabLaunchTime <= 5){
-                        EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= tabLaunchTime
+                    Float calibrateTimes = Float.parseFloat(settingsMetaDataMap.CALIBRATE_TIMES)
+                    if(calibrateTimes >= 0.1 && calibrateTimes <= 5){
+                        EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= calibrateTimes
                     }
                 }
                 catch(Exception e){
-                    println("TAB_LAUNCH_TIME is not a valid decimal mumber. WIll not be considered")
+                    println("CALIBRATE_TIMES is not a valid decimal mumber. WIll not be considered")
                 }
 
             }
