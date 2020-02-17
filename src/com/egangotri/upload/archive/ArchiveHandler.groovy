@@ -124,17 +124,17 @@ class ArchiveHandler {
                                 log.error("will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for (${UploadUtils.getFileTitleOnly(uploadableFile)}).")
+                                log.info("Attempt-2 following UnhandledAlertException for ('${UploadUtils.getFileTitleOnly(uploadableFile)}').")
                                 try {
-                                    UploadUtils.openNewTab(0)
-                                    tabIndex++
-                                    boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
-                                    if (!tabSwitched) {
+                                        UploadUtils.openNewTab(0)
+                                        tabIndex++
+                                        boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                                        if (!tabSwitched) {
                                         log.error("tab not switched. contiuing to next")
                                         continue
                                     }
                                     uploadOneItem(driver, uploadableFile, uploadLink)
-                                    log.info("File ${UploadUtils.getFileTitleOnly(uploadableFile)} most likely uploaded if you see this")
+                                    log.info("File '${UploadUtils.getFileTitleOnly(uploadableFile)}' most likely uploaded if you see this")
                                 }
                                 catch (UnhandledAlertException uae2) {
                                     log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab: ${uae2.message}")
