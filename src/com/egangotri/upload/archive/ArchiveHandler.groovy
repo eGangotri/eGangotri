@@ -268,7 +268,7 @@ class ArchiveHandler {
 
 
     static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
-        log.info("fileNameWithPath:$fileNameWithPath ready for upload")
+        log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
         //Go to URL
         driver.navigate().to(uploadLink);
         driver.get(uploadLink);
@@ -289,21 +289,21 @@ class ArchiveHandler {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {
-            log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${webDriverException.message}) ")
+            log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
             try {
                 log.info("Attempt-2")
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("${fileNameWithPath} must have succeeded if u see this")
+                log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading(${fileNameWithPath}).(${webDriverException2.message}) ")
+                log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException2.message}) ")
                 log.info("Attempt-3")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("${fileNameWithPath} must have succeeded if u see this")
+                log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
             }
         }
         UploadUtils.checkAlert(driver)
