@@ -134,7 +134,7 @@ class ArchiveHandler {
                                         continue
                                     }
                                     uploadOneItem(driver, uploadableFile, uploadLink)
-                                    log.info("File '${UploadUtils.getFileTitleOnly(uploadableFile)}' most likely uploaded if you see this")
+                                    log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
                                     log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab: ${uae2.message}")
