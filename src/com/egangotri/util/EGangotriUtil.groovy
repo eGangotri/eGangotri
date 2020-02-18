@@ -73,8 +73,8 @@ class EGangotriUtil {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
     }
 
-    static void sleepTimeInSeconds(Float sleepTimeInSeconds){
-        Thread.sleep( (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
+    static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overRideToOneSec = false){
+        Thread.sleep(overRideToOneSec ? 1000 : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
     }
     static List getAllBulkUploadArchiveProfiles() {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")

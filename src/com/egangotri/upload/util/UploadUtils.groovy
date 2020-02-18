@@ -209,19 +209,7 @@ class UploadUtils {
         return pdfs
     }
 
-    static void pasteFileNameAndCloseUploadPopup(String fileName) {
-        // A short pause, just to be sure that OK is selected
-        EGangotriUtil.sleepTimeInSeconds(1)
-        setClipboardData(fileName);
-        //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
-    }
+
 
     static void hitEscapeKey() {
         Robot robot = new Robot();
@@ -235,22 +223,18 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    static void clickChooseFilesToUploadButton(WebDriver driver, String fileNameWithPath){
+    static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath){
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
-    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
-        log.info "$fileName  being pasted"
-        // A short pause, just to be sure that OK is selected
-        EGangotriUtil.sleepTimeInSeconds(1);
-        setClipboardData(fileName);
+    static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
+        // A short pause is a must and must be atleast a second
+        EGangotriUtil.sleepTimeInSeconds(1, true)
+        setClipboardData(fileNameWithPath);
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_TAB);
-        robot.keyRelease(KeyEvent.VK_TAB);
-
         robot.keyPress(KeyEvent.VK_CONTROL);
         robot.keyPress(KeyEvent.VK_V);
         robot.keyRelease(KeyEvent.VK_V);
@@ -463,7 +447,7 @@ class UploadUtils {
         return true
     }
 
-    static void openNewTab(float sleepTimeInSeconds = 0) {
+    static void openNewTab(float sleepTimeInSeconds = 0.1) {
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);
@@ -474,6 +458,24 @@ class UploadUtils {
         }
     }
 
+
+    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
+        log.info "$fileName  being pasted"
+        // A short pause, just to be sure that OK is selected
+        EGangotriUtil.sleepTimeInSeconds(1);
+        setClipboardData(fileName);
+        //native key strokes for CTRL, V and ENTER keys
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_TAB);
+        robot.keyRelease(KeyEvent.VK_TAB);
+
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+    }
     static void checkAlert(WebDriver driver) {
         try {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)

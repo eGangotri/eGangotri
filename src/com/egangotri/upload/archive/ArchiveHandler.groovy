@@ -103,7 +103,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableFile)} @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab(0.1)
+                            UploadUtils.openNewTab()
 
                             //Switch to new Tab
                             boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
@@ -126,7 +126,7 @@ class ArchiveHandler {
                                 uploadFailureCount++
                                 log.info("Attempt-2 following UnhandledAlertException for ('${UploadUtils.getFileTitleOnly(uploadableFile)}').")
                                 try {
-                                        UploadUtils.openNewTab(0)
+                                        UploadUtils.openNewTab()
                                         tabIndex++
                                         boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                         if (!tabSwitched) {
@@ -182,7 +182,7 @@ class ArchiveHandler {
         log.info("userName: ${userName}")
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
         if(sentenceFragment == "UploadCompletionTime"){
-            UploadUtils.openNewTab(0)
+            UploadUtils.openNewTab()
             UploadUtils.switchToLastOpenTab(driver)
             driver.navigate().to(archiveUserAccountUrl);
 
@@ -284,7 +284,7 @@ class ArchiveHandler {
                     "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though" + webDriverException.message)
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
-        UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
+        UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
         log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
 
         try {
@@ -293,7 +293,7 @@ class ArchiveHandler {
         catch (WebDriverException webDriverException) {
             log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
-            UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
+            UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
             try {
                 log.info("Attempt-2")
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
@@ -303,7 +303,7 @@ class ArchiveHandler {
                 log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException2.message}) ")
                 log.info("Attempt-3")
                 UploadUtils.hitEscapeKey()
-                UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
+                UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
                 log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
             }
