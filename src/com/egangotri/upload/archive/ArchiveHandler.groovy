@@ -103,7 +103,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadableFile in uploadables.drop(1)) {
                             log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableFile)} @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab(0)
+                            UploadUtils.openNewTab(0.1)
 
                             //Switch to new Tab
                             boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
@@ -274,6 +274,7 @@ class ArchiveHandler {
         driver.get(uploadLink);
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        log.info("waiting for ${UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON} to be clickable")
         try {
             waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
         }
@@ -284,6 +285,7 @@ class ArchiveHandler {
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
         UploadUtils.clickChooseFilesToUploadButton(driver, fileNameWithPath)
+        log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
 
         try {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
