@@ -32,7 +32,7 @@ class UploadToArchive {
         if(settingsMetaDataMap){
             println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
             println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
-            def generateRandomCreator = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
+            def generateRandomCreatorFlag = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
             if(settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
                 try{
                     Integer partitionSize = Integer.parseInt(settingsMetaDataMap.PARTITION_SIZE)
@@ -63,13 +63,23 @@ class UploadToArchive {
                 FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
                 println("EGangotriUtil.PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
-            if(generateRandomCreator){
-                if(generateRandomCreator.toLowerCase() != "false")
+
+            if(generateRandomCreatorFlag){
+                if(generateRandomCreatorFlag.toLowerCase() != "false")
                 EGangotriUtil.GENERATE_RANDOM_CREATOR = true
-                if(generateRandomCreator.toLowerCase() != "true"){
-                    EGangotriUtil.ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = generateRandomCreator.split(",").collect{ -> it.trim()}
+                //if the value is not a Boolean but a CSV
+                if(generateRandomCreatorFlag.toLowerCase() != "true"){
+                    EGangotriUtil.ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = generateRandomCreatorFlag.split(",").collect{ -> it.trim()}
                 }
-                println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + generateRandomCreator)
+                println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + generateRandomCreatorFlag)
+            }
+
+            if(settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT && settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.isInteger()){
+                int randomCreatorMaxLimit = settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.toInteger()
+                if(randomCreatorMaxLimit >= 20 &&  randomCreatorMaxLimit <= 1000){
+                    UploadUtils.RANDOM_CREATOR_MAX_LIMIT = randomCreatorMaxLimit
+                }
+                println("EGangotriUtil.RANDOM_CREATOR_MAX_LIMIT: " + UploadUtils.RANDOM_CREATOR_MAX_LIMIT )
             }
         }
 

@@ -29,12 +29,14 @@ class UploadUtils {
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
-
     static final int DEFAULT_SLEEP_TIME = 1000
+
     static Map<String,String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static Map<String,List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
     static final String ARCHIVE_UPLOAD_URL = "https://archive.org/upload?"
     static final String AMPERSAND = "&"
+
+    static int RANDOM_CREATOR_MAX_LIMIT = 50
 
     static readTextFileAndDumpToList(String fileName){
         List list = []
@@ -340,7 +342,7 @@ class UploadUtils {
         List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
         Random rnd = new Random()
         List creators = []
-        int MAX_CREATORS = 50
+        int MAX_CREATORS = UploadUtils.RANDOM_CREATOR_MAX_LIMIT
         int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
         (1..max).each {
             int idx1 = rnd.nextInt(firstNames.size)
