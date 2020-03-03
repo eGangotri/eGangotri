@@ -240,7 +240,7 @@ class ArchiveHandler {
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
             String uploadLink = UploadUtils.generateURL(archiveProfile, fileName)
-            log.info("$tabIndex) $uploadLink")
+            log.info("$tabIndex) [$archiveProfile] $uploadLink")
         }
     }
 
@@ -268,15 +268,16 @@ class ArchiveHandler {
 
 
     static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
-        log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
-
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR){
             String lastStringFragAfterDash = fileNameWithPath.contains("-") ? fileNameWithPath.split("-").last() : fileNameWithPath
-            String removeFileEnding =
-                    lastStringFragAfterDash.contains(".") ?
-                            lastStringFragAfterDash.trim().tokenize(".").first() : lastStringFragAfterDash
+            String removeFileEnding = lastStringFragAfterDash
+            if(lastStringFragAfterDash.contains(".")){
+                removeFileEnding =  "'${UploadUtils.getFileTitleOnly(lastStringFragAfterDash)}'"
+            }
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + removeFileEnding : uploadLink
         }
+        log.info("URL for upload: \n${uploadLink}")
+        log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
 
         //Go to URL
         driver.navigate().to(uploadLink);
@@ -339,9 +340,16 @@ class ArchiveHandler {
              driver.findElement(By.className("additional_meta_remove_link")).click()
          }*/
 
-
+        long startTime = System.currentTimeMillis()
+        println("waiitng for page url" + startTime)
         WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)));
+        long endTime = System.currentTimeMillis()
+        println("waiting over for page url generation ${(endTime-startTime)/1000} seconds" )
+
+        WebDriverWait wait2 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
 
         String identifier = "" //driver.findElement(By.id("item_id")).innerHtml()
 

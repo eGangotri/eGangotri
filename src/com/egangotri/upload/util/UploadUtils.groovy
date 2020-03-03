@@ -27,6 +27,7 @@ class UploadUtils {
     static final String USER_MENU_ID = "user-menu" // only created when User is Signed In
     static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = "file_button_initial"
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
+    static final String PAGE_URL_ITEM_ID = "item_id"
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
     static final int DEFAULT_SLEEP_TIME = 1000
@@ -408,7 +409,6 @@ class UploadUtils {
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
         supplementary_url = supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
         String fullURL = ARCHIVE_UPLOAD_URL + supplementary_url
-        log.info "generateURL($archiveProfile):  \n$fullURL"
         return fullURL
     }
 
@@ -417,7 +417,7 @@ class UploadUtils {
     }
 
     static String getFileTitleOnly(String title) {
-        return title.drop(title.lastIndexOf(File.separator) + 1)
+        return title.drop(title.lastIndexOf(File.separator) + 1).trim()
     }
 
     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
