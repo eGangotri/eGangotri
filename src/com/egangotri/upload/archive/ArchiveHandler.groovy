@@ -269,11 +269,11 @@ class ArchiveHandler {
 
     static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR){
-            String lastStringFragAfterDash = fileNameWithPath.contains("-") ? fileNameWithPath.split("-").last() : fileNameWithPath
-            String removeFileEnding = lastStringFragAfterDash
-            if(lastStringFragAfterDash.contains(".")){
-                removeFileEnding =  "'${UploadUtils.getFileTitleOnly(lastStringFragAfterDash)}'"
-            }
+            log.info("fileNameWithPath $fileNameWithPath   :'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
+            String lastStringFragAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameWithPath)
+            log.info("lastStringFragAfterDash: \n${lastStringFragAfterDash}")
+            String removeFileEnding = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
+            log.info("removeFileEnding: \n${removeFileEnding}")
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + removeFileEnding : uploadLink
         }
         log.info("URL for upload: \n${uploadLink}")

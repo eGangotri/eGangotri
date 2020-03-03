@@ -416,8 +416,21 @@ class UploadUtils {
         return getFileTitleOnly(title.replaceAll(AMPERSAND, ""))
     }
 
+    /***
+     *
+     * @param title Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
+     * @return Hamlet by Shakespeare.pdf
+     */
     static String getFileTitleOnly(String title) {
-        return title.drop(title.lastIndexOf(File.separator) + 1).trim()
+        return title.trim().drop(title.lastIndexOf(File.separator) + 1)
+    }
+
+    static String removeFileEnding(String title){
+        return title.contains(".") ? title.trim().tokenize(".").dropRight(1).join(".") : title
+    }
+
+    static String getLastPortionOfTitleUsingSeparator(String title, String separator = "-"){
+        return title.contains(separator) ? title.split("-").last() : title
     }
 
     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
