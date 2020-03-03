@@ -22,7 +22,7 @@ class UploadToArchive {
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
-            println "args $args"
+            log.info "args $args"
             archiveProfiles = args.toList()
         }
 
@@ -30,8 +30,8 @@ class UploadToArchive {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if(settingsMetaDataMap){
-            println "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
-            println "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
+            log.info "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
+            log.info "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
             def generateRandomCreatorFlag = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
             if(settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.isInteger() && settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
                 try{
@@ -42,7 +42,7 @@ class UploadToArchive {
                     }
                 }
                 catch(Exception e){
-                    println("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. Will not be considered")
+                    log.info("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. Will not be considered")
                 }
             }
             //CALIBRATE_TIMES
@@ -54,23 +54,28 @@ class UploadToArchive {
                     }
                 }
                 catch(Exception e){
-                    println("CALIBRATE_TIMES is not a valid decimal mumber. WIll not be considered")
+                    log.info("CALIBRATE_TIMES is not a valid decimal mumber. WIll not be considered")
                 }
 
             }
             if(settingsMetaDataMap.PDF_ONLY && settingsMetaDataMap.PDF_ONLY == "true"){
                 FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
                 FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
-                println("EGangotriUtil.PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
+                log.info("PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
             if(settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING && settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING == "true"){
                 EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING = settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean()
-                println("EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING: " + settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean())
+                log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean())
+            }
+
+            if(settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL && settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL == "true"){
+                EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL = settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean()
+                log.info("ADD_RANDOM_INTEGER_TO_PAGE_URL: " + settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean())
             }
 
             if(settingsMetaDataMap.GENERATE_ONLY_URLS && settingsMetaDataMap.GENERATE_ONLY_URLS == "true"){
                 EGangotriUtil.GENERATE_ONLY_URLS = settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean()
-                println("EGangotriUtil.GENERATE_ONLY_URLS: " + settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean())
+                log.info("GENERATE_ONLY_URLS: " + settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean())
             }
 
 
@@ -81,7 +86,7 @@ class UploadToArchive {
                 if(generateRandomCreatorFlag.toLowerCase() != "true"){
                     EGangotriUtil.ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = generateRandomCreatorFlag.split(",").collect{ -> it.trim()}
                 }
-                println("EGangotriUtil.GENERATE_RANDOM_CREATOR: " + generateRandomCreatorFlag)
+                log.info("GENERATE_RANDOM_CREATOR: " + generateRandomCreatorFlag)
             }
 
             if(settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT && settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.isInteger()){
@@ -89,7 +94,7 @@ class UploadToArchive {
                 if(randomCreatorMaxLimit >= 20 &&  randomCreatorMaxLimit <= 1000){
                     UploadUtils.RANDOM_CREATOR_MAX_LIMIT = randomCreatorMaxLimit
                 }
-                println("EGangotriUtil.RANDOM_CREATOR_MAX_LIMIT: " + UploadUtils.RANDOM_CREATOR_MAX_LIMIT )
+                log.info("RANDOM_CREATOR_MAX_LIMIT: " + UploadUtils.RANDOM_CREATOR_MAX_LIMIT )
             }
         }
 

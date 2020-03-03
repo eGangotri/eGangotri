@@ -46,8 +46,8 @@ class ArchiveHandler {
             button.submit()
             //pass.click()
             EGangotriUtil.sleepTimeInSeconds(0.2)
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)));
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)))
             loginSucess = true
         }
         catch (Exception e) {
@@ -66,22 +66,23 @@ class ArchiveHandler {
 
         // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
-            ChromeOptions options = new ChromeOptions();
+            ChromeOptions options = new ChromeOptions()
             // This will disable [1581249040.339][SEVERE]: Timed out receiving message from renderer: 0.100E:\Sri Vatsa\Books\Buddhism\Bhikkhu Sujato\A-History-of-Mindfulness-How-Insight-Worsted-Tranquillity-in-the-Satipaṭṭhāna-Sutta Bhikkhu-Sujato.pdf
-            options.setPageLoadStrategy(PageLoadStrategy.NONE);
+            options.setPageLoadStrategy(PageLoadStrategy.NONE)
             WebDriver driver = new ChromeDriver(/*options*/)
             boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             if (!loginSuccess) {
-                println("Login failed once for ${archiveProfile}. Will give it one more shot")
+                log.info("Login failed once for ${archiveProfile}. Will give it one more shot")
                 loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             }
             if (!loginSuccess) {
-                println("Login failed for Second Time for ${archiveProfile}. will now quit")
+                log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
                 throw new Exception("Not Continuing becuase of Login Failure twice")
             }
 
             if (uploadPermission) {
                 if (uploadables) {
+                    String uploadedItemIdentifier = ""
                     log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
@@ -90,7 +91,7 @@ class ArchiveHandler {
                     EGangotriUtil.sleepTimeInSeconds(0.2)
                     getResultsCount(driver, "LoginTime")
                     try {
-                        ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
+                        uploadedItemIdentifier = ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
                         countOfUploadedItems++
                     }
                     catch (Exception e) {
@@ -117,7 +118,7 @@ class ArchiveHandler {
 
                             //Start Upload
                             try {
-                                String rchvIdntfr = uploadOneItem(driver, uploadableFile, uploadLink)
+                                uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink)
                             }
                             catch (UnhandledAlertException uae) {
                                 log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
@@ -133,7 +134,7 @@ class ArchiveHandler {
                                         log.error("tab not switched. contiuing to next")
                                         continue
                                     }
-                                    uploadOneItem(driver, uploadableFile, uploadLink)
+                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink)
                                     log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
@@ -155,7 +156,7 @@ class ArchiveHandler {
                                 continue
                             }
                             if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
-                                println("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                log.info("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                                 throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                             }
                             countOfUploadedItems++
@@ -173,7 +174,6 @@ class ArchiveHandler {
         }
 
         return [countOfUploadedItems, uploadFailureCount]
-        //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
     static void getResultsCount(WebDriver driver, String sentenceFragment) {
@@ -184,7 +184,7 @@ class ArchiveHandler {
         if(sentenceFragment == "UploadCompletionTime"){
             UploadUtils.openNewTab()
             UploadUtils.switchToLastOpenTab(driver)
-            driver.navigate().to(archiveUserAccountUrl);
+            driver.navigate().to(archiveUserAccountUrl)
 
         }
         driver.get(archiveUserAccountUrl)
@@ -219,7 +219,7 @@ class ArchiveHandler {
 
                     //new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.textToBePresentInElement(By.cssSelector("h3.co-top-row")))
                     String numOfUploads = driver.findElement(By.cssSelector("h3.co-top-row")).text
-                    println "$numOfUploads $fileName"
+                    log.info "$numOfUploads $fileName"
                     results << [numOfUploads, fileName]
                 }
 
@@ -269,19 +269,15 @@ class ArchiveHandler {
 
     static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR){
-            log.info("fileNameWithPath $fileNameWithPath   :'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
             String lastStringFragAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameWithPath)
-            log.info("lastStringFragAfterDash: \n${lastStringFragAfterDash}")
             String removeFileEnding = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
-            log.info("removeFileEnding: \n${removeFileEnding}")
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + removeFileEnding : uploadLink
         }
         log.info("URL for upload: \n${uploadLink}")
         log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
-
         //Go to URL
-        driver.navigate().to(uploadLink);
-        driver.get(uploadLink);
+        driver.navigate().to(uploadLink)
+        driver.get(uploadLink)
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         log.info("waiting for ${UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON} to be clickable")
@@ -290,7 +286,7 @@ class ArchiveHandler {
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
-            println("Cannot find Upload Button. " +
+            log.info("Cannot find Upload Button. " +
                     "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though" + webDriverException.message)
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
@@ -332,7 +328,7 @@ class ArchiveHandler {
 
             collectionSpan.click()
             Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
-            collDropDown.selectByValue("data:opensource_media");
+            collDropDown.selectByValue("data:opensource_media")
         }
 
         //remove this junk value that pops-up for profiles with Collections
@@ -340,18 +336,40 @@ class ArchiveHandler {
              driver.findElement(By.className("additional_meta_remove_link")).click()
          }*/
 
-        long startTime = System.currentTimeMillis()
-        println("waiitng for page url" + startTime)
         WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        wait.until(
-                ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)));
-        long endTime = System.currentTimeMillis()
-        println("waiting over for page url generation ${(endTime-startTime)/1000} seconds" )
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
 
         WebDriverWait wait2 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
+        Random _rndm = new Random()
+        String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+        log.info("identifier is ${identifier}")
 
-        String identifier = "" //driver.findElement(By.id("item_id")).innerHtml()
+        if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
+            int i = 0
+            identifier += "_" + _rndm.nextInt(100)
+            println(i++)
+            driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).click()
+            println(i++)
+            driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).clear()
+            println(i++)
+            driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).sendKeys(identifier)
+            println(i++)
+            UploadUtils.hitEnterKey()
+            println(i++)
+            WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            println(i++)
+            //fails here
+            wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+            println(i++)
+            identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            println(i++)
+            log.info("identifier after alteration is ${identifier}")
+        }
+        UploadUtils.storeArchiveIdentifierInFile(UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)
+
+        WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()

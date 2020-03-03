@@ -10,18 +10,18 @@ import spock.lang.Specification
  */
 class ArchiveHandlerTest extends Specification {
 /*    def "A Test for Test"() {
-        println "test"
+        log.info "test"
         given:
         int val1 = 5
         when:
         int result = val1*5
         then:
-        println result
+        log.info result
         result == 25
     }*/
 
 /*    def "test preCutOffSubFolders"(){
-        println "preCutOffSubFolders"
+        log.info "preCutOffSubFolders"
         setup:
         GroovyMock(FileUtil, global: true)
         FileUtil.PRE_CUTOFF >> "preCutOff"
@@ -30,7 +30,7 @@ class ArchiveHandlerTest extends Specification {
         def preCutOffFolders = ArchiveHandler.preCutOffSubFolders( "C:\\hw\\amit")
         def result = true
         then:
-        println preCutOffFolders
+        log.info preCutOffFolders
         assert result == true
     }*/
 }

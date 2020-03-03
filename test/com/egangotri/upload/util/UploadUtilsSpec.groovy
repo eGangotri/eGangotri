@@ -13,7 +13,7 @@ class UploadUtilsSpec extends Specification {
     }
 
     def cleanup(){
-        println "cleanup"
+        log.info "cleanup"
     }
 
     void "test encodeString"(){
@@ -27,7 +27,7 @@ class UploadUtilsSpec extends Specification {
                 "description=Sanskrit%20Vyakarana%20Books%20(व्याकरण%20ग्रंथाः)",
                 "description=Complete%20Collection%20of%20Vraj%20Vallabh%20Dwivedijis%20Works"
         ].each{
-            println java.net.URLDecoder.decode(it, "UTF-8")
+            log.info java.net.URLDecoder.decode(it, "UTF-8")
         }
 
         def val2 = java.net.URLDecoder.decode("description=Manuscripts%20of%20Dharmartha%20Trust%20(%20धर्मार्थ%20ट्रस्ट%20)%20%20at%20Raghunath%20Temple,%20Jammu,J%26K", "UTF-8") //== "dehydrogenase+%28NADP%2B%29"//("2 3 4")
@@ -43,8 +43,8 @@ class UploadUtilsSpec extends Specification {
         List list = UploadUtils.getPdfsInPreCutOffFolder(folder)
 
         expect: "list is empty"
-        println "folder path is " +  folder.absolutePath
-        println "list $list"
+        log.info "folder path is " +  folder.absolutePath
+        log.info "list $list"
         list.isEmpty()
     }
 
@@ -55,8 +55,8 @@ class UploadUtilsSpec extends Specification {
         List list = UploadUtils.getPdfsInPreCutOffFolder(folder)
 
         expect: "list should have been populated"
-        println "folder path is " +  folder.absolutePath
-        println "list $list"
+        log.info "folder path is " +  folder.absolutePath
+        log.info "list $list"
         list.size() > 0
     }
 

@@ -28,6 +28,7 @@ class UploadUtils {
     static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = "file_button_initial"
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final String PAGE_URL_ITEM_ID = "item_id"
+    static final String PAGE_URL_INPUT_FIELD = "input_field"
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
     static final int DEFAULT_SLEEP_TIME = 1000
@@ -92,7 +93,7 @@ class UploadUtils {
     static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
         List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
-        println "folders: $folders"
+        log.info "folders: $folders"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOnePdfInPreCutOffFolders(folders)) {
             atlestOne = true
         } else if (hasAtleastOnePdfExcludePreCutOff(folders)) {
@@ -105,7 +106,7 @@ class UploadUtils {
     static List<String> getUploadablePdfsForProfile(String archiveProfile) {
         List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
         List<String> pdfs = []
-        println "getUploadablePdfsForProfile: $archiveProfile"
+        log.info "getUploadablePdfsForProfile: $archiveProfile"
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
             pdfs = getPdfsInPreCutOffFolders(folders)
         } else {
@@ -228,8 +229,10 @@ class UploadUtils {
 
     static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath){
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
+        log.info("${CHOOSE_FILES_TO_UPLOAD_BUTTON} clicked")
         fileButtonInitial.click()
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
+        Thread.sleep(2000)
     }
 
     static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
@@ -261,7 +264,7 @@ class UploadUtils {
 
             def x = ['nnn', 'E:\\bngl2\\85685712 Jennings Vedantic Buddhism Of The Buddha.pdf']
             def y = "85685712 Jennings Vedantic Buddhism Of The Buddha.pdf"
-            println(x.findIndexOf { it =~ /($y)$/ })
+            log.info(x.findIndexOf { it =~ /($y)$/ })
             filterables.each { String filterable ->
                 int count2 = 0
                 try {
@@ -269,13 +272,13 @@ class UploadUtils {
                         String y2 = pdf.substring(src.length() + 1)
 
                         if(count2++ <10){
-                            println( "$filterable == ${y2} ($pdf) " +  filterable.equals(y2))
+                            log.info( "$filterable == ${y2} ($pdf) " +  filterable.equals(y2))
                         }
                         filterable.equals(y2)
                     }
 
                     if (idx >= 0) {
-                        println("${count++}).idx:$idx, $filterable == ${allPdfs.get(idx)}")
+                        log.info("${count++}).idx:$idx, $filterable == ${allPdfs.get(idx)}")
                         allPdfs.remove(idx)
                     }
                 }
@@ -370,9 +373,12 @@ class UploadUtils {
             }
 
             String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
-            String _fileNameAsDesc = '{0}'
+            String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
-            String desc_and_file_name = _desc ? "${_desc}, ${_fileNameAsDesc}" : "description=" + _fileNameAsDesc
+            if(_desc && _desc?.contains("description=")){
+                _desc = _desc.replaceAll("description=", "")
+            }
+            String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
             String supplementary_url = desc_and_file_name + AMPERSAND +  _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
@@ -451,8 +457,8 @@ class UploadUtils {
         ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
         //there is a bug in retrieving the size of chromeTabsList in Selenium.
         //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
-        println "chromeTabsList.size(): ${chromeTabsList.size()}"
-        println "chromeTabsList: ${chromeTabsList}"
+        log.info "chromeTabsList.size(): ${chromeTabsList.size()}"
+        log.info "chromeTabsList: ${chromeTabsList}"
         driver.switchTo().window(chromeTabsList.last())
         }
         catch (Exception e) {
@@ -496,10 +502,17 @@ class UploadUtils {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)
             webDriverWait.until(ExpectedConditions.alertIsPresent());
             Alert alert = driver.switchTo().alert();
-            println("found Alert Text: ${alert.getText()}")
+            log.info("found Alert Text: ${alert.getText()}")
             //alert.accept();
         } catch (Exception e) {
             log.info("no alert detected")
+        }
+    }
+
+    static void storeArchiveIdentifierInFile(String fileName, String _identifier){
+        File file = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
+        if(file.exists()){
+            file.append("$fileName, $_identifier\n")
         }
     }
 }

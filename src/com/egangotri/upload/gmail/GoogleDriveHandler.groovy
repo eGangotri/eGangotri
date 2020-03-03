@@ -27,9 +27,9 @@ class GoogleDriveHandler {
         boolean res = false
         try {
             String userHome = System.getProperty('user.home')
-            println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
+            log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
             System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe");
-            // println "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
+            // log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
             WebDriver driver = new ChromeDriver()
             driver.get("https://accounts.google.com");
@@ -46,7 +46,7 @@ class GoogleDriveHandler {
 
             WebElement pass = driver.findElement(By.name("password"));
             String kuta = metaDataMap."${loginProfile}.kuta" ?: metaDataMap."kuta"
-            println "kuta:$kuta"
+            log.info "kuta:$kuta"
             pass.sendKeys(kuta);
             pass.sendKeys(Keys.RETURN);
             EGangotriUtil.sleepTimeInSeconds(1)

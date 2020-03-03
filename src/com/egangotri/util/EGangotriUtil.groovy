@@ -25,6 +25,8 @@ class EGangotriUtil {
     static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    static final String ARCHIVE_IDENTIFIER_FILE = EGANGOTRI_BASE_DIR + File.separator + "identifier.txt"
+
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
 
@@ -35,6 +37,9 @@ class EGangotriUtil {
     static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []
 
     static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
+
+    static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = false
+
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
     static final int TIMEOUT_IN_TWO_SECONDS = 5
@@ -53,7 +58,7 @@ class EGangotriUtil {
         File propertiesFile = new File(filePath)
 
         if(!propertiesFile.exists()){
-            println("$filePath not found.")
+            log.info("$filePath not found.")
             return []
         }
 
@@ -95,7 +100,7 @@ class EGangotriUtil {
     }
 
     static boolean isAManuscriptProfile(String uploadProfile) {
-        println "uploadProfile $uploadProfile ="
+        log.info "uploadProfile $uploadProfile ="
         return getAllManuscriptProfiles().contains(uploadProfile)
     }
 

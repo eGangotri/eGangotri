@@ -12,16 +12,16 @@ class LoginToArchive {
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
-            println "args $args"
+            log.info "args $args"
             archiveProfiles = args.toList()
         }
         log.info "login to Archive"
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         archiveProfiles*.toString().each { String archiveProfile ->
-            println "Logging for Profile $archiveProfile"
+            log.info "Logging for Profile $archiveProfile"
             ArchiveHandler.loginToArchive(metaDataMap, archiveProfile)
         }
-        println "***Browser Launches Done"
+        log.info "***Browser Launches Done"
     }
 }
 
