@@ -34,6 +34,7 @@ class EGangotriUtil {
     static boolean GENERATE_RANDOM_CREATOR = false
     static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []
 
+    static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
     static final int TIMEOUT_IN_TWO_SECONDS = 5
