@@ -270,7 +270,7 @@ class ArchiveHandler {
     static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
         log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
 
-        if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING){
+        if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR){
             String lastStringFragAfterDash = fileNameWithPath.contains("-") ? fileNameWithPath.split("-").last() : fileNameWithPath
             String removeFileEnding =
                     lastStringFragAfterDash.contains(".") ?
