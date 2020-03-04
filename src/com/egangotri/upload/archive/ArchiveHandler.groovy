@@ -346,24 +346,21 @@ class ArchiveHandler {
         log.info("identifier is ${identifier}")
 
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
-            int i = 0
             identifier += "_" + _rndm.nextInt(100)
-            println(i++)
-            driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).click()
-            println(i++)
+            driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).clear()
-            println(i++)
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).sendKeys(identifier)
-            println(i++)
             UploadUtils.hitEnterKey()
-            println(i++)
             WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-            println(i++)
-            //fails here
+            boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
+            //for a strange reason the first tab doesnt have alert
+            //after have alert alert text is always nulll
+            if(alertWasDetected){
+                driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).click()
+                UploadUtils.hitEnterKey()
+            }
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
-            println(i++)
             identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-            println(i++)
             log.info("identifier after alteration is ${identifier}")
         }
         UploadUtils.storeArchiveIdentifierInFile(UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)

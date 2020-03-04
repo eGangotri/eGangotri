@@ -28,6 +28,7 @@ class UploadUtils {
     static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = "file_button_initial"
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final String PAGE_URL_ITEM_ID = "item_id"
+    static final String PAGE_URL = "page_url"
     static final String PAGE_URL_INPUT_FIELD = "input_field"
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
@@ -497,16 +498,24 @@ class UploadUtils {
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
-    static void checkAlert(WebDriver driver) {
+    static boolean checkAlert(WebDriver driver, Boolean accept = true) {
+        boolean alertWasDetected = false
         try {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)
             webDriverWait.until(ExpectedConditions.alertIsPresent());
             Alert alert = driver.switchTo().alert();
-            log.info("found Alert Text: ${alert.getText()}")
-            //alert.accept();
+            log.info("Found Alert Text: ->${alert.getText()}<-")
+            if(accept){
+                alert.accept()
+            }
+            else{
+                alert.dismiss()
+            }
+            alertWasDetected = true
         } catch (Exception e) {
-            log.info("no alert detected")
+            log.info("No alert detected")
         }
+        return alertWasDetected
     }
 
     static void storeArchiveIdentifierInFile(String fileName, String _identifier){
