@@ -95,7 +95,7 @@ class ArchiveHandler {
                         countOfUploadedItems++
                     }
                     catch (Exception e) {
-                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? 'will proceed to next tab' : ''}:${e.message}")
+                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
                         uploadFailureCount++
                     }
                     // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
@@ -138,20 +138,20 @@ class ArchiveHandler {
                                     log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab: ${uae2.message}")
+                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
                                     log.info("Failed. Attempt-2 for (${UploadUtils.getFileTitleOnly(uploadableFile)}). following UnhandledAlertException")
                                     continue
                                 }
                                 catch (Exception e) {
-                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab:${e.message}")
+                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
                                     uploadFailureCount++
                                     continue
                                 }
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}). will proceed to next tab:${e.message}")
+                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
