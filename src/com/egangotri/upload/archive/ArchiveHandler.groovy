@@ -354,7 +354,7 @@ class ArchiveHandler {
             WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
-            //after have alert alert text is always nulll
+            //after that have alert. alert text is always nulll
             if(alertWasDetected){
                 driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).click()
                 UploadUtils.hitEnterKey()
