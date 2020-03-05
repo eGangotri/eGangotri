@@ -287,7 +287,7 @@ class ArchiveHandler {
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
             log.info("Cannot find Upload Button. " +
-                    "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though" + webDriverException.message)
+                    "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
         UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
@@ -297,7 +297,7 @@ class ArchiveHandler {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {
-            log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException.message}) ")
+            log.info("WebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
             try {
@@ -306,7 +306,7 @@ class ArchiveHandler {
                 log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.info("WebDriverException. Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException2.message}) ")
+                log.info("WebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').\n(${webDriverException2.message}) ")
                 log.info("Attempt-3")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)

@@ -232,7 +232,12 @@ class UploadUtils {
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         log.info("${CHOOSE_FILES_TO_UPLOAD_BUTTON} clicked")
         fileButtonInitial.click()
-        pasteFileNameAndCloseUploadPopup(fileNameWithPath)
+        try{
+            pasteFileNameAndCloseUploadPopup(fileNameWithPath)
+        }
+        catch(Exception _ex){
+            log.error("Exception while pasting File Name in Open File Widget\n ${e.message}")
+        }
         Thread.sleep(2000)
     }
 
