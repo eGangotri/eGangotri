@@ -528,5 +528,9 @@ class UploadUtils {
         if(file.exists()){
             file.append("$fileName, $_identifier\n")
         }
+        else {
+            file.createNewFile()
+            file.append("$fileName, $_identifier\n")
+        }
     }
 }
