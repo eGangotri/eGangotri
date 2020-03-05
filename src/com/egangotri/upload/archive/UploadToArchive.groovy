@@ -127,7 +127,9 @@ class UploadToArchive {
                     String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
                     log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
-                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t" + (countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : 'Some Failed!')
+                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
+                            "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t"
+                    + (countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : (countOfUploadablePdfs == 0) ? 'All failed' :'Some Failed!')
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }
             } else {
