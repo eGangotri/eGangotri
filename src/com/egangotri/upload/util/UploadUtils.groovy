@@ -236,7 +236,7 @@ class UploadUtils {
             pasteFileNameAndCloseUploadPopup(fileNameWithPath)
         }
         catch(Exception _ex){
-            log.error("Exception while pasting File Name in Open File Widget\n ${e.message}")
+            log.error("Exception while pasting File Name in Open File Widget\n ${_ex.message}")
         }
         Thread.sleep(2000)
     }
