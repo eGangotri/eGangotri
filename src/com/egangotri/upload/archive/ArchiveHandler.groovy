@@ -72,7 +72,7 @@ class ArchiveHandler {
             WebDriver driver = new ChromeDriver(/*options*/)
             boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             if (!loginSuccess) {
-                log.info("Login failed once for ${archiveProfile}. Will give it one more shot")
+                log.info("Login failed once for ${archiveProfile}. will give it one more shot")
                 loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             }
             if (!loginSuccess) {
@@ -91,7 +91,7 @@ class ArchiveHandler {
                     EGangotriUtil.sleepTimeInSeconds(0.2)
                     getResultsCount(driver, "LoginTime")
                     try {
-                        uploadedItemIdentifier = ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink)
+                        uploadedItemIdentifier = ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink, archiveProfile)
                         countOfUploadedItems++
                     }
                     catch (Exception e) {
@@ -118,7 +118,7 @@ class ArchiveHandler {
 
                             //Start Upload
                             try {
-                                uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink)
+                                uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
                             }
                             catch (UnhandledAlertException uae) {
                                 log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
@@ -134,7 +134,7 @@ class ArchiveHandler {
                                         log.error("tab not switched. contiuing to next")
                                         continue
                                     }
-                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink)
+                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
                                     log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
@@ -267,8 +267,8 @@ class ArchiveHandler {
     }
 
 
-    static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink) {
-        if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR){
+    static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink, String archiveProfile) {
+        if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)){
             String lastStringFragAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameWithPath)
             String removeFileEnding = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + removeFileEnding : uploadLink

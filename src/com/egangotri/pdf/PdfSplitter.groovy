@@ -98,7 +98,7 @@ class PdfSplitter {
                 return
             }
 
-            println "( Size: ${formattedSize}) Will be Split"
+            println "( Size: ${formattedSize}) will be Split"
             totalFilesSplittable++
 
             creteSplitFolder(folderAbsolutePath)

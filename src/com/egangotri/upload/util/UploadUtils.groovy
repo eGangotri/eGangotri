@@ -475,6 +475,7 @@ class UploadUtils {
     }
 
     static void openNewTab(float sleepTimeInSeconds = 0.1) {
+        try{
         Robot r = new Robot();
         r.keyPress(KeyEvent.VK_CONTROL);
         r.keyPress(KeyEvent.VK_T);
@@ -482,6 +483,10 @@ class UploadUtils {
         r.keyRelease(KeyEvent.VK_CONTROL);
         if (sleepTimeInSeconds > 0) {
             EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
+        }
+        }
+        catch(Exception _ex){
+            log.error("openNewTab Exception: ${_ex.message}")
         }
     }
 

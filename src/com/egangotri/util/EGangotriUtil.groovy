@@ -34,8 +34,10 @@ class EGangotriUtil {
     static int PARTITION_SIZE = 250
     static boolean PARTITIONING_ENABLED = false
     static boolean GENERATE_RANDOM_CREATOR = false
+    //This not implemented
     static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []
 
+    static List IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = []
     static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
 
     static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = false
@@ -50,7 +52,7 @@ class EGangotriUtil {
     static final String USER_ID = "userId"
     static final String USER_NAME = "username"
 
-    static List ARCHIVE_PROFILES = getAllArchiveProfiles()
+    public static List ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
 
     static List getAllProfiles(String filePath, String textDiscarder) {
