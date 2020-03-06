@@ -61,4 +61,4 @@ In Home Directory ( for Windows this is typically
   In Lock Screen Mode the Robot APIs stop working.
   So No tabbing, pasting etc.
   If you are working remotely and your remote computer goes in Lock Screen Mode
-    you have to find ways to disable Locking
+    you have to find ways to disable Locking.
