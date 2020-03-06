@@ -490,8 +490,15 @@ class UploadUtils {
         }
     }
 
-
-    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
+    static void minimizeBrowser(String fileName) {
+        //native key strokes for CTRL, V and ENTER keys
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_WINDOWS);
+        robot.keyPress(KeyEvent.VK_PAGE_DOWN);
+        robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
+        robot.keyRelease(KeyEvent.VK_WINDOWS);
+    }
+        static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         EGangotriUtil.sleepTimeInSeconds(1);

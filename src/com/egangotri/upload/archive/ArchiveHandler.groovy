@@ -89,7 +89,7 @@ class ArchiveHandler {
                     //Start Upload of First File in Root Tab
                     log.info "Uploading: ${uploadables[0]}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
-                    getResultsCount(driver, "LoginTime")
+                    getResultsCount(driver, true)
                     try {
                         uploadedItemIdentifier = ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink, archiveProfile)
                         countOfUploadedItems++
@@ -163,7 +163,8 @@ class ArchiveHandler {
                             // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
                         }
                     }
-                    getResultsCount(driver, "UploadCompletionTime")
+                    getResultsCount(driver, false)
+                    UploadUtils.minimizeBrowser()
                 } else {
                     log.info "No File uploadable for profile $archiveProfile"
                 }
@@ -176,24 +177,23 @@ class ArchiveHandler {
         return [countOfUploadedItems, uploadFailureCount]
     }
 
-    static void getResultsCount(WebDriver driver, String sentenceFragment) {
+    static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
         WebElement avatar = driver.findElementByClassName("avatar")
         String userName = avatar.getAttribute("alt")
         log.info("userName: ${userName}")
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
-        if(sentenceFragment == "UploadCompletionTime"){
+        if(!_startTime){
             UploadUtils.openNewTab()
             UploadUtils.switchToLastOpenTab(driver)
             driver.navigate().to(archiveUserAccountUrl)
-
         }
         driver.get(archiveUserAccountUrl)
         WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
         WebElement resultsCount = driver.findElementByClassName("results_count")
         if (resultsCount) {
-            log.info("Results Count at $sentenceFragment: " + resultsCount.text)
-            if(sentenceFragment == "UploadCompletionTime"){
+            log.info("Results Count at ${ _startTime ? "LoginTime": 'UploadCompletionTime'}: " + resultsCount.text)
+            if(!_startTime){
                 log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
             }
         }

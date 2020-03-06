@@ -38,7 +38,7 @@ class UploadToArchive {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
         profiles*.toString().eachWithIndex { archiveProfile, index ->
-            log.info "${index + 1}). Test Uploadables in archive.org Profile $archiveProfile"
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
 
             log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
