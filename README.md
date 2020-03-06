@@ -56,3 +56,9 @@ In Home Directory ( for Windows this is typically
   'pre57' is also ignored but that is a different usage.
   It is meant to be ignored by all accounts. 
   Except ones which will specifically pick only pre57 folder. These accounts can be configured.
+  
+  #Lock Screen Issue in Remote Computers
+  In Lock Screen Mode the Robot APIs stop working.
+  So No tabbing, pasting etc.
+  If you are working remotely and your remote computer goes in Lock Screen Mode
+    you have to find ways to disable Locking
