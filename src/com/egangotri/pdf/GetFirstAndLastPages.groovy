@@ -55,7 +55,7 @@ class GetFirstAndLastPages {
         Document document = new Document()
         PdfCopy copy = new PdfCopy(document, os)
         document.open()
-        for (int i = 0 i < selectNumOfPages) {
+        for (int i = 0; i < selectNumOfPages;) {
             copy.addPage(copy.getImportedPage(reader, ++i))
         }
         os.flush()

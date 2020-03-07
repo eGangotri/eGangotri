@@ -90,7 +90,7 @@ class PDFSwapForRightToLeftOrder {
         document.open()
         int count = listOfOddPdfFiles.size() // odd will alys be higher or equal
 
-        for (int i = 0 i < count i++) {
+        for (int i = 0; i < count; i++) {
             File inFile = listOfOddPdfFiles[i]
             if (inFile) {
                 PdfReader reader = new PdfReader(inFile.getAbsolutePath())

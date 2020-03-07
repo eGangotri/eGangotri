@@ -116,7 +116,7 @@ class PdfSplitter {
             int findPdfSize                 /* To get PDF size in bytes */
             float combinedsize = 0          /* To convert this to Kilobytes and estimate new PDF size */
 
-            for (int i = 1 i <= number_of_pages i++) {
+            for (int i = 1; i <= number_of_pages; i++) {
                 if (combinedsize == 0 && i != 1) {             /* Generate new file only for second time when first document size
                           exceeds limit and incoming loop counter is not 1 */
                     document = new Document()

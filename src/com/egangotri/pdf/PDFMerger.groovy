@@ -51,7 +51,7 @@ class PDFMerger {
 
             for (InputStream inStr : list) {
                 PdfReader reader = new PdfReader(inStr)
-                for (int i = 1 i <= reader.getNumberOfPages() i++) {
+                for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                     document.newPage()
                     //import the page from source pdf
                     PdfImportedPage page = writer.getImportedPage(reader, i)
