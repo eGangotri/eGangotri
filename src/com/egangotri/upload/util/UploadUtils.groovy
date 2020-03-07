@@ -17,6 +17,7 @@ import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
+import org.openqa.selenium.Point;
 
 @Slf4j
 class UploadUtils {
@@ -238,7 +239,7 @@ class UploadUtils {
         catch(Exception _ex){
             log.error("Exception while pasting File Name in Open File Widget\n ${_ex.message}")
         }
-        Thread.sleep(2000)
+        EGangotriUtil.sleepTimeInSeconds(1)
     }
 
     static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
@@ -490,13 +491,14 @@ class UploadUtils {
         }
     }
 
-    static void minimizeBrowser(String fileName) {
+    static void minimizeBrowser(WebDriver driver) {
         //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_WINDOWS);
-        robot.keyPress(KeyEvent.VK_PAGE_DOWN);
-        robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
-        robot.keyRelease(KeyEvent.VK_WINDOWS);
+        Point p = new Point(0,3000);
+        driver.manage().window().setPosition(p);
+    }
+
+    static void closeBrowser(WebDriver driver) {
+        driver.quit()
     }
         static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
