@@ -31,7 +31,7 @@ class FileMover {
 
             Integer srcFilesCount = noOfFiles(srcDir)
             Integer dirFlesCountBeforeMove = noOfFiles(destDir)
-            FileUtil.moveDir(srcDir, destDir);
+            FileUtil.moveDir(srcDir, destDir)
             Integer dirFlesCountAfterMove = noOfFiles(destDir)
 
             Integer diff = Math.subtractExact(dirFlesCountAfterMove, dirFlesCountBeforeMove)

@@ -29,7 +29,7 @@ class GetFirstAndLastPages {
         for (File file : directory.listFiles()) {
             if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
                 println("procesing File ${file.name}")
-                manipulateWithCopy(file);
+                manipulateWithCopy(file)
             }
 
         }
@@ -39,9 +39,9 @@ class GetFirstAndLastPages {
             throws IOException, DocumentException {
         println("manipulateWithCopy pages")
 
-        OutputStream os = new FileOutputStream("${DESTINATION_FOLDER}${file.name}");
+        OutputStream os = new FileOutputStream("${DESTINATION_FOLDER}${file.name}")
         FileInputStream inStr = new FileInputStream(file)
-        PdfReader reader = new PdfReader(inStr);
+        PdfReader reader = new PdfReader(inStr)
         int numOfPages = reader.getNumberOfPages()
 
         println("Orig: $numOfPages")
@@ -52,16 +52,16 @@ class GetFirstAndLastPages {
         }
         int selectNumOfPages = reader.getNumberOfPages()
         println("selectNumOfPages: $selectNumOfPages")
-        Document document = new Document();
-        PdfCopy copy = new PdfCopy(document, os);
-        document.open();
-        for (int i = 0; i < selectNumOfPages;) {
-            copy.addPage(copy.getImportedPage(reader, ++i));
+        Document document = new Document()
+        PdfCopy copy = new PdfCopy(document, os)
+        document.open()
+        for (int i = 0 i < selectNumOfPages) {
+            copy.addPage(copy.getImportedPage(reader, ++i))
         }
-        os.flush();
-        document.close();
-        os.close();
-        reader.close();
+        os.flush()
+        document.close()
+        os.close()
+        reader.close()
 
     }
 

@@ -1,13 +1,13 @@
 package com.egangotri.pdf
 
 import com.itextpdf.text.Document
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.DocumentException
+import com.itextpdf.text.pdf.PdfCopy
+import com.itextpdf.text.pdf.PdfImportedPage
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfSmartCopy
 
-import java.util.regex.Matcher;
+import java.util.regex.Matcher
 
 class PDFSwapForRightToLeftOrder {
 
@@ -70,39 +70,39 @@ class PDFSwapForRightToLeftOrder {
 
     static void concatenatePdfs(List<File> listOfPdfFiles, File outputFile) throws DocumentException, IOException {
         println("concatenatePdfs for $outputFile")
-        Document document = new Document();
-        FileOutputStream outputStream = new FileOutputStream(outputFile);
-        PdfCopy copy = new PdfSmartCopy(document, outputStream);
-        document.open();
+        Document document = new Document()
+        FileOutputStream outputStream = new FileOutputStream(outputFile)
+        PdfCopy copy = new PdfSmartCopy(document, outputStream)
+        document.open()
         for (File inFile : listOfPdfFiles) {
-            PdfReader reader = new PdfReader(inFile.getAbsolutePath());
-            copy.addDocument(reader);
-            reader.close();
+            PdfReader reader = new PdfReader(inFile.getAbsolutePath())
+            copy.addDocument(reader)
+            reader.close()
         }
-        document.close();
+        document.close()
     }
 
     static void concatenateOddEvenPdfs(List<File> listOfOddPdfFiles, List<File> listOfEvenPdfFiles, File outputFile) throws DocumentException, IOException {
         println("concatenatePdfs for $outputFile")
-        Document document = new Document();
-        FileOutputStream outputStream = new FileOutputStream(outputFile);
-        PdfCopy copy = new PdfSmartCopy(document, outputStream);
-        document.open();
+        Document document = new Document()
+        FileOutputStream outputStream = new FileOutputStream(outputFile)
+        PdfCopy copy = new PdfSmartCopy(document, outputStream)
+        document.open()
         int count = listOfOddPdfFiles.size() // odd will alys be higher or equal
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0 i < count i++) {
             File inFile = listOfOddPdfFiles[i]
             if (inFile) {
-                PdfReader reader = new PdfReader(inFile.getAbsolutePath());
-                copy.addDocument(reader);
-                reader.close();
+                PdfReader reader = new PdfReader(inFile.getAbsolutePath())
+                copy.addDocument(reader)
+                reader.close()
             }
 
             File inFile2 = listOfEvenPdfFiles[i]
             if (inFile2) {
-                PdfReader reader = new PdfReader(inFile2.getAbsolutePath());
-                copy.addDocument(reader);
-                reader.close();
+                PdfReader reader = new PdfReader(inFile2.getAbsolutePath())
+                copy.addDocument(reader)
+                reader.close()
             }
 
         }
@@ -116,8 +116,8 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static PdfReader getReader(String inFile) {
-        System.out.println("Reading " + inFile);
-        PdfReader reader = new PdfReader(inFile);
+        System.out.println("Reading " + inFile)
+        PdfReader reader = new PdfReader(inFile)
         return reader
 
     }
@@ -132,24 +132,24 @@ class PDFSwapForRightToLeftOrder {
 
     static void convertToOnePagePdfs() {
         try {
-            PdfReader reader = getReader(getFileName());
-            int n = reader.getNumberOfPages();
-            System.out.println("Number of pages : " + n);
-            int i = 0;
+            PdfReader reader = getReader(getFileName())
+            int n = reader.getNumberOfPages()
+            System.out.println("Number of pages : " + n)
+            int i = 0
             while (i < n) {
                 String outFile = getTmpFileName(i)
-                System.out.println("Writing " + outFile);
-                Document document = new Document(reader.getPageSizeWithRotation(1));
-                PdfCopy writer = new PdfCopy(document, new FileOutputStream(outFile));
-                document.open();
-                PdfImportedPage page = writer.getImportedPage(reader, ++i);
-                writer.addPage(page);
-                document.close();
-                writer.close();
+                System.out.println("Writing " + outFile)
+                Document document = new Document(reader.getPageSizeWithRotation(1))
+                PdfCopy writer = new PdfCopy(document, new FileOutputStream(outFile))
+                document.open()
+                PdfImportedPage page = writer.getImportedPage(reader, ++i)
+                writer.addPage(page)
+                document.close()
+                writer.close()
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
     }
 }

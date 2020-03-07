@@ -5,7 +5,7 @@ import com.itextpdf.text.pdf.PdfCopy
 
 class RenameFilesInDir {
 
-    static String FOLDER_NAME = "G:\\OctoberBooks\\prtiek\\pratiekMan - Copy\\17Oct";
+    static String FOLDER_NAME = "G:\\OctoberBooks\\prtiek\\pratiekMan - Copy\\17Oct"
     static String RENAMED_FOLDER_NAME = "renamed"
     int totalFilesSplittable = 0
     static main(args) {
@@ -24,11 +24,11 @@ class RenameFilesInDir {
                 }
                 File  newFile = new File(RenameFilesInDir.FOLDER_NAME + "//" + RenameFilesInDir.RENAMED_FOLDER_NAME + "//"+ newFileName)
                 try {
-                    org.apache.commons.io.FileUtils.moveFile(file, newFile);
+                    org.apache.commons.io.FileUtils.moveFile(file, newFile)
                     println "Moved $newFileName"
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.printStackTrace()
                 }
             }
         }
@@ -42,7 +42,7 @@ class RenameFilesInDir {
         if(directory) {
             File renameFolder = new File(RenameFilesInDir.FOLDER_NAME + "//" + RenameFilesInDir.RENAMED_FOLDER_NAME)
             if(!renameFolder.exists())     {
-                println("${RenameFilesInDir.RENAMED_FOLDER_NAME} missing. Creating")  ;
+                println("${RenameFilesInDir.RENAMED_FOLDER_NAME} missing. Creating")  
                 renameFolder.mkdir()
             }
         }

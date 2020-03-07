@@ -295,10 +295,10 @@ class ArchiveHandler {
                     "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
-        UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
-        log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
 
         try {
+            UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
+            log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {

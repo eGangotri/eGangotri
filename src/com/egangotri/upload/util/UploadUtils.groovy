@@ -17,7 +17,7 @@ import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
-import org.openqa.selenium.Point;
+import org.openqa.selenium.Point
 
 @Slf4j
 class UploadUtils {
@@ -71,7 +71,7 @@ class UploadUtils {
                 if (key.endsWith(".description")) {
                     val = encodeString(val)
                 }
-                metaDataMap.put(key, val);
+                metaDataMap.put(key, val)
             }
 
             metaDataMap.each {
@@ -234,47 +234,44 @@ class UploadUtils {
 
 
     static void hitEscapeKey() {
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_ESCAPE);
-        robot.keyRelease(KeyEvent.VK_ESCAPE);
+        Robot robot = new Robot()
+        robot.keyPress(KeyEvent.VK_ESCAPE)
+        robot.keyRelease(KeyEvent.VK_ESCAPE)
     }
 
     static void hitEnterKey() {
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
+        Robot robot = new Robot()
+        robot.keyPress(KeyEvent.VK_ENTER)
+        robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
     static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath){
+        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON)))
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
-        log.info("${CHOOSE_FILES_TO_UPLOAD_BUTTON} clicked")
         fileButtonInitial.click()
-        try{
-            pasteFileNameAndCloseUploadPopup(fileNameWithPath)
-        }
-        catch(Exception _ex){
-            log.error("Exception while pasting File Name in Open File Widget\n ${_ex.message}")
-        }
-        EGangotriUtil.sleepTimeInSeconds(1)
+        log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
+        pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
     static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
         // A short pause is a must and must be atleast a second
         EGangotriUtil.sleepTimeInSeconds(1, true)
-        setClipboardData(fileNameWithPath);
+        setClipboardData(fileNameWithPath)
         //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
+        Robot robot = new Robot()
+        robot.keyPress(KeyEvent.VK_CONTROL)
+        robot.keyPress(KeyEvent.VK_V)
+        robot.keyRelease(KeyEvent.VK_V)
+        robot.keyRelease(KeyEvent.VK_CONTROL)
+        Thread.sleep(10)
+        robot.keyPress(KeyEvent.VK_ENTER)
+        robot.keyRelease(KeyEvent.VK_ENTER)
+        EGangotriUtil.sleepTimeInSeconds(0.01)
     }
 
     static void setClipboardData(String string) {
-        StringSelection stringSelection = new StringSelection(string);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
+        StringSelection stringSelection = new StringSelection(string)
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null)
     }
 
     static List getAStashOfFilesForUpload(String src) {
@@ -498,11 +495,11 @@ class UploadUtils {
 
     static void openNewTab(float sleepTimeInSeconds = 0.1) {
         try{
-        Robot r = new Robot();
-        r.keyPress(KeyEvent.VK_CONTROL);
-        r.keyPress(KeyEvent.VK_T);
-        r.keyRelease(KeyEvent.VK_T);
-        r.keyRelease(KeyEvent.VK_CONTROL);
+        Robot r = new Robot()
+        r.keyPress(KeyEvent.VK_CONTROL)
+        r.keyPress(KeyEvent.VK_T)
+        r.keyRelease(KeyEvent.VK_T)
+        r.keyRelease(KeyEvent.VK_CONTROL)
         if (sleepTimeInSeconds > 0) {
             EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
         }
@@ -514,16 +511,16 @@ class UploadUtils {
 
     static void minimizeBrowser(WebDriver driver) {
         //This approach causes browser to freeze.
-        // driver.manage().window().setPosition(new Point(0,3000););
+        // driver.manage().window().setPosition(new Point(0,3000))
         //Alt+Space+N
-        Robot robot=new Robot();
-        robot.keyPress(KeyEvent.VK_ALT);
-        robot.keyPress(KeyEvent.VK_SPACE);
-        robot.keyRelease(KeyEvent.VK_SPACE);
-        robot.keyRelease(KeyEvent.VK_ALT);
+        Robot robot=new Robot()
+        robot.keyPress(KeyEvent.VK_ALT)
+        robot.keyPress(KeyEvent.VK_SPACE)
+        robot.keyRelease(KeyEvent.VK_SPACE)
+        robot.keyRelease(KeyEvent.VK_ALT)
         Thread.sleep(100)
-        robot.keyPress(KeyEvent.VK_N);
-        robot.keyRelease(KeyEvent.VK_N);
+        robot.keyPress(KeyEvent.VK_N)
+        robot.keyRelease(KeyEvent.VK_N)
     }
 
     static void closeBrowser(WebDriver driver) {
@@ -532,26 +529,26 @@ class UploadUtils {
         static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
-        EGangotriUtil.sleepTimeInSeconds(1);
-        setClipboardData(fileName);
+        EGangotriUtil.sleepTimeInSeconds(1)
+        setClipboardData(fileName)
         //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_TAB);
-        robot.keyRelease(KeyEvent.VK_TAB);
+        Robot robot = new Robot()
+        robot.keyPress(KeyEvent.VK_TAB)
+        robot.keyRelease(KeyEvent.VK_TAB)
 
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
+        robot.keyPress(KeyEvent.VK_CONTROL)
+        robot.keyPress(KeyEvent.VK_V)
+        robot.keyRelease(KeyEvent.VK_V)
+        robot.keyRelease(KeyEvent.VK_CONTROL)
+        robot.keyPress(KeyEvent.VK_ENTER)
+        robot.keyRelease(KeyEvent.VK_ENTER)
     }
     static boolean checkAlert(WebDriver driver, Boolean accept = true) {
         boolean alertWasDetected = false
         try {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)
-            webDriverWait.until(ExpectedConditions.alertIsPresent());
-            Alert alert = driver.switchTo().alert();
+            webDriverWait.until(ExpectedConditions.alertIsPresent())
+            Alert alert = driver.switchTo().alert()
             log.info("Found Alert Text: ->${alert.getText()}<-")
             if(accept){
                 alert.accept()

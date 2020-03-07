@@ -18,20 +18,20 @@ class WriteToExcel {
     }
 
     static int getLastRowNum(String filePath) {
-        FileInputStream fis = null;
+        FileInputStream fis = null
         HSSFWorkbook workbook
         int lastRowNum = 0
         try {
             File file = new File(filePath)
-            fis = new FileInputStream(file);
-            workbook = new HSSFWorkbook(fis);
-            Sheet sheet = workbook.getSheetAt(0);
+            fis = new FileInputStream(file)
+            workbook = new HSSFWorkbook(fis)
+            Sheet sheet = workbook.getSheetAt(0)
             lastRowNum = sheet.getLastRowNum()
-            //Row row = sheet.createRow((short) ( + 1));
+            //Row row = sheet.createRow((short) ( + 1))
 
-            fis.close();
+            fis.close()
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace()
         }
 
         finally {

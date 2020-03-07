@@ -28,29 +28,29 @@ class GoogleDriveHandler {
         try {
             String userHome = System.getProperty('user.home')
             log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
-            System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe")
             // log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
             WebDriver driver = new ChromeDriver()
-            driver.get("https://accounts.google.com");
-            WebElement id = driver.findElement(By.id("identifierId"));
+            driver.get("https://accounts.google.com")
+            WebElement id = driver.findElement(By.id("identifierId"))
 
-            id.sendKeys(metaDataMap."${loginProfile}.userId");
-//            WebElement next = driver.findElement(By.id("identifierNext"));
-//            next.click();
-            id.sendKeys(Keys.RETURN);
+            id.sendKeys(metaDataMap."${loginProfile}.userId")
+//            WebElement next = driver.findElement(By.id("identifierNext"))
+//            next.click()
+            id.sendKeys(Keys.RETURN)
 
 
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS);
-            wait.until(ExpectedConditions.elementToBeClickable(By.name("password")));
+            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            wait.until(ExpectedConditions.elementToBeClickable(By.name("password")))
 
-            WebElement pass = driver.findElement(By.name("password"));
+            WebElement pass = driver.findElement(By.name("password"))
             String kuta = metaDataMap."${loginProfile}.kuta" ?: metaDataMap."kuta"
             log.info "kuta:$kuta"
-            pass.sendKeys(kuta);
-            pass.sendKeys(Keys.RETURN);
+            pass.sendKeys(kuta)
+            pass.sendKeys(Keys.RETURN)
             EGangotriUtil.sleepTimeInSeconds(1)
-            driver.get("http://drive.google.com");
+            driver.get("http://drive.google.com")
             if (upload) {
                 uploadToDrive(driver, folderName)
             }
