@@ -43,6 +43,7 @@ class UploadToArchive {
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
             if (countOfUploadablePdfs) {
+                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
                     List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)

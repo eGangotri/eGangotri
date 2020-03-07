@@ -112,7 +112,6 @@ class UploadUtils {
         } else {
             items = getAllItemsExceptPreCutOff(folders)
         }
-        log.info "getUploadablesForProfile: $archiveProfile: ${items?.size()?:0}"
         return items
     }
 
@@ -465,13 +464,11 @@ class UploadUtils {
 
     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
         List folderName = []
-
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
             folderName = FileUtil.ALL_FOLDERS.values().toList() - FileUtil.ALL_FOLDERS."DT"
         } else {
             folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
         }
-
         log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
         return folderName
     }
