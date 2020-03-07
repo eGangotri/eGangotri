@@ -219,7 +219,7 @@ class UploadUtils {
         boolean success = false
         String username = metaDataMap."${archiveProfile}.username"
         String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 =  " UserName [$username] in ${UploadUtils.getFileTitleOnly(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
+        String errMsg2 =  " UserName [$username] in ${getFileTitleOnly(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
         if(username?.trim()){
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
             if(!success){
