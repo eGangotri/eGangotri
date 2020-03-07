@@ -513,9 +513,16 @@ class UploadUtils {
     }
 
     static void minimizeBrowser(WebDriver driver) {
-        //native key strokes for CTRL, V and ENTER keys
-        Point p = new Point(0,3000);
-        driver.manage().window().setPosition(p);
+        //This approach causes browser to freeze.
+        // driver.manage().window().setPosition(new Point(0,3000););
+        //Alt+Space+N
+        Robot robot=new Robot();
+        robot.keyPress(KeyEvent.VK_ALT);
+        robot.keyPress(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_ALT);
+        robot.keyRelease(KeyEvent.VK_SPACE);
+        robot.keyPress(KeyEvent.VK_N);
+        robot.keyRelease(KeyEvent.VK_N);
     }
 
     static void closeBrowser(WebDriver driver) {
