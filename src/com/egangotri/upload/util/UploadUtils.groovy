@@ -215,6 +215,19 @@ class UploadUtils {
         return pdfs
     }
 
+    static List checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile){
+        boolean success = false
+        String username = metaDataMap."${archiveProfile}.username"
+        String userNameInvalidMsg = "Invalid/Non-Existent"
+        String errMsg2 =  " UserName($username) in ${EGangotriUtil.ARCHIVE_PROPERTIES_FILE} file for $archiveProfile"
+        if(username){
+            success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
+            if(!success){
+                userNameInvalidMsg = "Invalid Email Format "
+            }
+        }
+        return [success, "${userNameInvalidMsg}${errMsg2}"]
+    }
 
 
     static void hitEscapeKey() {

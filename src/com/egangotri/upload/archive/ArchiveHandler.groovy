@@ -24,10 +24,6 @@ class ArchiveHandler {
         logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
     }
 
-    static List<List<Integer>> performPartitioningAndUploadToArchive(def metaDataMap, String archiveProfile) {
-        return performPartitioningAndUploadToArchive(metaDataMap, archiveProfile, true)
-    }
-
     static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
         boolean loginSucess = false
         try {
@@ -60,7 +56,7 @@ class ArchiveHandler {
 
 
     static List<Integer> uploadAllItemsToArchiveByProfile(
-            def metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
+            Map metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
 
@@ -244,8 +240,17 @@ class ArchiveHandler {
         }
     }
 
+    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile){
+        String username = metaDataMap."${archiveProfile}.username"
+        return username ? true : false
+    }
 
-    static List<List<Integer>> performPartitioningAndUploadToArchive(def metaDataMap, String archiveProfile, boolean uploadPermission) {
+
+    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile) {
+        return performPartitioningAndUploadToArchive(metaDataMap, archiveProfile, true)
+    }
+
+    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         List<List<Integer>> uploadStatsList = []

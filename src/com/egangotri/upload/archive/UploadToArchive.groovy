@@ -42,13 +42,13 @@ class UploadToArchive {
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
 
             log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
-            if (countOfUploadablePdfs) {
+            List userNameVaidityCheckAndErrorMsg = UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)
+            if (countOfUploadablePdfs && userNameVaidityCheckAndErrorMsg.first()) {
                 if(EGangotriUtil.GENERATE_ONLY_URLS){
                     List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
                 }
                 else{
-
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
                     int uplddSum = uploadStats.collect{ elem -> elem.first()}.sum()
                     String statsAsPlusSeparatedValues = uploadStats.collect{ elem -> elem.first()}.join(" + ")
@@ -66,7 +66,11 @@ class UploadToArchive {
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }
             } else {
-                log.info "No Files uploadable for Profile $archiveProfile"
+                if(!countOfUploadablePdfs){
+                    log.info "No Files uploadable for Profile $archiveProfile"
+                } else {
+                    log.info(userNameVaidityCheckAndErrorMsg.last().toString())
+                }
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
