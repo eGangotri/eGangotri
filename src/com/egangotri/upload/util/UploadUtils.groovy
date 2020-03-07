@@ -519,8 +519,9 @@ class UploadUtils {
         Robot robot=new Robot();
         robot.keyPress(KeyEvent.VK_ALT);
         robot.keyPress(KeyEvent.VK_SPACE);
-        robot.keyRelease(KeyEvent.VK_ALT);
         robot.keyRelease(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_ALT);
+        Thread.sleep(100)
         robot.keyPress(KeyEvent.VK_N);
         robot.keyRelease(KeyEvent.VK_N);
     }
