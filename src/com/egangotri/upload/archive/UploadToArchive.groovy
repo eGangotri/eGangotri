@@ -3,7 +3,6 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
-import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 
 /**
@@ -44,9 +43,8 @@ class UploadToArchive {
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
             if (countOfUploadablePdfs) {
-                log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
-                    List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+                    List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)

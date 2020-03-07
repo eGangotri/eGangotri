@@ -251,7 +251,7 @@ class ArchiveHandler {
     }
 
     static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile, boolean uploadPermission) {
-        List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
+        List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
 
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size() > EGangotriUtil.PARTITION_SIZE) {

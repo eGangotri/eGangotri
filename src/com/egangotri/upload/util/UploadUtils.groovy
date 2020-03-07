@@ -17,7 +17,6 @@ import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
-import org.openqa.selenium.Point
 
 @Slf4j
 class UploadUtils {
@@ -105,20 +104,20 @@ class UploadUtils {
         return atlestOne
     }
 
-    static List<String> getUploadablePdfsForProfile(String archiveProfile) {
+    static List<String> getUploadablesForProfile(String archiveProfile) {
         List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
-        List<String> pdfs = []
-        log.info "getUploadablePdfsForProfile: $archiveProfile"
+        List<String> items = []
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
-            pdfs = getPdfsInPreCutOffFolders(folders)
+            items = getItemsInPreCutOffFolders(folders)
         } else {
-            pdfs = getAllPdfsExceptPreCutOff(folders)
+            items = getAllItemsExceptPreCutOff(folders)
         }
-        return pdfs
+        log.info "getUploadablesForProfile: $archiveProfile: ${items?.size()?:0}"
+        return items
     }
 
     static int getCountOfUploadablePdfsForProfile(String archiveProfile) {
-        return getUploadablePdfsForProfile(archiveProfile)?.size()
+        return getUploadablesForProfile(archiveProfile)?.size()
     }
 
 
@@ -146,20 +145,20 @@ class UploadUtils {
 
     static boolean hasAtleastOnePdfInPreCutOffFolders(List<File> folders) {
         boolean atlestOne = false
-        if (getPdfsInPreCutOffFolders(folders)) {
+        if (getItemsInPreCutOffFolders(folders)) {
             atlestOne = true
         }
         return atlestOne
     }
 
-    static List<String> getAllPdfsExceptPreCutOff(File folder) {
+    static List<String> getAllItemsExceptPreCutOff(File folder) {
         getAllPdfs(folder, true)
     }
 
-    static List<String> getAllPdfsExceptPreCutOff(List<File> folders) {
+    static List<String> getAllItemsExceptPreCutOff(List<File> folders) {
         List<String> pdfs = []
         folders.each { folder ->
-            pdfs.addAll(getAllPdfsExceptPreCutOff(folder))
+            pdfs.addAll(getAllItemsExceptPreCutOff(folder))
         }
         return pdfs
     }
@@ -207,7 +206,7 @@ class UploadUtils {
         return pdfs
     }
 
-    static List<String> getPdfsInPreCutOffFolders(List<File> folders) {
+    static List<String> getItemsInPreCutOffFolders(List<File> folders) {
         List<String> pdfs = []
         folders.each { folder ->
             pdfs.addAll(getPdfsInPreCutOffFolder(folder))
@@ -246,7 +245,7 @@ class UploadUtils {
     }
 
     static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath){
-        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON)))
+        //Note this id is already tested to be clickable
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
         log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
