@@ -254,7 +254,7 @@ class ArchiveHandler {
         List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
 
         List<List<Integer>> uploadStatsList = []
-        if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size > EGangotriUtil.PARTITION_SIZE) {
+        if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size() > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
             log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
 

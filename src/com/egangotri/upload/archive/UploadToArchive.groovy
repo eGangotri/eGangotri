@@ -27,7 +27,7 @@ class UploadToArchive {
             archiveProfiles = args.toList()
         }
 
-       // System.setProperty("webdriver.chrome.driver", getClass().getResource("chromedriver.exe").toURI().toString())
+        // System.setProperty("webdriver.chrome.driver", getClass().getResource("chromedriver.exe").toURI().toString())
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
         execute(archiveProfiles, metaDataMap)
@@ -38,24 +38,24 @@ class UploadToArchive {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive"
         profiles*.toString().eachWithIndex { archiveProfile, index ->
+            if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
+                return
+            }
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
-
-            log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
-            List userNameVaidityCheckAndErrorMsg = UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)
-            if (countOfUploadablePdfs && userNameVaidityCheckAndErrorMsg.first()) {
-                if(EGangotriUtil.GENERATE_ONLY_URLS){
+            if (countOfUploadablePdfs) {
+                log.info("CountOfUploadablePdfs: $countOfUploadablePdfs")
+                if (EGangotriUtil.GENERATE_ONLY_URLS) {
                     List<String> uploadables = UploadUtils.getUploadablePdfsForProfile(archiveProfile)
-                    ArchiveHandler.generateAllUrls(archiveProfile,uploadables)
-                }
-                else{
+                    ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
+                } else {
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
-                    int uplddSum = uploadStats.collect{ elem -> elem.first()}.sum()
-                    String statsAsPlusSeparatedValues = uploadStats.collect{ elem -> elem.first()}.join(" + ")
-                    String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum": uploadStats.first().first()
+                    int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
+                    String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
+                    String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
 
-                    int excSum = uploadStats.collect{ elem  -> elem.last()}.sum()
-                    String excpsAsPlusSeparatedValues = uploadStats.collect{elem -> elem .last()}.join(" + ")
+                    int excSum = uploadStats.collect { elem -> elem.last() }.sum()
+                    String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
                     String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
                     log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
@@ -66,15 +66,11 @@ class UploadToArchive {
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }
             } else {
-                if(!countOfUploadablePdfs){
-                    log.info "No Files uploadable for Profile $archiveProfile"
-                } else {
-                    log.info(userNameVaidityCheckAndErrorMsg.last().toString())
-                }
+                log.info "No uploadable files for Profile $archiveProfile"
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-        if(uploadSuccessCheckingMatrix){
+        if (uploadSuccessCheckingMatrix) {
             log.info "Upload Report:\n"
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
