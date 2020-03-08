@@ -34,7 +34,7 @@ class UploadUtils {
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
     static final int DEFAULT_SLEEP_TIME = 1000
-    static final String DATE_TIME_PATTERN = "d-MMM-yy-HH:mm"
+    static final String DATE_TIME_PATTERN = "d-MMM-yy-h_mm_a"
 
     static Map<String, String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static Map<String, List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
