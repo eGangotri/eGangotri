@@ -5,6 +5,8 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+import java.text.SimpleDateFormat
+
 /**
  * Created by user on 1/18/2016.
  * Make sure
@@ -35,7 +37,8 @@ class UploadToArchive {
 
     static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        log.info "Start uploading to Archive"
+        log.info "Start uploading to Archive @ " + new SimpleDateFormat("d MMM yy HH:mm").format(new Date())
+
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
