@@ -568,12 +568,18 @@ class UploadUtils {
     }
 
 
-    static void createIdentifierFileForCurrentExecution() {
+    static String createIdentifierFileForCurrentExecution() {
+        File identifierFolder = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER)
+        if(!identifierFolder.exists()){
+            identifierFolder.mkdir()
+        }
         EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = EGangotriUtil.ARCHIVE_IDENTIFIER_FILE.replace("{0}", getFormattedDateString())
         File file = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
         if (!file.exists()) {
             file.createNewFile()
         }
+        log.info("Identifiers will be stored in ${file.name}")
+        return file.name
     }
 
     static void storeArchiveIdentifierInFile(String fileName, String _identifier) {
