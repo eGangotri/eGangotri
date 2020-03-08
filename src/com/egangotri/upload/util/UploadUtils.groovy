@@ -582,7 +582,7 @@ class UploadUtils {
         return file.name
     }
 
-    static void storeArchiveIdentifierInFile(String fileName, String _identifier) {
-        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append( "\"$fileName\", \"$_identifier\"\n")
+    static void storeArchiveIdentifierInFile(String uploadLink, String fileNameWithPath,String fileName, String _identifier) {
+        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append( "\"$uploadLink\", \"$fileNameWithPath\", \"$fileName\", \"$_identifier\"\n")
     }
 }

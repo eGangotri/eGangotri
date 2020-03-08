@@ -368,7 +368,7 @@ class ArchiveHandler {
             identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
             log.info("identifier after alteration is ${identifier}")
         }
-        UploadUtils.storeArchiveIdentifierInFile(UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)
+        UploadUtils.storeArchiveIdentifierInFile(uploadLink, fileNameWithPath, UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
