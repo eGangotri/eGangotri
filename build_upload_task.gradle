@@ -7,9 +7,9 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     /**
      * For Single Profile
        args = ["PRFL1"]
-      For Multiple Profile
+      For Multiple Profiles
        args = ["PRFL1","PRFL2"]
       */
 
-    args = [ "ANON4"]
+    args = ["PRFL3","PRFL5"]
 }
