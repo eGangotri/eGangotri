@@ -11,5 +11,5 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
        args = ["PRFL1","PRFL2"]
       */
 
-    args = ["PRFL1"]
+    args = [ "ANON4"]
 }
