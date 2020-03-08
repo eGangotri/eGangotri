@@ -24,7 +24,7 @@ class EGangotriUtil {
     static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
-    static final String ARCHIVE_IDENTIFIER_FILE = EGANGOTRI_BASE_DIR + File.separator + "identifier.txt"
+    static String ARCHIVE_IDENTIFIER_FILE = EGANGOTRI_BASE_DIR + File.separator + "identifier" + File.separator + "identifier_{0}.csv"
 
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"

@@ -5,8 +5,6 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
-import java.text.SimpleDateFormat
-
 /**
  * Created by user on 1/18/2016.
  * Make sure
@@ -31,13 +29,14 @@ class UploadToArchive {
         // System.setProperty("webdriver.chrome.driver", getClass().getResource("chromedriver.exe").toURI().toString())
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
+        UploadUtils.createIdentifierFileForCurrentExecution()
         execute(archiveProfiles, metaDataMap)
         System.exit(0)
     }
 
     static boolean execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        log.info "Start uploading to Archive @ " + new SimpleDateFormat("d MMM yy HH:mm").format(new Date())
+        log.info "Start uploading to Archive @ " + UploadUtils.getFormattedDateString()
 
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {

@@ -17,6 +17,7 @@ import java.awt.Robot
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
+import java.text.SimpleDateFormat
 
 @Slf4j
 class UploadUtils {
@@ -33,24 +34,25 @@ class UploadUtils {
     static final String LICENSE_PICKER_DIV = "license_picker_row"
     static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
     static final int DEFAULT_SLEEP_TIME = 1000
+    static final String DATE_TIME_PATTERN = "d-MMM-yy-HH:mm"
 
-    static Map<String,String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
-    static Map<String,List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
+    static Map<String, String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
+    static Map<String, List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
     static final String ARCHIVE_UPLOAD_URL = "https://archive.org/upload?"
     static final String AMPERSAND = "&"
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
 
-    static readTextFileAndDumpToList(String fileName){
+    static readTextFileAndDumpToList(String fileName) {
         List list = []
-            File file = new File(fileName)
-            def line = ""
-            file.withReader { reader ->
-                while ((line = reader.readLine()) != null) {
-                    list << line
-                }
+        File file = new File(fileName)
+        def line = ""
+        file.withReader { reader ->
+            while ((line = reader.readLine()) != null) {
+                list << line
             }
-            return list
+        }
+        return list
     }
 
     static Hashtable<String, String> loadProperties(String fileName) {
@@ -58,7 +60,7 @@ class UploadUtils {
         File propertiesFile = new File(fileName)
         Hashtable<String, String> metaDataMap = [:]
 
-        if(propertiesFile.exists()){
+        if (propertiesFile.exists()) {
             propertiesFile.withInputStream {
                 properties.load(it)
             }
@@ -105,7 +107,7 @@ class UploadUtils {
     }
 
     static List<String> getUploadablesForProfile(String archiveProfile) {
-        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName? new File(fileName): null }
+        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName ? new File(fileName) : null }
         List<String> items = []
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
             items = getItemsInPreCutOffFolders(folders)
@@ -168,9 +170,9 @@ class UploadUtils {
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
         if (excludePreCutOff) {
-            optionsMap.put("excludeFilter", { it.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) || it.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD)})
+            optionsMap.put("excludeFilter", { it.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) || it.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) })
         }
-        if(!folder.exists()){
+        if (!folder.exists()) {
             log.error("$folder doesnt exist. returning")
             return []
         }
@@ -193,7 +195,7 @@ class UploadUtils {
                                       it.name.endsWith(EGangotriUtil.PDF)*/
                           }
         ]
-        if(!folder.exists()){
+        if (!folder.exists()) {
             log.error("$folder doesnt exist. returning")
             return []
         }
@@ -213,18 +215,18 @@ class UploadUtils {
         return pdfs
     }
 
-    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile){
+    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile) {
         boolean success = false
         String username = metaDataMap."${archiveProfile}.username"
         String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 =  " UserName [$username] in ${getFileTitleOnly(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
-        if(username?.trim()){
+        String errMsg2 = " UserName [$username] in ${getFileTitleOnly(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
+        if (username?.trim()) {
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
-            if(!success){
+            if (!success) {
                 userNameInvalidMsg = "Invalid Email Format of"
             }
         }
-        if(!success){
+        if (!success) {
             log.info("${userNameInvalidMsg}${errMsg2}")
         }
         return success
@@ -243,7 +245,7 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
-    static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath){
+    static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath) {
         //Note this id is already tested to be clickable
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
@@ -289,8 +291,8 @@ class UploadUtils {
                     int idx = allPdfs.findIndexOf { pdf ->
                         String y2 = pdf.substring(src.length() + 1)
 
-                        if(count2++ <10){
-                            log.info( "$filterable == ${y2} ($pdf) " +  filterable.equals(y2))
+                        if (count2++ < 10) {
+                            log.info("$filterable == ${y2} ($pdf) " + filterable.equals(y2))
                         }
                         filterable.equals(y2)
                     }
@@ -341,11 +343,12 @@ class UploadUtils {
         return partitions
     }
 
-    static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit(){
+    static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit() {
         if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
             throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
         }
     }
+
     static String generateCreatorsForProfileAndPickARandomOne(String archiveProfile) {
         throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
         if (!RANDOM_CREATOR_BY_PROFILE_MAP || !RANDOM_CREATOR_BY_PROFILE_MAP.containsKey(archiveProfile)) {
@@ -354,8 +357,8 @@ class UploadUtils {
         if (!RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]) {
             RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"] = randomCreators()
         }
-        List randomCreators =  RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
-        String randomPick =  randomCreators[new Random().nextInt(randomCreators.size)]
+        List randomCreators = RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
+        String randomPick = randomCreators[new Random().nextInt(randomCreators.size)]
         return "creator=${randomPick}"
     }
 
@@ -381,40 +384,40 @@ class UploadUtils {
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
             def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
             String _creator = metaDataMap."${archiveProfile}.creator"
-            if(!_creator){
+            if (!_creator) {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
             }
 
             String _subjects = metaDataMap."${archiveProfile}.subjects"
-            if(!_subjects){
-                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? "subject=" + _creator.replaceAll("creator=", ""): null
+            if (!_subjects) {
+                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? "subject=" + _creator.replaceAll("creator=", "") : null
             }
 
             String _lang = metaDataMap."${archiveProfile}.language" ?: "language=eng"
             String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
-            if(_desc && _desc?.contains("description=")){
+            if (_desc && _desc?.contains("description=")) {
                 _desc = _desc.replaceAll("description=", "")
             }
             String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
-            String supplementary_url = desc_and_file_name + AMPERSAND +  _lang
+            String supplementary_url = desc_and_file_name + AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
             }
-            if(_subjects){
+            if (_subjects) {
                 supplementary_url += AMPERSAND + _subjects
             }
-            if(!EGangotriUtil.GENERATE_RANDOM_CREATOR){
-                supplementary_url += AMPERSAND +  _creator
+            if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
+                supplementary_url += AMPERSAND + _creator
             }
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
         }
         String url = SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
-        if((EGangotriUtil.GENERATE_RANDOM_CREATOR)){
+        if ((EGangotriUtil.GENERATE_RANDOM_CREATOR)) {
             String _creator = generateCreatorsForProfileAndPickARandomOne(archiveProfile)
-            url += AMPERSAND +  _creator
+            url += AMPERSAND + _creator
 
-            if(!url.contains("subject=")){
+            if (!url.contains("subject=")) {
                 String _subjects = "subject=" + _creator.replaceAll("creator=", "")
                 url += AMPERSAND + _subjects
             }
@@ -454,11 +457,11 @@ class UploadUtils {
      * @param title Ex: Hamlet by Shakespeare.pdf
      * @return Hamlet by Shakespeare
      */
-    static String removeFileEnding(String title){
+    static String removeFileEnding(String title) {
         return title.contains(".") ? title.trim().tokenize(".").dropRight(1).join(".") : title
     }
 
-    static String getLastPortionOfTitleUsingSeparator(String title, String separator = "-"){
+    static String getLastPortionOfTitleUsingSeparator(String title, String separator = "-") {
         return title.contains(separator) ? title.split("-").last() : title
     }
 
@@ -473,14 +476,14 @@ class UploadUtils {
         return folderName
     }
 
-    static boolean switchToLastOpenTab(ChromeDriver driver){
+    static boolean switchToLastOpenTab(ChromeDriver driver) {
         try {
-        ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
-        //there is a bug in retrieving the size of chromeTabsList in Selenium.
-        //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
-        log.info "chromeTabsList.size(): ${chromeTabsList.size()}"
-        log.info "chromeTabsList: ${chromeTabsList}"
-        driver.switchTo().window(chromeTabsList.last())
+            ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
+            //there is a bug in retrieving the size of chromeTabsList in Selenium.
+            //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
+            log.info "chromeTabsList.size(): ${chromeTabsList.size()}"
+            log.info "chromeTabsList: ${chromeTabsList}"
+            driver.switchTo().window(chromeTabsList.last())
         }
         catch (Exception e) {
             log.info("Exception while switching to new Tab ${e.message}")
@@ -490,17 +493,17 @@ class UploadUtils {
     }
 
     static void openNewTab(float sleepTimeInSeconds = 0.1) {
-        try{
-        Robot r = new Robot()
-        r.keyPress(KeyEvent.VK_CONTROL)
-        r.keyPress(KeyEvent.VK_T)
-        r.keyRelease(KeyEvent.VK_T)
-        r.keyRelease(KeyEvent.VK_CONTROL)
-        if (sleepTimeInSeconds > 0) {
-            EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
+        try {
+            Robot r = new Robot()
+            r.keyPress(KeyEvent.VK_CONTROL)
+            r.keyPress(KeyEvent.VK_T)
+            r.keyRelease(KeyEvent.VK_T)
+            r.keyRelease(KeyEvent.VK_CONTROL)
+            if (sleepTimeInSeconds > 0) {
+                EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
+            }
         }
-        }
-        catch(Exception _ex){
+        catch (Exception _ex) {
             log.error("openNewTab Exception: ${_ex.message}")
         }
     }
@@ -509,7 +512,7 @@ class UploadUtils {
         //This approach causes browser to freeze.
         // driver.manage().window().setPosition(new Point(0,3000))
         //Alt+Space+N
-        Robot robot=new Robot()
+        Robot robot = new Robot()
         robot.keyPress(KeyEvent.VK_ALT)
         robot.keyPress(KeyEvent.VK_SPACE)
         robot.keyRelease(KeyEvent.VK_SPACE)
@@ -522,7 +525,8 @@ class UploadUtils {
     static void closeBrowser(WebDriver driver) {
         driver.quit()
     }
-        static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
+
+    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
         log.info "$fileName  being pasted"
         // A short pause, just to be sure that OK is selected
         EGangotriUtil.sleepTimeInSeconds(1)
@@ -539,6 +543,7 @@ class UploadUtils {
         robot.keyPress(KeyEvent.VK_ENTER)
         robot.keyRelease(KeyEvent.VK_ENTER)
     }
+
     static boolean checkAlert(WebDriver driver, Boolean accept = true) {
         boolean alertWasDetected = false
         try {
@@ -546,10 +551,9 @@ class UploadUtils {
             webDriverWait.until(ExpectedConditions.alertIsPresent())
             Alert alert = driver.switchTo().alert()
             log.info("Found Alert Text: ->${alert.getText()}<-")
-            if(accept){
+            if (accept) {
                 alert.accept()
-            }
-            else{
+            } else {
                 alert.dismiss()
             }
             alertWasDetected = true
@@ -559,14 +563,20 @@ class UploadUtils {
         return alertWasDetected
     }
 
-    static void storeArchiveIdentifierInFile(String fileName, String _identifier){
+    static getFormattedDateString() {
+        return new SimpleDateFormat(DATE_TIME_PATTERN).format(new Date())
+    }
+
+
+    static void createIdentifierFileForCurrentExecution() {
+        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = EGangotriUtil.ARCHIVE_IDENTIFIER_FILE.replace("{0}", getFormattedDateString())
         File file = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-        if(file.exists()){
-            file.append("$fileName, $_identifier\n")
-        }
-        else {
+        if (!file.exists()) {
             file.createNewFile()
-            file.append("$fileName, $_identifier\n")
         }
+    }
+
+    static void storeArchiveIdentifierInFile(String fileName, String _identifier) {
+        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append("$fileName, $_identifier\n")
     }
 }
