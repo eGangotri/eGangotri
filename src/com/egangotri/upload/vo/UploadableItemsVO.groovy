@@ -7,7 +7,7 @@ class UploadableItemsVO extends UploadVO {
         super()
         archiveProfile = _archiveProfile
         fullFilePath = _fullFilePath
-        fileTitle = getFileTitleOnly(removeFileEnding(fileNameWithPath))
+        fileTitle = getFileTitleOnly(removeFileEnding(fullFilePath))
         uploadLink = generateURL(archiveProfile, fullFilePath)
     }
 }

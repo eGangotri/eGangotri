@@ -20,7 +20,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class UploadToArchive {
 
-    static main(String[] args) {
+    static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
             log.info "args $args"
