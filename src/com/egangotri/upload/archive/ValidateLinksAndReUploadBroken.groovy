@@ -77,7 +77,6 @@ class ValidateLinksAndReUploadBroken {
     static void startReuploadOfFailedItems(){
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        List<List<Integer>> uploadStatsList = []
         Set<String> profilesWithFailedLinks = failedItems*.archiveProfile as Set
 
         profilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
@@ -91,8 +90,7 @@ class ValidateLinksAndReUploadBroken {
             if (countOfUploadablePdfs) {
                 log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
                 List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap,failedItemsForProfile)
-                uploadStatsList << uploadStats
-                String report = UploadUtils.generateStats(uploadStatsList, archiveProfile, countOfUploadablePdfs)
+                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadablePdfs)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
             }
             EGangotriUtil.sleepTimeInSeconds(5)
