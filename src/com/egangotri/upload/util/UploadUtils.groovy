@@ -42,7 +42,9 @@ class UploadUtils {
     static final String AMPERSAND = "&"
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
+    static boolean ValidateLinksAndReUploadBrokenRunning = false
 
+    static final String EXECUTION_AS_VALIDATION = "validation"
     static readTextFileAndDumpToList(String fileName) {
         List list = []
         File file = new File(fileName)
@@ -570,10 +572,17 @@ class UploadUtils {
 
     static String createIdentifierFileForCurrentExecution() {
         File identifierFolder = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER)
+        if(ValidateLinksAndReUploadBrokenRunning){
+            identifierFolder = new File(EGangotriUtil.ARCHIVE_VALIDATING_IDENTIFIER_FOLDER)
+        }
         if(!identifierFolder.exists()){
             identifierFolder.mkdir()
         }
-        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = EGangotriUtil.ARCHIVE_IDENTIFIER_FILE.replace("{0}", getFormattedDateString())
+        if(ValidateLinksAndReUploadBrokenRunning){
+            identifierFolder = new File(EGangotriUtil.ARCHIVE_VALIDATING_IDENTIFIER_FOLDER)
+        }
+        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = identifierFolder.getAbsolutePath() + File.separator + "identifier_${getFormattedDateString()}.csv"
+
         File file = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
         if (!file.exists()) {
             file.createNewFile()

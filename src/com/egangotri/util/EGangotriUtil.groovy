@@ -26,7 +26,8 @@ class EGangotriUtil {
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
 
     static final String ARCHIVE_IDENTIFIER_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "identifier"
-    static String ARCHIVE_IDENTIFIER_FILE = ARCHIVE_IDENTIFIER_FOLDER + File.separator + "identifier_{0}.csv"
+    static final String ARCHIVE_VALIDATING_IDENTIFIER_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "identifier_validatator"
+    static String ARCHIVE_IDENTIFIER_FILE = ""
 
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
@@ -53,7 +54,7 @@ class EGangotriUtil {
     static final String USER_ID = "userId"
     static final String USER_NAME = "username"
 
-    public static List ARCHIVE_PROFILES = getAllArchiveProfiles()
+    public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
 
     static List getAllProfiles(String filePath, String textDiscarder) {

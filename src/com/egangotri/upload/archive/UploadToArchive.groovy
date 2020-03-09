@@ -20,8 +20,8 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class UploadToArchive {
 
-    static main(args) {
-        List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
+    static main(String[] args) {
+        List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
             log.info "args $args"
             archiveProfiles = args.toList()
@@ -29,10 +29,9 @@ class UploadToArchive {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
         execute(archiveProfiles, metaDataMap)
-        System.exit(0)
     }
 
-    static boolean execute(List profiles, Map metaDataMap) {
+    static void execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         log.info "Start uploading to Archive @ " + UploadUtils.getFormattedDateString()
 
@@ -60,7 +59,8 @@ class UploadToArchive {
 
         ArchiveUtil.printUplodReport(uploadSuccessCheckingMatrix)
         log.info "***End of Upload to Archive Program"
-        return true
+        System.exit(0)
+
     }
 
 

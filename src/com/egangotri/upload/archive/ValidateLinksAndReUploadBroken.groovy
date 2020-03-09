@@ -17,6 +17,7 @@ class ValidateLinksAndReUploadBroken {
     static main(args) {
         log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
         setIdentifierFile(args)
+        UploadUtils.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
         processCSV()
         filterFailedItems()
@@ -24,6 +25,7 @@ class ValidateLinksAndReUploadBroken {
             startReuploadOfFailedItems()
         }
         log.info "***End of ValidateLinksInArchive Program"
+        System.exit(0)
     }
 
     static void setIdentifierFile(def args){
@@ -54,7 +56,7 @@ class ValidateLinksAndReUploadBroken {
             linksForTesting.add(new UploadableLinksVO(_fields.toList()))
         }
         archiveProfiles = linksForTesting*.archiveProfile as Set
-        log.info(archiveProfiles.toString())
+        log.info("Checking " + linksForTesting.size() + " links in "  + "${archiveProfiles.toString()} Profiles"  )
     }
 
     static void filterFailedItems(){

@@ -1,5 +1,6 @@
 package com.egangotri.upload.util
 
+import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -13,7 +14,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
-
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
         WebElement avatar = driver.findElementByClassName("avatar")
         String userName = avatar.getAttribute("alt")
@@ -48,8 +48,12 @@ class ArchiveUtil {
         }
     }
 
-    static void storeArchiveIdentifierInFile(String archiveProfile, String uploadLink, String fileNameWithPath,String fileName, String _identifier) {
-        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$fileName\", \"$_identifier\"\n"
+    static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
+        String archiveProfile = uploadVo.archiveProfile
+        String uploadLink = uploadVo.uploadLink
+        String fileNameWithPath = uploadVo.fullFilePath
+        String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
+        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\", \"$_identifier\"\n"
         new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
     }
 
@@ -96,6 +100,4 @@ class ArchiveUtil {
         }
         return loginSucess
     }
-
-
 }
