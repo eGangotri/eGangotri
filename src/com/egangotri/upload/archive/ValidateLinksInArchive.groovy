@@ -9,7 +9,7 @@ class ValidateLinksInArchive {
     static Set archiveProfiles = []
     static File latestIdentifierFile = null
     static List<UploadedLinksVO> linksForTesting = []
-    static List<UploadedLinksVO> failedLinks = []
+    static List<UploadedLinksVO> failedItems = []
 
     static main(args) {
         log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
@@ -40,7 +40,7 @@ class ValidateLinksInArchive {
         println("latestIdentifierFile ${latestIdentifierFile.name}")
         processCSV()
         filterFailedItems()
-        if(failedLinks){
+        if(failedItems){
             startReuploadOfFailedItems()
         }
         return true
@@ -48,9 +48,8 @@ class ValidateLinksInArchive {
 
     static boolean processCSV() {
         latestIdentifierFile.splitEachLine("\",") { fields ->
-            def _fields = fields.collect {appendDoubleQuotes(it.trim())}
-            println (_fields.class)
-            println (_fields)
+            def _fields = fields.collect {stripDoubleQuotes(it.trim())}
+            log.info ("Found " + _fields)
             linksForTesting.add(new UploadedLinksVO(_fields.toList()))
         }
         archiveProfiles = linksForTesting*.archiveProfile as Set
@@ -63,45 +62,37 @@ class ValidateLinksInArchive {
                 entry.archiveLink.toURL().text
             }
             catch(FileNotFoundException e){
-                println(e.message)
-                e.printStackTrace()
-                failedLinks << entry
+                failedItems << entry
             }
             catch(Exception e){
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                failedLinks << entry
+                failedItems << entry
             }
         }
-        println("failedLinks*.archiveLink" + failedLinks*.archiveLink)
+        println("failedLinks*.archiveLink" + failedItems*.archiveLink)
     }
 
     static void startReuploadOfFailedItems(){
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         List<List<Integer>> uploadStatsList = []
-        Set<String> profilesWithFailedLinks = failedLinks*.archiveProfile as Set
+        Set<String> profilesWithFailedLinks = failedItems*.archiveProfile as Set
         profilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
             }
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
-            Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
+            List<UploadedLinksVO> failedItemsForProfile = failedItems.findAll { it.archiveProfile == archiveProfile }
+            int countOfUploadablePdfs = failedItemsForProfile.size()
             if (countOfUploadablePdfs) {
                 log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
-                if (EGangotriUtil.GENERATE_ONLY_URLS) {
-                    List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
-                    ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
-                } else {
-                    List<Integer> uploadStats = ArchiveHandler.uploadAllLinksToArchiveByProfile(metaDataMap,
-                            archiveProfile, true, failedLinks.findAll { it.archiveProfile == archiveProfile }
-                    )
-                    uploadStatsList << uploadStats
-                    String report = UploadToArchive.generateStats(uploadStatsList, archiveProfile, countOfUploadablePdfs)
-                    uploadSuccessCheckingMatrix.put((index + 1), report)
-                }
-            } else {
-                log.info "No uploadable files for Profile $archiveProfile"
+                List<Integer> uploadStats = ArchiveHandler.uploadAllLinksToArchiveByProfile(metaDataMap,
+                        archiveProfile, true, failedItemsForProfile
+                )
+                uploadStatsList << uploadStats
+                String report = UploadToArchive.generateStats(uploadStatsList, archiveProfile, countOfUploadablePdfs)
+                uploadSuccessCheckingMatrix.put((index + 1), report)
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
@@ -116,13 +107,7 @@ class ValidateLinksInArchive {
         log.info "***End of ValidateLinksInArchive Program"
     }
 
-    static String appendDoubleQuotes(String field)
-    {
-        if(!field.endsWith("\"")) {
-            return field.concat("\"")
-        }
-        else {
-            return field
-        }
+    static String stripDoubleQuotes(String field){
+            return field.replaceAll("\"","")
     }
 }
