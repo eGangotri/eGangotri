@@ -51,19 +51,7 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
-                    int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
-                    String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
-                    String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
-
-                    int excSum = uploadStats.collect { elem -> elem.last() }.sum()
-                    String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
-                    String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
-                    log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
-
-                    String statusMsg = countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
-                    String rep = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
-                            "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t $statusMsg"
-                    println(rep)
+                    generateStats(uploadStats, archiveProfile, countOfUploadablePdfs)
                     uploadSuccessCheckingMatrix.put((index + 1), rep)
                 }
             } else {
@@ -81,6 +69,23 @@ class UploadToArchive {
 
         log.info "***End of Upload to Archive Program"
         return true
+    }
+
+    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){
+        int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
+        String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
+        String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
+
+        int excSum = uploadStats.collect { elem -> elem.last() }.sum()
+        String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
+        String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
+        log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
+
+        String statusMsg = countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
+        String report = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
+                "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t $statusMsg"
+        println(report)
+        return report
     }
 }
 

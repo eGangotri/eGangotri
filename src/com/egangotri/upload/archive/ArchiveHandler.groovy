@@ -60,26 +60,13 @@ class ArchiveHandler {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
 
-        // HashMap<String,String> mapOfArchiveIdAndFileName = [:]
         try {
-            ChromeOptions options = new ChromeOptions()
-            // This will disable [1581249040.339][SEVERE]: Timed out receiving message from renderer: 0.100E:\Sri Vatsa\Books\Buddhism\Bhikkhu Sujato\A-History-of-Mindfulness-How-Insight-Worsted-Tranquillity-in-the-Satipaṭṭhāna-Sutta Bhikkhu-Sujato.pdf
-            options.setPageLoadStrategy(PageLoadStrategy.NONE)
-            WebDriver driver = new ChromeDriver(/*options*/)
-            boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            if (!loginSuccess) {
-                log.info("Login failed once for ${archiveProfile}. will give it one more shot")
-                loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-            }
-            if (!loginSuccess) {
-                log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
-                throw new Exception("Not Continuing becuase of Login Failure twice")
-            }
-
+            WebDriver driver = new ChromeDriver()
+            navigateLoginLogic(driver, metaDataMap, archiveProfile)
             if (uploadPermission) {
                 if (uploadables) {
                     String uploadedItemIdentifier = ""
-                    log.info "Ready to upload ${uploadables.size()} Pdf(s) for Profile $archiveProfile"
+                    log.info "Ready to upload ${uploadables.size()} Items(s) for Profile $archiveProfile"
                     //Get Upload Link
                     String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
                     //Start Upload of First File in Root Tab
@@ -127,6 +114,122 @@ class ArchiveHandler {
                                         tabIndex++
                                         boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                         if (!tabSwitched) {
+                                        log.error("tab not switched. contiuing to next")
+                                        continue
+                                    }
+                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
+                                    log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
+                                }
+                                catch (UnhandledAlertException uae2) {
+                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab: ${uae2.message}")
+                                    UploadUtils.hitEnterKey()
+                                    uploadFailureCount++
+                                    log.info("Failed. Attempt-2 for (${UploadUtils.getFileTitleOnly(uploadableFile)}). following UnhandledAlertException")
+                                    continue
+                                }
+                                catch (Exception e) {
+                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
+                                    uploadFailureCount++
+                                    continue
+                                }
+                            }
+                            catch (Exception e) {
+                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
+                                uploadFailureCount++
+                                continue
+                            }
+                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
+                                log.info("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                                throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
+                            }
+                            countOfUploadedItems++
+                            // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
+                        }
+                    }
+                    getResultsCount(driver, false)
+                    UploadUtils.minimizeBrowser(driver)
+                } else {
+                    log.info "No File uploadable for profile $archiveProfile"
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+
+        return [countOfUploadedItems, uploadFailureCount]
+    }
+
+    static void navigateLoginLogic(WebDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
+        boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+        if (!loginSuccess) {
+            log.info("Login failed once for ${archiveProfile}. will give it one more shot")
+            loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+        }
+        if (!loginSuccess) {
+            log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
+            throw new Exception("Not Continuing becuase of Login Failure twice")
+        }
+    }
+    static List<Integer> uploadAllLinksToArchiveByProfile(
+            Map metaDataMap, String archiveProfile, boolean uploadPermission, List<UploadedLinksVO> uploadableLinks) {
+        int countOfUploadedItems = 0
+        int uploadFailureCount = 0
+        List<String> uploadables = uploadableLinks*.fullFilePath
+        List<String> uploadLinks = uploadableLinks*.uploadLink
+        try {
+            WebDriver driver = new ChromeDriver()
+            navigateLoginLogic(driver, metaDataMap, archiveProfile)
+
+            if (uploadPermission) {
+                if (uploadableLinks) {
+                    String uploadedItemIdentifier = ""
+                    log.info "Ready to upload ${uploadables.size()} Item(s) for Profile $archiveProfile"
+                    //Start Upload of First File in Root Tab
+                    log.info "Uploading: ${uploadables[0]}"
+                    EGangotriUtil.sleepTimeInSeconds(0.2)
+                    getResultsCount(driver, true)
+                    try {
+                        uploadedItemIdentifier = uploadOneItem(driver, uploadables[0], uploadLinks[0], archiveProfile)
+                        countOfUploadedItems++
+                    }
+                    catch (Exception e) {
+                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
+                        uploadFailureCount++
+                    }
+                    // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
+                    // Upload Remaining Files by generating New Tabs
+                    if (uploadableLinks.size() > 1) {
+                        int tabIndex = 1
+                        for (uploadableLink in uploadableLinks.drop(1)) {
+                            log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableLink.fullFilePath)} @ tabNo:$tabIndex"
+                            UploadUtils.openNewTab()
+
+                            //Switch to new Tab
+                            boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                            if (_tabSwitched) {
+                                tabIndex++
+                            } else {
+                                log.info("Tab Creation Failed.")
+                                continue
+                            }
+                            String uploadLink = uploadableLink.uploadLink
+                            String uploadableFile = uploadableLink.fullFilePath
+                            //Start Upload
+                            try {
+                                uploadedItemIdentifier = uploadOneItem(driver, uploadableLink.fullFilePath, uploadableLink.uploadLink, archiveProfile)
+                            }
+                            catch (UnhandledAlertException uae) {
+                                log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
+                                log.error("will proceed to next tab: ${uae.message}")
+                                UploadUtils.hitEnterKey()
+                                uploadFailureCount++
+                                log.info("Attempt-2 following UnhandledAlertException for ('${UploadUtils.getFileTitleOnly(uploadableFile)}').")
+                                try {
+                                    UploadUtils.openNewTab()
+                                    tabIndex++
+                                    boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                                    if (!tabSwitched) {
                                         log.error("tab not switched. contiuing to next")
                                         continue
                                     }
