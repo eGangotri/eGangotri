@@ -67,11 +67,7 @@ class ArchiveUtil {
         }
     }
 
-    static void loginToArchive(def metaDataMap, String archiveProfile) {
-        logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
-    }
-
-    static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
+    static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile) {
         boolean loginSucess = false
         try {
             driver.get(ArchiveUtil.ARCHIVE_LOGIN_URL)
