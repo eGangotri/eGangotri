@@ -73,7 +73,7 @@ class ValidateLinksAndReUploadBroken {
                 failedItems << entry
             }
         }
-        println("failedLinks*.archiveLink" + failedItems*.archiveLink)
+        log.info("Total ${failedItems.size()} failedLinks " + failedItems*.archiveLink.toString())
     }
 
     static void startReuploadOfFailedItems(){
