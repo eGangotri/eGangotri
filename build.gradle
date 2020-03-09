@@ -132,6 +132,8 @@ dependencies {
     compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '3.0.1'
     compile group: 'org.codehaus.geb', name: 'geb-core', version: '0.7.2'
 
+    compile group: 'com.opencsv', name: 'opencsv', version: '5.1'
+
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'
 }
