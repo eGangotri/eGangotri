@@ -8,7 +8,7 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class ValidateLinksInArchive {
+class ValidateLinksAndReUploadBroken {
     static Set archiveProfiles = []
     static File identifierFile = null
     static List<UploadableLinksVO> linksForTesting = []
