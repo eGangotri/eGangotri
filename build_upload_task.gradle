@@ -14,7 +14,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     args = ["PRFL3","PRFL5"]
 }
 
-task checkLinksForUploadSuccess(dependsOn: 'classes', type: JavaExec) {
+task validateLinksInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.ValidateLinksInArchive"
     jvmArgs = applicationDefaultJvmArgs
