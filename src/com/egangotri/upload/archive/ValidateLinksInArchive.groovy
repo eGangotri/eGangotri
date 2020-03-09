@@ -6,8 +6,13 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class ValidateLinksInArchive {
+    static Set archiveProfiles = []
+    static File latestIdentifierFile = null
+    static List<UploadedLinksVO> links = []
+
     static main(args) {
-        File latestIdentifierFile = new File( EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
+        latestIdentifierFile = new File( EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
+
         if(!latestIdentifierFile){
             log.error("No Files in ${EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
@@ -27,30 +32,26 @@ class ValidateLinksInArchive {
         }
 
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        execute(archiveProfiles, metaDataMap,latestIdentifierFile)
+        execute(archiveProfiles, metaDataMap)
     }
 
-    static boolean execute(List profiles, Map metaDataMap, File latestIdentifierFile) {
+    static boolean execute(List profiles, Map metaDataMap) {
         println("latestIdentifierFile ${latestIdentifierFile.name}")
-        processCSV(latestIdentifierFile)
+        processCSV()
         return true
     }
 
-    static boolean processCSV(File latestIdentifierFile) {
-        List<UploadedLinksVO> links = []
-        //links.add(new UploadedLinksVO("1 2 3 4 5".split()))
-
+    static boolean processCSV() {
         latestIdentifierFile.splitEachLine("\",") { fields ->
-
             def _fields = fields.collect {appendDoubleQuotes(it)}
             println (_fields.class)
             println (_fields)
             links.add(new UploadedLinksVO(_fields.toList()))
         }
-
-        Set archiveProfiles = links*.archiveProfile as Set
+        archiveProfiles = links*.archiveProfile as Set
         println(archiveProfiles)
     }
+
     static String appendDoubleQuotes(String field)
     {
         if(!field.endsWith("\"")) {
