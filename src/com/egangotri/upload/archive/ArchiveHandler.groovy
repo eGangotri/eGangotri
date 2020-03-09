@@ -1,92 +1,54 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.vo.UploadVO
+import com.egangotri.upload.vo.UploadableItemsVO
+import com.egangotri.upload.vo.UploadableLinksVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
-import org.openqa.selenium.PageLoadStrategy
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.UnhandledAlertException
+import static com.egangotri.upload.util.ArchiveUtil.*
 
 @Slf4j
 class ArchiveHandler {
-    static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
-    static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
-
-    static void loginToArchive(def metaDataMap, String archiveProfile) {
-        logInToArchiveOrg(new ChromeDriver(), metaDataMap, archiveProfile)
-    }
-
-    static boolean logInToArchiveOrg(WebDriver driver, def metaDataMap, String archiveProfile) {
-        boolean loginSucess = false
-        try {
-            driver.get(ARCHIVE_LOGIN_URL)
-            log.info("Login to Archive URL $ARCHIVE_LOGIN_URL")
-            //Login
-            WebElement id = driver.findElement(By.name(UploadUtils.USERNAME_TEXTBOX_NAME))
-            WebElement pass = driver.findElement(By.name(UploadUtils.PASSWORD_TEXTBOX_NAME))
-            WebElement button = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
-
-            String username = metaDataMap."${archiveProfile}.username"
-            id.sendKeys(username)
-            String kuta = metaDataMap."${archiveProfile}.kuta" ?: metaDataMap."kuta"
-            pass.sendKeys(kuta)
-            //button.click doesnt work
-            button.submit()
-            //pass.click()
-            EGangotriUtil.sleepTimeInSeconds(0.2)
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-            wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)))
-            loginSucess = true
-        }
-        catch (Exception e) {
-            log.info("Exeption in logInToArchiveOrg ${e.message}")
-            e.printStackTrace()
-            throw e
-        }
-        return loginSucess
-    }
-
 
     static List<Integer> uploadAllItemsToArchiveByProfile(
-            Map metaDataMap, String archiveProfile, boolean uploadPermission, List<String> uploadables) {
+            Map metaDataMap, List<UploadVO> uploadVos) {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
-
         try {
             WebDriver driver = new ChromeDriver()
+            String archiveProfile = uploadVos.first().archiveProfile
+            List<String> uploadables = uploadVos*.fullFilePath
             navigateLoginLogic(driver, metaDataMap, archiveProfile)
-            if (uploadPermission) {
-                if (uploadables) {
-                    String uploadedItemIdentifier = ""
-                    log.info "Ready to upload ${uploadables.size()} Items(s) for Profile $archiveProfile"
-                    //Get Upload Link
-                    String uploadLink = UploadUtils.generateURL(archiveProfile, uploadables[0])
+                if (uploadVos) {
+                    log.info "Ready to upload ${uploadables.size()} Items(s) for Profile ${uploadVos.first().archiveProfile}"
                     //Start Upload of First File in Root Tab
-                    log.info "Uploading: ${uploadables[0]}"
+                    log.info "Uploading: ${uploadVos.first().fileTitle}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
                     getResultsCount(driver, true)
                     try {
-                        uploadedItemIdentifier = ArchiveHandler.uploadOneItem(driver, uploadables[0], uploadLink, archiveProfile)
+                        uploadOneItem(driver, uploadVos.first())
                         countOfUploadedItems++
                     }
                     catch (Exception e) {
                         log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
                         uploadFailureCount++
                     }
-                    // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
                     // Upload Remaining Files by generating New Tabs
                     if (uploadables.size() > 1) {
                         int tabIndex = 1
-                        for (uploadableFile in uploadables.drop(1)) {
-                            log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableFile)} @ tabNo:$tabIndex"
+                        for (uploadVo in uploadVos.drop(1)) {
+                            log.info "Uploading: ${uploadVo.fileTitle} @ tabNo:$tabIndex"
                             UploadUtils.openNewTab()
 
                             //Switch to new Tab
@@ -94,21 +56,21 @@ class ArchiveHandler {
                             if (_tabSwitched) {
                                 tabIndex++
                             } else {
-                                log.info("Tab Creation Failed.")
+                                log.info("Tab Creation Failed during uppload of ${uploadVo.fileTitle}.")
+                                uploadFailureCount++
                                 continue
                             }
-                            uploadLink = UploadUtils.generateURL(archiveProfile, uploadableFile)
 
                             //Start Upload
                             try {
-                                uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
+                                uploadOneItem(driver, uploadVo)
                             }
                             catch (UnhandledAlertException uae) {
-                                log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
+                                log.error("UnhandledAlertException while uploading(${uploadVo.fileTitle}.")
                                 log.error("will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for ('${UploadUtils.getFileTitleOnly(uploadableFile)}').")
+                                log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.fileTitle}').")
                                 try {
                                         UploadUtils.openNewTab()
                                         tabIndex++
@@ -117,24 +79,24 @@ class ArchiveHandler {
                                         log.error("tab not switched. contiuing to next")
                                         continue
                                     }
-                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
-                                    log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
+                                    uploadOneItem(driver, uploadVo)
+                                    log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.fileTitle}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab: ${uae2.message}")
+                                    log.info("UnhandledAlertException while uploading(${uploadVo.fileTitle}).\n will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
-                                    log.info("Failed. Attempt-2 for (${UploadUtils.getFileTitleOnly(uploadableFile)}). following UnhandledAlertException")
+                                    log.info("Failed. Attempt-2 for (${uploadVo.fileTitle}). following UnhandledAlertException")
                                     continue
                                 }
                                 catch (Exception e) {
-                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
+                                    log.info("Exception while uploading(${uploadVo.fileTitle}).\n will proceed to next tab:${e.message}")
                                     uploadFailureCount++
                                     continue
                                 }
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
+                                log.info("Exception while uploading(${uploadVo.fileTitle}).\n will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
@@ -143,7 +105,6 @@ class ArchiveHandler {
                                 throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                             }
                             countOfUploadedItems++
-                            // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
                         }
                     }
                     getResultsCount(driver, false)
@@ -151,151 +112,12 @@ class ArchiveHandler {
                 } else {
                     log.info "No File uploadable for profile $archiveProfile"
                 }
-            }
         }
         catch (Exception e) {
             e.printStackTrace()
         }
 
         return [countOfUploadedItems, uploadFailureCount]
-    }
-
-    static void navigateLoginLogic(WebDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
-        boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-        if (!loginSuccess) {
-            log.info("Login failed once for ${archiveProfile}. will give it one more shot")
-            loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
-        }
-        if (!loginSuccess) {
-            log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
-            throw new Exception("Not Continuing becuase of Login Failure twice")
-        }
-    }
-    static List<Integer> uploadAllLinksToArchiveByProfile(
-            Map metaDataMap, String archiveProfile, boolean uploadPermission, List<UploadedLinksVO> uploadableLinks) {
-        int countOfUploadedItems = 0
-        int uploadFailureCount = 0
-        List<String> uploadables = uploadableLinks*.fullFilePath
-        List<String> uploadLinks = uploadableLinks*.uploadLink
-        try {
-            WebDriver driver = new ChromeDriver()
-            navigateLoginLogic(driver, metaDataMap, archiveProfile)
-
-            if (uploadPermission) {
-                if (uploadableLinks) {
-                    String uploadedItemIdentifier = ""
-                    log.info "Ready to upload ${uploadables.size()} Item(s) for Profile $archiveProfile"
-                    //Start Upload of First File in Root Tab
-                    log.info "Uploading: ${uploadables[0]}"
-                    EGangotriUtil.sleepTimeInSeconds(0.2)
-                    getResultsCount(driver, true)
-                    try {
-                        uploadedItemIdentifier = uploadOneItem(driver, uploadables[0], uploadLinks[0], archiveProfile)
-                        countOfUploadedItems++
-                    }
-                    catch (Exception e) {
-                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
-                        uploadFailureCount++
-                    }
-                    // mapOfArchiveIdAndFileName.put(archiveIdentifier, uploadables[0])
-                    // Upload Remaining Files by generating New Tabs
-                    if (uploadableLinks.size() > 1) {
-                        int tabIndex = 1
-                        for (uploadableLink in uploadableLinks.drop(1)) {
-                            log.info "Uploading: ${UploadUtils.getFileTitleOnly(uploadableLink.fullFilePath)} @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab()
-
-                            //Switch to new Tab
-                            boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
-                            if (_tabSwitched) {
-                                tabIndex++
-                            } else {
-                                log.info("Tab Creation Failed.")
-                                continue
-                            }
-                            String uploadLink = uploadableLink.uploadLink
-                            String uploadableFile = uploadableLink.fullFilePath
-                            //Start Upload
-                            try {
-                                uploadedItemIdentifier = uploadOneItem(driver, uploadableLink.fullFilePath, uploadableLink.uploadLink, archiveProfile)
-                            }
-                            catch (UnhandledAlertException uae) {
-                                log.error("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}.")
-                                log.error("will proceed to next tab: ${uae.message}")
-                                UploadUtils.hitEnterKey()
-                                uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for ('${UploadUtils.getFileTitleOnly(uploadableFile)}').")
-                                try {
-                                    UploadUtils.openNewTab()
-                                    tabIndex++
-                                    boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
-                                    if (!tabSwitched) {
-                                        log.error("tab not switched. contiuing to next")
-                                        continue
-                                    }
-                                    uploadedItemIdentifier = uploadOneItem(driver, uploadableFile, uploadLink, archiveProfile)
-                                    log.info("****Attempt-2 succeeded if you see this for File '${UploadUtils.getFileTitleOnly(uploadableFile)}'")
-                                }
-                                catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab: ${uae2.message}")
-                                    UploadUtils.hitEnterKey()
-                                    uploadFailureCount++
-                                    log.info("Failed. Attempt-2 for (${UploadUtils.getFileTitleOnly(uploadableFile)}). following UnhandledAlertException")
-                                    continue
-                                }
-                                catch (Exception e) {
-                                    log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
-                                    uploadFailureCount++
-                                    continue
-                                }
-                            }
-                            catch (Exception e) {
-                                log.info("Exception while uploading(${UploadUtils.getFileTitleOnly(uploadableFile)}).\n will proceed to next tab:${e.message}")
-                                uploadFailureCount++
-                                continue
-                            }
-                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
-                                log.info("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                                throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                            }
-                            countOfUploadedItems++
-                            // mapOfArchiveIdAndFileName.put(rchvIdntfr, fileName)
-                        }
-                    }
-                    getResultsCount(driver, false)
-                    UploadUtils.minimizeBrowser(driver)
-                } else {
-                    log.info "No File uploadable for profile $archiveProfile"
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace()
-        }
-
-        return [countOfUploadedItems, uploadFailureCount]
-    }
-
-    static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
-        WebElement avatar = driver.findElementByClassName("avatar")
-        String userName = avatar.getAttribute("alt")
-        log.info("userName: ${userName}")
-        String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
-        if(!_startTime){
-            UploadUtils.openNewTab()
-            UploadUtils.switchToLastOpenTab(driver)
-            driver.navigate().to(archiveUserAccountUrl)
-        }
-        driver.get(archiveUserAccountUrl)
-        WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
-        WebElement resultsCount = driver.findElementByClassName("results_count")
-        if (resultsCount) {
-            log.info("Results Count at ${ _startTime ? "LoginTime": 'UploadCompletionTime'}: " + resultsCount.text)
-            if(!_startTime){
-                log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
-            }
-        }
     }
 
     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
@@ -316,7 +138,6 @@ class ArchiveHandler {
                     searchList.sendKeys(fileName)
                     searchList.submit()
 
-                    //new WebDriverWait(driver, ARCHIVE_WAITING_PERIOD).until(ExpectedConditions.textToBePresentInElement(By.cssSelector("h3.co-top-row")))
                     String numOfUploads = driver.findElement(By.cssSelector("h3.co-top-row")).text
                     log.info "$numOfUploads $fileName"
                     results << [numOfUploads, fileName]
@@ -332,7 +153,6 @@ class ArchiveHandler {
         }
 
         return countOfUploadedItems
-        //WriteToExcel.toCSV(mapOfArchiveIdAndFileName)
     }
 
 
@@ -350,10 +170,6 @@ class ArchiveHandler {
 
 
     static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile) {
-        return performPartitioningAndUploadToArchive(metaDataMap, archiveProfile, true)
-    }
-
-    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile, boolean uploadPermission) {
         List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
 
         List<List<Integer>> uploadStatsList = []
@@ -363,23 +179,37 @@ class ArchiveHandler {
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, archiveProfile, uploadPermission, partitionedUploadables)
+                //create UploadVO
+                List<UploadableItemsVO> vos = []
+                partitionedUploadables.each{ uploadable ->
+                    vos << new UploadableItemsVO(archiveProfile,uploadable)
+                }
+                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, vos)
                 uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, archiveProfile, uploadPermission, uploadables)
+            //create UploadVO
+            List<UploadableItemsVO> vos = []
+            uploadables.each{ uploadable ->
+                vos << new UploadableItemsVO(archiveProfile,uploadable)
+            }
+            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos)
             uploadStatsList << uploadStats
         }
         uploadStatsList
     }
 
 
-    static String uploadOneItem(WebDriver driver, String fileNameWithPath, String uploadLink, String archiveProfile) {
+    static String uploadOneItem(WebDriver driver, UploadVO uploadVO) {
+        String fileNameWithPath = uploadVO.fullFilePath
+        String uploadLink = uploadVO.uploadLink
+        String archiveProfile = uploadVO.archiveProfile
+
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)){
             String lastStringFragAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameWithPath)
-            String removeFileEnding = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
-            uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + removeFileEnding : uploadLink
+            String lastStringFragAfterDashWithFileEndingRemoved = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
+            uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + lastStringFragAfterDashWithFileEndingRemoved : uploadLink
         }
         log.info("URL for upload: \n${uploadLink}")
         log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
@@ -471,7 +301,7 @@ class ArchiveHandler {
             identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
             log.info("identifier after alteration is ${identifier}")
         }
-        UploadUtils.storeArchiveIdentifierInFile(archiveProfile, uploadLink, fileNameWithPath, UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)
+        storeArchiveIdentifierInFile(archiveProfile, uploadLink, fileNameWithPath, UploadUtils.getFileTitleOnly(fileNameWithPath),identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))

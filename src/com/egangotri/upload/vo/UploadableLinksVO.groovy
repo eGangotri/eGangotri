@@ -1,13 +1,11 @@
-package com.egangotri.upload.archive
+package com.egangotri.upload.vo
 
-class UploadedLinksVO {
-    String uploadLink
-    String fullFilePath
-    String fileTitle
+class UploadableLinksVO extends UploadVO{
+
     String archiveLink
-    String archiveProfile
 
-    UploadedLinksVO(List<String> fields){
+    UploadableLinksVO(List<String> fields){
+        super()
         archiveProfile = fields[0]
         uploadLink = fields[1]
         fullFilePath = fields[2]

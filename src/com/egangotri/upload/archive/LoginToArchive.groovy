@@ -1,5 +1,6 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -19,7 +20,7 @@ class LoginToArchive {
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         archiveProfiles*.toString().each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
-            ArchiveHandler.loginToArchive(metaDataMap, archiveProfile)
+            ArchiveUtil.loginToArchive(metaDataMap, archiveProfile)
         }
         log.info "***Browser Launches Done"
     }

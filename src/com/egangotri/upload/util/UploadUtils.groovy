@@ -582,8 +582,21 @@ class UploadUtils {
         return file.name
     }
 
-    static void storeArchiveIdentifierInFile(String archiveProfile, String uploadLink, String fileNameWithPath,String fileName, String _identifier) {
-        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$fileName\", \"$_identifier\"\n"
-        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){
+        int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
+        String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
+        String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
+
+        int excSum = uploadStats.collect { elem -> elem.last() }.sum()
+        String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
+        String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
+        log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
+
+        String statusMsg = countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
+        String report = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
+                "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t $statusMsg"
+        println(report)
+        return report
     }
+
 }

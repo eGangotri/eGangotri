@@ -7,6 +7,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class SettingsUtil {
     def static void applySettings(){
+        UploadUtils.createIdentifierFileForCurrentExecution()
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if(settingsMetaDataMap){
             log.info "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
