@@ -3,7 +3,7 @@ package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
-import com.egangotri.upload.vo.UploadableItemsVO
+import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -178,14 +178,14 @@ class ArchiveHandler {
 
             for (List<String> partitionedUploadables : partitions) {
                 log.info("Batch of partitioned Items Count ${partitionedUploadables.size()} sent for uploads")
-                List<UploadableItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
+                List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
                 storeQueuedItemsInFile(vos)
                 List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos )
                 uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            List<UploadableItemsVO> vos = generateVOsFromFileNames(archiveProfile,uploadables)
+            List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,uploadables)
             List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos)
             uploadStatsList << uploadStats
         }
@@ -193,10 +193,10 @@ class ArchiveHandler {
     }
 
     //create UploadVO
-    static List<UploadableItemsVO> generateVOsFromFileNames(String archiveProfile,List<String> uploadables){
-        List<UploadableItemsVO> vos = []
+    static List<ItemsVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
+        List<ItemsVO> vos = []
         uploadables.each{ uploadable ->
-            vos << new UploadableItemsVO(archiveProfile,uploadable)
+            vos << new ItemsVO(archiveProfile,uploadable)
         }
         return vos
     }

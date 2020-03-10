@@ -1,8 +1,9 @@
 package com.egangotri.upload.vo
 
-class UploadableLinksVO extends UploadVO{
+class LinksVO extends UploadVO{
     String archiveLink
-    UploadableLinksVO(List<String> fields){
+
+    LinksVO(List<String> fields){
         super()
         archiveProfile = fields[0]
         uploadLink = fields[1]

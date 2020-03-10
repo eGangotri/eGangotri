@@ -3,7 +3,9 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
-import com.egangotri.upload.vo.UploadableLinksVO
+import com.egangotri.upload.vo.ItemsVO
+import com.egangotri.upload.vo.LinksVO
+import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -11,39 +13,47 @@ import groovy.util.logging.Slf4j
 class ValidateLinksAndReUploadBroken {
     static Set archiveProfiles = []
     static File identifierFile = null
-    static List<UploadableLinksVO> linksForTesting = []
-    static List<UploadableLinksVO> failedItems = []
+    static List<LinksVO> identifierLinksForTesting = []
+    static List<ItemsVO> queuedItemsForTesting = []
+    static List<LinksVO> failedLinks = []
+    static List<ItemsVO> missedOutQueuedItems = []
+
 
     static main(args) {
         log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
         setIdentifierFile(args)
         ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
-        processCSV()
+        processIdentifierCSV()
+        processQueuedCSV()
+        findQueueItemsNotInIdentifierCSV()
         filterFailedItems()
-        if(failedItems){
-            startReuploadOfFailedItems()
+        if (missedOutQueuedItems) {
+            startReuploadOfFailedItems(missedOutQueuedItems)
+        }
+        if (failedLinks) {
+            startReuploadOfFailedItems(failedLinks)
         }
         log.info "***End of ValidateLinksInArchive Program"
         System.exit(0)
     }
 
-    static void setIdentifierFile(def args){
-        identifierFile = new File( EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
+    static void setIdentifierFile(def args) {
+        identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
-        if(!identifierFile){
+        if (!identifierFile) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
         if (args) {
             println "args $args"
-            if(args?.size() != 1){
+            if (args?.size() != 1) {
                 log.error("Only 1 File Name can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            String _file = args.first().endsWith(".csv")?args.first(): args.first() + ".csv"
+            String _file = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file)
-            if(!identifierFile){
+            if (!identifierFile) {
                 log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
@@ -51,48 +61,70 @@ class ValidateLinksAndReUploadBroken {
         println("Identifier File for processing: ${identifierFile.name}")
     }
 
-    static boolean processCSV() {
+    static void processIdentifierCSV() {
         identifierFile.splitEachLine("\",") { fields ->
-            def _fields = fields.collect {stripDoubleQuotes(it.trim())}
-            linksForTesting.add(new UploadableLinksVO(_fields.toList()))
+            def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
+            identifierLinksForTesting.add(new LinksVO(_fields.toList()))
         }
-        archiveProfiles = linksForTesting*.archiveProfile as Set
-        log.info("Checking " + linksForTesting.size() + " links in "  + "${archiveProfiles.toString()} Profiles"  )
+        archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
+        log.info("Checking " + identifierLinksForTesting.size() + " links in " + "${archiveProfiles.toString()} Profiles")
     }
 
-    static void filterFailedItems(){
-        linksForTesting.eachWithIndex { UploadableLinksVO entry, int i ->
+    static void processQueuedCSV() {
+        identifierFile.splitEachLine("\",") { fields ->
+            def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
+            queuedItemsForTesting.add(new ItemsVO(_fields.toList()))
+        }
+        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
+        log.info("Checking " + queuedItemsForTesting.size() + " links in " + "${queuedProfiles.toString()} Profiles")
+    }
+
+    // QueuedItem - IdentifierGeneratedItem
+    //Queued Item is a superset of IdentifierGeneratedItem
+    static void findQueueItemsNotInIdentifierCSV() {
+        List allFilePaths = identifierLinksForTesting*.fullFilePath
+        queuedItemsForTesting.each { queuedItem ->
+            if (!allFilePaths.contains(queuedItem.fullFilePath)) {
+                missedOutQueuedItems << queuedItem
+            }
+        }
+        log.info("Found ${missedOutQueuedItems.size()} Items from Queued List that were missed")
+
+    }
+
+    static void filterFailedItems() {
+        identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
                 entry.archiveLink.toURL().text
             }
-            catch(FileNotFoundException e){
-                failedItems << entry
+            catch (FileNotFoundException e) {
+                failedLinks << entry
             }
-            catch(Exception e){
+            catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                failedItems << entry
+                failedLinks << entry
             }
         }
-        log.info("Total ${failedItems.size()} failedLinks " + failedItems*.archiveLink.toString())
+        log.info("Total ${failedLinks.size()} failedLinks " + failedLinks*.archiveLink.toString())
     }
 
-    static void startReuploadOfFailedItems(){
+    static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Set<String> profilesWithFailedLinks = failedItems*.archiveProfile as Set
+        Set<String> profilesWithFailedLinks = reuploadableItems*.archiveProfile as Set
 
         profilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
             }
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
-            List<UploadableLinksVO> failedItemsForProfile = failedItems.findAll { it.archiveProfile == archiveProfile }
+            List<UploadVO> failedItemsForProfile = reuploadableItems.findAll { it.archiveProfile == archiveProfile }
 
             int countOfUploadablePdfs = failedItemsForProfile.size()
             if (countOfUploadablePdfs) {
                 log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
-                List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap,failedItemsForProfile)
+                List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedItemsForProfile)
                 String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadablePdfs)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
             }
@@ -101,7 +133,7 @@ class ValidateLinksAndReUploadBroken {
         ArchiveUtil.printUplodReport(uploadSuccessCheckingMatrix)
     }
 
-    static String stripDoubleQuotes(String field){
-            return field.replaceAll("\"","")
+    static String stripDoubleQuotes(String field) {
+        return field.replaceAll("\"", "")
     }
 }
