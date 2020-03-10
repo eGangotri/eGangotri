@@ -46,7 +46,7 @@ class ArchiveUtil {
         }
         if (!loginSuccess) {
             log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
-            throw new Exception("Not Continuing becuase of Login Failure twice")
+            throw new Exception("Not Continuing because of Login Failure twice")
         }
     }
 
