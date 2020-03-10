@@ -85,7 +85,7 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void processQueuedCSV() {
-        identifierFile.splitEachLine("\",") { fields ->
+        queuedFile.splitEachLine("\",") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
             queuedItemsForTesting.add(new ItemsVO(_fields.toList()))
         }
@@ -93,10 +93,12 @@ class ValidateLinksAndReUploadBroken {
         log.info("Checking " + queuedItemsForTesting.size() + " links in " + "${queuedProfiles.toString()} Profiles")
     }
 
-    // QueuedItem - IdentifierGeneratedItem
+    // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInIdentifierCSV() {
         List allFilePaths = identifierLinksForTesting*.fullFilePath
+        log.info("Found ${allFilePaths.size()} Items in identifier file")
+
         queuedItemsForTesting.each { queuedItem ->
             if (!allFilePaths.contains(queuedItem.fullFilePath)) {
                 missedOutQueuedItems << queuedItem
@@ -105,7 +107,6 @@ class ValidateLinksAndReUploadBroken {
             }
         }
         log.info("Found ${missedOutQueuedItems.size()} Items from Queued List that were missed")
-
     }
 
     static void filterFailedItems() {
