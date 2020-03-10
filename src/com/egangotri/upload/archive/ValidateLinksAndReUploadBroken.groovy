@@ -17,7 +17,7 @@ class ValidateLinksAndReUploadBroken {
     static main(args) {
         log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
         setIdentifierFile(args)
-        UploadUtils.ValidateLinksAndReUploadBrokenRunning = true
+        ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
         processCSV()
         filterFailedItems()
@@ -29,10 +29,10 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void setIdentifierFile(def args){
-        identifierFile = new File( EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
+        identifierFile = new File( EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
 
         if(!identifierFile){
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER}.Cannot proceed. Quitting")
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
         if (args) {
@@ -41,13 +41,14 @@ class ValidateLinksAndReUploadBroken {
                 log.error("Only 1 File Name can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            identifierFile = new File(EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER + File.separator + args.first())
+            String _file = args.first().endsWith(".csv")?args.first(): args.first() + ".csv"
+            identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file)
             if(!identifierFile){
-                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER}.Cannot proceed. Quitting")
+                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
         }
-        println("latestIdentifierFile ${identifierFile.name}")
+        println("Identifier File for processing: ${identifierFile.name}")
     }
 
     static boolean processCSV() {

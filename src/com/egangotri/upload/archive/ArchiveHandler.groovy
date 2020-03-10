@@ -1,10 +1,9 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.upload.util.ArchiveUtil
+
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.UploadableItemsVO
-import com.egangotri.upload.vo.UploadableLinksVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -159,7 +158,7 @@ class ArchiveHandler {
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
             String uploadLink = UploadUtils.generateURL(archiveProfile, fileName)
-            log.info("$tabIndex) [$archiveProfile] $uploadLink")
+            log.info("${tabIndex+1}) [$archiveProfile] $uploadLink")
         }
     }
 
@@ -175,31 +174,32 @@ class ArchiveHandler {
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size() > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
-            log.info("uploadables will be uploaded in ${partitions.size} # of Browsers: ")
+            log.info("uploadables will be uploaded in ${partitions.size()} # of Browsers: ")
 
             for (List<String> partitionedUploadables : partitions) {
-                log.info("Batch of partitioned Items Count ${partitionedUploadables.size} sent for uploads")
-                //create UploadVO
-                List<UploadableItemsVO> vos = []
-                partitionedUploadables.each{ uploadable ->
-                    vos << new UploadableItemsVO(archiveProfile,uploadable)
-                }
-                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, vos)
+                log.info("Batch of partitioned Items Count ${partitionedUploadables.size()} sent for uploads")
+                List<UploadableItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
+                storeQueuedItemsInFile(vos)
+                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos )
                 uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            //create UploadVO
-            List<UploadableItemsVO> vos = []
-            uploadables.each{ uploadable ->
-                vos << new UploadableItemsVO(archiveProfile,uploadable)
-            }
+            List<UploadableItemsVO> vos = generateVOsFromFileNames(archiveProfile,uploadables)
             List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos)
             uploadStatsList << uploadStats
         }
         uploadStatsList
     }
 
+    //create UploadVO
+    static List<UploadableItemsVO> generateVOsFromFileNames(String archiveProfile,List<String> uploadables){
+        List<UploadableItemsVO> vos = []
+        uploadables.each{ uploadable ->
+            vos << new UploadableItemsVO(archiveProfile,uploadable)
+        }
+        return vos
+    }
 
     static String uploadOneItem(WebDriver driver, UploadVO uploadVO) {
         String fileNameWithPath = uploadVO.fullFilePath

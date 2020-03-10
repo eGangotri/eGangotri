@@ -42,9 +42,7 @@ class UploadUtils {
     static final String AMPERSAND = "&"
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
-    static boolean ValidateLinksAndReUploadBrokenRunning = false
 
-    static final String EXECUTION_AS_VALIDATION = "validation"
     static readTextFileAndDumpToList(String fileName) {
         List list = []
         File file = new File(fileName)
@@ -384,7 +382,7 @@ class UploadUtils {
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
         }
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
-            def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
+            def metaDataMap = loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
             String _creator = metaDataMap."${archiveProfile}.creator"
             if (!_creator) {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
@@ -567,28 +565,6 @@ class UploadUtils {
 
     static getFormattedDateString() {
         return new SimpleDateFormat(DATE_TIME_PATTERN).format(new Date())
-    }
-
-
-    static String createIdentifierFileForCurrentExecution() {
-        File identifierFolder = new File(EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER)
-        if(ValidateLinksAndReUploadBrokenRunning){
-            identifierFolder = new File(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
-        }
-        if(!identifierFolder.exists()){
-            identifierFolder.mkdir()
-        }
-        if(ValidateLinksAndReUploadBrokenRunning){
-            identifierFolder = new File(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
-        }
-        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = identifierFolder.getAbsolutePath() + File.separator + "identifier_${getFormattedDateString()}.csv"
-
-        File file = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-        log.info("Identifiers will be stored in ${file.name}")
-        return file.name
     }
 
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){

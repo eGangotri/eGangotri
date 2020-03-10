@@ -26,9 +26,13 @@ class EGangotriUtil {
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
 
     static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_queued"
-    static final String ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_identifier_generated"
+    static final String ARCHIVE_GENERATED_IDENTIFIERS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_generated_identifiers"
     static final String ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_post_validation"
-    static String ARCHIVE_IDENTIFIER_FILE = ""
+
+    static String ARCHIVE_ITEMS_QUEUED_FILE = EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + "item_{0}.csv"
+    static String ARCHIVE_IDENTIFIER_FILE = EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + "item_{0}.csv"
+    static String ARCHIVE_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "item_{0}.csv"
+
 
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"

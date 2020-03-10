@@ -14,6 +14,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
+    static boolean ValidateLinksAndReUploadBrokenRunning = false
+
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
         WebElement avatar = driver.findElementByClassName("avatar")
         String userName = avatar.getAttribute("alt")
@@ -49,12 +51,74 @@ class ArchiveUtil {
     }
 
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
+        String appendable = voToCSVString(uploadVo, _identifier)
+        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+    }
+
+    static void storeQueuedItemsInFile(List<UploadVO> uploadVos) {
+        String appendable = ""
+        uploadVos.each{ uploadVo ->
+            appendable.concat(voToCSVString(uploadVo))
+        }
+        new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
+
+    }
+    static String voToCSVString(UploadVO uploadVo, String _identifier = null) {
         String archiveProfile = uploadVo.archiveProfile
         String uploadLink = uploadVo.uploadLink
         String fileNameWithPath = uploadVo.fullFilePath
         String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
-        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\", \"$_identifier\"\n"
-        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+        String _idntfier = _identifier?"\"$_identifier\"":""
+        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
+        return appendable
+    }
+
+    static void createQueuedVOFiles(){
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
+        EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE =
+                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
+    }
+
+    static void createValidationFiles() {
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
+        EGangotriUtil.ARCHIVE_VALIDATION_FILE =
+                EGangotriUtil.ARCHIVE_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+
+        generateFile(EGangotriUtil.ARCHIVE_VALIDATION_FILE)
+    }
+
+    static String createIdentifierFiles() {
+        generateFolder(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER)
+        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE =
+                EGangotriUtil.ARCHIVE_IDENTIFIER_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+
+        generateFile(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
+    }
+
+    static void generateFolder(String folderName) {
+        File folder = new File(folderName)
+        if(!folder.exists()){
+            folder.mkdir()
+        }
+    }
+
+    static void createVOSavingFiles() {
+        if(ValidateLinksAndReUploadBrokenRunning){
+            createValidationFiles()
+        }
+        else{
+            createQueuedVOFiles()
+            createIdentifierFiles()
+        }
+    }
+
+    static void generateFile(String fileName) {
+        File file = new File(fileName)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
     }
 
     static void printUplodReport( Map<Integer, String> uploadSuccessCheckingMatrix){
