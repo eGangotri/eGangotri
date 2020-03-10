@@ -13,6 +13,7 @@ import groovy.util.logging.Slf4j
 class ValidateLinksAndReUploadBroken {
     static Set archiveProfiles = []
     static File identifierFile = null
+    static File queuedFile = null
     static List<LinksVO> identifierLinksForTesting = []
     static List<ItemsVO> queuedItemsForTesting = []
     static List<LinksVO> failedLinks = []
@@ -40,25 +41,38 @@ class ValidateLinksAndReUploadBroken {
 
     static void setIdentifierFile(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
         if (!identifierFile) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
+
+        if (!queuedFile) {
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
+            System.exit(0)
+        }
         if (args) {
             println "args $args"
-            if (args?.size() != 1) {
-                log.error("Only 1 File Name can be accepted.Cannot proceed. Quitting")
+            if (args?.size() > 2) {
+                log.error("Only 2 File Name(s) can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            String _file = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
-            identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file)
+            String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
+            String _file_2 = args[1].endsWith(".csv") ? args[1] : args[1] + ".csv"
+            identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file_1)
+            queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_1)
             if (!identifierFile) {
                 log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
+            if (!queuedFile) {
+                log.error("No such File ${queuedFile} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
+                System.exit(0)
+            }
         }
         println("Identifier File for processing: ${identifierFile.name}")
+        println("Queue File for processing: ${queuedFile.name}")
     }
 
     static void processIdentifierCSV() {
@@ -86,6 +100,8 @@ class ValidateLinksAndReUploadBroken {
         queuedItemsForTesting.each { queuedItem ->
             if (!allFilePaths.contains(queuedItem.fullFilePath)) {
                 missedOutQueuedItems << queuedItem
+                log.info("Found missed Item ${queuedItem.fileTitle} ")
+
             }
         }
         log.info("Found ${missedOutQueuedItems.size()} Items from Queued List that were missed")

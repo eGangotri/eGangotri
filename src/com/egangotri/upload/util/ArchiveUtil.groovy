@@ -52,13 +52,17 @@ class ArchiveUtil {
 
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
         String appendable = voToCSVString(uploadVo, _identifier)
-        new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+        if(ValidateLinksAndReUploadBrokenRunning){
+            new File(EGangotriUtil.ARCHIVE_VALIDATION_FILE).append(appendable)
+        } else{
+            new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+        }
     }
 
     static void storeQueuedItemsInFile(List<UploadVO> uploadVos) {
         String appendable = ""
         uploadVos.each{ uploadVo ->
-            appendable.concat(voToCSVString(uploadVo))
+            appendable += voToCSVString(uploadVo)
         }
         println("appendable: ${appendable}")
         new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
