@@ -29,10 +29,10 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void setIdentifierFile(def args){
-        identifierFile = new File( EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
+        identifierFile = new File( EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER ).listFiles()?.sort { -it.lastModified() }?.head()
 
         if(!identifierFile){
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER}.Cannot proceed. Quitting")
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
         if (args) {
@@ -41,9 +41,9 @@ class ValidateLinksAndReUploadBroken {
                 log.error("Only 1 File Name can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            identifierFile = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER + File.separator + args.first())
+            identifierFile = new File(EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER + File.separator + args.first())
             if(!identifierFile){
-                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER}.Cannot proceed. Quitting")
+                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
         }

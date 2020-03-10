@@ -24,16 +24,16 @@ class SettingsUtil {
                     log.info("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. will not be considered")
                 }
             }
-            //CALIBRATE_TIMES
-            if(settingsMetaDataMap.CALIBRATE_TIMES){
+            //ADJUST_SLEEP_TIMES
+            if(settingsMetaDataMap.ADJUST_SLEEP_TIMES){
                 try{
-                    Float calibrateTimes = Float.parseFloat(settingsMetaDataMap.CALIBRATE_TIMES)
+                    Float calibrateTimes = Float.parseFloat(settingsMetaDataMap.ADJUST_SLEEP_TIMES)
                     if(calibrateTimes >= 0.5 && calibrateTimes <= 5){
                         EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= calibrateTimes
                     }
                 }
                 catch(Exception e){
-                    log.info("CALIBRATE_TIMES is not a valid decimal mumber. will not be considered")
+                    log.info("ADJUST_SLEEP_TIMES is not a valid decimal mumber. will not be considered")
                 }
 
             }

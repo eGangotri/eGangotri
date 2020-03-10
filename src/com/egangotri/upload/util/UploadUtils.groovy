@@ -571,15 +571,15 @@ class UploadUtils {
 
 
     static String createIdentifierFileForCurrentExecution() {
-        File identifierFolder = new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FOLDER)
+        File identifierFolder = new File(EGangotriUtil.ARCHIVE_IDENTIFIERS_GENERATED_ITEMS_FOLDER)
         if(ValidateLinksAndReUploadBrokenRunning){
-            identifierFolder = new File(EGangotriUtil.ARCHIVE_VALIDATING_IDENTIFIER_FOLDER)
+            identifierFolder = new File(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
         }
         if(!identifierFolder.exists()){
             identifierFolder.mkdir()
         }
         if(ValidateLinksAndReUploadBrokenRunning){
-            identifierFolder = new File(EGangotriUtil.ARCHIVE_VALIDATING_IDENTIFIER_FOLDER)
+            identifierFolder = new File(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
         }
         EGangotriUtil.ARCHIVE_IDENTIFIER_FILE = identifierFolder.getAbsolutePath() + File.separator + "identifier_${getFormattedDateString()}.csv"
 

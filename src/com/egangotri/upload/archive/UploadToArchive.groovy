@@ -25,7 +25,7 @@ class UploadToArchive {
         if (args) {
             log.info "args $args"
             archiveProfiles = args.toList()
-        }
+        }s
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
         execute(archiveProfiles, metaDataMap)
