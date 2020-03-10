@@ -18,12 +18,5 @@ task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.ValidateLinksAndReUploadBroken"
     jvmArgs = applicationDefaultJvmArgs
-    /**
-     * For Single Profile
-     args = ["PRFL1"]
-     For Multiple Profiles
-     args = ["PRFL1","PRFL2"]
-     */
-
     args = []
 }
