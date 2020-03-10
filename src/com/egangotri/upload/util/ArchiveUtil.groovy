@@ -60,6 +60,7 @@ class ArchiveUtil {
         uploadVos.each{ uploadVo ->
             appendable.concat(voToCSVString(uploadVo))
         }
+        println("appendable: ${appendable}")
         new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
 
     }
@@ -70,7 +71,18 @@ class ArchiveUtil {
         String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
         String _idntfier = _identifier?"\"$_identifier\"":""
         String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
+        println("appendable: ${appendable}")
         return appendable
+    }
+
+    static void createVOSavingFiles() {
+        if(ValidateLinksAndReUploadBrokenRunning){
+            createValidationFiles()
+        }
+        else{
+            createQueuedVOFiles()
+            createIdentifierFiles()
+        }
     }
 
     static void createQueuedVOFiles(){
@@ -101,16 +113,6 @@ class ArchiveUtil {
         File folder = new File(folderName)
         if(!folder.exists()){
             folder.mkdir()
-        }
-    }
-
-    static void createVOSavingFiles() {
-        if(ValidateLinksAndReUploadBrokenRunning){
-            createValidationFiles()
-        }
-        else{
-            createQueuedVOFiles()
-            createIdentifierFiles()
         }
     }
 
