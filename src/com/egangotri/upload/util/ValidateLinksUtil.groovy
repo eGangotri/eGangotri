@@ -35,19 +35,19 @@ class ValidateLinksUtil {
     }
 
     static int statsForLinksVO(String csvFile){
-        List<LinksVO> vos = csvToItemsVO(new File(csvFile))
+        List<LinksVO> vos = csvToLinksVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
     static int statsForVOs(List<? extends UploadVO> vos){
         if(!vos) return 0
-        String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "Link" : "Queued"
+        String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) had Identifiers generated from the uploaded ones" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
 
         int totalItems = 0
         vosGrouped.eachWithIndex { def entry, int i ->
             totalItems += entry.value.size()
-            log.info( " ${i+1}). ${entry.key} had ${entry.value.size()} $desc items sent for upload")
+            log.info( " ${i+1}). ${entry.value.size()} $desc  for profile ${entry.key}")
         }
         return totalItems
     }

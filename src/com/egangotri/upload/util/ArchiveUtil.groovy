@@ -64,7 +64,6 @@ class ArchiveUtil {
         uploadVos.each{ uploadVo ->
             appendable += voToCSVString(uploadVo)
         }
-        println("appendable: ${appendable}")
         new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
 
     }
@@ -136,8 +135,9 @@ class ArchiveUtil {
             log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
             if(!ValidateLinksAndReUploadBrokenRunning){
                 int statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
+                log.info("\n")
                 int statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-                log.info("Are No of Queued Items ${} == Identifier Generated Items? ${statsForItemsVO == statsForLinksVO} ? 'Yes': 'No'")
+                log.info("Are No of Queued Items (${statsForItemsVO}) == ($statsForLinksVO) Identifier Generated Items? ${statsForItemsVO == statsForLinksVO} ? 'Yes': 'No'")
             }
         }
     }
