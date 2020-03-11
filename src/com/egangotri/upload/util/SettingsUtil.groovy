@@ -70,7 +70,7 @@ class SettingsUtil {
 
             if(settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT && settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.isInteger()){
                 int randomCreatorMaxLimit = settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.toInteger()
-                if(randomCreatorMaxLimit >= 20 &&  randomCreatorMaxLimit <= 1000){
+                if(randomCreatorMaxLimit >= 10 &&  randomCreatorMaxLimit <= 1000){
                     UploadUtils.RANDOM_CREATOR_MAX_LIMIT = randomCreatorMaxLimit
                 }
                 log.info("RANDOM_CREATOR_MAX_LIMIT: " + UploadUtils.RANDOM_CREATOR_MAX_LIMIT )

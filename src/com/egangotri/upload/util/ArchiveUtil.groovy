@@ -137,7 +137,7 @@ class ArchiveUtil {
                 int statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
                 log.info("\n")
                 int statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-                log.info("Are No of Queued Items (${statsForItemsVO}) == ($statsForLinksVO) Identifier Generated Items? ${statsForItemsVO == statsForLinksVO} ? 'Yes': 'No'")
+                log.info("Are No of Queued Items (${statsForItemsVO}) == ($statsForLinksVO) Identifier Generated Items? ${statsForItemsVO == statsForLinksVO  ? 'Yes': 'No'}")
             }
         }
     }
