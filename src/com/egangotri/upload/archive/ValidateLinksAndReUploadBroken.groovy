@@ -3,6 +3,7 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.util.ValidateLinksUtil
 import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.LinksVO
 import com.egangotri.upload.vo.UploadVO
@@ -76,34 +77,27 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void processIdentifierCSV() {
-        identifierFile.splitEachLine("\",") { fields ->
-            def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            identifierLinksForTesting.add(new LinksVO(_fields.toList()))
-        }
+        identifierLinksForTesting = ValidateLinksUtil.csvToLinksVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
-        log.info("Checking " + identifierLinksForTesting.size() + " links in " + "${archiveProfiles.toString()} Profiles")
+        log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "${archiveProfiles.toString()} Profiles")
     }
 
     static void processQueuedCSV() {
-        queuedFile.splitEachLine("\",") { fields ->
-            def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            queuedItemsForTesting.add(new ItemsVO(_fields.toList()))
-        }
+        queuedItemsForTesting = ValidateLinksUtil.csvToItemsVO(queuedFile)
         Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Checking " + queuedItemsForTesting.size() + " links in " + "${queuedProfiles.toString()} Profiles")
+        log.info("Checking " + queuedItemsForTesting.size() + " Uploaded Item(s) in " + "${queuedProfiles.toString()} Profiles")
     }
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInIdentifierCSV() {
-        List allFilePaths = identifierLinksForTesting*.fullFilePath
-        log.info("Found ${allFilePaths.size()} Items in identifier file")
+        List allFilePaths = identifierLinksForTesting*.path
+        log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that never had an Id generated in ${allFilePaths.size()} identifiers")
 
         queuedItemsForTesting.each { queuedItem ->
-            if (!allFilePaths.contains(queuedItem.fullFilePath)) {
+            if (!allFilePaths.contains(queuedItem.path)) {
                 missedOutQueuedItems << queuedItem
-                log.info("Found missed Item ${queuedItem.fileTitle} ")
-
+                log.info("Found missed Item ${queuedItem.title} ")
             }
         }
         log.info("Found ${missedOutQueuedItems.size()} Items from Queued List that were missed")
@@ -150,7 +144,5 @@ class ValidateLinksAndReUploadBroken {
         ArchiveUtil.printUplodReport(uploadSuccessCheckingMatrix)
     }
 
-    static String stripDoubleQuotes(String field) {
-        return field.replaceAll("\"", "")
-    }
+
 }

@@ -27,12 +27,12 @@ class ArchiveHandler {
         try {
             WebDriver driver = new ChromeDriver()
             String archiveProfile = uploadVos.first().archiveProfile
-            List<String> uploadables = uploadVos*.fullFilePath
+            List<String> uploadables = uploadVos*.path
             navigateLoginLogic(driver, metaDataMap, archiveProfile)
                 if (uploadVos) {
                     log.info "Ready to upload ${uploadables.size()} Items(s) for Profile ${uploadVos.first().archiveProfile}"
                     //Start Upload of First File in Root Tab
-                    log.info "Uploading: ${uploadVos.first().fileTitle}"
+                    log.info "Uploading: ${uploadVos.first().title}"
                     EGangotriUtil.sleepTimeInSeconds(0.2)
                     getResultsCount(driver, true)
                     try {
@@ -47,7 +47,7 @@ class ArchiveHandler {
                     if (uploadables.size() > 1) {
                         int tabIndex = 1
                         for (uploadVo in uploadVos.drop(1)) {
-                            log.info "Uploading: ${uploadVo.fileTitle} @ tabNo:$tabIndex"
+                            log.info "Uploading: ${uploadVo.title} @ tabNo:$tabIndex"
                             UploadUtils.openNewTab()
 
                             //Switch to new Tab
@@ -55,7 +55,7 @@ class ArchiveHandler {
                             if (_tabSwitched) {
                                 tabIndex++
                             } else {
-                                log.info("Tab Creation Failed during uppload of ${uploadVo.fileTitle}.")
+                                log.info("Tab Creation Failed during uppload of ${uploadVo.title}.")
                                 uploadFailureCount++
                                 continue
                             }
@@ -65,11 +65,11 @@ class ArchiveHandler {
                                 uploadOneItem(driver, uploadVo)
                             }
                             catch (UnhandledAlertException uae) {
-                                log.error("UnhandledAlertException while uploading(${uploadVo.fileTitle}.")
+                                log.error("UnhandledAlertException while uploading(${uploadVo.title}.")
                                 log.error("will proceed to next tab: ${uae.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.fileTitle}').")
+                                log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.title}').")
                                 try {
                                         UploadUtils.openNewTab()
                                         tabIndex++
@@ -79,23 +79,23 @@ class ArchiveHandler {
                                         continue
                                     }
                                     uploadOneItem(driver, uploadVo)
-                                    log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.fileTitle}'")
+                                    log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.title}'")
                                 }
                                 catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading(${uploadVo.fileTitle}).\n will proceed to next tab: ${uae2.message}")
+                                    log.info("UnhandledAlertException while uploading(${uploadVo.title}).\n will proceed to next tab: ${uae2.message}")
                                     UploadUtils.hitEnterKey()
                                     uploadFailureCount++
-                                    log.info("Failed. Attempt-2 for (${uploadVo.fileTitle}). following UnhandledAlertException")
+                                    log.info("Failed. Attempt-2 for (${uploadVo.title}). following UnhandledAlertException")
                                     continue
                                 }
                                 catch (Exception e) {
-                                    log.info("Exception while uploading(${uploadVo.fileTitle}).\n will proceed to next tab:${e.message}")
+                                    log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
                                     uploadFailureCount++
                                     continue
                                 }
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading(${uploadVo.fileTitle}).\n will proceed to next tab:${e.message}")
+                                log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
@@ -162,12 +162,6 @@ class ArchiveHandler {
         }
     }
 
-    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile){
-        String username = metaDataMap."${archiveProfile}.username"
-        return username ? true : false
-    }
-
-
     static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile) {
         List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
 
@@ -203,7 +197,7 @@ class ArchiveHandler {
     }
 
     static String uploadOneItem(WebDriver driver, UploadVO uploadVO) {
-        String fileNameWithPath = uploadVO.fullFilePath
+        String fileNameWithPath = uploadVO.path
         String uploadLink = uploadVO.uploadLink
         String archiveProfile = uploadVO.archiveProfile
 

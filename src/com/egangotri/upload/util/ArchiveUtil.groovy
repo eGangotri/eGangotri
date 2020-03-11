@@ -71,10 +71,10 @@ class ArchiveUtil {
     static String voToCSVString(UploadVO uploadVo, String _identifier = null) {
         String archiveProfile = uploadVo.archiveProfile
         String uploadLink = uploadVo.uploadLink
-        String fileNameWithPath = uploadVo.fullFilePath
+        String fileNameWithPath = uploadVo.path
         String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
         String _idntfier = _identifier?"\"$_identifier\"":""
-        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
+        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\", ${_idntfier}\n"
         println("appendable: ${appendable}")
         return appendable
     }
@@ -134,6 +134,11 @@ class ArchiveUtil {
                 log.info "$k) $v"
             }
             log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
+            if(!ValidateLinksAndReUploadBrokenRunning){
+                int statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
+                int statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
+                log.info("Are No of Queued Items ${} == Identifier Generated Items? ${statsForItemsVO == statsForLinksVO} ? 'Yes': 'No'")
+            }
         }
     }
 
