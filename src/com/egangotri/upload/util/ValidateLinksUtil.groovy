@@ -14,9 +14,6 @@ class ValidateLinksUtil {
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
             items.add(new LinksVO(_fields.toList()))
         }
-        items.each{
-            println(it.toString())
-        }
         return items
     }
 
@@ -29,27 +26,29 @@ class ValidateLinksUtil {
         return items
     }
 
-    static int statsForItemsVO(String csvFile){
+    static Tuple statsForItemsVO(String csvFile){
         List<ItemsVO> vos = csvToItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
-    static int statsForLinksVO(String csvFile){
+    static Tuple statsForLinksVO(String csvFile){
         List<LinksVO> vos = csvToLinksVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
-    static int statsForVOs(List<? extends UploadVO> vos){
-        if(!vos) return 0
+    static Tuple statsForVOs(List<? extends UploadVO> vos){
+        if(!vos) return new Tuple(0,"")
         String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) had Identifiers generated from the uploaded ones" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
 
         int totalItems = 0
+        List sumString = []
         vosGrouped.eachWithIndex { def entry, int i ->
             totalItems += entry.value.size()
+            sumString << entry.value.size()
             log.info( " ${i+1}). ${entry.value.size()} $desc  for profile ${entry.key}")
         }
-        return totalItems
+        return new Tuple(totalItems, sumString.join("+"))
     }
     static String stripDoubleQuotes(String field) {
         return field.replaceAll("\"", "")

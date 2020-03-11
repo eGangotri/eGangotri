@@ -482,7 +482,6 @@ class UploadUtils {
             //there is a bug in retrieving the size of chromeTabsList in Selenium.
             //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
             log.info "chromeTabsList.size(): ${chromeTabsList.size()}"
-            log.info "chromeTabsList: ${chromeTabsList}"
             driver.switchTo().window(chromeTabsList.last())
         }
         catch (Exception e) {

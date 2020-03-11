@@ -57,7 +57,7 @@ class UploadToArchive {
             EGangotriUtil.sleepTimeInSeconds(5)
         }
 
-        ArchiveUtil.printUplodReport(uploadSuccessCheckingMatrix)
+        ArchiveUtil.printUploadReport(uploadSuccessCheckingMatrix)
         log.info "***End of Upload to Archive Program"
         System.exit(0)
 

@@ -279,7 +279,7 @@ class ArchiveHandler {
         log.info("identifier is ${identifier}")
 
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
-            identifier += "_" + _rndm.nextInt(100)
+            identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).clear()
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).sendKeys(identifier)

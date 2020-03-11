@@ -74,7 +74,6 @@ class ArchiveUtil {
         String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
         String _idntfier = _identifier?"\"$_identifier\"":""
         String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\", ${_idntfier}\n"
-        println("appendable: ${appendable}")
         return appendable
     }
 
@@ -126,7 +125,7 @@ class ArchiveUtil {
         }
     }
 
-    static void printUplodReport( Map<Integer, String> uploadSuccessCheckingMatrix){
+    static void printUploadReport(Map<Integer, String> uploadSuccessCheckingMatrix){
         if (uploadSuccessCheckingMatrix) {
             log.info "Upload Report:\n"
             uploadSuccessCheckingMatrix.each { k, v ->
@@ -134,10 +133,11 @@ class ArchiveUtil {
             }
             log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
             if(!ValidateLinksAndReUploadBrokenRunning){
-                int statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
+                Tuple statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
                 log.info("\n")
-                int statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-                log.info("Are No of Queued Items (${statsForItemsVO}) == ($statsForLinksVO) Identifier Generated Items? ${statsForItemsVO == statsForLinksVO  ? 'Yes': 'No'}")
+                Tuple statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
+                log.info("Are No of Queued Items ( ${statsForItemsVO[1]} = ${statsForItemsVO[0]}) equal to ( ${statsForLinksVO[1]} == ${statsForLinksVO[0]}) Identifier Generated Items? " +
+                        "${statsForItemsVO[0] == statsForLinksVO[0]  ? 'Yes': 'No. Short by ${statsForLinksVO[0] - statsForItemsVO[0]}'}")
             }
         }
     }

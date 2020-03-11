@@ -30,12 +30,11 @@ class ValidateLinksAndReUploadBroken {
         processQueuedCSV()
         findQueueItemsNotInIdentifierCSV()
         filterFailedItems()
-        if (missedOutQueuedItems) {
-            startReuploadOfFailedItems(missedOutQueuedItems)
+        if (missedOutQueuedItems || failedLinks) {
+            List<UploadVO> allFailedItems = failedLinks + missedOutQueuedItems
+            startReuploadOfFailedItems(allFailedItems)
         }
-        if (failedLinks) {
-            startReuploadOfFailedItems(failedLinks)
-        }
+
         log.info "***End of ValidateLinksInArchive Program"
         System.exit(0)
     }
@@ -79,13 +78,13 @@ class ValidateLinksAndReUploadBroken {
     static void processIdentifierCSV() {
         identifierLinksForTesting = ValidateLinksUtil.csvToLinksVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
-        log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "${archiveProfiles.toString()} Profiles")
+        log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "Profiles ${archiveProfiles.toString()}")
     }
 
     static void processQueuedCSV() {
         queuedItemsForTesting = ValidateLinksUtil.csvToItemsVO(queuedFile)
         Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Checking " + queuedItemsForTesting.size() + " Uploaded Item(s) in " + "${queuedProfiles.toString()} Profiles")
+        log.info("Checking " + queuedItemsForTesting.size() + " Queued Item(s) in " + "Profiles ${queuedProfiles.toString()}")
     }
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
@@ -97,13 +96,15 @@ class ValidateLinksAndReUploadBroken {
         queuedItemsForTesting.each { queuedItem ->
             if (!allFilePaths.contains(queuedItem.path)) {
                 missedOutQueuedItems << queuedItem
-                log.info("Found missed Item ${queuedItem.title} ")
+                log.info("\tFound missing Item ${queuedItem.title} ")
             }
         }
-        log.info("Found ${missedOutQueuedItems.size()} Items from Queued List that were missed")
+        log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  missedOutQueuedItems*.archiveProfile.toString())
     }
 
     static void filterFailedItems() {
+        log.info("Filtering ${identifierLinksForTesting.size()} Items with Generated Identifiers)")
+
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
                 entry.archiveLink.toURL().text
@@ -117,7 +118,8 @@ class ValidateLinksAndReUploadBroken {
                 failedLinks << entry
             }
         }
-        log.info("Total ${failedLinks.size()} failedLinks " + failedLinks*.archiveLink.toString())
+        log.info("${failedLinks.size()} failedLink(s) " + " Items found in Identifier Generated List that were missing. Affected Profie(s)" +  failedLinks*.archiveProfile.toString())
+        log.info(failedLinks*.archiveLink.toString())
     }
 
     static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
@@ -141,7 +143,7 @@ class ValidateLinksAndReUploadBroken {
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-        ArchiveUtil.printUplodReport(uploadSuccessCheckingMatrix)
+        ArchiveUtil.printUploadReport(uploadSuccessCheckingMatrix)
     }
 
 

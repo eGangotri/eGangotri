@@ -48,6 +48,8 @@ class EGangotriUtil {
     static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
 
     static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = false
+    static final Range ASCII_CHARS =  "A".."z"
+    static final def ASCII_CHARS_SIZE =  ASCII_CHARS.size()
 
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
