@@ -100,7 +100,7 @@ class ArchiveUtil {
     }
 
     static String createIdentifierFiles() {
-        generateFolder(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER)
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
         EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE =
                 EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE.replace("{0}",UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)

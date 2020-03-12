@@ -28,9 +28,9 @@ class ValidateLinksAndReUploadBroken {
         setCSVsForValidation(args)
         ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
-        processIdentifierCSV()
+        processUsheredCSV()
         processQueuedCSV()
-        findQueueItemsNotInIdentifierCSV()
+        findQueueItemsNotInUsheredCSV()
         filterFailedItems()
         if (missedOutQueuedItems || failedLinks) {
             List<? extends UploadVO> allFailedItems =  missedOutQueuedItems
@@ -47,11 +47,11 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void setCSVsForValidation(def args) {
-        identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
         if (!identifierFile) {
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
 
@@ -67,10 +67,10 @@ class ValidateLinksAndReUploadBroken {
             }
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
-            identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file_1)
+            identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_1)
             queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
             if (!identifierFile) {
-                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
+                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
             if (!queuedFile) {
@@ -82,7 +82,7 @@ class ValidateLinksAndReUploadBroken {
         println("Queue File for processing: ${queuedFile.name}")
     }
 
-    static void processIdentifierCSV() {
+    static void processUsheredCSV() {
         identifierLinksForTesting = ValidateLinksUtil.csvToLinksVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
         log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "Profiles ${archiveProfiles.toString()}")
@@ -96,7 +96,7 @@ class ValidateLinksAndReUploadBroken {
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
-    static void findQueueItemsNotInIdentifierCSV() {
+    static void findQueueItemsNotInUsheredCSV() {
         List allFilePaths = identifierLinksForTesting*.path
         log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that never had an Id generated in ${allFilePaths.size()} identifiers")
 

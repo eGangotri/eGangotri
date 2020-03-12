@@ -26,11 +26,11 @@ class EGangotriUtil {
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
 
     static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_queued"
-    static final String ARCHIVE_GENERATED_IDENTIFIERS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_generated_identifiers"
+    static final String ARCHIVE_ITEMS_USHERED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_ushered"
     static final String ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_post_validation"
 
     static String ARCHIVE_ITEMS_QUEUED_FILE = EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + "item_{0}.csv"
-    static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + "item_{0}.csv"
+    static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + "item_{0}.csv"
     static String ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "queued_item_{0}.csv"
     static String ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "ushered_item_{0}.csv"
 //ARCHIVE_VALIDATION_FILE

@@ -38,7 +38,7 @@ class ValidateLinksUtil {
 
     static Tuple statsForVOs(List<? extends UploadVO> vos){
         if(!vos) return new Tuple(0,"")
-        String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) had Identifiers generated from the uploaded ones" : "item(s) were queued for upload"
+        String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) were ushered for upload" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
 
         int totalItems = 0
