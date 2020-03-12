@@ -148,7 +148,7 @@ class ArchiveUtil {
             }
             log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
             if(ValidateLinksAndReUploadBrokenRunning) {
-                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
+                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
             }
             else {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
@@ -159,9 +159,10 @@ class ArchiveUtil {
     static void compareQueuedWithUsheredStats(String queuedFile, String usheredFile){
         Tuple statsForQueued = ValidateLinksUtil.statsForItemsVO(queuedFile)
         log.info("\n")
-        Tuple statsForUshered = ValidateLinksUtil.statsForLinksVO(usheredFile)
+        Tuple statsForUshered = ValidateLinksUtil.statsForUsheredItemsVO(usheredFile)
+        String equality = (statsForQueued[0] == statsForUshered[0]) ? "Yes" : "\nNo. Short by ${Math.abs(statsForUshered[0] - statsForQueued[0])} item(s)"
         log.info("Are No of Queued Items ( ${statsForQueued[1]} = ${statsForQueued[0]}) equal to ( ${statsForUshered[1]} == ${statsForUshered[0]}) Upload-Ushered Items? " +
-                "${statsForQueued[0] == statsForUshered[0]  ? 'Yes': 'No. Short by ${statsForLinksVO[0] - statsForItemsVO[0]}'}")
+                equality)
 
     }
     static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile) {

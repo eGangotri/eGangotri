@@ -3,12 +3,11 @@ package com.egangotri.upload.util
 import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.LinksVO
 import com.egangotri.upload.vo.UploadVO
-import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
 class ValidateLinksUtil {
-    static List<LinksVO> csvToLinksVO(File csvFile) {
+    static List<LinksVO> csvToUsheredItemsVO(File csvFile) {
         List<LinksVO> items = []
         csvFile.splitEachLine("\",") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
@@ -31,13 +30,13 @@ class ValidateLinksUtil {
         return statsForVOs(vos)
     }
 
-    static Tuple statsForLinksVO(String csvFile){
-        List<LinksVO> vos = csvToLinksVO(new File(csvFile))
+    static Tuple statsForUsheredItemsVO(String csvFile){
+        List<LinksVO> vos = csvToUsheredItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
     static Tuple statsForVOs(List<? extends UploadVO> vos){
-        if(!vos) return new Tuple(0,"")
+        if(!vos) return new Tuple(0,"0")
         String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) were ushered for upload" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
 

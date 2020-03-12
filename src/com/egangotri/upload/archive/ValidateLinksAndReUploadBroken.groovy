@@ -83,7 +83,7 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void processUsheredCSV() {
-        identifierLinksForTesting = ValidateLinksUtil.csvToLinksVO(identifierFile)
+        identifierLinksForTesting = ValidateLinksUtil.csvToUsheredItemsVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
         log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "Profiles ${archiveProfiles.toString()}")
     }
@@ -98,12 +98,12 @@ class ValidateLinksAndReUploadBroken {
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInUsheredCSV() {
         List allFilePaths = identifierLinksForTesting*.path
-        log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that never had an Id generated in ${allFilePaths.size()} identifiers")
+        log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
 
         queuedItemsForTesting.each { queuedItem ->
             if (!allFilePaths.contains(queuedItem.path)) {
                 missedOutQueuedItems << queuedItem
-                log.info("\tFound missing Item ${queuedItem.title} ")
+                log.info("\tFound missing Item [${queuedItem.archiveProfile}] ${queuedItem.title} ")
             }
         }
         log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
