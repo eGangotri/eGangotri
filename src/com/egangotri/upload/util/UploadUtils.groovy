@@ -7,6 +7,7 @@ import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -491,16 +492,18 @@ class UploadUtils {
         return true
     }
 
-    static void openNewTab(float sleepTimeInSeconds = 0.1) {
+    static void openNewTab(ChromeDriver driver, float sleepTimeInSeconds = 0.1) {
         try {
-            Robot r = new Robot()
+       /*     Robot r = new Robot()
             r.keyPress(KeyEvent.VK_CONTROL)
             r.keyPress(KeyEvent.VK_T)
             r.keyRelease(KeyEvent.VK_T)
-            r.keyRelease(KeyEvent.VK_CONTROL)
+            r.keyRelease(KeyEvent.VK_CONTROL)*/
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
             }
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.open('www.google.com','_blank');");
         }
         catch (Exception _ex) {
             log.error("openNewTab Exception: ${_ex.message}")

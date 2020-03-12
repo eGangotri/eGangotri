@@ -48,7 +48,7 @@ class ArchiveHandler {
                         int tabIndex = 1
                         for (uploadVo in uploadVos.drop(1)) {
                             log.info "Uploading: ${uploadVo.title} @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab()
+                            UploadUtils.openNewTab(driver)
 
                             //Switch to new Tab
                             boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
@@ -71,7 +71,7 @@ class ArchiveHandler {
                                 uploadFailureCount++
                                 log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.title}').")
                                 try {
-                                        UploadUtils.openNewTab()
+                                        UploadUtils.openNewTab(driver)
                                         tabIndex++
                                         boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                         if (!tabSwitched) {

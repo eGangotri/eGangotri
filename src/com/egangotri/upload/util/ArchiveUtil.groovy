@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
-    static boolean ValidateLinksAndReUploadBrokenRunning = false
+    public static boolean ValidateLinksAndReUploadBrokenRunning = false
 
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
         WebElement avatar = driver.findElementByClassName("avatar")
@@ -22,7 +22,7 @@ class ArchiveUtil {
         log.info("userName: ${userName}")
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
         if(!_startTime){
-            UploadUtils.openNewTab()
+            UploadUtils.openNewTab(driver)
             UploadUtils.switchToLastOpenTab(driver)
             driver.navigate().to(archiveUserAccountUrl)
         }
@@ -72,8 +72,8 @@ class ArchiveUtil {
         String uploadLink = uploadVo.uploadLink
         String fileNameWithPath = uploadVo.path
         String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
-        String _idntfier = _identifier?"\"$_identifier\"":""
-        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\", ${_idntfier}\n"
+        String _idntfier = _identifier?"\", $_identifier\"":""
+        String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
         return appendable
     }
 

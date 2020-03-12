@@ -66,9 +66,6 @@ class GoogleDriveHandler {
     static void uploadToDrive(def driver, String folderName) {
         driver.findElement(By.xpath("//div[contains(text(),'My Drive')]")).click()
         driver.findElement(By.xpath("/html/body/div[12]")).click()
-        ///html/body/div[13] ///html/body/div[13]
-        //driver.findElement(By.xpath("//div[contains(text(),'Upload folder...')]")).click()
-        //driver.findElement(By.className('.h-w a-w h-w a-w-Xi')).click() // a-w-Mr
         UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
     }
 

@@ -31,8 +31,13 @@ class ValidateLinksAndReUploadBroken {
         findQueueItemsNotInIdentifierCSV()
         filterFailedItems()
         if (missedOutQueuedItems || failedLinks) {
-            List<UploadVO> allFailedItems = failedLinks + missedOutQueuedItems
-            startReuploadOfFailedItems(allFailedItems)
+            List<? extends UploadVO> allFailedItems =  missedOutQueuedItems
+            failedLinks.each { failedLink ->
+                allFailedItems.add(failedLink)
+            }
+            println(allFailedItems.size())
+            println(allFailedItems*.archiveProfile)
+            //startReuploadOfFailedItems(allFailedItems)
         }
 
         log.info "***End of ValidateLinksInArchive Program"
@@ -99,11 +104,11 @@ class ValidateLinksAndReUploadBroken {
                 log.info("\tFound missing Item ${queuedItem.title} ")
             }
         }
-        log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  missedOutQueuedItems*.archiveProfile.toString())
+        log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
     }
 
     static void filterFailedItems() {
-        log.info("Filtering ${identifierLinksForTesting.size()} Items with Generated Identifiers)")
+        log.info("Testing ${identifierLinksForTesting.size()} Items with Generated Identifiers)")
 
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
@@ -118,8 +123,9 @@ class ValidateLinksAndReUploadBroken {
                 failedLinks << entry
             }
         }
-        log.info("${failedLinks.size()} failedLink(s) " + " Items found in Identifier Generated List that were missing. Affected Profie(s)" +  failedLinks*.archiveProfile.toString())
-        log.info(failedLinks*.archiveLink.toString())
+        log.info("${failedLinks.size()} failedLink" + " Item(s) found in Identifier Generated List that were missing." +
+                " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
+        log.info("Failed Links: " + failedLinks*.archiveLink.toString())
     }
 
     static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
