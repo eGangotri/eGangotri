@@ -53,9 +53,9 @@ class ArchiveUtil {
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
         String appendable = voToCSVString(uploadVo, _identifier)
         if(ValidateLinksAndReUploadBrokenRunning){
-            new File(EGangotriUtil.ARCHIVE_VALIDATION_FILE).append(appendable)
+            new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE).append(appendable)
         } else{
-            new File(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE).append(appendable)
+            new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE).append(appendable)
         }
     }
 
@@ -64,7 +64,11 @@ class ArchiveUtil {
         uploadVos.each{ uploadVo ->
             appendable += voToCSVString(uploadVo)
         }
-        new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
+        if(ValidateLinksAndReUploadBrokenRunning){
+            new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE).append(appendable)
+        } else{
+            new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
+        }
 
     }
     static String voToCSVString(UploadVO uploadVo, String _identifier = null) {
@@ -95,21 +99,32 @@ class ArchiveUtil {
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
     }
 
-    static void createValidationFiles() {
-        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
-        EGangotriUtil.ARCHIVE_VALIDATION_FILE =
-                EGangotriUtil.ARCHIVE_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-
-        generateFile(EGangotriUtil.ARCHIVE_VALIDATION_FILE)
-    }
-
     static String createIdentifierFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER)
-        EGangotriUtil.ARCHIVE_IDENTIFIER_FILE =
-                EGangotriUtil.ARCHIVE_IDENTIFIER_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-
-        generateFile(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
+        EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE =
+                EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
     }
+
+
+    static void createValidationFiles() {
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
+        createValidationQueuedFiles()
+        createValidationUsheredFiles()
+    }
+
+    static void createValidationUsheredFiles(){
+        EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE =
+                EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
+    }
+
+    static void createValidationQueuedFiles(){
+        EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE =
+                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
+    }
+
 
     static void generateFolder(String folderName) {
         File folder = new File(folderName)
@@ -132,16 +147,23 @@ class ArchiveUtil {
                 log.info "$k) $v"
             }
             log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
-            if(!ValidateLinksAndReUploadBrokenRunning){
-                Tuple statsForItemsVO = ValidateLinksUtil.statsForItemsVO(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
-                log.info("\n")
-                Tuple statsForLinksVO = ValidateLinksUtil.statsForLinksVO(EGangotriUtil.ARCHIVE_IDENTIFIER_FILE)
-                log.info("Are No of Queued Items ( ${statsForItemsVO[1]} = ${statsForItemsVO[0]}) equal to ( ${statsForLinksVO[1]} == ${statsForLinksVO[0]}) Identifier Generated Items? " +
-                        "${statsForItemsVO[0] == statsForLinksVO[0]  ? 'Yes': 'No. Short by ${statsForLinksVO[0] - statsForItemsVO[0]}'}")
+            if(ValidateLinksAndReUploadBrokenRunning) {
+                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
             }
+            else {
+                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
+             }
         }
     }
 
+    static void compareQueuedWithUsheredStats(String queuedFile, String usheredFile){
+        Tuple statsForQueued = ValidateLinksUtil.statsForItemsVO(queuedFile)
+        log.info("\n")
+        Tuple statsForUshered = ValidateLinksUtil.statsForLinksVO(usheredFile)
+        log.info("Are No of Queued Items ( ${statsForQueued[1]} = ${statsForQueued[0]}) equal to ( ${statsForUshered[1]} == ${statsForUshered[0]}) Upload-Ushered Items? " +
+                "${statsForQueued[0] == statsForUshered[0]  ? 'Yes': 'No. Short by ${statsForLinksVO[0] - statsForItemsVO[0]}'}")
+
+    }
     static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile) {
         boolean loginSucess = false
         try {

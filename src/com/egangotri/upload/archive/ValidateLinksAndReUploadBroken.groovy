@@ -10,6 +10,8 @@ import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
+
 @Slf4j
 class ValidateLinksAndReUploadBroken {
     static Set archiveProfiles = []
@@ -23,7 +25,7 @@ class ValidateLinksAndReUploadBroken {
 
     static main(args) {
         log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
-        setIdentifierFile(args)
+        setCSVsForValidation(args)
         ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
         processIdentifierCSV()
@@ -37,14 +39,14 @@ class ValidateLinksAndReUploadBroken {
             }
             println(allFailedItems.size())
             println(allFailedItems*.archiveProfile)
-            //startReuploadOfFailedItems(allFailedItems)
+            startReuploadOfFailedItems(allFailedItems)
         }
 
         log.info "***End of ValidateLinksInArchive Program"
         System.exit(0)
     }
 
-    static void setIdentifierFile(def args) {
+    static void setCSVsForValidation(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
@@ -64,9 +66,9 @@ class ValidateLinksAndReUploadBroken {
                 System.exit(0)
             }
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
-            String _file_2 = args[1].endsWith(".csv") ? args[1] : args[1] + ".csv"
+            String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
             identifierFile = new File(EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER + File.separator + _file_1)
-            queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_1)
+            queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
             if (!identifierFile) {
                 log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_GENERATED_IDENTIFIERS_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
@@ -143,6 +145,7 @@ class ValidateLinksAndReUploadBroken {
             int countOfUploadablePdfs = failedItemsForProfile.size()
             if (countOfUploadablePdfs) {
                 log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
+                storeQueuedItemsInFile(failedItemsForProfile)
                 List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedItemsForProfile)
                 String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadablePdfs)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
