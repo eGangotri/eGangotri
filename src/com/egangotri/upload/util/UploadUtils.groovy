@@ -433,7 +433,7 @@ class UploadUtils {
         return ARCHIVE_UPLOAD_URL + insertDescription
     }
 
-    static insertDescriptionInUploadUrl(String supplementary_url){
+    static insertDescriptionInUploadUrl(String supplementary_url, String fileNameToBeUsedAsUniqueDescription){
         return supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
     }
 
