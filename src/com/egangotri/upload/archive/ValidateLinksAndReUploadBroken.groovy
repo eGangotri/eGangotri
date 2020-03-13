@@ -85,13 +85,13 @@ class ValidateLinksAndReUploadBroken {
     static void processUsheredCSV() {
         identifierLinksForTesting = ValidateLinksUtil.csvToUsheredItemsVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
-        log.info("Checking " + identifierLinksForTesting.size() + " Identifier Generated links in " + "Profiles ${archiveProfiles.toString()}")
+        log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
     static void processQueuedCSV() {
         queuedItemsForTesting = ValidateLinksUtil.csvToItemsVO(queuedFile)
         Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Checking " + queuedItemsForTesting.size() + " Queued Item(s) in " + "Profiles ${queuedProfiles.toString()}")
+        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
     }
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
@@ -110,7 +110,7 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void filterFailedItems() {
-        log.info("Testing ${identifierLinksForTesting.size()} Items with Generated Identifiers)")
+        log.info("Testing ${identifierLinksForTesting.size()} Links in archive for upload-success-confirmation)")
 
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
@@ -125,7 +125,7 @@ class ValidateLinksAndReUploadBroken {
                 failedLinks << entry
             }
         }
-        log.info("${failedLinks.size()} failedLink" + " Item(s) found in Identifier Generated List that were missing." +
+        log.info("${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
                 " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
         log.info("Failed Links: " + failedLinks*.archiveLink.toString())
     }
@@ -157,4 +157,3 @@ class ValidateLinksAndReUploadBroken {
 
 
 }
-m
