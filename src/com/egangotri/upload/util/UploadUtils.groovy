@@ -429,7 +429,7 @@ class UploadUtils {
 
     static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
-        String insertDescription = insertDescriptionInUploadUrl(supplementary_url)
+        String insertDescription = insertDescriptionInUploadUrl(supplementary_url, fileNameToBeUsedAsUniqueDescription)
         return ARCHIVE_UPLOAD_URL + insertDescription
     }
 
