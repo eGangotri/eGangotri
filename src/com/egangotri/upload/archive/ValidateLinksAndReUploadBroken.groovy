@@ -21,6 +21,7 @@ class ValidateLinksAndReUploadBroken {
     static List<ItemsVO> queuedItemsForTesting = []
     static List<LinksVO> failedLinks = []
     static List<ItemsVO> missedOutQueuedItems = []
+    static List<? extends UploadVO> allFailedItems =  []
 
 
     static main(args) {
@@ -32,20 +33,21 @@ class ValidateLinksAndReUploadBroken {
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
         filterFailedItems()
-        if (missedOutQueuedItems || failedLinks) {
-            List<? extends UploadVO> allFailedItems =  missedOutQueuedItems
-            failedLinks.each { failedLink ->
-                allFailedItems.add(failedLink)
-            }
-            println(allFailedItems.size())
-            println(allFailedItems*.archiveProfile)
-            startReuploadOfFailedItems(allFailedItems)
-        }
-
+        combineFailedItems()
+        startReuploadOfFailedItems()
         log.info "***End of ValidateLinksInArchive Program"
         System.exit(0)
     }
 
+    static void combineFailedItems(){
+        if (missedOutQueuedItems || failedLinks) {
+            allFailedItems =  missedOutQueuedItems
+            failedLinks.each { failedLink ->
+                allFailedItems.add(failedLink)
+            }
+            log.info("Combined figure for re-uploading:" + allFailedItems.size() + " in Profiles: " + allFailedItems*.archiveProfile)
+        }
+    }
     static void setCSVsForValidation(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
