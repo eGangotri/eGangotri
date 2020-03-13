@@ -7,16 +7,13 @@ import groovy.util.logging.Slf4j
 class EGangotriUtil {
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
-    static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
     static final String PROPERTIES = ".properties"
-    static final String PRECUTOFF_PROFILE = "IB"
-    static final List MANUSCRIPT_PROFILES = ["DT"]
-
-    static final String MANUSCRIPTS = "MANUSCRIPTS"
-
-
+    static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5
+
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
+
+    static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
@@ -108,30 +105,4 @@ class EGangotriUtil {
         return (archiveProfile == PRECUTOFF_PROFILE)
     }
 
-    static boolean isAManuscriptProfile(String uploadProfile) {
-        log.info "uploadProfile $uploadProfile ="
-        return getAllManuscriptProfiles().contains(uploadProfile)
-    }
-
-
-    static List<String> nonManuscriptFolders() {
-        List<String> nonManuFolders = []
-        FileUtil.ALL_FOLDERS.each { k, v ->
-            if (!MANUSCRIPT_PROFILES.contains(k)) {
-                nonManuFolders << v
-            }
-        }
-        return nonManuFolders
-    }
-
-    static List<String> manuscriptFolders() {
-        List<String> manuFolders = FileUtil.ALL_FOLDERS.values() - nonManuscriptFolders()
-        return manuFolders
-    }
-
-    static List<String> getAllManuscriptProfiles() {
-        Map uploadProfileMap = UploadUtils.loadProperties(UPLOAD_PROFILES_PROPERTIES_FILE)
-        List manuProfiles = uploadProfileMap.get(MANUSCRIPTS).split(",").toList()
-        return manuProfiles
-    }
 }

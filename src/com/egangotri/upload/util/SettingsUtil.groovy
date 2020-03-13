@@ -10,8 +10,6 @@ class SettingsUtil {
         ArchiveUtil.createVOSavingFiles()
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if(settingsMetaDataMap){
-            log.info "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
-            log.info "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
             if(settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.isInteger() && settingsMetaDataMap.PARTITION_SIZE.toInteger() >0){
                 try{
                     Integer partitionSize = Integer.parseInt(settingsMetaDataMap.PARTITION_SIZE)
@@ -23,6 +21,7 @@ class SettingsUtil {
                 catch(Exception e){
                     log.info("PARTITION_SIZE : ${settingsMetaDataMap.PARTITION_SIZE} is not a valid mumber. will not be considered")
                 }
+                log.info "settingsMetaDataMap.PARTITION_SIZE ${settingsMetaDataMap.PARTITION_SIZE}"
             }
             //ADJUST_SLEEP_TIMES
             if(settingsMetaDataMap.ADJUST_SLEEP_TIMES){
@@ -35,13 +34,21 @@ class SettingsUtil {
                 catch(Exception e){
                     log.info("ADJUST_SLEEP_TIMES is not a valid decimal mumber. will not be considered")
                 }
-
+                log.info("ADJUST_SLEEP_TIMES: " + EGangotriUtil.ADJUST_SLEEP_TIMES )
             }
+
+            if(settingsMetaDataMap.PRECUTOFF_PROFILE){
+                EGangotriUtil.PRECUTOFF_PROFILE = settingsMetaDataMap.PRECUTOFF_PROFILE
+                log.info("PRECUTOFF_PROFILE: " + EGangotriUtil.PRECUTOFF_PROFILE )
+            }
+
             if(settingsMetaDataMap.PDF_ONLY && settingsMetaDataMap.PDF_ONLY == "true"){
                 FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
                 FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
+                log.info "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
                 log.info("PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
+
             if(settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING && settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING == "true"){
                 EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING = settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean()
                 log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean())
@@ -81,6 +88,5 @@ class SettingsUtil {
                 log.info("IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS: " + EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
             }
         }
-
     }
 }

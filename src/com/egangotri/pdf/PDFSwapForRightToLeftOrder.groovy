@@ -11,7 +11,7 @@ import java.util.regex.Matcher
 
 class PDFSwapForRightToLeftOrder {
 
-    static String path = "C:\\Treasures7\\urduCollOfProfShahidAmin\\Prof Shahid"
+    static String path = "C:\\q\\q\\q"
     static String fileName = "Haqayat-e-Rumi I and II 1945 - Anjuman-e- Taraqqi.pdf"
     static String tmpDir = path + File.separator + "tmp"
     /**

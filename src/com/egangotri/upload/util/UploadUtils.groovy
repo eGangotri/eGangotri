@@ -469,7 +469,7 @@ class UploadUtils {
     static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
         List folderName = []
         if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
-            folderName = FileUtil.ALL_FOLDERS.values().toList() - FileUtil.ALL_FOLDERS."DT"
+            folderName = FileUtil.ALL_FOLDERS.values().toList()
         } else {
             folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
         }

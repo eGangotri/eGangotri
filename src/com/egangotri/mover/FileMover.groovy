@@ -8,9 +8,8 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class FileMover {
-    static String DEST_ROOT_DIR = "C:\\Treasures6"
     static Map<String, List<String>> srcDestMap
-    static List profiles = ["DT", "SR", "JG"] //"SR", "DT", "JG"
+    static List profiles = []
 
     static main(args) {
         if (args) {
