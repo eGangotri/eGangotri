@@ -157,7 +157,7 @@ class ArchiveHandler {
 
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
-            String uploadLink = UploadUtils.generateURL(archiveProfile, fileName)
+            String uploadLink = UploadUtils.generateUploadUrl(archiveProfile, fileName)
             log.info("${tabIndex+1}) [$archiveProfile] $uploadLink")
         }
     }
@@ -207,7 +207,7 @@ class ArchiveHandler {
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + lastStringFragAfterDashWithFileEndingRemoved : uploadLink
         }
         log.info("URL for upload: \n${uploadLink}")
-        log.info("fileNameWithPath:'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' ready for upload")
+        log.info("fileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
         //Go to URL
         driver.navigate().to(uploadLink)
         driver.get(uploadLink)
@@ -230,21 +230,21 @@ class ArchiveHandler {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {
-            log.error("WebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').(${webDriverException.message}) ")
+            log.error("WebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
             try {
                 log.info("Attempt-2")
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
+                log.info("'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.error("WebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.getFileTitleOnly(fileNameWithPath)}').\n(${webDriverException2.message}) ")
+                log.error("WebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').\n(${webDriverException2.message}) ")
                 log.info("Attempt-3")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("'${UploadUtils.getFileTitleOnly(fileNameWithPath)}' must have succeeded if u see this")
+                log.info("'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
         }
         UploadUtils.checkAlert(driver)

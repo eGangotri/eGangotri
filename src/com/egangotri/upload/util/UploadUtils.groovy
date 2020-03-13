@@ -220,7 +220,7 @@ class UploadUtils {
         boolean success = false
         String username = metaDataMap."${archiveProfile}.username"
         String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 = " UserName [$username] in ${getFileTitleOnly(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
+        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
         if (username?.trim()) {
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
             if (!success) {
@@ -427,21 +427,27 @@ class UploadUtils {
     }
 
 
-    static String generateURL(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
-        boolean isPDF = fileNameToBeUsedAsUniqueDescription.endsWith(EGangotriUtil.PDF)
-        if (isPDF) {
-            fileNameToBeUsedAsUniqueDescription = fileNameToBeUsedAsUniqueDescription.replace(EGangotriUtil.PDF, "")
-        }
-        log.info "uniqueDescription:$fileNameToBeUsedAsUniqueDescription"
-
+    static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
-        supplementary_url = supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
-        String fullURL = ARCHIVE_UPLOAD_URL + supplementary_url
-        return fullURL
+        String insertDescription = insertDescriptionInUploadUrl(supplementary_url)
+        return ARCHIVE_UPLOAD_URL + insertDescription
+    }
+
+    static insertDescriptionInUploadUrl(String supplementary_url){
+        return supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
     }
 
     static String _removeAmpersandAndFetchTitleOnly(String title) {
-        return getFileTitleOnly(title.replaceAll(AMPERSAND, ""))
+        return stripFilePathAndFileEnding(title.replaceAll(AMPERSAND, ""))
+    }
+
+    /***
+     *
+     * @param title Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
+     * @return Hamlet by Shakespeare
+     */
+    static String stripFilePathAndFileEnding(String title) {
+        return title.trim().drop(title.lastIndexOf(File.separator) + 1)
     }
 
     /***
@@ -449,7 +455,7 @@ class UploadUtils {
      * @param title Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
      * @return Hamlet by Shakespeare.pdf
      */
-    static String getFileTitleOnly(String title) {
+    static String stripFilePath(String title) {
         return title.trim().drop(title.lastIndexOf(File.separator) + 1)
     }
 

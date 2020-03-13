@@ -7,8 +7,8 @@ class ItemsVO extends UploadVO {
         super()
         archiveProfile = _archiveProfile
         path = _fullFilePath
-        title = getFileTitleOnly(removeFileEnding(path))
-        uploadLink = generateURL(archiveProfile, path)
+        title = stripFilePath(removeFileEnding(path))
+        uploadLink = generateUploadUrl(archiveProfile, path)
     }
 
     ItemsVO(List<String> fields){

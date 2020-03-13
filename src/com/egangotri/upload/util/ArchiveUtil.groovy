@@ -75,7 +75,7 @@ class ArchiveUtil {
         String archiveProfile = uploadVo.archiveProfile
         String uploadLink = uploadVo.uploadLink
         String fileNameWithPath = uploadVo.path
-        String title = UploadUtils.getFileTitleOnly(fileNameWithPath)
+        String title = UploadUtils.stripFilePath(fileNameWithPath)
         String _idntfier = _identifier?"\", $_identifier\"":""
         String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
         return appendable
