@@ -34,7 +34,7 @@ class SettingsUtil {
                 catch(Exception e){
                     log.info("ADJUST_SLEEP_TIMES is not a valid decimal mumber. will not be considered")
                 }
-                log.info("ADJUST_SLEEP_TIMES: " + EGangotriUtil.ADJUST_SLEEP_TIMES )
+                log.info("ADJUST_SLEEP_TIMES: " + settingsMetaDataMap.ADJUST_SLEEP_TIMES )
             }
 
             if(settingsMetaDataMap.PRECUTOFF_PROFILE){
