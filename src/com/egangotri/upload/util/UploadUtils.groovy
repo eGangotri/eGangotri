@@ -514,17 +514,6 @@ class UploadUtils {
     static void minimizeBrowser(WebDriver driver) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.blur()");
-        //This approach causes browser to freeze.
-        // driver.manage().window().setPosition(new Point(0,3000))
-        //Alt+Space+N
-     /*   Robot robot = new Robot()
-        robot.keyPress(KeyEvent.VK_ALT)
-        robot.keyPress(KeyEvent.VK_SPACE)
-        robot.keyRelease(KeyEvent.VK_SPACE)
-        robot.keyRelease(KeyEvent.VK_ALT)
-        Thread.sleep(100)
-        robot.keyPress(KeyEvent.VK_N)
-        robot.keyRelease(KeyEvent.VK_N)*/
     }
 
     static void closeBrowser(WebDriver driver) {
