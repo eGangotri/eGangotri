@@ -108,14 +108,19 @@ class ValidateLinksAndReUploadBroken {
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
                 entry.archiveLink.toURL().text
+                print("${i}..")
             }
             catch (FileNotFoundException e) {
                 failedLinks << entry
+                println("Failed Link !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
                 failedLinks << entry
+            }
+            if(i%50 == 0){
+                println("")
             }
         }
         log.info("${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
