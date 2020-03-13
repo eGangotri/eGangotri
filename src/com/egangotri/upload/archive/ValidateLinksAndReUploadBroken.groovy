@@ -48,6 +48,7 @@ class ValidateLinksAndReUploadBroken {
             log.info("Combined figure for re-uploading:" + allFailedItems.size() + " in Profiles: " + allFailedItems*.archiveProfile)
         }
     }
+
     static void setCSVsForValidation(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
