@@ -447,7 +447,7 @@ class UploadUtils {
      * @return Hamlet by Shakespeare
      */
     static String stripFilePathAndFileEnding(String title) {
-        return title.trim().drop(title.lastIndexOf(File.separator) + 1)
+        return removeFileEnding(stripFilePath(title))
     }
 
     /***

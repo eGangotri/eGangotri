@@ -32,21 +32,11 @@ class ValidateLinksAndReUploadBroken {
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
-        filterFailedItems()
-        combineFailedItems()
+        filterFailedUsheredItems()
+        combineAllFailedItems()
         startReuploadOfFailedItems()
         log.info "***End of ValidateLinksInArchive Program"
         System.exit(0)
-    }
-
-    static void combineFailedItems(){
-        if (missedOutQueuedItems || failedLinks) {
-            allFailedItems =  missedOutQueuedItems
-            failedLinks.each { failedLink ->
-                allFailedItems.add(failedLink)
-            }
-            log.info("Combined figure for re-uploading:" + allFailedItems.size() + " in Profiles: " + allFailedItems*.archiveProfile)
-        }
     }
 
     static void setCSVsForValidation(def args) {
@@ -112,8 +102,8 @@ class ValidateLinksAndReUploadBroken {
         log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
     }
 
-    static void filterFailedItems() {
-        log.info("Testing ${identifierLinksForTesting.size()} Links in archive for upload-success-confirmation)")
+    static void filterFailedUsheredItems() {
+        log.info("Testing ${identifierLinksForTesting.size()} Links in archive for upload-success-confirmation")
 
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
@@ -131,6 +121,16 @@ class ValidateLinksAndReUploadBroken {
         log.info("${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
                 " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
         log.info("Failed Links: " + failedLinks*.archiveLink.toString())
+    }
+
+    static void combineAllFailedItems(){
+        if (missedOutQueuedItems || failedLinks) {
+            allFailedItems =  missedOutQueuedItems
+            failedLinks.each { failedLink ->
+                allFailedItems.add(failedLink)
+            }
+            log.info("Combined figure for re-uploading:" + allFailedItems.size() + " in Profiles: " + allFailedItems*.archiveProfile)
+        }
     }
 
     static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
