@@ -498,7 +498,7 @@ class UploadUtils {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
             }
             JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("window.open('chrome://newtab','_blank');");
+            js.executeScript("window.open('','_blank');");
         }
         catch (Exception _ex) {
             log.error("openNewTab Exception: ${_ex.message}")
