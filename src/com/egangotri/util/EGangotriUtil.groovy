@@ -10,7 +10,8 @@ class EGangotriUtil {
     static final String PROPERTIES = ".properties"
     static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5
-
+    static long PROGRAM_START_TIME_IN_SECONDS = 0
+    static long PROGRAM_END_TIME_IN_SECONDS = 0
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
 
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
@@ -105,4 +106,13 @@ class EGangotriUtil {
         return (archiveProfile == PRECUTOFF_PROFILE)
     }
 
+    static void recordProgramStart(String program = ""){
+        EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS = System.currentTimeSeconds()
+        log.info "Program $program started @ " + UploadUtils.getFormattedDateString()
+    }
+
+    static void recordProgramEnd(){
+        EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS = System.currentTimeSeconds()
+        log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString()
+    }
 }

@@ -140,19 +140,22 @@ class ArchiveUtil {
         }
     }
 
-    static void printUploadReport(Map<Integer, String> uploadSuccessCheckingMatrix){
+    static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int grandTotalOfUplodableItems){
         if (uploadSuccessCheckingMatrix) {
-            log.info "Upload Report:\n"
+            log.info "Final Report:\n"
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
             }
-            log.info "\n ***All Items put for upload implies all were attempted successfully for upload. But there can be errors still after attempted upload. best to check manually."
             if(ValidateLinksAndReUploadBrokenRunning) {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
             }
             else {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
              }
+            int totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS
+            log.info("Total Time Taken: ${totalTime} second(s)")
+            log.info("Total Items attempted: $grandTotalOfUplodableItems")
+            log.info("Average Upload Time: ${grandTotalOfUplodableItems/totalTime} seconds/item")
         }
     }
 

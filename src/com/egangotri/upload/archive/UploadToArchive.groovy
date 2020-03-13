@@ -33,37 +33,35 @@ class UploadToArchive {
 
     static void execute(List profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        log.info "Start uploading to Archive @ " + UploadUtils.getFormattedDateString()
-
+        EGangotriUtil.recordProgramStart("eGangotri Archiver")
+        int grandTotalOfUplodableItems = 0
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
             }
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
-            Integer countOfUploadablePdfs = UploadUtils.getCountOfUploadablePdfsForProfile(archiveProfile)
-            if (countOfUploadablePdfs) {
-                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
+            Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
+            if (countOfUploadableItems) {
+                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadableItems}"
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
                     List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
-                    String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadablePdfs)
+                    String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
                     uploadSuccessCheckingMatrix.put((index + 1), report)
                 }
+                grandTotalOfUplodableItems += countOfUploadableItems
             } else {
                 log.info "No uploadable files for Profile $archiveProfile"
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
 
-        ArchiveUtil.printUploadReport(uploadSuccessCheckingMatrix)
-        log.info "***End of Upload to Archive Program"
+        EGangotriUtil.recordProgramEnd()
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, grandTotalOfUplodableItems)
         System.exit(0)
-
     }
-
-
 }
 
 

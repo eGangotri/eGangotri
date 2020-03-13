@@ -25,7 +25,7 @@ class ValidateLinksAndReUploadBroken {
 
 
     static main(args) {
-        log.info "Starting ValidateLinksInArchive @ " + UploadUtils.getFormattedDateString()
+        EGangotriUtil.recordProgramStart("ValidateLinksInArchive")
         setCSVsForValidation(args)
         ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
         SettingsUtil.applySettings()
@@ -34,8 +34,9 @@ class ValidateLinksAndReUploadBroken {
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
         combineAllFailedItems()
-        startReuploadOfFailedItems()
-        log.info "***End of ValidateLinksInArchive Program"
+        Map<Integer, String> uploadSuccessCheckingMatrix = startReuploadOfFailedItems()
+        EGangotriUtil.recordProgramEnd()
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix)
         System.exit(0)
     }
 
@@ -138,7 +139,7 @@ class ValidateLinksAndReUploadBroken {
         }
     }
 
-    static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
+    static Map<Integer, String> startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Set<String> profilesWithFailedLinks = reuploadableItems*.archiveProfile as Set
@@ -160,7 +161,7 @@ class ValidateLinksAndReUploadBroken {
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-        ArchiveUtil.printUploadReport(uploadSuccessCheckingMatrix)
+        return uploadSuccessCheckingMatrix
     }
 
 

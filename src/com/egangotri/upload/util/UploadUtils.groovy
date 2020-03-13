@@ -118,7 +118,7 @@ class UploadUtils {
         return items
     }
 
-    static int getCountOfUploadablePdfsForProfile(String archiveProfile) {
+    static int getCountOfUploadableItemsForProfile(String archiveProfile) {
         return getUploadablesForProfile(archiveProfile)?.size()
     }
 
