@@ -108,7 +108,7 @@ class ValidateLinksAndReUploadBroken {
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
                 entry.archiveLink.toURL().text
-                print("${i}..")
+                print("${i},")
             }
             catch (FileNotFoundException e) {
                 failedLinks << entry
@@ -119,7 +119,7 @@ class ValidateLinksAndReUploadBroken {
                 e.printStackTrace()
                 failedLinks << entry
             }
-            if(i%50 == 0){
+            if(i%75 == 0){
                 println("")
             }
         }
