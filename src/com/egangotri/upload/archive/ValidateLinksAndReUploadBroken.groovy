@@ -141,10 +141,10 @@ class ValidateLinksAndReUploadBroken {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Set<String> profilesWithFailedLinks = reuploadableItems*.archiveProfile as Set
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profilesWithFailedLinks)
-        int attemptedItemsTotal = 0
-
         Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks)
+
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(purgedProfilesWithFailedLinks)
+        int attemptedItemsTotal = 0
 
         purgedProfilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
