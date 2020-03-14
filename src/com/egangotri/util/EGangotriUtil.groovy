@@ -8,11 +8,6 @@ class EGangotriUtil {
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"
-    static String PRECUTOFF_PROFILE = ""
-    static final int UPLOAD_FAILURE_THRESHOLD = 5
-    static long PROGRAM_START_TIME_IN_SECONDS = 0
-    static long PROGRAM_END_TIME_IN_SECONDS = 0
-    static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
 
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
 
@@ -31,11 +26,17 @@ class EGangotriUtil {
     static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + "item_{0}.csv"
     static String ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "queued_item_{0}.csv"
     static String ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "ushered_item_{0}.csv"
-//ARCHIVE_VALIDATION_FILE
+    static
+    final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
 
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
 
+    static int MAX_UPLODABLES = 1000
+    static String PRECUTOFF_PROFILE = ""
+    static final int UPLOAD_FAILURE_THRESHOLD = 5
+
+    static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
     static Boolean GENERATE_ONLY_URLS = false
     static int PARTITION_SIZE = 250
     static boolean PARTITIONING_ENABLED = false
@@ -50,8 +51,6 @@ class EGangotriUtil {
     static final Range ASCII_CHARS =  "A".."z"
     static final def ASCII_CHARS_SIZE =  ASCII_CHARS.size()
 
-    static
-    final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
     static final int TIMEOUT_IN_TWO_SECONDS = 5
 
     static final int TIMEOUT_IN_FIVE_SECONDS = 5
@@ -62,8 +61,6 @@ class EGangotriUtil {
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
-    static int GLOBAL_UPLOADING_COUNTER = 0
-
 
     static List getAllProfiles(String filePath, String textDiscarder) {
         Properties properties = new Properties()
@@ -108,13 +105,4 @@ class EGangotriUtil {
         return (archiveProfile == PRECUTOFF_PROFILE)
     }
 
-    static void recordProgramStart(String program = ""){
-        EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS = System.currentTimeSeconds()
-        log.info "Program $program started @ " + UploadUtils.getFormattedDateString()
-    }
-
-    static void recordProgramEnd(){
-        EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS = System.currentTimeSeconds()
-        log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString()
-    }
 }
