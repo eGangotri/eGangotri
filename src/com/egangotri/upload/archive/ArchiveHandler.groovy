@@ -168,10 +168,10 @@ class ArchiveHandler {
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size() > EGangotriUtil.PARTITION_SIZE) {
             def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
-            log.info("uploadables will be uploaded in ${partitions.size()} # of Browsers: ")
-
+            log.info(" ${partitions.size()} Browsers will be created for Profile $archiveProfile: ")
+            int partitionCounter = 0
             for (List<String> partitionedUploadables : partitions) {
-                log.info("Batch of partitioned Items Count ${partitionedUploadables.size()} sent for uploads")
+                log.info("Batch # ${partitionCounter}/${partitions.size()}. Count ${partitionedUploadables.size()} sent for uploads")
                 List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
                 storeQueuedItemsInFile(vos)
                 List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos )

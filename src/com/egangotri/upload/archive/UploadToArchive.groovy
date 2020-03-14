@@ -39,10 +39,9 @@ class UploadToArchive {
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
             }
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
             if (countOfUploadableItems) {
-                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadableItems}"
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
                     List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
