@@ -119,6 +119,7 @@ class ValidateLinksAndReUploadBroken {
                 failedLinks << entry
             }
             if(i%75 == 0){
+                Thread.sleep(5000)
                 println("")
             }
         }
