@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
+    static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     public static boolean ValidateLinksAndReUploadBrokenRunning = false
 
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
@@ -140,7 +141,7 @@ class ArchiveUtil {
         }
     }
 
-    static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int grandTotalOfUplodableItems){
+    static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int attemptedItemsTotal){
         if (uploadSuccessCheckingMatrix) {
             log.info "Final Report:\n"
             uploadSuccessCheckingMatrix.each { k, v ->
@@ -154,8 +155,9 @@ class ArchiveUtil {
              }
             int totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS
             log.info("Total Time Taken: ${totalTime} second(s)")
-            log.info("Total Items attempted: $grandTotalOfUplodableItems")
-            log.info("Average Upload Time: ${grandTotalOfUplodableItems/totalTime} seconds/item")
+            log.info("Total Items attempted: $attemptedItemsTotal")
+            log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
+            log.info("Average Upload Time: ${attemptedItemsTotal/totalTime} seconds/item")
         }
     }
 
@@ -196,5 +198,18 @@ class ArchiveUtil {
             throw e
         }
         return loginSucess
+    }
+
+
+    static int getGrandTotalOfAllUploadables(List<String> profiles){
+        int grandTotalOfUplodableItems = 0
+        profiles*.toString().eachWithIndex { archiveProfile, index ->
+            if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile,false)) {
+                return
+            }
+            Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
+            grandTotalOfUplodableItems += countOfUploadableItems
+        }
+        return grandTotalOfUplodableItems
     }
 }

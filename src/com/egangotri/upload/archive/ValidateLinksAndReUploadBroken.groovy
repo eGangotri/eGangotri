@@ -34,9 +34,7 @@ class ValidateLinksAndReUploadBroken {
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
         combineAllFailedItems()
-        Map<Integer, String> uploadSuccessCheckingMatrix = startReuploadOfFailedItems()
-        EGangotriUtil.recordProgramEnd()
-        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix)
+        startReuploadOfFailedItems()
         System.exit(0)
     }
 
@@ -139,10 +137,12 @@ class ValidateLinksAndReUploadBroken {
         }
     }
 
-    static Map<Integer, String> startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
+    static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Set<String> profilesWithFailedLinks = reuploadableItems*.archiveProfile as Set
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables()
+        int attemptedItemsTotal = 0
 
         profilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
@@ -151,17 +151,22 @@ class ValidateLinksAndReUploadBroken {
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
             List<UploadVO> failedItemsForProfile = reuploadableItems.findAll { it.archiveProfile == archiveProfile }
 
-            int countOfUploadablePdfs = failedItemsForProfile.size()
-            if (countOfUploadablePdfs) {
-                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadablePdfs}"
+            int countOfUploadableItems = failedItemsForProfile.size()
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
+            if (countOfUploadableItems) {
+                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadableItems}"
                 storeQueuedItemsInFile(failedItemsForProfile)
                 List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedItemsForProfile)
-                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadablePdfs)
+                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadableItems)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
+                attemptedItemsTotal += countOfUploadableItems
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-        return uploadSuccessCheckingMatrix
+
+
+        EGangotriUtil.recordProgramEnd()
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
     }
 
 
