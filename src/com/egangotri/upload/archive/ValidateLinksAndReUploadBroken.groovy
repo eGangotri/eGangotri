@@ -80,6 +80,15 @@ class ValidateLinksAndReUploadBroken {
         log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
+    static void generateFailedLinksFromList(){
+        List<String> links = []
+        identifierLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
+            if(links.contains(entry.uploadLink)){
+                failedLinks << entry
+            }
+        }
+    }
+
     static void processQueuedCSV() {
         queuedItemsForTesting = ValidateLinksUtil.csvToItemsVO(queuedFile)
         Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
