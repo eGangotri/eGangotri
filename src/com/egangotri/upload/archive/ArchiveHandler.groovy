@@ -47,6 +47,12 @@ class ArchiveHandler {
                     if (uploadables.size() > 1) {
                         int tabIndex = 1
                         for (uploadVo in uploadVos.drop(1)) {
+                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
+                                String errMsg = "Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg"
+                                log.info(errMsg)
+                                throw new Exception(errMsg)
+                            }
+
                             log.info "Uploading: ${uploadVo.title} @ tabNo:$tabIndex"
                             UploadUtils.openNewTab(driver)
 
@@ -98,10 +104,6 @@ class ArchiveHandler {
                                 log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
-                            }
-                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
-                                log.info("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
-                                throw new Exception("Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg")
                             }
                             countOfUploadedItems++
                         }

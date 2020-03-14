@@ -36,7 +36,7 @@ class EGangotriUtil {
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
 
     static String PRECUTOFF_PROFILE = ""
-    static final int UPLOAD_FAILURE_THRESHOLD = 5
+    static final int UPLOAD_FAILURE_THRESHOLD = 20
     static int MAX_UPLODABLES = 1000
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
     static Boolean GENERATE_ONLY_URLS = false

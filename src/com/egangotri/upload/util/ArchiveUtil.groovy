@@ -154,10 +154,10 @@ class ArchiveUtil {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
              }
             int totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS
-            log.info("Total Time Taken: ${totalTime} second(s)")
+            log.info("Total Time Taken: ${totalTime} second(s)[ ${(totalTime/60).round(2)} minutes(s)]")
             log.info("Total Items attempted: $attemptedItemsTotal")
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
-            log.info("Average Upload Time: ${attemptedItemsTotal/totalTime} seconds/item")
+            log.info("Average Upload Time: ${((totalTime/60)/attemptedItemsTotal).round(2)} minute(s)/item")
         }
     }
 
@@ -166,7 +166,7 @@ class ArchiveUtil {
         log.info("\n")
         Tuple statsForUshered = ValidateLinksUtil.statsForUsheredItemsVO(usheredFile)
         String equality = (statsForQueued[0] == statsForUshered[0]) ? "Yes" : "\nNo. Short by ${Math.abs(statsForUshered[0] - statsForQueued[0])} item(s)"
-        log.info("Are No of Queued Items ( ${statsForQueued[1]} = ${statsForQueued[0]}) equal to ( ${statsForUshered[1]} == ${statsForUshered[0]}) Upload-Ushered Items? " +
+        log.info("Are No of Queued Items ( [${statsForQueued[1]}] = ${statsForQueued[0]}) equal to ( [${statsForUshered[1]}] = ${statsForUshered[0]}) Upload-Ushered Items? " +
                 equality)
 
     }
