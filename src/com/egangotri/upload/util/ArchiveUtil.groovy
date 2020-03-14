@@ -210,7 +210,7 @@ class ArchiveUtil {
         return grandTotalOfUplodableItems
     }
 
-    static Collection<String> purgeBrokenProfiles(Collection<String> profiles){
-        return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)}
+    static Collection<String> purgeBrokenProfiles(Collection<String> profiles,  Hashtable<String, String> metaDataMap){
+        return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, profile)}
     }
 }

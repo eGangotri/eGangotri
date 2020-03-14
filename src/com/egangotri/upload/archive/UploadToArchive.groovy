@@ -28,7 +28,7 @@ class UploadToArchive {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles)
+        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
         execute(purgedProfiles, metaDataMap)
         System.exit(0)
     }

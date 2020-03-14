@@ -32,7 +32,7 @@ class ValidateLinksAndReUploadBroken {
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
-        filterFailedUsheredItems()
+        //filterFailedUsheredItems()
         combineAllFailedItems()
         startReuploadOfFailedItems()
         System.exit(0)
@@ -125,7 +125,7 @@ class ValidateLinksAndReUploadBroken {
                 println("")
             }
         }
-        log.info("${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
+        log.info("\n${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
                 " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
         log.info("Failed Links: " + failedLinks*.archiveLink.toString())
     }
@@ -136,23 +136,27 @@ class ValidateLinksAndReUploadBroken {
             failedLinks.each { failedLink ->
                 allFailedItems.add(failedLink)
             }
-            log.info("Combined figure for re-uploading:" + allFailedItems.size() + " in Profiles: " + allFailedItems*.archiveProfile)
+            log.info("Combined figure for re-uploading(${missedOutQueuedItems.size()} + ${failedLinks.size()}) :" + allFailedItems.size() + " in Profiles: ${allFailedItems*.archiveProfile as Set}" )
         }
     }
 
-    static void startReuploadOfFailedItems(List<UploadVO> reuploadableItems) {
+    static void startReuploadOfFailedItems() {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Set<String> profilesWithFailedLinks = reuploadableItems*.archiveProfile as Set
-        Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks)
+        Set<String> profilesWithFailedLinks = allFailedItems*.archiveProfile as Set
+        Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks, metaDataMap)
 
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(purgedProfilesWithFailedLinks)
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = allFailedItems.size()
+        if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
+            log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
+            System.exit(1)
+        }
+        log.info("Toal Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+
         int attemptedItemsTotal = 0
 
         purgedProfilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile"
-            List<UploadVO> failedItemsForProfile = reuploadableItems.findAll { it.archiveProfile == archiveProfile }
-
+            List<UploadVO> failedItemsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedItemsForProfile.size()
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
             if (countOfUploadableItems) {
