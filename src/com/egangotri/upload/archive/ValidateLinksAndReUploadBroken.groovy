@@ -33,6 +33,7 @@ class ValidateLinksAndReUploadBroken {
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
+        //for use in special cases only
         //generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
