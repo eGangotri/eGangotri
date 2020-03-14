@@ -9,6 +9,9 @@ class EGangotriUtil {
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"
 
+    static long PROGRAM_START_TIME_IN_SECONDS = 0
+    static long PROGRAM_END_TIME_IN_SECONDS = 0
+
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
@@ -32,10 +35,9 @@ class EGangotriUtil {
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
 
-    static int MAX_UPLODABLES = 1000
     static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5
-
+    static int MAX_UPLODABLES = 1000
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
     static Boolean GENERATE_ONLY_URLS = false
     static int PARTITION_SIZE = 250
@@ -51,6 +53,7 @@ class EGangotriUtil {
     static final Range ASCII_CHARS =  "A".."z"
     static final def ASCII_CHARS_SIZE =  ASCII_CHARS.size()
 
+
     static final int TIMEOUT_IN_TWO_SECONDS = 5
 
     static final int TIMEOUT_IN_FIVE_SECONDS = 5
@@ -61,6 +64,7 @@ class EGangotriUtil {
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
+    static int GLOBAL_UPLOADING_COUNTER = 0
 
     static List getAllProfiles(String filePath, String textDiscarder) {
         Properties properties = new Properties()
@@ -105,4 +109,13 @@ class EGangotriUtil {
         return (archiveProfile == PRECUTOFF_PROFILE)
     }
 
+    static void recordProgramStart(String program = ""){
+        EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS = System.currentTimeSeconds()
+        log.info "Program $program started @ " + UploadUtils.getFormattedDateString()
+    }
+
+    static void recordProgramEnd(){
+        EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS = System.currentTimeSeconds()
+        log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString()
+    }
 }
