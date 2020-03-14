@@ -201,19 +201,16 @@ class ArchiveUtil {
     }
 
 
-    static int getGrandTotalOfAllUploadables(List<String> profiles){
+    static int getGrandTotalOfAllUploadables(Collection<String> profiles){
         int grandTotalOfUplodableItems = 0
         profiles*.toString().eachWithIndex { archiveProfile, index ->
-            if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile,false)) {
-                return
-            }
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
             grandTotalOfUplodableItems += countOfUploadableItems
         }
         return grandTotalOfUplodableItems
     }
 
-    static List<String> purgeBrokenProfiles(List<String> profiles){
+    static Collection<String> purgeBrokenProfiles(Collection<String> profiles){
         return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)}
     }
 }
