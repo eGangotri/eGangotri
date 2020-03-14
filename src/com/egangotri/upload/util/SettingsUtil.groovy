@@ -42,6 +42,18 @@ class SettingsUtil {
                 log.info("PRECUTOFF_PROFILE: " + EGangotriUtil.PRECUTOFF_PROFILE )
             }
 
+            if(settingsMetaDataMap.MAX_UPLODABLES){
+                try{
+                    int maxUplodables = Integer.parseInt(settingsMetaDataMap.MAX_UPLODABLES)
+                    if(maxUplodables >= 50 && maxUplodables <= 2000){
+                        EGangotriUtil.MAX_UPLODABLES = maxUplodables
+                    }
+                }
+                catch(Exception e){
+                    log.info("MAX_UPLODABLES is not a valid Integer. will not be considered")
+                }
+                log.info("MAX_UPLODABLES: " + EGangotriUtil.MAX_UPLODABLES )
+            }
             if(settingsMetaDataMap.PDF_ONLY && settingsMetaDataMap.PDF_ONLY == "true"){
                 FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
                 FileUtil.PDF_REGEX =  FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/

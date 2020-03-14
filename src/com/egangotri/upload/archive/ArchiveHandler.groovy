@@ -264,11 +264,6 @@ class ArchiveHandler {
             collDropDown.selectByValue("data:opensource_media")
         }
 
-        //remove this junk value that pops-up for profiles with Collections
-        /* if (uploadLink.contains("collection=")) {
-             driver.findElement(By.className("additional_meta_remove_link")).click()
-         }*/
-
         WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
 
@@ -303,6 +298,8 @@ class ArchiveHandler {
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
+        EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
+        log.info("Document # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER} sent for upload")
         return identifier
     }
 }

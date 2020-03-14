@@ -62,6 +62,8 @@ class EGangotriUtil {
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
+    static int GLOBAL_UPLOADING_COUNTER = 0
+
 
     static List getAllProfiles(String filePath, String textDiscarder) {
         Properties properties = new Properties()
