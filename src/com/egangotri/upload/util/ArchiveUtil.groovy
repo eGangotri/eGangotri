@@ -10,12 +10,15 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
+import java.text.DecimalFormat
+
 @Slf4j
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     public static boolean ValidateLinksAndReUploadBrokenRunning = false
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
         WebElement avatar = driver.findElementByClassName("avatar")
@@ -154,10 +157,10 @@ class ArchiveUtil {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
              }
             int totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS
-            log.info("Total Time Taken: ${totalTime} second(s)[ ${(totalTime/60).round(2)} minutes(s)]")
+            log.info("Total Time Taken: ${totalTime} second(s)[ ${df.format(totalTime/60)} minutes(s)]")
             log.info("Total Items attempted: $attemptedItemsTotal")
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
-            log.info("Average Upload Time: ${((totalTime/60)/attemptedItemsTotal).round(2)} minute(s)/item")
+            log.info("Average Upload Time: ${df.format((totalTime/60)/attemptedItemsTotal)} minute(s)/item")
         }
     }
 
