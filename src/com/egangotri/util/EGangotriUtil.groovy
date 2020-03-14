@@ -8,12 +8,9 @@ class EGangotriUtil {
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"
-<<<<<<< Updated upstream
 
     static long PROGRAM_START_TIME_IN_SECONDS = 0
     static long PROGRAM_END_TIME_IN_SECONDS = 0
-=======
->>>>>>> Stashed changes
 
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
 
@@ -38,16 +35,9 @@ class EGangotriUtil {
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
 
-<<<<<<< Updated upstream
     static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5
     static int MAX_UPLODABLES = 1000
-=======
-    static int MAX_UPLODABLES = 1000
-    static String PRECUTOFF_PROFILE = ""
-    static final int UPLOAD_FAILURE_THRESHOLD = 5
-
->>>>>>> Stashed changes
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
     static Boolean GENERATE_ONLY_URLS = false
     static int PARTITION_SIZE = 250
@@ -63,10 +53,7 @@ class EGangotriUtil {
     static final Range ASCII_CHARS =  "A".."z"
     static final def ASCII_CHARS_SIZE =  ASCII_CHARS.size()
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
     static final int TIMEOUT_IN_TWO_SECONDS = 5
 
     static final int TIMEOUT_IN_FIVE_SECONDS = 5
