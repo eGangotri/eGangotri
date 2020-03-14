@@ -32,7 +32,8 @@ class ValidateLinksAndReUploadBroken {
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
-        //filterFailedUsheredItems()
+        filterFailedUsheredItems()
+        //generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
         System.exit(0)
@@ -80,10 +81,19 @@ class ValidateLinksAndReUploadBroken {
         log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
-    static void generateFailedLinksFromList(){
-        List<String> links = []
+    //This static variable can only be used with generateFailedLinksFromStaticList()
+    static  List<String> _staticListOfBadLinks = ["https://archive.org/details/kalidas_meghaduta_202003_406_"]
+
+    /** This method is used in unique cases. where u have failed indentifiers only and you want to use them to reupload them only
+     * // So u take the identifiers , use the ushered-csv to generate the complete VO Object.
+     * Then upload the VOS
+     */
+    static void generateFailedLinksFromStaticList(){
+        log.info("generating vos from static list of Links with size: " + _staticListOfBadLinks.size())
+
         identifierLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
-            if(links.contains(entry.uploadLink)){
+            if(_staticListOfBadLinks*.trim().contains(entry.archiveLink)){
+                println("entry.uploadLink: " + entry.uploadLink)
                 failedLinks << entry
             }
         }
@@ -141,7 +151,8 @@ class ValidateLinksAndReUploadBroken {
 
     static void combineAllFailedItems(){
         if (missedOutQueuedItems || failedLinks) {
-            allFailedItems =  missedOutQueuedItems
+            allFailedItems = missedOutQueuedItems
+
             failedLinks.each { failedLink ->
                 allFailedItems.add(failedLink)
             }
