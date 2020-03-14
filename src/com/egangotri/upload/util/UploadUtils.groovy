@@ -478,7 +478,7 @@ class UploadUtils {
         } else {
             folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
         }
-        log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
+        //log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
         return folderName
     }
 
