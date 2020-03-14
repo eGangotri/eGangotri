@@ -215,7 +215,7 @@ class ArchiveHandler {
         driver.get(uploadLink)
 
         WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        log.info("waiting for ${UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON} to be clickable")
+        //log.info("waiting for ${UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON} to be clickable")
         try {
             waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
         }
@@ -228,7 +228,7 @@ class ArchiveHandler {
 
         try {
             UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
-            log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
+            //log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {
@@ -249,7 +249,7 @@ class ArchiveHandler {
                 log.info("'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
         }
-        UploadUtils.checkAlert(driver)
+        //UploadUtils.checkAlert(driver)
         WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
 

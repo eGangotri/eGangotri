@@ -551,7 +551,7 @@ class UploadUtils {
             }
             alertWasDetected = true
         } catch (Exception e) {
-            log.info("No alert detected")
+            //log.info("No alert detected")
         }
         return alertWasDetected
     }
