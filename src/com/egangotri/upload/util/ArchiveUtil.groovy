@@ -212,4 +212,8 @@ class ArchiveUtil {
         }
         return grandTotalOfUplodableItems
     }
+
+    static List<String> purgeBrokenProfiles(List<String> profiles){
+        return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)}
+    }
 }

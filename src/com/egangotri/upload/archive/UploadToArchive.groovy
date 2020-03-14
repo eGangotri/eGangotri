@@ -28,7 +28,9 @@ class UploadToArchive {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        execute(archiveProfiles, metaDataMap)
+        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles)
+        execute(purgedProfiles, metaDataMap)
+        System.exit(0)
     }
 
     static void execute(List<String> profiles, Map metaDataMap) {
@@ -38,9 +40,6 @@ class UploadToArchive {
 
         int attemptedItemsTotal = 0
         profiles*.toString().eachWithIndex { archiveProfile, index ->
-            if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
-                return
-            }
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
             if (countOfUploadableItems) {
@@ -61,9 +60,7 @@ class UploadToArchive {
 
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
-        System.exit(0)
     }
-
 }
 
 

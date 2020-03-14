@@ -144,7 +144,9 @@ class ValidateLinksAndReUploadBroken {
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables()
         int attemptedItemsTotal = 0
 
-        profilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
+        Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks)
+
+        purgedProfilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
             if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile)) {
                 return
             }
@@ -163,7 +165,6 @@ class ValidateLinksAndReUploadBroken {
             }
             EGangotriUtil.sleepTimeInSeconds(5)
         }
-
 
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
