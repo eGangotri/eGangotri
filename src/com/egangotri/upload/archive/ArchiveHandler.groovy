@@ -273,7 +273,7 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         Random _rndm = new Random()
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-        log.info("identifier is ${identifier}")
+        log.info("identifier from archive is ${identifier}")
 
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
             identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
@@ -291,7 +291,7 @@ class ArchiveHandler {
             }
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
             identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-            log.info("identifier after alteration is ${identifier}")
+            log.info("identifier tweaked for uniquness is ${identifier}")
         }
         storeArchiveIdentifierInFile(uploadVO,identifier)
 

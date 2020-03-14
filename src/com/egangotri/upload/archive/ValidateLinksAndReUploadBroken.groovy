@@ -118,7 +118,7 @@ class ValidateLinksAndReUploadBroken {
                 log.info("\tFound missing Item [${queuedItem.archiveProfile}] ${queuedItem.title} ")
             }
         }
-        log.info("${missedOutQueuedItems.size()} Items found in Queued List that were missing. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
+        log.info("${missedOutQueuedItems.size()}/${queuedItemsForTesting.size()} Items found in Queued List that missed upload. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
     }
 
     static void filterFailedUsheredItems() {
