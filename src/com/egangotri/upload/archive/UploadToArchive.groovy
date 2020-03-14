@@ -41,7 +41,7 @@ class UploadToArchive {
         int attemptedItemsTotal = 0
         profiles*.toString().eachWithIndex { archiveProfile, index ->
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
                     List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
