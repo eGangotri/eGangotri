@@ -31,7 +31,7 @@ class UploadToArchive {
         execute(archiveProfiles, metaDataMap)
     }
 
-    static void execute(List profiles, Map metaDataMap) {
+    static void execute(List<String> profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         int grandTotalOfUplodableItems = 0
@@ -60,6 +60,18 @@ class UploadToArchive {
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, grandTotalOfUplodableItems)
         System.exit(0)
+    }
+
+    static int getGrandTotalOfAllUploadables(List<String> profiles){
+        int grandTotalOfUplodableItems = 0
+        profiles*.toString().eachWithIndex { archiveProfile, index ->
+            if (!UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, archiveProfile,false)) {
+                return
+            }
+            Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
+            grandTotalOfUplodableItems += countOfUploadableItems
+        }
+        return grandTotalOfUplodableItems
     }
 }
 

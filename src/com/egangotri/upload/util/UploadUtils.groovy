@@ -178,7 +178,6 @@ class UploadUtils {
             return []
         }
         folder.traverse(optionsMap) {
-            //log.info "getAllPdfs>>" + it
             pdfs << it.absolutePath
         }
         return pdfs.sort()
@@ -216,7 +215,7 @@ class UploadUtils {
         return pdfs
     }
 
-    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile) {
+    static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
         boolean success = false
         String username = metaDataMap."${archiveProfile}.username"
         String userNameInvalidMsg = "Invalid/Non-Existent"
@@ -227,7 +226,7 @@ class UploadUtils {
                 userNameInvalidMsg = "Invalid Email Format of"
             }
         }
-        if (!success) {
+        if (!success && logErrMsg) {
             log.info("${userNameInvalidMsg}${errMsg2}")
         }
         return success
