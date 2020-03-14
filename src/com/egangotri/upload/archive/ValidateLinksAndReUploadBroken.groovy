@@ -102,16 +102,18 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void filterFailedUsheredItems() {
-        log.info("Testing ${identifierLinksForTesting.size()} Links in archive for upload-success-confirmation")
+        int testableLinksCount = identifierLinksForTesting.size()
+        log.info("Testing ${testableLinksCount} Links in archive for upload-success-confirmation")
 
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
+
             try {
                 entry.archiveLink.toURL().text
                 print("${i},")
             }
             catch (FileNotFoundException e) {
                 failedLinks << entry
-                println("Failed Link !!! @ ${i}..")
+                println("Failed Link(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
