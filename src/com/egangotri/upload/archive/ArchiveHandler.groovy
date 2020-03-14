@@ -299,7 +299,7 @@ class ArchiveHandler {
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
-        log.info("Document # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER} sent for upload")
+        log.info("Document # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return identifier
     }
 }
