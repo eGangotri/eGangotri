@@ -13,7 +13,7 @@ import groovy.util.logging.Slf4j
 import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
 
 @Slf4j
-class ValidateLinksAndReUploadBroken {
+class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File identifierFile = null
     static File queuedFile = null
@@ -25,9 +25,9 @@ class ValidateLinksAndReUploadBroken {
 
 
     static main(args) {
-        EGangotriUtil.recordProgramStart("ValidateLinksInArchive")
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
         setCSVsForValidation(args)
-        ArchiveUtil.ValidateLinksAndReUploadBrokenRunning = true
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
         processUsheredCSV()
         processQueuedCSV()
@@ -109,6 +109,10 @@ class ValidateLinksAndReUploadBroken {
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInUsheredCSV() {
+        if(EGangotriUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            log.info("Queued Items will be ignored for upload")
+            return
+        }
         List allFilePaths = identifierLinksForTesting*.path
         log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
 
@@ -122,6 +126,10 @@ class ValidateLinksAndReUploadBroken {
     }
 
     static void filterFailedUsheredItems() {
+        if(EGangotriUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            log.info("Ushered Items will be ignored for upload")
+            return
+        }
         int testableLinksCount = identifierLinksForTesting.size()
         log.info("Testing ${testableLinksCount} Links in archive for upload-success-confirmation")
 

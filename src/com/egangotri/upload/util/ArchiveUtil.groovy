@@ -17,7 +17,7 @@ class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
-    public static boolean ValidateLinksAndReUploadBrokenRunning = false
+    public static boolean ValidateUploadsAndReUploadFailedItems = false
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
@@ -56,7 +56,7 @@ class ArchiveUtil {
 
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
         String appendable = voToCSVString(uploadVo, _identifier)
-        if(ValidateLinksAndReUploadBrokenRunning){
+        if(ValidateUploadsAndReUploadFailedItems){
             new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE).append(appendable)
         } else{
             new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE).append(appendable)
@@ -68,7 +68,7 @@ class ArchiveUtil {
         uploadVos.each{ uploadVo ->
             appendable += voToCSVString(uploadVo)
         }
-        if(ValidateLinksAndReUploadBrokenRunning){
+        if(ValidateUploadsAndReUploadFailedItems){
             new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE).append(appendable)
         } else{
             new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
@@ -86,7 +86,7 @@ class ArchiveUtil {
     }
 
     static void createVOSavingFiles() {
-        if(ValidateLinksAndReUploadBrokenRunning){
+        if(ValidateUploadsAndReUploadFailedItems){
             createValidationFiles()
         }
         else{
@@ -150,7 +150,7 @@ class ArchiveUtil {
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
             }
-            if(ValidateLinksAndReUploadBrokenRunning) {
+            if(ValidateUploadsAndReUploadFailedItems) {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
             }
             else {
