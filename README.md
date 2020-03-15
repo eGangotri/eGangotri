@@ -62,3 +62,7 @@ In Home Directory ( for Windows this is typically
   So No tabbing, pasting etc.
   If you are working remotely and your remote computer goes in Lock Screen Mode
     you have to find ways to disable Locking.
+    
+# Remove Lock Screen/Login Screen
+https://www.isunshare.com/windows-10/2-ways-to-automatically-skip-windows-10-login-screen.html
+https://smarttechnicalworld.com/gpedit-msc-windows-10-group-policy-editor/

@@ -6,6 +6,10 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class SettingsUtil {
+    static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
+    static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
+    static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
+
     def static void applySettings() {
         ArchiveUtil.createVOSavingFiles()
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
@@ -105,15 +109,15 @@ class SettingsUtil {
 
             if (ArchiveUtil.ValidateUploadsAndReUploadFailedItems) {
                 if (settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS == "true") {
-                    EGangotriUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
+                    IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
                 }
 
                 if (settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS == "true") {
-                    EGangotriUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
+                    IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
                 }
 
                 if (settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS == "true") {
-                    EGangotriUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = true
+                    ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = true
                 }
 
             }

@@ -109,7 +109,7 @@ class ValidateUploadsAndReUploadFailedItems {
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInUsheredCSV() {
-        if(EGangotriUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+        if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Queued Items will be ignored for upload")
             return
         }
@@ -126,7 +126,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void filterFailedUsheredItems() {
-        if(EGangotriUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+        if(SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Ushered Items will be ignored for upload")
             return
         }
@@ -170,7 +170,8 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void startReuploadOfFailedItems() {
-        if(EGangotriUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
+        if(SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
+            log.info("Only stats generated. No Uploading due to Setting")
             return
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)

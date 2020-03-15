@@ -65,9 +65,7 @@ class EGangotriUtil {
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
     static int GLOBAL_UPLOADING_COUNTER = 0
-    static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
-    static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
-    static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
+
 
     static List getAllProfiles(String filePath, String textDiscarder) {
         Properties properties = new Properties()
