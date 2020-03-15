@@ -281,17 +281,20 @@ class ArchiveHandler {
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).clear()
             driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).sendKeys(identifier)
             UploadUtils.hitEnterKey()
-            WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
             //after that have alert. alert text is always nulll
             if(alertWasDetected){
+                log.info("alert detected while identifier was being tweaked")
                 driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).click()
                 UploadUtils.hitEnterKey()
             }
+            WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
-            identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-            log.info("identifier tweaked for uniquness is ${identifier}")
+            String identifierNowInTextBox = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            log.info("identifier we tweaked $identifier == $identifierNowInTextBox [to identifier in text Box ]")
+            identifier = identifierNowInTextBox
+            log.info("identifier being stored will be ${identifier}")
         }
         storeArchiveIdentifierInFile(uploadVO,identifier)
 
