@@ -170,6 +170,9 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void startReuploadOfFailedItems() {
+        if(EGangotriUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
+            return
+        }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Set<String> profilesWithFailedLinks = allFailedItems*.archiveProfile as Set
@@ -180,7 +183,7 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
             System.exit(1)
         }
-        log.info("Toal Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+        log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
 
         int attemptedItemsTotal = 0
 
@@ -202,6 +205,4 @@ class ValidateUploadsAndReUploadFailedItems {
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
     }
-
-
 }

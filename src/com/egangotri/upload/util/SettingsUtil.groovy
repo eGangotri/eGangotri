@@ -111,6 +111,11 @@ class SettingsUtil {
                 if (settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS == "true") {
                     EGangotriUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
                 }
+
+                if (settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS == "true") {
+                    EGangotriUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = true
+                }
+
             }
         }
     }
