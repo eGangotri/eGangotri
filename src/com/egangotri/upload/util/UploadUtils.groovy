@@ -258,7 +258,7 @@ class UploadUtils {
         //Note this id is already tested to be clickable
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
-        log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
+        //log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
     }
 
