@@ -15,14 +15,14 @@ class LoginToArchive {
 
 
     static main(args) {
-        List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
+        List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
             log.info "args $args"
             archiveProfiles = args.toList()
         }
         log.info "login to Archive"
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        archiveProfiles*.toString().each { String archiveProfile ->
+        archiveProfiles.each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
             WebDriver driver = new ChromeDriver()
             ArchiveUtil.logInToArchiveOrg(driver, metaDataMap, archiveProfile)

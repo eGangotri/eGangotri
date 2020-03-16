@@ -474,6 +474,15 @@ class UploadUtils {
         return title.contains(".") ? title.trim().tokenize(".").dropRight(1).join(".") : title
     }
 
+    /***
+     *
+     * @param title Ex: Hamlet by Shakespeare.pdf
+     * @return pdf
+     */
+    static String getFileEnding(String title) {
+        return title.contains(".") ? title.trim().tokenize(".").last() : title
+    }
+
     static String getLastPortionOfTitleUsingSeparator(String title, String separator = "-") {
         return title.contains(separator) ? title.split("-").last() : title
     }

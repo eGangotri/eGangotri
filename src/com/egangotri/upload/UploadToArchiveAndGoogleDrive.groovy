@@ -33,8 +33,8 @@ class UploadToArchiveAndGoogleDrive {
                 }
             }
 
-           log.info "uploadProfiles ${uploadProfiles*.toString()}"
-           log.info "archiveProfiles ${archiveProfiles*.toString()}"
+           log.info "uploadProfiles $uploadProfiles"
+           log.info "archiveProfiles $archiveProfiles"
         }
 
        log.info "UploadToArchiveAndGmail"

@@ -20,10 +20,10 @@ class UploadToGoogleDrive {
         execute(uploadProfiles, metaDataMap)
     }
 
-    static void execute(List profiles, Hashtable<String, String> metaDataMap) {
+    static void execute(List<String> profiles, Hashtable<String, String> metaDataMap) {
         log.info "Start uploading to Google Drive"
         Map<String, String> uploadSuccessCheckingMatrix = [:]
-        profiles*.toString().eachWithIndex { uploadProfile, index ->
+        profiles.eachWithIndex { String uploadProfile, index ->
 
             List<String> folders = resolveFolderBasedOnGoogleDriveProfile(uploadProfile)
             log.info("folders: $folders")

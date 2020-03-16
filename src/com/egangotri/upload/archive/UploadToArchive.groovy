@@ -29,7 +29,15 @@ class UploadToArchive {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
         List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
-        execute(purgedProfiles, metaDataMap)
+        boolean executeIfAllFilesAreSufficientlyLong = true
+
+        if(SettingsUtil.TEST_FILE_NAMES_LENGTH){
+            executeIfAllFilesAreSufficientlyLong = TestFileNameLengths.testLengths(purgedProfiles)
+        }
+
+        if(executeIfAllFilesAreSufficientlyLong && SettingsUtil.TEST_FILE_NAMES_LENGTH){
+            execute(purgedProfiles, metaDataMap)
+        }
         System.exit(0)
     }
 
@@ -39,7 +47,7 @@ class UploadToArchive {
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
 
         int attemptedItemsTotal = 0
-        profiles*.toString().eachWithIndex { archiveProfile, index ->
+        profiles.eachWithIndex { archiveProfile, index ->
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
