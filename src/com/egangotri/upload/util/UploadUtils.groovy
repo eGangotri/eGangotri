@@ -171,7 +171,11 @@ class UploadUtils {
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
         if (excludePreCutOff) {
-            optionsMap.put("excludeFilter", { it.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) || it.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) })
+            optionsMap.put("excludeFilter", { File file ->
+                file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
+                        file.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) ||
+                        file.name.startsWith(".")
+            })
         }
         if (!folder.exists()) {
             log.error("$folder doesnt exist. returning")
@@ -183,6 +187,9 @@ class UploadUtils {
         return pdfs.sort()
     }
 
+    static excludableItems(String file){
+
+    }
     static List<String> getAllPdfs(File folder) {
         return getAllPdfs(folder, false)
     }
