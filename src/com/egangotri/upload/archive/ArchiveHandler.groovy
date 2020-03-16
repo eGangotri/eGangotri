@@ -289,8 +289,9 @@ class ArchiveHandler {
             //after that have alert. alert text is always nulll
             if(alertWasDetected){
                 log.info("alert detected while identifier was being tweaked")
-                driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).click()
-                UploadUtils.hitEnterKey()
+                pgUrlInputField.click()
+                pgUrlInputField.sendKeys(Keys.ENTER)
+                //UploadUtils.hitEnterKey()
             }
             WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
