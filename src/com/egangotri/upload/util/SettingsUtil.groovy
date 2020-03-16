@@ -10,8 +10,9 @@ class SettingsUtil {
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean TEST_FILE_NAMES_LENGTH = true
+    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png"," tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar"]
 
-    def static void applySettings() {
+    static void applySettings() {
         ArchiveUtil.createVOSavingFiles()
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if (settingsMetaDataMap) {
@@ -106,6 +107,11 @@ class SettingsUtil {
             if (settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS) {
                 EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.split(",")*.trim().toList()
                 log.info("IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS: " + EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
+            }
+
+            if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
+                IGNORE_EXTENSIONS = settingsMetaDataMap.IGNORE_EXTENSIONS.split(",")*.trim().toList()
+                log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
             }
 
             if (ArchiveUtil.ValidateUploadsAndReUploadFailedItems) {

@@ -165,16 +165,18 @@ class UploadUtils {
         return pdfs
     }
 
-    static List<String> getAllPdfs(File folder, Boolean excludePreCutOff) {
+    static List<String> getAllPdfs(File folder, Boolean excludeFlag) {
         List<String> pdfs = []
         Map optionsMap = [type      : FileType.FILES,
                           nameFilter: ~(FileUtil.PDF_REGEX)
         ]
-        if (excludePreCutOff) {
+        if (excludeFlag) {
             optionsMap.put("excludeFilter", { File file ->
                 file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
                         file.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) ||
-                        file.name.startsWith(".")
+                        file.name.startsWith(".") ||
+                        !file.name.contains(".") ||
+                        SettingsUtil.IGNORE_EXTENSIONS.contains(getFileEnding(file.name).toLowerCase())
             })
         }
         if (!folder.exists()) {
