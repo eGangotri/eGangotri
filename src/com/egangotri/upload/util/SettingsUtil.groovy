@@ -10,7 +10,7 @@ class SettingsUtil {
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean TEST_FILE_NAMES_LENGTH = true
-    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png"," tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar"]
+    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png"," tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm"]
 
     static void applySettings() {
         ArchiveUtil.createVOSavingFiles()
