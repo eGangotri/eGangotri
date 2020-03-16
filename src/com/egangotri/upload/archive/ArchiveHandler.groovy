@@ -7,6 +7,7 @@ import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
@@ -278,9 +279,11 @@ class ArchiveHandler {
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
             identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
-            driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).clear()
-            driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)).sendKeys(identifier)
-            UploadUtils.hitEnterKey()
+            WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
+            pgUrlInputField.clear()
+            pgUrlInputField.sendKeys(identifier)
+            pgUrlInputField.sendKeys(Keys.ENTER)
+            //UploadUtils.hitEnterKey()
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
             //after that have alert. alert text is always nulll
