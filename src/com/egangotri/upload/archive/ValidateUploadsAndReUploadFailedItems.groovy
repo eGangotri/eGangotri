@@ -29,6 +29,10 @@ class ValidateUploadsAndReUploadFailedItems {
         setCSVsForValidation(args)
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
+        execute()
+    }
+
+    static void execute(){
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
@@ -39,7 +43,17 @@ class ValidateUploadsAndReUploadFailedItems {
         startReuploadOfFailedItems()
         System.exit(0)
     }
+    static void runForQuickTestOfMissedQueueItemsOnlyWithoutUploding(){
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
+        setCSVsForValidation(null)
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+        SettingsUtil.applySettings()
+        SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
+        SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
+        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=true
+        execute()
 
+    }
     static void setCSVsForValidation(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()

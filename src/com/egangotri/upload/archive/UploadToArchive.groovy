@@ -68,6 +68,7 @@ class UploadToArchive {
 
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
+        ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnlyWithoutUploding()
     }
 }
 
