@@ -27,7 +27,7 @@ class TestFileNameLengths {
                 if (shortNames) {
                     profileAndInvalidNames.put(archiveProfile, shortNames)
                 }
-                profileAndNames.put(archiveProfile, shortNames)
+                profileAndNames.put(archiveProfile, names)
             }
         }
         log.info("This upload has folowing Unique Path Endings ${setOfEndings}")

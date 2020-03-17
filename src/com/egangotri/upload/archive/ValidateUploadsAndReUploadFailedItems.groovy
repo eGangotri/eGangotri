@@ -36,9 +36,9 @@ class ValidateUploadsAndReUploadFailedItems {
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
-        filterFailedUsheredItems()
+        //filterFailedUsheredItems()
         //for use in special cases only
-        //generateFailedLinksFromStaticList()
+        generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
         System.exit(0)
@@ -136,14 +136,13 @@ class ValidateUploadsAndReUploadFailedItems {
                 print("${i},")
             }
             catch (FileNotFoundException e) {
-                entry.archiveLink = entry.uploadLink.replace("=eng", "=san")
+                entry.uploadLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
                 println("Failed Link(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                entry.archiveLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
             }
             if(i%75 == 0){
@@ -153,12 +152,13 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         log.info("\n${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
                 " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
-        log.info("Failed Links: " + failedLinks*.archiveLink.toString())
+        log.info("Failed Links: " + failedLinks*.archiveLink.collect{ -> "'$it'"}.toString())
     }
 
 
     //This static variable can only be used with generateFailedLinksFromStaticList()
-    static  List<String> _staticListOfBadLinks = ["https://archive.org/details/paribhashaindushekaranageshbhattachandrikabalbodhinied.sripadasatynaraynamurthir_374_T"]
+    static  List<String> _staticListOfBadLinks = ["https://archive.org/details/vyakarnabhushanasarakaundawithvykaranabhushnasarakashikahariramakalakamalashanka_182_P"," https://archive.org/details/vyakarnasidhhantalaghumanjusanagesabhattakunjikadurbalakalabalambhattasaralarama_242_J"," https://archive.org/details/vyakarnasidhhantalaghumanjusanagesabhattaratnaprabhasabhapatisarmaupadhyayachowkambhatatparya_159_"," https://archive.org/details/vyakarnasidhhantalaghumanjusanagesakalablambhattakunjikamadhavshastribhandarieta_511_L"," https://archive.org/details/vyakarnavartikaeksamikshatmakadhyayanvedapatimishraprithvipublications_481_A"," https://archive.org/details/vyakarnenagesabhattakritishutantrasayaprabhavarajanathatripathisampoornanaduniversity_460_v"," https://archive.org/details/vyasapaninibhavanirnayasethumadhavacharyas._874_f"," https://archive.org/details/wordorderinsanskritanduniversalgrammarfritsstaal_129_v"," https://archive.org/details/worksofbhattojidikshit_157_x"," https://archive.org/details/arthaprakasikabyradharamanpandeymlbdonsiddhantakaumudi_807_Y"," https://archive.org/details/karakadarsanasiddhantakaumudikarakaprakarnakalanathjhachowkambha1969_933_x"," https://archive.org/details/laghukaumudivyakaranautpallakaushikvenkatanarasimhacharyavavillaramaswamysastrulusons1937_527_z"," https://archive.org/details/laghusiddhantkaumudimeaayehuevarttikokasamikshatmakaadhyayanvanditapandeyahindithesis_664_V"," https://archive.org/details/siddhantakaumuditattvabodhinigynendrasaraswatibalamanoramavasudevadikshitgirijas_663_f"]
+    //"https://archive.org/details/paribhashaindushekaranageshbhattachandrikabalbodhinied.sripadasatynaraynamurthir_374_T"]
 
     /** This method is used in unique cases.
      *  Where u have a list of failed Archive Urls and you want to use them to reupload them only
@@ -185,6 +185,7 @@ class ValidateUploadsAndReUploadFailedItems {
             }
         }
     }
+
     static void combineAllFailedItems(){
         if (missedOutQueuedItems || failedLinks) {
             allFailedItems = missedOutQueuedItems
