@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class TestFileNameLengths {
     static int MINIMUM_LENGTH = 20
+
     static boolean testLengths(List<String> profiles) {
         Map<String, List<String>> profileAndInvalidNames = [:]
         Map<String, List<String>> profileAndNames = [:]
