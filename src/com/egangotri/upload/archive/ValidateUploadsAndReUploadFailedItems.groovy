@@ -136,14 +136,14 @@ class ValidateUploadsAndReUploadFailedItems {
                 print("${i},")
             }
             catch (FileNotFoundException e) {
-                entry.archiveLink = entry.archiveLink.replace("=eng", "=san"))
+                entry.archiveLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
                 println("Failed Link(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                entry.archiveLink = entry.archiveLink.replace("=eng", "=san"))
+                entry.archiveLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
             }
             if(i%75 == 0){
@@ -179,7 +179,8 @@ class ValidateUploadsAndReUploadFailedItems {
 
         identifierLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
             if(_staticListOfBadLinks*.trim().contains(entry.archiveLink)){
-                println("entry.uploadLink: " + entry.uploadLink.replace("=eng", "=san"))
+                entry.uploadLink = entry.uploadLink.replace("=eng", "=san")
+                println("entry.uploadLink: " + entry.uploadLink)
                 failedLinks << entry
             }
         }
