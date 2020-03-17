@@ -403,7 +403,7 @@ class UploadUtils {
                 _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? "subject=" + _creator.replaceAll("creator=", "") : null
             }
 
-            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=san"
+            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=${com.egangotri.upload.util.SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE}"
             String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
             if (_desc && _desc?.contains("description=")) {
