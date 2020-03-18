@@ -8,7 +8,6 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class PreUploadReview {
-    static int MINIMUM_LENGTH = 20
 
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
@@ -36,7 +35,7 @@ class PreUploadReview {
                     setOfEndings << UploadUtils.getFileEnding(entry)
                     String stripPath = UploadUtils.stripFilePath(entry)
                     names << "${stripPath} [\t ${entry} ]"
-                    if (stripPath.length() < MINIMUM_LENGTH) {
+                    if (stripPath.length() < MINIMUM_FILE_NAME_LENGTH) {
                         shortNames << "${stripPath} [\t ${entry} ]"
                     }
                 }
@@ -46,7 +45,7 @@ class PreUploadReview {
                 profileAndNames.put(archiveProfile, names)
             }
         }
-        log.info("This upload has folowing Unique Path Endings ${setOfEndings}")
+        log.info("This upload has following Unique Path Endings ${setOfEndings}")
         if (profileAndNames) {
             log.info("The Following are the files that will be uploaded")
             profileAndNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
@@ -55,12 +54,12 @@ class PreUploadReview {
             }
 
             if (profileAndInvalidNames) {
-                log.info("The Following files need name-changes")
+                log.info("The Following files have names less than ${MINIMUM_FILE_NAME_LENGTH} characters")
                 profileAndInvalidNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
                     log.info("${entry.value.join("\n")}")
                 }
-                log.info("Cannot proceed because there are file names shorter than the Minimum")
+                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement.")
             }
 
             return profileAndInvalidNames.size() == 0

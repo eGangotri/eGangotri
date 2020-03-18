@@ -12,6 +12,7 @@ class SettingsUtil {
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png"," tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm"]
+    static int MINIMUM_FILE_NAME_LENGTH = 20
 
     static void applySettings() {
         ArchiveUtil.createVOSavingFiles()
@@ -140,6 +141,11 @@ class SettingsUtil {
             if (settingsMetaDataMap.PREVIEW_FILES) {
                 PREVIEW_FILES = settingsMetaDataMap.PREVIEW_FILES.toBoolean()
                 log.info("PREVIEW_FILES: " + PREVIEW_FILES)
+            }
+
+            if (settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH && settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH.isInteger()) {
+                MINIMUM_FILE_NAME_LENGTH = settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH.toInteger()
+                log.info("MINIMUM_FILE_NAME_LENGTH: " + MINIMUM_FILE_NAME_LENGTH)
             }
         }
     }
