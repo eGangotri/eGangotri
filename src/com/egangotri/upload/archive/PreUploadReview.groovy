@@ -61,6 +61,9 @@ class PreUploadReview {
                 }
                 log.info("Cannot proceed because there are file names shorter than the Minimum Requirement.")
             }
+            else{
+                log.info("All texts are above minimum file length requirement")
+            }
 
             return profileAndInvalidNames.size() == 0
         }
