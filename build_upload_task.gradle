@@ -14,6 +14,13 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
     args = ["PRFL1","PRFL2","PRFL3","PRFL4","PRFL5"]
 }
 
+task preUploadReview(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.PreUploadReview"
+    jvmArgs = applicationDefaultJvmArgs
+    args = ["PRFL1","PRFL2","PRFL3","PRFL4","PRFL5"]
+}
+
 task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems"

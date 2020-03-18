@@ -9,7 +9,7 @@ class SettingsUtil {
     static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
-    static boolean TEST_FILE_NAMES_LENGTH = true
+    static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png"," tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm"]
 
@@ -121,25 +121,25 @@ class SettingsUtil {
             }
 
             if (ArchiveUtil.ValidateUploadsAndReUploadFailedItems) {
-                if (settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS == "true") {
-                    IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
+                if (settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
+                    IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS: " + IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS)
                 }
 
-                if (settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS == "true") {
-                    IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = true
+                if (settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
+                    IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS: " + IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS)
                 }
 
-                if (settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS && settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS == "true") {
+                if (settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS) {
+                    ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS: " + ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS)
-                    ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = true
                 }
             }
 
-            if (settingsMetaDataMap.TEST_FILE_NAMES_LENGTH && settingsMetaDataMap.TEST_FILE_NAMES_LENGTH == "true") {
-                TEST_FILE_NAMES_LENGTH = true
-                log.info("TEST_FILE_NAMES_LENGTH: " + TEST_FILE_NAMES_LENGTH)
+            if (settingsMetaDataMap.PREVIEW_FILES) {
+                PREVIEW_FILES = settingsMetaDataMap.PREVIEW_FILES.toBoolean()
+                log.info("PREVIEW_FILES: " + PREVIEW_FILES)
             }
         }
     }

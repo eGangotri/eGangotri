@@ -1,13 +1,29 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class TestFileNameLengths {
+class PreUploadReview {
     static int MINIMUM_LENGTH = 20
 
-    static boolean testLengths(List<String> profiles) {
+    static void main(String[] args) {
+        List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
+        if (args) {
+            log.info "args $args"
+            archiveProfiles = args.toList()
+        }
+        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        SettingsUtil.applySettings()
+        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
+        preview(purgedProfiles)
+        System.exit(0)
+    }
+
+    static boolean preview(List<String> profiles) {
         Map<String, List<String>> profileAndInvalidNames = [:]
         Map<String, List<String>> profileAndNames = [:]
         Set<String> setOfEndings = [] as Set

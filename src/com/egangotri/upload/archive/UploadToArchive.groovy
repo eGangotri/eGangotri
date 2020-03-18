@@ -29,13 +29,13 @@ class UploadToArchive {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
         List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
-        boolean executeIfAllFilesAreSufficientlyLong = true
+        boolean previewSuccess = true
 
-        if(SettingsUtil.TEST_FILE_NAMES_LENGTH){
-            executeIfAllFilesAreSufficientlyLong = TestFileNameLengths.testLengths(purgedProfiles)
+        if(SettingsUtil.PREVIEW_FILES){
+            previewSuccess = PreUploadReview.preview(purgedProfiles)
         }
 
-        if(executeIfAllFilesAreSufficientlyLong && SettingsUtil.TEST_FILE_NAMES_LENGTH){
+        if(previewSuccess){
             execute(purgedProfiles, metaDataMap)
         }
         System.exit(0)
