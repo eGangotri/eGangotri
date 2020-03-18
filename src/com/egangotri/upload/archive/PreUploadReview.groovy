@@ -35,7 +35,7 @@ class PreUploadReview {
                     setOfEndings << UploadUtils.getFileEnding(entry)
                     String stripPath = UploadUtils.stripFilePath(entry)
                     names << "${stripPath} [\t ${entry} ]"
-                    if (stripPath.length() < MINIMUM_FILE_NAME_LENGTH) {
+                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
                         shortNames << "${stripPath} [\t ${entry} ]"
                     }
                 }
@@ -54,7 +54,7 @@ class PreUploadReview {
             }
 
             if (profileAndInvalidNames) {
-                log.info("The Following files have names less than ${MINIMUM_FILE_NAME_LENGTH} characters")
+                log.info("The Following files have names less than ${SettingsUtil.MINIMUM_FILE_NAME_LENGTH} characters")
                 profileAndInvalidNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
                     log.info("${entry.value.join("\n")}")
