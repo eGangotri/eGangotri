@@ -60,6 +60,8 @@ class EGangotriUtil {
     static final int TEN_TIMES_TIMEOUT_IN_SECONDS = TIMEOUT_IN_FIVE_SECONDS * 10
 
     static final String USER_ID = "userId"
+    //password
+    static final String KUTA = "kuta"
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
@@ -78,9 +80,10 @@ class EGangotriUtil {
        List profiles = []
 
         properties.load(propertiesFile.newDataInputStream())
-        properties.each{ key, v -> if (key.contains(textDiscarder)) {
-            profiles << (key - textDiscarder)
-        } }
+        properties.each{ key, v -> if (!key.contains(KUTA) ) {
+            profiles << key
+        }
+        }
         return profiles
     }
 

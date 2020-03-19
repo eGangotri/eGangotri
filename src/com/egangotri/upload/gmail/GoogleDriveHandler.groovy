@@ -45,8 +45,8 @@ class GoogleDriveHandler {
             wait.until(ExpectedConditions.elementToBeClickable(By.name("password")))
 
             WebElement pass = driver.findElement(By.name("password"))
-            String kuta = metaDataMap."${loginProfile}.kuta" ?: metaDataMap."kuta"
-            log.info "kuta:$kuta"
+            String kuta = metaDataMap."${loginProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
+            log.info "kuta:${kuta}"
             pass.sendKeys(kuta)
             pass.sendKeys(Keys.RETURN)
             EGangotriUtil.sleepTimeInSeconds(1)

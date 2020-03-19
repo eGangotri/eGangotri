@@ -185,7 +185,7 @@ class ArchiveUtil {
 
             String username = metaDataMap."${archiveProfile}"
             id.sendKeys(username)
-            String kuta = metaDataMap."${archiveProfile}.kuta" ?: metaDataMap."kuta"
+            String kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             pass.sendKeys(kuta)
             //button.click doesnt work
             button.submit()

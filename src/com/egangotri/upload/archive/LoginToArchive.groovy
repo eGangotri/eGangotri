@@ -20,7 +20,7 @@ class LoginToArchive {
             log.info "args $args"
             archiveProfiles = args.toList()
         }
-        log.info "login to Archive"
+        EGangotriUtil.recordProgramStart("eGangotri Archive Logger")
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         archiveProfiles.each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
@@ -28,7 +28,7 @@ class LoginToArchive {
             ArchiveUtil.logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             getResultsCount(driver, true)
         }
-        log.info "***Browser Launches Done"
+        EGangotriUtil.recordProgramEnd()
         System.exit(0)
     }
 }
