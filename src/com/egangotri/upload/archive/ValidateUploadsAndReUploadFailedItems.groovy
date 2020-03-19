@@ -138,15 +138,16 @@ class ValidateUploadsAndReUploadFailedItems {
             catch (FileNotFoundException e) {
                 entry.uploadLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
-                println("\nFailed Link: ${entry.archiveLink}(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
+                println("\nFailed Link: \"${entry.archiveLink}\"(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
                 failedLinks << entry
             }
-            if(i%75 == 0){
-                Thread.sleep(5000)
+            if(i%35 == 0){
+                //Thread.sleep(5000)
+                System.gc()
                 println("")
             }
         }
