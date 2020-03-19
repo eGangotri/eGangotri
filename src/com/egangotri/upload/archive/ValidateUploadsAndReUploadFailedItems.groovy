@@ -43,14 +43,14 @@ class ValidateUploadsAndReUploadFailedItems {
         startReuploadOfFailedItems()
         System.exit(0)
     }
-    static void runForQuickTestOfMissedQueueItemsOnlyWithoutUploding(){
+    static void runForQuickTestOfMissedQueueItemsOnly(boolean testAndUpload = true){
         EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
         setCSVsForValidation(null)
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=true
+        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=!testAndUpload
         execute()
 
     }
@@ -129,8 +129,7 @@ class ValidateUploadsAndReUploadFailedItems {
         int testableLinksCount = identifierLinksForTesting.size()
         log.info("Testing ${testableLinksCount} Links in archive for upload-success-confirmation")
 
-        identifierLinksForTesting.eachW ithIndex { LinksVO entry, int i ->
-
+        identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
             try {
                 entry.archiveLink.toURL().text
                 print("${i},")

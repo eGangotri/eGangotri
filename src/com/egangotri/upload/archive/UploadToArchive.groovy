@@ -38,6 +38,7 @@ class UploadToArchive {
         if(previewSuccess){
             execute(purgedProfiles, metaDataMap)
         }
+        ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
         System.exit(0)
     }
 
@@ -68,7 +69,6 @@ class UploadToArchive {
 
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal)
-        ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnlyWithoutUploding()
     }
 }
 
