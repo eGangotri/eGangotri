@@ -112,10 +112,10 @@ class ValidateUploadsAndReUploadFailedItems {
         List allFilePaths = identifierLinksForTesting*.path
         log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
 
-        queuedItemsForTesting.each { queuedItem ->
+        queuedItemsForTesting.eachWithIndex { queuedItem, index ->
             if (!allFilePaths.contains(queuedItem.path)) {
                 missedOutQueuedItems << queuedItem
-                log.info("\tFound missing Item [${queuedItem.archiveProfile}] ${queuedItem.title} ")
+                log.info("\tFound missing Item [ (# $index). ${queuedItem.archiveProfile}] ${queuedItem.title} ")
             }
         }
         log.info("${missedOutQueuedItems.size()}/${queuedItemsForTesting.size()} Items found in Queued List that missed upload. Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
@@ -129,7 +129,7 @@ class ValidateUploadsAndReUploadFailedItems {
         int testableLinksCount = identifierLinksForTesting.size()
         log.info("Testing ${testableLinksCount} Links in archive for upload-success-confirmation")
 
-        identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
+        identifierLinksForTesting.eachW ithIndex { LinksVO entry, int i ->
 
             try {
                 entry.archiveLink.toURL().text
