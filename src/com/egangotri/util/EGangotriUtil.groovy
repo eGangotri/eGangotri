@@ -73,7 +73,7 @@ class EGangotriUtil {
         File propertiesFile = new File(propertyFileName)
 
         if(!propertiesFile.exists()){
-            log.info("$ARCHIVE_PROPERTIES_FILE not found.")
+            log.info("$propertyFileName not found.")
             return []
         }
 
