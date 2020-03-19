@@ -11,7 +11,7 @@ import static javax.mail.Message.RecipientType.TO
 @Slf4j
 class Mailer {
     private static String username= "indicjournals@gmail.com"
-    private static String password= "a@hBmsep123"
+    private static String password= "*********"
     private static String host = "smtp.gmail.com"
 
     static main(args) {

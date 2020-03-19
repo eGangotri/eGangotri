@@ -183,7 +183,7 @@ class ArchiveUtil {
             WebElement pass = driver.findElement(By.name(UploadUtils.PASSWORD_TEXTBOX_NAME))
             WebElement button = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
 
-            String username = metaDataMap."${archiveProfile}.username"
+            String username = metaDataMap."${archiveProfile}"
             id.sendKeys(username)
             String kuta = metaDataMap."${archiveProfile}.kuta" ?: metaDataMap."kuta"
             pass.sendKeys(kuta)

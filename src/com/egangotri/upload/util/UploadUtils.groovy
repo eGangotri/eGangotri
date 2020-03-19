@@ -228,7 +228,7 @@ class UploadUtils {
 
     static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
         boolean success = false
-        String username = metaDataMap."${archiveProfile}.username"
+        String username = metaDataMap."${archiveProfile}"
         String userNameInvalidMsg = "Invalid/Non-Existent"
         String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
         if (username?.trim()) {

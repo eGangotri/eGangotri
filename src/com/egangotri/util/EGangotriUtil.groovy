@@ -60,19 +60,18 @@ class EGangotriUtil {
     static final int TEN_TIMES_TIMEOUT_IN_SECONDS = TIMEOUT_IN_FIVE_SECONDS * 10
 
     static final String USER_ID = "userId"
-    static final String USER_NAME = "username"
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
     static int GLOBAL_UPLOADING_COUNTER = 0
 
 
-    static List getAllProfiles(String filePath, String textDiscarder) {
+    static List getAllProfiles() {
         Properties properties = new Properties()
-        File propertiesFile = new File(filePath)
+        File propertiesFile = new File(ARCHIVE_PROPERTIES_FILE)
 
         if(!propertiesFile.exists()){
-            log.info("$filePath not found.")
+            log.info("$ARCHIVE_PROPERTIES_FILE not found.")
             return []
         }
 
@@ -90,7 +89,7 @@ class EGangotriUtil {
     }
 
     static List getAllArchiveProfiles() {
-        return getAllProfiles(ARCHIVE_PROPERTIES_FILE, ".$USER_NAME")
+        return getAllProfiles()
     }
 
     static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overRideToOneSec = false){
