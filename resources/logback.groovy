@@ -8,6 +8,9 @@ import org.apache.log4j.RollingFileAppender
 import static ch.qos.logback.classic.Level.INFO
 
 def LOG_PATH = "target"
+def USER_HOME = System.getProperty("user.home")
+def ONE_DRIVE_PATH = "$USER_HOME\\OneDrive"
+
 appender("Console-Appender", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         //pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
@@ -22,5 +25,15 @@ appender("File-Appender", FileAppender) {
         outputPatternAsHeader = false
     }
 }
-logger("com.egangotri", INFO, ["Console-Appender", "File-Appender" ], false)
+
+//With this Setting your logs will end up in
+appender("One-Drive-Appender", FileAppender) {
+    file = "${ONE_DRIVE_PATH}/egangotri.log"
+    encoder(PatternLayoutEncoder) {
+        //pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
+        pattern = "%msg%n"
+        outputPatternAsHeader = false
+    }
+}
+logger("com.egangotri", INFO, ["Console-Appender", "File-Appender","One-Drive-Appender" ], false)
 root(INFO, ["Console-Appender"])
