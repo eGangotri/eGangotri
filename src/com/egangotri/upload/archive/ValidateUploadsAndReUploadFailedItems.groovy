@@ -3,7 +3,7 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
-import com.egangotri.upload.util.ValidateLinksUtil
+import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.LinksVO
 import com.egangotri.upload.vo.UploadVO
@@ -91,13 +91,13 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void processUsheredCSV() {
-        identifierLinksForTesting = ValidateLinksUtil.csvToUsheredItemsVO(identifierFile)
+        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(identifierFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
         log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
     static void processQueuedCSV() {
-        queuedItemsForTesting = ValidateLinksUtil.csvToItemsVO(queuedFile)
+        queuedItemsForTesting = ValidateUtil.csvToItemsVO(queuedFile)
         Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
         log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
     }
@@ -207,11 +207,7 @@ class ValidateUploadsAndReUploadFailedItems {
         Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks, metaDataMap)
 
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = allFailedItems.size()
-        if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
-            log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
-            System.exit(1)
-        }
-        log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+        ValidateUtil.validateMaxUploadableLimit()
 
         int attemptedItemsTotal = 0
 

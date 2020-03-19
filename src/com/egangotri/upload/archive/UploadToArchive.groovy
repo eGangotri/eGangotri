@@ -3,6 +3,7 @@ package com.egangotri.upload.archive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -37,8 +38,10 @@ class UploadToArchive {
 
         if(previewSuccess){
             execute(purgedProfiles, metaDataMap)
+            if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0){
+                ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
+            }
         }
-        ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
         System.exit(0)
     }
 
@@ -46,7 +49,7 @@ class UploadToArchive {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
-
+        ValidateUtil.validateMaxUploadableLimit()
         int attemptedItemsTotal = 0
         profiles.eachWithIndex { archiveProfile, index ->
             Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)

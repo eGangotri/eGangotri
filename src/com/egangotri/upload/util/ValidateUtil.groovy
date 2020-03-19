@@ -3,10 +3,11 @@ package com.egangotri.upload.util
 import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.LinksVO
 import com.egangotri.upload.vo.UploadVO
+import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class ValidateLinksUtil {
+class ValidateUtil {
     static List<LinksVO> csvToUsheredItemsVO(File csvFile) {
         List<LinksVO> items = []
         csvFile.splitEachLine("\",") { fields ->
@@ -14,6 +15,14 @@ class ValidateLinksUtil {
             items.add(new LinksVO(_fields.toList()))
         }
         return items
+    }
+
+    static validateMaxUploadableLimit(){
+        if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
+            log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
+            System.exit(1)
+        }
+        log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
     }
 
     static List<ItemsVO> csvToItemsVO(File csvFile) {
