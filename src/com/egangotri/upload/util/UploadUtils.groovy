@@ -175,6 +175,7 @@ class UploadUtils {
             optionsMap.put("excludeFilter", { File file ->
                 file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
                         file.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) ||
+                        file.absolutePath.toLowerCase().contains(FileUtil.FREEZE_KEY_WORD) ||
                         file.name.startsWith(".") ||
                         !file.name.contains(".") ||
                         SettingsUtil.IGNORE_EXTENSIONS.contains(getFileEnding(file.name).toLowerCase())
