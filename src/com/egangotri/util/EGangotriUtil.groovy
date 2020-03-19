@@ -68,9 +68,9 @@ class EGangotriUtil {
     static int GLOBAL_UPLOADING_COUNTER = 0
 
 
-    static List getAllProfiles() {
+    static List getAllProfiles(String propertyFileName) {
         Properties properties = new Properties()
-        File propertiesFile = new File(ARCHIVE_PROPERTIES_FILE)
+        File propertiesFile = new File(propertyFileName)
 
         if(!propertiesFile.exists()){
             log.info("$ARCHIVE_PROPERTIES_FILE not found.")
@@ -88,11 +88,11 @@ class EGangotriUtil {
     }
 
     static List getAllGoogleDriveProfiles() {
-        return getAllProfiles(GOOGLE_DRIVE_PROPERTIES_FILE, ".$USER_ID")
+        return getAllProfiles(GOOGLE_DRIVE_PROPERTIES_FILE)
     }
 
     static List getAllArchiveProfiles() {
-        return getAllProfiles()
+        return getAllProfiles(ARCHIVE_PROPERTIES_FILE)
     }
 
     static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overRideToOneSec = false){
