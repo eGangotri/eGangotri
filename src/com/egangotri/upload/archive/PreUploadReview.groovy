@@ -61,7 +61,7 @@ class PreUploadReview {
                     log.info "${index + 1}). ${entry.key}"
                     log.info("${entry.value.join("\n")}")
                 }
-                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME} Numbers.")
+                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME} Digits in file name.")
             }
             else{
                 log.info("All texts are above minimum file length requirement")
