@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-
+import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.ItemsVO
@@ -272,17 +272,15 @@ class ArchiveHandler {
 
         WebDriverWait wait2 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
-        Random _rndm = new Random()
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
         log.info("identifier from archive is ${identifier}")
 
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
-            identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
+            identifier = enhanceIdentifier(identifier)
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()
             pgUrlInputField.sendKeys(identifier)
-            EGangotriUtil.sleepTimeInSeconds(0.1, true)
             pgUrlInputField.sendKeys(Keys.ENTER)
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
