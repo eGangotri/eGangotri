@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.upload.util.ArchiveUtil
+
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.ItemsVO
@@ -277,7 +277,7 @@ class ArchiveHandler {
         log.info("identifier from archive is ${identifier}")
 
         if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
-            identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
+            identifier += "_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()

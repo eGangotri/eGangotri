@@ -50,8 +50,9 @@ class EGangotriUtil {
     static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
 
     static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = false
-    static final Range ASCII_CHARS =  "A".."z"
-    static final def ASCII_CHARS_SIZE =  ASCII_CHARS.size()
+    //using ("A".."z" ) will introduce non-alpha chars
+    static final List ASCII_ALPHA_CHARS =  ("A".."Z").toList() + ("a".."z").toList()
+    static final def ASCII_CHARS_SIZE =  ASCII_ALPHA_CHARS.size()
 
 
     static final int TIMEOUT_IN_TWO_SECONDS = 5
