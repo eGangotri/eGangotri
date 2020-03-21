@@ -282,8 +282,8 @@ class ArchiveHandler {
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()
             pgUrlInputField.sendKeys(identifier)
+            EGangotriUtil.sleepTimeInSeconds(0.1, true)
             pgUrlInputField.sendKeys(Keys.ENTER)
-            //UploadUtils.hitEnterKey()
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
             //after that have alert. alert text is always nulll
@@ -291,7 +291,6 @@ class ArchiveHandler {
                 log.info("alert detected while identifier was being tweaked")
                 pgUrlInputField.click()
                 pgUrlInputField.sendKeys(Keys.ENTER)
-                //UploadUtils.hitEnterKey()
             }
             WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))

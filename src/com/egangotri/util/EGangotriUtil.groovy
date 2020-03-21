@@ -95,8 +95,8 @@ class EGangotriUtil {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE)
     }
 
-    static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overRideToOneSec = false){
-        Thread.sleep(overRideToOneSec ? 1000 : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
+    static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overrideEgangotriWaitingPeriod = false){
+        Thread.sleep(overrideEgangotriWaitingPeriod ? (sleepTimeInSeconds*1000).toInteger() : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
     }
 
     static List getAllUploadProfiles() {
