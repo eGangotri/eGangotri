@@ -6,9 +6,11 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+import java.util.regex.Pattern
+
 @Slf4j
 class PreUploadReview {
-
+    static int MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME = 6
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
@@ -35,7 +37,7 @@ class PreUploadReview {
                     setOfEndings << UploadUtils.getFileEnding(entry)
                     String stripPath = UploadUtils.stripFilePath(entry)
                     names << "${stripPath} [\t ${entry} ]"
-                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
+                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH || fileNameHasAllowedNumberOfNumerics(stripPath)) {
                         shortNames << "${stripPath} [\t ${entry} ]"
                     }
                 }
@@ -59,7 +61,7 @@ class PreUploadReview {
                     log.info "${index + 1}). ${entry.key}"
                     log.info("${entry.value.join("\n")}")
                 }
-                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement.")
+                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME} Numbers.")
             }
             else{
                 log.info("All texts are above minimum file length requirement")
@@ -67,5 +69,9 @@ class PreUploadReview {
 
             return profileAndInvalidNames.size() == 0
         }
+    }
+
+    static boolean fileNameHasAllowedNumberOfNumerics( String fileName) {
+        return fileName.findAll( /\d+/ ).join("").size() <= MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME
     }
 }
