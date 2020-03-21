@@ -6,11 +6,9 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
-import java.util.regex.Pattern
-
 @Slf4j
 class PreUploadReview {
-    static int MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME = 6
+    static int MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME = 6
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
@@ -37,7 +35,7 @@ class PreUploadReview {
                     setOfEndings << UploadUtils.getFileEnding(entry)
                     String stripPath = UploadUtils.stripFilePath(entry)
                     names << "${stripPath} [\t ${entry} ]"
-                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH || fileNameHasAllowedNumberOfNumerics(stripPath)) {
+                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH /*|| fileNameHasOverAllowedDigits(stripPath)*/) {
                         shortNames << "${stripPath} [\t ${entry} ]"
                     }
                 }
@@ -61,7 +59,7 @@ class PreUploadReview {
                     log.info "${index + 1}). ${entry.key}"
                     log.info("${entry.value.join("\n")}")
                 }
-                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME} Digits in file name.")
+                log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME} Digits in file name.")
             }
             else{
                 log.info("All texts are above minimum file length requirement")
@@ -71,7 +69,7 @@ class PreUploadReview {
         }
     }
 
-    static boolean fileNameHasAllowedNumberOfNumerics( String fileName) {
-        return fileName.findAll( /\d+/ ).join("").size() <= MAXIMUM_ALLOWED_NUMBERSIN_FILE_NAME
+    static boolean fileNameHasOverAllowedDigits(String fileName) {
+        return fileName.findAll( /\d+/ ).join("").size() > MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME
     }
 }
