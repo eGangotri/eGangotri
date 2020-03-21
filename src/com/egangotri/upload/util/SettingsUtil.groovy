@@ -35,7 +35,7 @@ class SettingsUtil {
             if (settingsMetaDataMap.ADJUST_SLEEP_TIMES) {
                 try {
                     Float calibrateTimes = Float.parseFloat(settingsMetaDataMap.ADJUST_SLEEP_TIMES)
-                    if (calibrateTimes >= 0.5 && calibrateTimes <= 5) {
+                    if (calibrateTimes >= 0.1 && calibrateTimes <= 5) {
                         EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= calibrateTimes
                     }
                 }
