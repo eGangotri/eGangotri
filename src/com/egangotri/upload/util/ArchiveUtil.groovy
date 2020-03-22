@@ -204,8 +204,9 @@ class ArchiveUtil {
     }
 
     static String enhanceIdentifier(String originalIdentifier){
-        if(originalIdentifier.length() > 94 ){
-            originalIdentifier.substring(0,94)
+        //identifier length shouldnt be more that 101 chars
+        if(originalIdentifier.length() > 95 ){
+            originalIdentifier = originalIdentifier.substring(0,95)
         }
         Random _rndm = new Random()
         String enhancedIdentifier = "${originalIdentifier}_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
