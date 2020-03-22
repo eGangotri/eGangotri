@@ -35,7 +35,8 @@ class PreUploadReview {
                     setOfEndings << UploadUtils.getFileEnding(entry)
                     String stripPath = UploadUtils.stripFilePath(entry)
                     names << "${stripPath} [\t ${entry} ]"
-                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH /*|| fileNameHasOverAllowedDigits(stripPath)*/) {
+                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH
+                    ) {
                         shortNames << "${stripPath} [\t ${entry} ]"
                     }
                 }
