@@ -234,7 +234,7 @@ class ArchiveUtil {
         }
         return allUploadables
     }
-    static Collection<String> purgeBrokenProfiles(Collection<String> profiles,  Hashtable<String, String> metaDataMap){
+    static Collection<String> filterInvalidProfiles(Collection<String> profiles, Hashtable<String, String> metaDataMap){
         return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, profile)} as Set
     }
 }

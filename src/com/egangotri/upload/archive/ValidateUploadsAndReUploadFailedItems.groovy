@@ -25,8 +25,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
 
     static main(args) {
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
-        SettingsUtil.applySettings()
+        SettingsUtil.applySettingsWithReuploaderFlags()
         execute(args)
     }
 
@@ -45,23 +44,13 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
-        SettingsUtil.applySettings()
-        SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
-        SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=!reupload
+        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload] as Boolean[])
         execute()
-
     }
 
-    static void findMissedUsheredItemsOnlyAndReupload(boolean testAndUpload = false){
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
-        SettingsUtil.applySettings()
-        SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-        SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
-        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=testAndUpload
+    static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
+        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload] as Boolean[])
         execute()
-
     }
 
     static void processUsheredCSV() {
@@ -213,11 +202,11 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         Set<String> profilesWithFailedLinks = allFailedItems*.archiveProfile as Set
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        Set<String> validProfiles = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks, metaDataMap)
+        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
         _execute(validProfiles, metaDataMap)
     }
 
-    static _execute(Set<String> validProfiles, Hashtable<String, String> metaDataMap){
+    static _execute(Set<String> profiles, Hashtable<String, String> metaDataMap){
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
 
@@ -226,7 +215,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
         int attemptedItemsTotal = 0
 
-        validProfiles.eachWithIndex { archiveProfile, index ->
+        profiles.eachWithIndex { archiveProfile, index ->
             List<UploadVO> failedItemsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedItemsForProfile.size()
             if (countOfUploadableItems) {

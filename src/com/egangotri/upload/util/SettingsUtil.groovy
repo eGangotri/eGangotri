@@ -149,4 +149,16 @@ class SettingsUtil {
             }
         }
     }
+
+    static void applySettingsWithReuploaderFlags(Boolean[] reuploaderFlags = []) {
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+        applySettings()
+
+        if(reuploaderFlags && reuploaderFlags.size() == 3){
+            SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]
+            SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[1]
+            SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[2]
+        }
+    }
+
 }
