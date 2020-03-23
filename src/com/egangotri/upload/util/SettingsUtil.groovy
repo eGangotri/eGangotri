@@ -11,7 +11,7 @@ class SettingsUtil {
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm"]
+    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm", "db"]
     static int MINIMUM_FILE_NAME_LENGTH = 25
 
     static void applySettings() {

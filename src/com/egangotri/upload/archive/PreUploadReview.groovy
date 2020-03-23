@@ -26,6 +26,8 @@ class PreUploadReview {
         Map<String, List<String>> profileAndInvalidNames = [:]
         Map<String, List<String>> profileAndNames = [:]
         Set<String> setOfEndings = [] as Set
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
         profiles.eachWithIndex { archiveProfile, index ->
             List<String> uploadablesForProfile = UploadUtils.getUploadablesForProfile(archiveProfile)
             if (uploadablesForProfile) {
@@ -58,7 +60,9 @@ class PreUploadReview {
                 log.info("The Following files have names less than ${SettingsUtil.MINIMUM_FILE_NAME_LENGTH} characters")
                 profileAndInvalidNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
-                    log.info("${entry.value.join("\n")}")
+                    entry.value.eachWithIndex{ String val, int i ->
+                        log.info(" ${i+1}). $val}")
+                    }
                 }
                 log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME} Digits in file name.")
             }
