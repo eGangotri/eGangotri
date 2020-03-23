@@ -40,6 +40,9 @@ class UploadToArchive {
             execute(purgedProfiles, metaDataMap)
             if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0){
                 ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
+                //Wait for 1 Hour and check Links also
+                Thread.sleep(1000*60*60)
+                ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
             }
         }
         System.exit(0)

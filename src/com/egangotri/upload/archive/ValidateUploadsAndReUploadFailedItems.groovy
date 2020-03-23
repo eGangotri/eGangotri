@@ -33,11 +33,12 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void execute(){
+        EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
-        //for use in special cases only
+        //(generateFailedLinksFromStaticList) for use in special cases only
         //generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
@@ -51,6 +52,18 @@ class ValidateUploadsAndReUploadFailedItems {
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
         SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=!testAndUpload
+        execute()
+
+    }
+
+    static void runForQuickTestOfMissedLinksOnly(boolean testAndUpload = false){
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedLinks")
+        setCSVsForValidation(null)
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+        SettingsUtil.applySettings()
+        SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
+        SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
+        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=testAndUpload
         execute()
 
     }
