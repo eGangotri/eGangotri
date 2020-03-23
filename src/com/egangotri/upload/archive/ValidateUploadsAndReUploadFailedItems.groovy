@@ -46,6 +46,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
@@ -55,6 +56,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean testAndUpload = false){
+        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
