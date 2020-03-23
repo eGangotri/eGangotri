@@ -305,10 +305,7 @@ class ArchiveHandler {
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
-        if( EGangotriUtil.GLOBAL_UPLOADING_COUNTER % 100 == 0){
-            log.info("Garbage Collecting after every 100th upload.")
-            System.gc()
-        }
+        garbageCollectAndPrintUsageInfo()
         log.info("Document # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return identifier
     }

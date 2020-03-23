@@ -203,6 +203,17 @@ class ArchiveUtil {
         return loginSucess
     }
 
+    static void garbageCollectAndPrintUsageInfo(){
+        if( EGangotriUtil.GLOBAL_UPLOADING_COUNTER % 100 == 0){
+            double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
+            log.info("Memory being used: ${memUse} mb")
+            log.info("Garbage Collecting after every 100th upload.")
+            System.gc()
+            memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
+            log.info("Memory use after Garbace Collection: ${memUse} mb")
+        }
+    }
+
     static String enhanceIdentifier(String originalIdentifier){
         //identifier length shouldnt be more that 101 chars
         if(originalIdentifier.length() > 95 ){
