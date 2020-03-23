@@ -29,7 +29,7 @@ class UploadToArchive {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
+        Set<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
         boolean previewSuccess = true
 
         if(SettingsUtil.PREVIEW_FILES){
@@ -48,7 +48,7 @@ class UploadToArchive {
         System.exit(0)
     }
 
-    static void execute(List<String> profiles, Map metaDataMap) {
+    static void execute(Set<String> profiles, Map metaDataMap) {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
@@ -70,7 +70,7 @@ class UploadToArchive {
             } else {
                 log.info "No uploadable files for Profile $archiveProfile"
             }
-            EGangotriUtil.sleepTimeInSeconds(5)
+            EGangotriUtil.sleepTimeInSeconds(5, true)
         }
 
         EGangotriUtil.recordProgramEnd()

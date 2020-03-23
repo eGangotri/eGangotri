@@ -17,12 +17,12 @@ class PreUploadReview {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        List<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
+        Set<String> purgedProfiles = ArchiveUtil.purgeBrokenProfiles(archiveProfiles, metaDataMap)
         preview(purgedProfiles)
         System.exit(0)
     }
 
-    static boolean preview(List<String> profiles) {
+    static boolean preview(Set<String> profiles) {
         Map<String, List<String>> profileAndInvalidNames = [:]
         Map<String, List<String>> profileAndNames = [:]
         Set<String> setOfEndings = [] as Set

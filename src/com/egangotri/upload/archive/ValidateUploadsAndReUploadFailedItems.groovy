@@ -31,7 +31,6 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void execute(List<String> args = []){
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
         setCSVsForValidation(args)
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
         processUsheredCSV()
@@ -212,20 +211,24 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Only stats generated. No Uploading due to Setting")
             return
         }
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Set<String> profilesWithFailedLinks = allFailedItems*.archiveProfile as Set
-        Set<String> purgedProfilesWithFailedLinks = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks, metaDataMap)
+        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        Set<String> validProfiles = ArchiveUtil.purgeBrokenProfiles(profilesWithFailedLinks, metaDataMap)
+        _execute(validProfiles, metaDataMap)
+    }
+
+    static _execute(Set<String> validProfiles, Hashtable<String, String> metaDataMap){
+        Map<Integer, String> uploadSuccessCheckingMatrix = [:]
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
 
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = allFailedItems.size()
         ValidateUtil.validateMaxUploadableLimit()
 
         int attemptedItemsTotal = 0
 
-        purgedProfilesWithFailedLinks*.toString().eachWithIndex { archiveProfile, index ->
+        validProfiles.eachWithIndex { archiveProfile, index ->
             List<UploadVO> failedItemsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedItemsForProfile.size()
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}"
             if (countOfUploadableItems) {
                 log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadableItems}"
                 storeQueuedItemsInFile(failedItemsForProfile)
@@ -234,6 +237,10 @@ class ValidateUploadsAndReUploadFailedItems {
                 uploadSuccessCheckingMatrix.put((index + 1), report)
                 attemptedItemsTotal += countOfUploadableItems
             }
+            else {
+                log.info "No uploadable files for Profile $archiveProfile"
+            }
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             EGangotriUtil.sleepTimeInSeconds(5)
         }
 
