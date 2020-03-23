@@ -206,11 +206,10 @@ class ArchiveUtil {
     static void garbageCollectAndPrintUsageInfo(){
         if( EGangotriUtil.GLOBAL_UPLOADING_COUNTER % 100 == 0){
             double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
-            log.info("Memory being used: ${memUse} mb")
-            log.info("Garbage Collecting after every 100th upload.")
+            log.info("Memory being used: ${memUse} mb. Garbage Collecting after every 100th upload.")
             System.gc()
             memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
-            log.info("Memory use after Garbace Collection: ${memUse} mb")
+            log.info("Memory use after Garbage Collection: ${memUse} mb")
         }
     }
 
