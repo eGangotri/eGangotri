@@ -174,7 +174,7 @@ class ArchiveHandler {
             log.info(" ${partitions.size()} Browsers will be created for Profile $archiveProfile: ")
             int partitionCounter = 0
             for (List<String> partitionedUploadables : partitions) {
-                log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedUploadables.size()} Item(s) sent for uploads")
+                log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedUploadables.size()} Item(s) queued for upload")
                 List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
                 storeQueuedItemsInFile(vos)
                 List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos )
