@@ -25,14 +25,14 @@ class ValidateUploadsAndReUploadFailedItems {
 
 
     static main(args) {
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
-        setCSVsForValidation(args)
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         SettingsUtil.applySettings()
-        execute()
+        execute(args)
     }
 
-    static void execute(){
+    static void execute(List<String> args = []){
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
+        setCSVsForValidation(args)
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
         processUsheredCSV()
         processQueuedCSV()
@@ -44,22 +44,17 @@ class ValidateUploadsAndReUploadFailedItems {
         startReuploadOfFailedItems()
         System.exit(0)
     }
-    static void runForQuickTestOfMissedQueueItemsOnly(boolean testAndUpload = true){
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
-        setCSVsForValidation(null)
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+
+    static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
         SettingsUtil.applySettings()
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=!testAndUpload
+        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=!reupload
         execute()
 
     }
 
-    static void runForQuickTestOfMissedLinksOnly(boolean testAndUpload = false){
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedLinks")
-        setCSVsForValidation(null)
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+    static void findMissedUsheredItemsOnlyAndReupload(boolean testAndUpload = false){
         SettingsUtil.applySettings()
         SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
         SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
@@ -67,6 +62,19 @@ class ValidateUploadsAndReUploadFailedItems {
         execute()
 
     }
+
+    static void processUsheredCSV() {
+        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(identifierFile)
+        archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
+        log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
+    }
+
+    static void processQueuedCSV() {
+        queuedItemsForTesting = ValidateUtil.csvToItemsVO(queuedFile)
+        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
+        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
+    }
+
     static void setCSVsForValidation(def args) {
         identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
@@ -101,18 +109,6 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         println("Identifier File for processing: ${identifierFile.name}")
         println("Queue File for processing: ${queuedFile.name}")
-    }
-
-    static void processUsheredCSV() {
-        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(identifierFile)
-        archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
-        log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
-    }
-
-    static void processQueuedCSV() {
-        queuedItemsForTesting = ValidateUtil.csvToItemsVO(queuedFile)
-        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
     }
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
