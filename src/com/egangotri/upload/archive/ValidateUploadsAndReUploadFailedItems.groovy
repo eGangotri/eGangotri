@@ -15,7 +15,7 @@ import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
 @Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
-    static File identifierFile = null
+    static File usheredFile = null
     static File queuedFile = null
     static List<LinksVO> identifierLinksForTesting = []
     static List<ItemsVO> queuedItemsForTesting = []
@@ -31,7 +31,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void execute(List<String> args = []){
         setCSVsForValidation(args)
-        EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
+        UploadUtils.resetGlobalUploadCounter()
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
@@ -54,7 +54,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void processUsheredCSV() {
-        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(identifierFile)
+        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(usheredFile)
         archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
         log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
@@ -66,10 +66,10 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void setCSVsForValidation(def args) {
-        identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        usheredFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
         queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
-        if (!identifierFile) {
+        if (!usheredFile) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
@@ -86,10 +86,10 @@ class ValidateUploadsAndReUploadFailedItems {
             }
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
-            identifierFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_1)
+            usheredFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_1)
             queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
-            if (!identifierFile) {
-                log.error("No such File ${identifierFile} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
+            if (!usheredFile) {
+                log.error("No such File ${usheredFile} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
             if (!queuedFile) {
@@ -97,7 +97,7 @@ class ValidateUploadsAndReUploadFailedItems {
                 System.exit(0)
             }
         }
-        println("Identifier File for processing: ${identifierFile.name}")
+        println("Identifier File for processing: ${usheredFile.name}")
         println("Queue File for processing: ${queuedFile.name}")
     }
 

@@ -17,10 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.awt.Robot
 import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
-import java.awt.event.KeyEvent
-import java.text.SimpleDateFormat
-
 @Slf4j
 class UploadUtils {
 
@@ -121,6 +117,10 @@ class UploadUtils {
 
     static int getCountOfUploadableItemsForProfile(String archiveProfile) {
         return getUploadablesForProfile(archiveProfile)?.size()
+    }
+
+    static void resetGlobalUploadCounter() {
+        EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
     }
 
 
@@ -597,3 +597,7 @@ class UploadUtils {
     }
 
 }
+import java.awt.datatransfer.StringSelection
+import java.awt.event.KeyEvent
+
+import java.text.SimpleDateFormat
