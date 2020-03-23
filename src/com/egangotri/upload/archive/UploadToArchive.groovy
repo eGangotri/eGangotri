@@ -42,7 +42,7 @@ class UploadToArchive {
                 ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
                 //Wait for 1 Hour and check Links also
                 Thread.sleep(1000*60*60)
-                ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedQueueItemsOnly()
+                ValidateUploadsAndReUploadFailedItems.runForQuickTestOfMissedLinksOnly()
             }
         }
         System.exit(0)
