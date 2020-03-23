@@ -44,12 +44,12 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
-        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload] as Boolean[])
+        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload])
         execute()
     }
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
-        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload] as Boolean[])
+        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
         execute()
     }
 
