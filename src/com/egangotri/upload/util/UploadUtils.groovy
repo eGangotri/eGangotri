@@ -507,7 +507,6 @@ class UploadUtils {
             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
             //there is a bug in retrieving the size of chromeTabsList in Selenium.
             //use of last() instead of chromeTabsList.get(tabIndex+1) saves the issue
-            log.info "chromeTabsList.size(): ${chromeTabsList.size()}"
             driver.switchTo().window(chromeTabsList.last())
         }
         catch (Exception e) {
