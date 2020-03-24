@@ -27,6 +27,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static main(args) {
         SettingsUtil.applySettingsWithReuploaderFlags()
         execute(args)
+        System.exit(0)
     }
 
     static void execute(def args = [] ){
@@ -40,7 +41,6 @@ class ValidateUploadsAndReUploadFailedItems {
         generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
-        System.exit(0)
     }
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
