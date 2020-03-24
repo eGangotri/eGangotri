@@ -36,9 +36,9 @@ class ValidateUploadsAndReUploadFailedItems {
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
-        //filterFailedUsheredItems()
+        filterFailedUsheredItems()
         //(generateFailedLinksFromStaticList) for use in special cases only
-        generateFailedLinksFromStaticList()
+        //generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
     }
@@ -156,7 +156,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
 
     //This static variable can only be used with generateFailedLinksFromStaticList()
-    static  List<String> _staticListOfBadLinks =['https://archive.org/details/weorournationhooddefinedshrim.s.golwalkarguruji1939_143_a', 'https://archive.org/details/gurujivyaktiaurkaryapalkarn.h1m.s.golwalkar_601_O', 'https://archive.org/details/gurujivyaktiaurkaryapalkarn.h2m.s.golwalkar_550_v', 'https://archive.org/details/gurujiindianmuslimsm.s.golwalkar_792_G', 'https://archive.org/details/shrigurujisamagravol01m.s.golwalkar_785_A', 'https://archive.org/details/shrigurujisamagravol02m.s.golwalkar_673_H', 'https://archive.org/details/shrigurujisamagravol03m.s.golwalkar_177_O', 'https://archive.org/details/shrigurujisamagravol04m.s.golwalkar_180_H', 'https://archive.org/details/shrigurujisamagravol05m.s.golwalkar_356_Y', 'https://archive.org/details/shrigurujisamagravol06m.s.golwalkar_698_F', 'https://archive.org/details/shrigurujisamagravol07m.s.golwalkar_301_p', 'https://archive.org/details/shrigurujisamagravol08m.s.golwalkar_359_l', 'https://archive.org/details/shrigurujisamagravol09m.s.golwalkar_361_K', 'https://archive.org/details/shrigurujisamagravol10m.s.golwalkar_753_M', 'https://archive.org/details/shrigurujisamagravol11m.s.golwalkar_863_J', 'https://archive.org/details/shrigurujisamagravol12m.s.golwalkar_460_a', 'https://archive.org/details/gurujibiographybycpbhishikarenglishm.s.golwalkar_650_K', 'https://archive.org/details/gurujiavisionaryen001m.s.golwalkar_21_P', 'https://archive.org/details/gurujiekanaukhanetrutvav001m.s.golwalkar_98_n', 'https://archive.org/details/gurujivyaktitvakrutitvav004m.s.golwalkar_419_W', 'https://archive.org/details/gurujiaurrajnitim.s.golwalkar_242_K', 'https://archive.org/details/gurujiaurrashtraavadharanam.s.golwalkar_765_b', 'https://archive.org/details/gurujiaursamajiksamarastam.s.golwalkar_562_L', 'https://archive.org/details/gurujiauryuvam.s.golwalkar_611_S', 'https://archive.org/details/gurujibodhakatham.s.golwalkar_377_g', 'https://archive.org/details/gurujikaaarthikchintanm.s.golwalkar_537_k', 'https://archive.org/details/gurujikamargadarshanm.s.golwalkar_687_W', 'https://archive.org/details/gurujikaprabodhanm.s.golwalkar_792_A', 'https://archive.org/details/gurujikasamajikdarshanm.s.golwalkar_950_w', 'https://archive.org/details/gurujikepreraksansmaranm.s.golwalkar_679_e', 'https://archive.org/details/gurujiandmatrushaktim.s.golwalkar_293_t', 'https://archive.org/details/gurujiandthechristianmissionsm.s.golwalkar_290_o', 'https://archive.org/details/gurujionhinduviewoflifem.s.golwalkar_24_J', 'https://archive.org/details/poorvanchalaurshrigurujim.s.golwalkar_914_N', 'https://archive.org/details/shrigurujipioneerofanewera.englishm.s.golwalkar_744_I', 'https://archive.org/details/sanghatmasrigurujihhtdesaisgg61m.s.golwalkar_561_K', 'https://archive.org/details/shreegurujiekswayamsevaknarendramodim.s.golwalkar_877_L', 'https://archive.org/details/gurujihindibiobook003m.s.golwalkar_143_V', 'https://archive.org/details/yugdrasthasrigurujihi001m.s.golwalkar_364_i', 'https://archive.org/details/bharatiyasamskritisaneguruji1953_566_s']
+    static  List<String> _staticListOfBadLinks =['https://archive.org/details/weorournationhooddefinedshrim.s_a']
 
     /** This method is used in unique cases.
      *  Where u have a list of failed Archive Urls and you want to use them to reupload them only
@@ -221,8 +221,8 @@ class ValidateUploadsAndReUploadFailedItems {
         profiles.eachWithIndex { archiveProfile, index ->
             List<UploadVO> failedItemsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedItemsForProfile.size()
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
-                log.info "getUploadablesForProfile: $archiveProfile: ${countOfUploadableItems}"
                 storeQueuedItemsInFile(failedItemsForProfile)
                 List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedItemsForProfile)
                 String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadableItems)
@@ -232,7 +232,6 @@ class ValidateUploadsAndReUploadFailedItems {
             else {
                 log.info "No uploadable files for Profile $archiveProfile"
             }
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             EGangotriUtil.sleepTimeInSeconds(5)
         }
 
