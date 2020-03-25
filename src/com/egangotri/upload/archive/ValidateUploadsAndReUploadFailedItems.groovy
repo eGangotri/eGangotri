@@ -79,7 +79,7 @@ class ValidateUploadsAndReUploadFailedItems {
             System.exit(0)
         }
         if (args) {
-            println "args $args"
+            log.info "args $args"
             if (args?.size() > 2) {
                 log.error("Only 2 File Name(s) can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
@@ -97,8 +97,8 @@ class ValidateUploadsAndReUploadFailedItems {
                 System.exit(0)
             }
         }
-        println("Identifier File for processing: ${usheredFile.name}")
-        println("Queue File for processing: ${queuedFile.name}")
+        log.info("Identifier File for processing: ${usheredFile.name}")
+        log.info("Queue File for processing: ${queuedFile.name}")
     }
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
@@ -129,14 +129,18 @@ class ValidateUploadsAndReUploadFailedItems {
         log.info("Testing ${testableLinksCount} Links in archive for upload-success-confirmation")
 
         identifierLinksForTesting.eachWithIndex { LinksVO entry, int i ->
+            String urlText = ""
             try {
-                entry.archiveLink.toURL().text
+                urlText = entry.archiveLink.toURL().text
+                int checkDownloadOptions = urlText.count("format-group")
+                if(checkDownloadOptions < 3){
+                    log.info("\nThis could be a case of Bad Data: \"${entry.archiveLink}\" Check manually @ ${i}..")
+                }
                 print("${i},")
             }
             catch (FileNotFoundException e) {
-                entry.uploadLink = entry.uploadLink.replace("=eng", "=san")
                 failedLinks << entry
-                println("\nFailed Link: \"${entry.archiveLink}\"(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
+                log.info("\nFailed Link: \"${entry.archiveLink}\"(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
@@ -146,7 +150,7 @@ class ValidateUploadsAndReUploadFailedItems {
             if(i%35 == 0){
                 //Thread.sleep(5000)
                 System.gc()
-                println("")
+                log.info("")
             }
         }
         log.info("\n${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
@@ -180,8 +184,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
         identifierLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
             if(_staticListOfBadLinks*.trim().contains(entry.archiveLink)){
-                entry.uploadLink = entry.uploadLink.replace("=eng", "=san")
-                println("entry.uploadLink: " + entry.uploadLink)
+                log.info("entry.uploadLink: " + entry.uploadLink)
                 failedLinks << entry
             }
         }
