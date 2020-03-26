@@ -19,7 +19,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static File queuedFile = null
     static List<LinksVO> identifierLinksForTesting = []
     static List<ItemsVO> queuedItemsForTesting = []
-    static List<LinksVO> failedLinks = []
+    static List<LinksVO> missedOutUsheredItems = []
     static List<ItemsVO> missedOutQueuedItems = []
     static List<? extends UploadVO> allFailedItems =  []
 
@@ -105,6 +105,7 @@ class ValidateUploadsAndReUploadFailedItems {
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInUsheredCSV() {
         if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            missedOutQueuedItems = []
             log.info("Queued Items will be ignored for upload")
             return
         }
@@ -122,6 +123,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void filterFailedUsheredItems() {
         if(SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            missedOutUsheredItems = []
             log.info("Ushered Items will be ignored for upload")
             return
         }
@@ -139,13 +141,13 @@ class ValidateUploadsAndReUploadFailedItems {
                 print("${i},")
             }
             catch (FileNotFoundException e) {
-                failedLinks << entry
-                log.info("\nFailed Link: \"${entry.archiveLink}\"(${failedLinks.size()} of $testableLinksCount) !!! @ ${i}..")
+                missedOutUsheredItems << entry
+                log.info("\nFailed Link: \"${entry.archiveLink}\"(${missedOutUsheredItems.size()} of $testableLinksCount) !!! @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                failedLinks << entry
+                missedOutUsheredItems << entry
             }
             if(i%35 == 0){
                 //Thread.sleep(5000)
@@ -153,9 +155,9 @@ class ValidateUploadsAndReUploadFailedItems {
                 log.info("")
             }
         }
-        log.info("\n${failedLinks.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
-                " Affected Profie(s)" +  (failedLinks*.archiveProfile as Set).toString())
-        log.info("Failed Links: " + (failedLinks*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
+                " Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
+        log.info("Failed Links: " + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
     }
 
 
@@ -185,19 +187,19 @@ class ValidateUploadsAndReUploadFailedItems {
         identifierLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
             if(_staticListOfBadLinks*.trim().contains(entry.archiveLink)){
                 log.info("entry.uploadLink: " + entry.uploadLink)
-                failedLinks << entry
+                missedOutUsheredItems << entry
             }
         }
     }
 
     static void combineAllFailedItems(){
-        if (missedOutQueuedItems || failedLinks) {
+        if (missedOutQueuedItems || missedOutUsheredItems) {
             allFailedItems = missedOutQueuedItems
 
-            failedLinks.each { failedLink ->
+            missedOutUsheredItems.each { failedLink ->
                 allFailedItems.add(failedLink)
             }
-            log.info("Combined figure for re-uploading(${missedOutQueuedItems.size()} + ${failedLinks.size()}) :" + allFailedItems.size() + " in Profiles: ${allFailedItems*.archiveProfile as Set}" )
+            log.info("Combined figure for re-uploading(${missedOutQueuedItems.size()} + ${missedOutUsheredItems.size()}) :" + allFailedItems.size() + " in Profiles: ${allFailedItems*.archiveProfile as Set}" )
         }
     }
 
