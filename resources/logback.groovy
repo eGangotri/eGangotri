@@ -10,6 +10,7 @@ import static ch.qos.logback.classic.Level.INFO
 def LOG_PATH = "target"
 def USER_HOME = System.getProperty("user.home")
 def GOOGLE_DRIVE_PATH = "$USER_HOME/google_drive/server_logs"
+def CURRENT_TIME = timestamp("yyyy-MM-dd HH-mm")
 
 appender("Console-Appender", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -28,7 +29,7 @@ appender("File-Appender", FileAppender) {
 
 //With this Setting your logs will end up in
 appender("Google-Drive-Appender", FileAppender) {
-    file = "${GOOGLE_DRIVE_PATH}/egangotri.log"
+    file = "${GOOGLE_DRIVE_PATH}/egangotri_${CURRENT_TIME}.log"
     encoder(PatternLayoutEncoder) {
         //pattern = "[%-5level] %d{yyyy-MM-dd HH:mm:ss}  %c{1} - %msg%n"
         pattern = "%msg%n"
