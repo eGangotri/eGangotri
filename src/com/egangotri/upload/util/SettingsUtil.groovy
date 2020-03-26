@@ -11,7 +11,9 @@ class SettingsUtil {
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe"," jpeg"," msi"," ini"," bat","jar","chm", "db"]
+    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
+    static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS=["freeze", "upload"]
+
     static int MINIMUM_FILE_NAME_LENGTH = 25
 
     static void applySettings(boolean createVOSavingFiles = true) {
@@ -109,13 +111,18 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS) {
-                EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.split(",")*.trim().toList()
+                EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = csvToList(settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
                 log.info("IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS: " + EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
             }
 
             if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
-                IGNORE_EXTENSIONS = settingsMetaDataMap.IGNORE_EXTENSIONS.split(",")*.trim().toList()
+                IGNORE_EXTENSIONS = csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
                 log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
+            }
+
+            if (settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS) {
+                IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = csvToList(settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
+                log.info("IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS: " + IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
             }
 
             if (settingsMetaDataMap.DEFAULT_LANGUAGE_ISO_CODE) {
@@ -160,5 +167,11 @@ class SettingsUtil {
             SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[1]
             SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[2]
         }
+    }
+
+    static List csvToList(String csv){
+        csv = csv.replaceAll(/["|\[|\]|']/, "")
+        //csv = csv.replace("[","").replace("]","")
+        return csv.split(",")*.trim()
     }
 }

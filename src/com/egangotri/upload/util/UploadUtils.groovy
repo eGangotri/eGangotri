@@ -174,8 +174,9 @@ class UploadUtils {
         if (excludeFlag) {
             optionsMap.put("excludeFilter", { File file ->
                 file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
-                        file.absolutePath.toLowerCase().contains(FileUtil.UPLOAD_KEY_WORD) ||
-                        file.absolutePath.toLowerCase().contains(FileUtil.FREEZE_KEY_WORD) ||
+                SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS.stream().anyMatch {
+                    String ignorableKeyWords -> file.absolutePath.toLowerCase().contains(ignorableKeyWords)
+                } ||
                         file.name.startsWith(".") ||
                         !file.name.contains(".") ||
                         SettingsUtil.IGNORE_EXTENSIONS.contains(getFileEnding(file.name).toLowerCase())
