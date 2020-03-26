@@ -133,7 +133,7 @@ class ValidateUploadsAndReUploadFailedItems {
             try {
                 urlText = entry.archiveLink.toURL().text
                 int checkDownloadOptions = urlText.count("format-group")
-                if(checkDownloadOptions < 3){
+                if(checkDownloadOptions < 2){
                     log.info("\nThis could be a case of Bad Data: \"${entry.archiveLink}\" Check manually @ ${i}..")
                 }
                 print("${i},")
