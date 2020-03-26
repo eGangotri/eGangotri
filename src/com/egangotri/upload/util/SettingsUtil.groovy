@@ -11,11 +11,13 @@ class SettingsUtil {
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff"," html"," exe"," jpeg"," msi"," ini"," bat","jar","chm", "db"]
+    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe"," jpeg"," msi"," ini"," bat","jar","chm", "db"]
     static int MINIMUM_FILE_NAME_LENGTH = 25
 
-    static void applySettings() {
-        ArchiveUtil.createVOSavingFiles()
+    static void applySettings(boolean createVOSavingFiles = true) {
+        if(createVOSavingFiles){
+            ArchiveUtil.createVOSavingFiles()
+        }
         Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if (settingsMetaDataMap) {
             if (settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.isInteger() && settingsMetaDataMap.PARTITION_SIZE.toInteger() > 0) {

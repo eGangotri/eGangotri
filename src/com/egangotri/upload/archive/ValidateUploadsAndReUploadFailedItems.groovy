@@ -10,6 +10,9 @@ import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
 
 @Slf4j
@@ -22,6 +25,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static List<LinksVO> missedOutUsheredItems = []
     static List<ItemsVO> missedOutQueuedItems = []
     static List<? extends UploadVO> allFailedItems =  []
+    static List<LinksVO> itemsWith400BadData =  []
 
 
     static main(args) {
@@ -136,7 +140,8 @@ class ValidateUploadsAndReUploadFailedItems {
                 urlText = entry.archiveLink.toURL().text
                 int checkDownloadOptions = urlText.count("format-group")
                 if(checkDownloadOptions < 2){
-                    log.info("\nThis could be a case of Bad Data: \"${entry.archiveLink}\" Check manually @ ${i}..")
+                    itemsWith400BadData << entry
+                    log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${i}..")
                 }
                 print("${i},")
             }
@@ -158,6 +163,9 @@ class ValidateUploadsAndReUploadFailedItems {
         log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
                 " Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
         log.info("Failed Links: " + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        log.info("Found ${itemsWith400BadData?.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)\n"
+                + (itemsWith400BadData*.path.collect{ _path-> "'" + _path + "'\n"}))
+        copy400BadDataFilesToSpecialFolder()
     }
 
 
@@ -194,7 +202,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void combineAllFailedItems(){
         if (missedOutQueuedItems || missedOutUsheredItems) {
-            allFailedItems = missedOutQueuedItems
+            allFailedItems.addAll(missedOutQueuedItems)
 
             missedOutUsheredItems.each { failedLink ->
                 allFailedItems.add(failedLink)
@@ -203,6 +211,23 @@ class ValidateUploadsAndReUploadFailedItems {
         }
     }
 
+    static void copy400BadDataFilesToSpecialFolder(){
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
+        if(itemsWith400BadData){
+            itemsWith400BadData.forEach{ LinksVO code400BadDataItem ->
+                try {
+                    Files.copy(new File(code400BadDataItem.path).toPath(),
+                            new File(EGangotriUtil.CODE_404_BAD_DATA_FOLDER +  File.separator + code400BadDataItem.title).toPath())
+                    log.info("copying ${code400BadDataItem.path} to ${EGangotriUtil.CODE_404_BAD_DATA_FOLDER}")
+                }
+                catch(Exception e){
+                    log.error("Error copying ${code400BadDataItem.path} ${e.message}")
+                    e.printStackTrace()
+                }
+
+            }
+        }
+    }
     static void startReuploadOfFailedItems() {
         if(SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Only stats generated. No Uploading due to Setting")

@@ -16,7 +16,7 @@ class PreUploadReview {
             archiveProfiles = args.toList()
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        SettingsUtil.applySettings()
+        SettingsUtil.applySettings(false)
         Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap)
         preview(purgedProfiles)
         System.exit(0)
