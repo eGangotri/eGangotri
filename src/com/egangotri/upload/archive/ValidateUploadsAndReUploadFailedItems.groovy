@@ -54,6 +54,9 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
+        if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
+            missedOutQueuedItems = []
+        }
         execute()
     }
 
@@ -109,7 +112,6 @@ class ValidateUploadsAndReUploadFailedItems {
     //Queued Item is a superset of IdentifierGeneratedItem
     static void findQueueItemsNotInUsheredCSV() {
         if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
-            missedOutQueuedItems = []
             log.info("Queued Items will be ignored for upload")
             return
         }
