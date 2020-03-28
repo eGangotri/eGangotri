@@ -54,9 +54,6 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
-        if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
-            missedOutQueuedItems = []
-        }
         execute()
     }
 
@@ -129,7 +126,6 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void filterFailedUsheredItems() {
         if(SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
-            missedOutUsheredItems = []
             log.info("Ushered Items will be ignored for upload")
             return
         }
