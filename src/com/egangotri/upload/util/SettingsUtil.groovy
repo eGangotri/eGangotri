@@ -1,9 +1,6 @@
 package com.egangotri.upload.util
 
 import com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems
-import com.egangotri.upload.vo.ItemsVO
-import com.egangotri.upload.vo.LinksVO
-import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
@@ -167,8 +164,8 @@ class SettingsUtil {
     static void applySettingsWithReuploaderFlags(List<Boolean> reuploaderFlags = []) {
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
-        ValidateUploadsAndReUploadFailedItems.usheredFile = null
-        ValidateUploadsAndReUploadFailedItems.queuedFile = null
+        ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
+        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.identifierLinksForTesting = []
         ValidateUploadsAndReUploadFailedItems.queuedItemsForTesting = []
         ValidateUploadsAndReUploadFailedItems.missedOutUsheredItems = []

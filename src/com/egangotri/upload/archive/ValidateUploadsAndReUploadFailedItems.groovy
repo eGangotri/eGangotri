@@ -11,15 +11,14 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 
 import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
 
 @Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
-    static File usheredFile = null
-    static File queuedFile = null
+    static File USHERED_ITEMS_FILE = null
+    static File QUEUED_ITEMS_FILE = null
     static List<LinksVO> identifierLinksForTesting = []
     static List<ItemsVO> queuedItemsForTesting = []
     static List<LinksVO> missedOutUsheredItems = []
@@ -37,8 +36,8 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void execute(def args = [] ){
         setCSVsForValidation(args)
-        processUsheredCSV()
         processQueuedCSV()
+        processUsheredCSV()
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
         //(generateFailedLinksFromStaticList) for use in special cases only
@@ -58,29 +57,16 @@ class ValidateUploadsAndReUploadFailedItems {
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
         execute()
     }
-
-    static void processUsheredCSV() {
-        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(usheredFile)
-        archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
-        log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
-    }
-
-    static void processQueuedCSV() {
-        queuedItemsForTesting = ValidateUtil.csvToItemsVO(queuedFile)
-        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
-    }
-
     static void setCSVsForValidation(def args) {
-        usheredFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
-        queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        QUEUED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
 
-        if (!usheredFile) {
+        if (!USHERED_ITEMS_FILE) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
 
-        if (!queuedFile) {
+        if (!QUEUED_ITEMS_FILE) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
@@ -92,20 +78,34 @@ class ValidateUploadsAndReUploadFailedItems {
             }
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
-            usheredFile = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_1)
-            queuedFile = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
-            if (!usheredFile) {
-                log.error("No such File ${usheredFile} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
+            USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_1)
+            QUEUED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
+            if (!USHERED_ITEMS_FILE) {
+                log.error("No such File ${USHERED_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            if (!queuedFile) {
-                log.error("No such File ${queuedFile} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
+            if (!QUEUED_ITEMS_FILE) {
+                log.error("No such File ${QUEUED_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
         }
-        log.info("Identifier File for processing: ${usheredFile.name}")
-        log.info("Queue File for processing: ${queuedFile.name}")
+        log.info("Identifier File for processing: ${USHERED_ITEMS_FILE.name}")
+        log.info("Queue File for processing: ${QUEUED_ITEMS_FILE.name}")
     }
+
+
+    static void processQueuedCSV() {
+        queuedItemsForTesting = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
+        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
+        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
+    }
+
+    static void processUsheredCSV() {
+        identifierLinksForTesting = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
+        archiveProfiles = identifierLinksForTesting*.archiveProfile as Set
+        log.info("Converted " + identifierLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
+    }
+
 
     // Thsi function produces QueuedItem - IdentifierGeneratedItem
     //Queued Item is a superset of IdentifierGeneratedItem
@@ -154,20 +154,43 @@ class ValidateUploadsAndReUploadFailedItems {
                 e.printStackTrace()
                 missedOutUsheredItems << entry
             }
-            if(i%35 == 0){
+            if(i> 0 && i%35 == 0){
                 //Thread.sleep(5000)
                 System.gc()
                 log.info("")
             }
         }
-        log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
-                " Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
-        log.info("Failed Links: " + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
-        log.info("Found ${itemsWith400BadData?.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)\n"
-                + (itemsWith400BadData*.path.collect{ _path-> "'" + _path + "'\n"}))
+        logUsheredMissedInfo()
         copy400BadDataFilesToSpecialFolder()
     }
 
+    static void logUsheredMissedInfo(){
+        log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
+                "\n Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
+
+        Map<String,LinksVO> groupedUsheredMissed = missedOutUsheredItems.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
+        //log.info("Failed Links: \n" + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        groupedUsheredMissed.keySet().each{ _prfName ->
+            log.info("${_prfName}:")
+            groupedUsheredMissed[_prfName].each{ LinksVO _links, int counter ->
+                log.info("\t$counter). '${_links.archiveLink}")
+            }
+        }
+
+        log.info("Found ${itemsWith400BadData?.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"+
+                "\nAffected Profie(s)" +  (itemsWith400BadData*.archiveProfile as Set).toString())
+
+        Map<String,LinksVO> groupedCode404 = itemsWith400BadData.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
+        //log.info("Failed Links: \n" + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        groupedCode404.keySet().each{ _prfName ->
+            log.info("${_prfName}:")
+            groupedCode404[_prfName].eachWithIndex{ LinksVO _links, int counter ->
+                log.info("\t$counter). '${_links.path}")
+            }
+        }
+
+        //log.info("" + itemsWith400BadData*.path.collect{ _path-> "'" + _path + "'\n"})
+    }
 
     //This static variable can only be used with generateFailedLinksFromStaticList()
     static  List<String> _staticListOfBadLinks =['https://archive.org/details/weorournationhooddefinedshrim.s_a']

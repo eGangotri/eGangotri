@@ -10,24 +10,18 @@ import groovy.util.logging.Slf4j
 class ValidateUtil {
     static List<LinksVO> csvToUsheredItemsVO(File csvFile) {
         List<LinksVO> items = []
-        csvFile.splitEachLine("\",") { fields ->
+        csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
+            println(_fields)
+            println("linksVO:" + new LinksVO(_fields.toList()).toString())
             items.add(new LinksVO(_fields.toList()))
         }
         return items
     }
 
-    static validateMaxUploadableLimit(){
-        if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
-            log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
-            System.exit(1)
-        }
-        log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
-    }
-
     static List<ItemsVO> csvToItemsVO(File csvFile) {
         List<ItemsVO> items = []
-        csvFile.splitEachLine("\",") { fields ->
+        csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
             items.add(new ItemsVO(_fields.toList()))
         }
@@ -61,4 +55,13 @@ class ValidateUtil {
     static String stripDoubleQuotes(String field) {
         return field.replaceAll("\"", "")
     }
+
+    static validateMaxUploadableLimit(){
+        if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
+            log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Canoot proceed. Quitting")
+            System.exit(1)
+        }
+        log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+    }
+
 }
