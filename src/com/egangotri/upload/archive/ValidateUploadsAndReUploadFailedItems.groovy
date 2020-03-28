@@ -165,27 +165,29 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void logUsheredMissedInfo(){
-        log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing." +
-                "\n Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
+        log.info("\n${missedOutUsheredItems.size()} failedLink" + " Item(s) found in Ushered List that were missing.")
+        if(missedOutUsheredItems.size()){
+            log.info("Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
+        }
 
-        Map<String,LinksVO> groupedUsheredMissed = missedOutUsheredItems.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
-        //log.info("Failed Links: \n" + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        Map<String,List<LinksVO>> groupedUsheredMissed = missedOutUsheredItems.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
         groupedUsheredMissed.keySet().each{ _prfName ->
             log.info("${_prfName}:")
             groupedUsheredMissed[_prfName].each{ LinksVO _links, int counter ->
-                log.info("\t$counter). '${_links.archiveLink}")
+                log.info("\t${counter+1}). '${_links.archiveLink}")
             }
         }
 
-        log.info("Found ${itemsWith400BadData?.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"+
-                "\nAffected Profie(s)" +  (itemsWith400BadData*.archiveProfile as Set).toString())
+        log.info("Found ${itemsWith400BadData?.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)")
+        if(itemsWith400BadData.size()){
+            log.info("Affected Profie(s)" +  (itemsWith400BadData*.archiveProfile as Set).toString())
+        }
 
-        Map<String,LinksVO> groupedCode404 = itemsWith400BadData.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
-        //log.info("Failed Links: \n" + (missedOutUsheredItems*.archiveLink.collect{ _link-> "'" + _link + "'"}))
+        Map<String,List<LinksVO>> groupedCode404 = itemsWith400BadData.groupBy{ LinksVO missedOut -> missedOut.archiveProfile}
         groupedCode404.keySet().each{ _prfName ->
             log.info("${_prfName}:")
             groupedCode404[_prfName].eachWithIndex{ LinksVO _links, int counter ->
-                log.info("\t$counter). '${_links.path}")
+                log.info("\t${counter+1}). '${_links.path}")
             }
         }
 
