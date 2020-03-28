@@ -29,6 +29,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
 
     static main(args) {
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
         SettingsUtil.applySettingsWithReuploaderFlags()
         execute(args)
         System.exit(0)
@@ -36,7 +37,6 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void execute(def args = [] ){
         setCSVsForValidation(args)
-        UploadUtils.resetGlobalUploadCounter()
         processUsheredCSV()
         processQueuedCSV()
         findQueueItemsNotInUsheredCSV()
@@ -48,11 +48,13 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
+        EGangotriUtil.recordProgramStart("findMissedQueueItemsOnlyAndReupload")
         SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload])
         execute()
     }
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
+        EGangotriUtil.recordProgramStart("findMissedUsheredItemsOnlyAndReupload")
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
         execute()
     }
@@ -239,7 +241,6 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static _execute(Set<String> profiles, Hashtable<String, String> metaDataMap){
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
 
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = allFailedItems.size()
         ValidateUtil.validateMaxUploadableLimit()

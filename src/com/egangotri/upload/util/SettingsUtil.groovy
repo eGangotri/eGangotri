@@ -21,6 +21,7 @@ class SettingsUtil {
     static int MINIMUM_FILE_NAME_LENGTH = 25
 
     static void applySettings(boolean createVOSavingFiles = true) {
+        UploadUtils.resetGlobalUploadCounter()
         if(createVOSavingFiles){
             ArchiveUtil.createVOSavingFiles()
         }
