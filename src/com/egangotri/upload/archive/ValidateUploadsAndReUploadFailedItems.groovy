@@ -149,7 +149,7 @@ class ValidateUploadsAndReUploadFailedItems {
             }
             catch (FileNotFoundException e) {
                 missedOutUsheredItems << entry
-                log.info("\nFailed Link: \"${entry.archiveLink}\"(${missedOutUsheredItems.size()} of $testableLinksCount) !!! @ ${i}..")
+                log.info("\nFailed Link (${missedOutUsheredItems.size()} of $testableLinksCount): \"${entry.archiveLink}\" @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
