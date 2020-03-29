@@ -12,8 +12,6 @@ class ValidateUtil {
         List<LinksVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            println(_fields)
-            println("linksVO:" + new LinksVO(_fields.toList()).toString())
             items.add(new LinksVO(_fields.toList()))
         }
         return items

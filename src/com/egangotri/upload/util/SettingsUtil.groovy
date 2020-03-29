@@ -166,7 +166,7 @@ class SettingsUtil {
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
         ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.identifierLinksForTesting = []
+        ValidateUploadsAndReUploadFailedItems.usheredLinksForTesting = []
         ValidateUploadsAndReUploadFailedItems.queuedItemsForTesting = []
         ValidateUploadsAndReUploadFailedItems.missedOutUsheredItems = []
         ValidateUploadsAndReUploadFailedItems.missedOutQueuedItems = []
