@@ -203,13 +203,13 @@ class ArchiveUtil {
         return loginSucess
     }
 
-    static void garbageCollectAndPrintUsageInfo(){
+    static void garbageCollectAndPrintMemUsageInfo(){
         if( EGangotriUtil.GLOBAL_UPLOADING_COUNTER % 100 == 0){
             double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
-            log.info("Memory being used: ${memUse} mb. Garbage Collecting after every 100th upload.")
+            log.info("Garbage Collecting after every 100th upload.\nMemory being used: ${Math.round(memUse)} mb.")
             System.gc()
             memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024*1024)
-            log.info("Memory use after Garbage Collection: ${memUse} mb")
+            log.info("Memory use after Garbage Collection: ${Math.round(memUse)} mb")
         }
     }
 

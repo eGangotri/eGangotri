@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.upload.util.ArchiveUtil
+
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.ItemsVO
@@ -54,7 +54,7 @@ class ArchiveHandler {
                                 throw new Exception(errMsg)
                             }
 
-                            log.info "Uploading: ${uploadVo.title} @ tabNo:$tabIndex"
+                            log.info "\nUploading: ${uploadVo.title} @ tabNo:$tabIndex"
                             UploadUtils.openNewTab(driver)
 
                             //Switch to new Tab
@@ -209,8 +209,8 @@ class ArchiveHandler {
             String lastStringFragAfterDashWithFileEndingRemoved = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
             uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + lastStringFragAfterDashWithFileEndingRemoved : uploadLink
         }
-        log.info("URL for upload: \n${uploadLink}")
-        log.info("fileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
+        log.info("\tURL for upload: \n${uploadLink}")
+        log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
         //Go to URL
         driver.navigate().to(uploadLink)
         driver.get(uploadLink)
@@ -222,8 +222,8 @@ class ArchiveHandler {
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
-            log.info("Cannot find Upload Button. " +
-                    "Hence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
+            log.info("\tCannot find Upload Button. " +
+                    "\tHence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
 
@@ -233,21 +233,21 @@ class ArchiveHandler {
             new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
         }
         catch (WebDriverException webDriverException) {
-            log.error("WebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').(${webDriverException.message}) ")
+            log.error("\tWebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').(${webDriverException.message}) ")
             UploadUtils.hitEscapeKey()
             UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
             try {
-                log.info("Attempt-2")
+                log.info("\tAttempt-2")
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
+                log.info("\t'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
             catch (WebDriverException webDriverException2) {
-                log.error("WebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').\n(${webDriverException2.message}) ")
-                log.info("Attempt-3")
+                log.error("\tWebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').\n(${webDriverException2.message}) ")
+                log.info("\tAttempt-3")
                 UploadUtils.hitEscapeKey()
                 UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
                 new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
+                log.info("\t'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
         }
         //UploadUtils.checkAlert(driver)
@@ -295,7 +295,7 @@ class ArchiveHandler {
             ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
             identifier = identifierNowInTextBox
         }
-        log.info("identifier: ${identifier}")
+        log.info("\tidentifier: ${identifier}")
         storeArchiveIdentifierInFile(uploadVO,identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
@@ -304,8 +304,8 @@ class ArchiveHandler {
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
-        garbageCollectAndPrintUsageInfo()
-        log.info("Document # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
+        garbageCollectAndPrintMemUsageInfo()
+        log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return identifier
     }
 }
