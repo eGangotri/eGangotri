@@ -463,11 +463,20 @@ class UploadUtils {
 
     /***
      *
-     * @param title Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
+     * @param filePath Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
      * @return Hamlet by Shakespeare.pdf
      */
-    static String stripFilePath(String title) {
-        return title.trim().drop(title.lastIndexOf(File.separator) + 1)
+    static String stripFilePath(String filePath) {
+        return filePath.trim().drop(filePath.lastIndexOf(File.separator) + 1)
+    }
+
+    /***
+     *
+     * @param filePath Ex: C:\books\set-1\Hamlet by Shakespeare.pdf
+     * @return C:\books\set-1
+     */
+    static String stripFileTitle(String filePath) {
+        return filePath.trim().take(filePath.lastIndexOf(File.separator) + 1)
     }
 
     /***
