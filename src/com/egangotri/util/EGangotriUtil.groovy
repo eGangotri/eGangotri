@@ -35,6 +35,7 @@ class EGangotriUtil {
     static final String FIRST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "first_names.txt"
     static final String LAST_NAME_FILE = EGANGOTRI_BASE_DIR + File.separator + "last_names.txt"
     static final String CODE_404_BAD_DATA_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "code404_rejectedFiles"
+    static final String CODE_503_SLOW_DOWN_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "code503_rejectedFiles"
 
     static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5

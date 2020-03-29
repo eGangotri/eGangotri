@@ -10,6 +10,7 @@ class SettingsUtil {
     static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
+    static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
@@ -147,6 +148,11 @@ class SettingsUtil {
                     ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS: " + ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS)
                 }
+
+                if (settingsMetaDataMap.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN) {
+                    MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = settingsMetaDataMap.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN.toBoolean()
+                    log.info("MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN: " + MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN)
+                }
             }
 
             if (settingsMetaDataMap.PREVIEW_FILES) {
@@ -158,6 +164,7 @@ class SettingsUtil {
                 MINIMUM_FILE_NAME_LENGTH = settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH.toInteger()
                 log.info("MINIMUM_FILE_NAME_LENGTH: " + MINIMUM_FILE_NAME_LENGTH)
             }
+
         }
     }
 
@@ -172,6 +179,7 @@ class SettingsUtil {
         ValidateUploadsAndReUploadFailedItems.missedOutQueuedItems = []
         ValidateUploadsAndReUploadFailedItems.allFailedItems =  []
         ValidateUploadsAndReUploadFailedItems.itemsWith400BadData =  []
+        ValidateUploadsAndReUploadFailedItems.itemsWith503SlowDown =  []
         applySettings()
         if(reuploaderFlags?.size() == 3){
             SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]

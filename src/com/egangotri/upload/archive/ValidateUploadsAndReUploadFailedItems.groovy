@@ -25,6 +25,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static List<ItemsVO> missedOutQueuedItems = []
     static List<? extends UploadVO> allFailedItems =  []
     static List<LinksVO> itemsWith400BadData =  []
+    static List<LinksVO> itemsWith503SlowDown =  []
 
 
     static main(args) {
@@ -206,7 +207,32 @@ class ValidateUploadsAndReUploadFailedItems {
             }
         }
     }
+
+    static void move503SlowDownFilesToSpecialFolder(){
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
+        if(missedOutUsheredItems){
+            log.info("\n\nStarting moving 503 Slow Down Item(s)")
+
+            missedOutUsheredItems.eachWithIndex{ LinksVO _missedOutItems, int counter ->
+                try {
+                    Files.move(new File(_missedOutItems.path).toPath(),
+                            new File(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER +  File.separator + _missedOutItems.title).toPath())
+                    log.info("\t${counter+1}). Moving ${_missedOutItems.title} to ${EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER}")
+                }
+                catch(Exception e){
+                    log.error("Error copying ${_missedOutItems.path} ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     static void startReuploadOfFailedItems() {
+        if(SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN){
+            move503SlowDownFilesToSpecialFolder()
+            return
+        }
+
         if(SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Only stats generated. No Uploading due to Setting")
             return
