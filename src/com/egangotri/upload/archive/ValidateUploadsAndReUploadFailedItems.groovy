@@ -233,11 +233,11 @@ class ValidateUploadsAndReUploadFailedItems {
         if(itemsWith400BadData){
             log.info("\n\nStarting copy 404BadData Item(s)")
 
-            itemsWith400BadData.forEach{ LinksVO code400BadDataItem ->
+            itemsWith400BadData.eachWithIndex{ LinksVO code400BadDataItem, int counter ->
                 try {
                     Files.copy(new File(code400BadDataItem.path).toPath(),
                             new File(EGangotriUtil.CODE_404_BAD_DATA_FOLDER +  File.separator + code400BadDataItem.title).toPath())
-                    log.info("\tCopying ${code400BadDataItem.path} to ${EGangotriUtil.CODE_404_BAD_DATA_FOLDER}")
+                    log.info("\t${counter+1}). Copying ${code400BadDataItem.title} to ${EGangotriUtil.CODE_404_BAD_DATA_FOLDER}")
                 }
                 catch(Exception e){
                     log.error("Error copying ${code400BadDataItem.path} ${e.message}")
