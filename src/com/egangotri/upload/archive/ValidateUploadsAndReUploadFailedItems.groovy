@@ -140,11 +140,7 @@ class ValidateUploadsAndReUploadFailedItems {
             String urlText = ""
             try {
                 urlText = entry.archiveLink.toURL().text
-                int checkDownloadOptions = urlText.count("format-group")
-                if(checkDownloadOptions < 2){
-                    itemsWith400BadData << entry
-                    log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${i}..")
-                }
+                checkIfCode404BadFile(urlText, entry,i)
                 print("${i},")
             }
             catch (FileNotFoundException e) {
@@ -162,9 +158,16 @@ class ValidateUploadsAndReUploadFailedItems {
             }
         }
         logUsheredMissedInfo()
-        copy400BadDataFilesToSpecialFolder()
     }
 
+    static void  checkIfCode404BadFile(String urlText, LinksVO entry, int counter){
+        int checkDownloadOptions = urlText.count("format-group")
+        if(checkDownloadOptions < 2){
+            itemsWith400BadData << entry
+            log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${counter}..")
+            moveFile(entry, EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
+        }
+    }
     static void logUsheredMissedInfo(){
         String _msg = "\nFound ${missedOutUsheredItems.size()}/${usheredLinksForTesting.size()} failed Ushered Link(s)."
         ValidateUtil.logPerProfile(_msg,missedOutUsheredItems,"archiveLink")
@@ -172,10 +175,6 @@ class ValidateUploadsAndReUploadFailedItems {
         String _msg2 = "\nFound ${itemsWith400BadData?.size()}/${usheredLinksForTesting.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"
         ValidateUtil.logPerProfile(_msg2, itemsWith400BadData,"path")
     }
-
-
-
-
 
     static void combineAllFailedItems(){
         if (missedOutQueuedItems || missedOutUsheredItems) {
@@ -188,44 +187,27 @@ class ValidateUploadsAndReUploadFailedItems {
         }
     }
 
-    static void copy400BadDataFilesToSpecialFolder(){
-        ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
-        if(itemsWith400BadData){
-            log.info("\n\nStarting copy 404BadData Item(s)")
-
-            itemsWith400BadData.eachWithIndex{ LinksVO code400BadDataItem, int counter ->
-                try {
-                    Files.copy(new File(code400BadDataItem.path).toPath(),
-                            new File(EGangotriUtil.CODE_404_BAD_DATA_FOLDER +  File.separator + code400BadDataItem.title).toPath())
-                    log.info("\t${counter+1}). Copying ${code400BadDataItem.title} to ${EGangotriUtil.CODE_404_BAD_DATA_FOLDER}")
-                }
-                catch(Exception e){
-                    log.error("Error copying ${code400BadDataItem.path} ${e.message}")
-                    e.printStackTrace()
-                }
-
-            }
+    static void moveFile(LinksVO movableItems, String destFolder, String counter = ""){
+        try {
+            Files.move(new File(movableItems.path).toPath(),
+                    new File(destFolder +  File.separator + movableItems.title).toPath())
+            log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
+        }
+        catch(Exception e){
+            log.error("Error moving ${movableItems.path} ${e.message}")
+            e.printStackTrace()
         }
     }
 
     static void move503SlowDownFilesToSpecialFolder(){
-        ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
         if(missedOutUsheredItems){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
-
             missedOutUsheredItems.eachWithIndex{ LinksVO _missedOutItems, int counter ->
-                try {
-                    Files.move(new File(_missedOutItems.path).toPath(),
-                            new File(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER +  File.separator + _missedOutItems.title).toPath())
-                    log.info("\t${counter+1}). Moving ${_missedOutItems.title} to ${EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER}")
-                }
-                catch(Exception e){
-                    log.error("Error copying ${_missedOutItems.path} ${e.message}")
-                    e.printStackTrace()
-                }
+                moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER. "${counter}).")
             }
         }
     }
+
 
     static void startReuploadOfFailedItems() {
         if(SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN){

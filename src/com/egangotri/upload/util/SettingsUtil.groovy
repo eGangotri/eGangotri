@@ -180,6 +180,9 @@ class SettingsUtil {
         ValidateUploadsAndReUploadFailedItems.allFailedItems =  []
         ValidateUploadsAndReUploadFailedItems.itemsWith400BadData =  []
         ValidateUploadsAndReUploadFailedItems.itemsWith503SlowDown =  []
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
+
         applySettings()
         if(reuploaderFlags?.size() == 3){
             SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]
