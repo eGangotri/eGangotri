@@ -53,7 +53,7 @@ class PreUploadReview {
             log.info("The Following are the files that will be uploaded")
             profileAndNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
                 log.info "${index + 1}). ${entry.key}"
-                log.info("${entry.value.join("\n")}")
+                log.info("\t${entry.value.join("\n\t")}")
             }
 
             if (profileAndInvalidNames) {
@@ -61,7 +61,7 @@ class PreUploadReview {
                 profileAndInvalidNames.eachWithIndex { Map.Entry<String, List<String>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
                     entry.value.eachWithIndex{ String val, int i ->
-                        log.info(" ${i+1}). $val}")
+                        log.info("\t${i+1}). $val}")
                     }
                 }
                 log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME} Digits in file name.")
