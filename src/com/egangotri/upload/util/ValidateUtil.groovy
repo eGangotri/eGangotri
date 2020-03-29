@@ -62,4 +62,18 @@ class ValidateUtil {
         log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
     }
 
+    static void logPerProfile(String msg, List<? extends UploadVO> vos, String propertyAsString){
+        log.info(msg)
+        if(vos.size()){
+            log.info("Affected Profile(s)" +  (vos*.archiveProfile as Set).toString())
+            Map<String,List<? extends UploadVO>> groupedByProfile = vos.groupBy{ def vo -> vo.archiveProfile}
+
+            groupedByProfile.keySet().each{ _prfName ->
+                log.info("${_prfName}:")
+                groupedByProfile[_prfName].eachWithIndex{ def vo, int counter ->
+                    log.info("\t${counter+1}). '" + vo."$propertyAsString" + "'")
+                }
+            }
+        }
+    }
 }

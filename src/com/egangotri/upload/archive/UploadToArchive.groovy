@@ -41,7 +41,7 @@ class UploadToArchive {
             if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0){
                 log.info("Will now check if all queued items were successful")
                 ValidateUploadsAndReUploadFailedItems.findMissedQueueItemsOnlyAndReupload()
-                log.info("going to sleep for 1 Hour\n")
+                log.info("Going to sleep for 1 Hour...\n")
                 //Wait for 1 Hour and check Links also
                 Thread.sleep(1000*60*60)
                 log.info("\nWill now check if all ushered items were successful")

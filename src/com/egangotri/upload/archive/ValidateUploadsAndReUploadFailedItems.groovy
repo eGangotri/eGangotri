@@ -41,7 +41,7 @@ class ValidateUploadsAndReUploadFailedItems {
         findQueueItemsNotInUsheredCSV()
         filterFailedUsheredItems()
         //(generateFailedLinksFromStaticList) for use in special cases only
-        //generateFailedLinksFromStaticList()
+        //ReuploadUsingLinks.generateFailedLinksFromStaticList()
         combineAllFailedItems()
         startReuploadOfFailedItems()
     }
@@ -166,56 +166,15 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void logUsheredMissedInfo(){
         String _msg = "\nFound ${missedOutUsheredItems.size()}/${usheredLinksForTesting.size()} failed Ushered Link(s)."
-        logPerProfile(_msg,missedOutUsheredItems,"archiveLink")
+        ValidateUtil.logPerProfile(_msg,missedOutUsheredItems,"archiveLink")
 
         String _msg2 = "\nFound ${itemsWith400BadData?.size()}/${usheredLinksForTesting.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"
-        logPerProfile(_msg2, itemsWith400BadData,"path")
-    }
-    static void logPerProfile(String msg, List<? extends UploadVO> vos, String propertyAsString){
-        log.info(msg)
-        if(missedOutUsheredItems.size()){
-            log.info("Affected Profie(s)" +  (missedOutUsheredItems*.archiveProfile as Set).toString())
-            Map<String,List<? extends UploadVO>> groupedByProfile = vos.groupBy{ def vo -> vo.archiveProfile}
-
-            groupedByProfile.keySet().each{ _prfName ->
-                log.info("${_prfName}:")
-                groupedByProfile[_prfName].eachWithIndex{ def vo, int counter ->
-                    log.info("\t${counter+1}). '" + vo."$propertyAsString" + "'")
-                }
-            }
-        }
+        ValidateUtil.logPerProfile(_msg2, itemsWith400BadData,"path")
     }
 
-    //This static variable can only be used with generateFailedLinksFromStaticList()
-    static  List<String> _staticListOfBadLinks =['https://archive.org/details/weorournationhooddefinedshrim.s_a']
 
-    /** This method is used in unique cases.
-     *  Where u have a list of failed Archive Urls and you want to use them to reupload them only
-     * So u take the links copy paste to _staticListOfBadLinks ,
-     * have following settings:
-     * IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-     * IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
-     * ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=false
-     *generating vos
-     * comment out call to filterFailedUsheredItems()
-     * uncomment call to generateFailedLinksFromStaticList() and execute the program
-     *
-     * .
-     * Then upload the VOS
-     */
-    static void generateFailedLinksFromStaticList(){
-        log.info("generating vos from static list of Links with size: " + _staticListOfBadLinks.size())
-        SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=true
-        SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=false
-        SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=false
 
-        usheredLinksForTesting.eachWithIndex{ LinksVO entry, int i ->
-            if(_staticListOfBadLinks*.trim().contains(entry.archiveLink)){
-                log.info("entry.uploadLink: " + entry.uploadLink)
-                missedOutUsheredItems << entry
-            }
-        }
-    }
+
 
     static void combineAllFailedItems(){
         if (missedOutQueuedItems || missedOutUsheredItems) {
