@@ -173,13 +173,13 @@ class SettingsUtil {
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
         ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.usheredLinksForTesting = []
-        ValidateUploadsAndReUploadFailedItems.queuedItemsForTesting = []
-        ValidateUploadsAndReUploadFailedItems.missedOutUsheredItems = []
-        ValidateUploadsAndReUploadFailedItems.missedOutQueuedItems = []
-        ValidateUploadsAndReUploadFailedItems.allFailedItems =  []
-        ValidateUploadsAndReUploadFailedItems.itemsWith400BadData =  []
-        ValidateUploadsAndReUploadFailedItems.itemsWith503SlowDown =  []
+        ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING = []
+        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FOR_TESTING = []
+        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_QUEUED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS =  []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA =  []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN =  []
         ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
         ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
 

@@ -12,20 +12,18 @@ import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
 
-import static com.egangotri.upload.util.ArchiveUtil.storeQueuedItemsInFile
-
 @Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File USHERED_ITEMS_FILE = null
     static File QUEUED_ITEMS_FILE = null
-    static List<LinksVO> usheredLinksForTesting = []
-    static List<ItemsVO> queuedItemsForTesting = []
-    static List<LinksVO> missedOutUsheredItems = []
-    static List<ItemsVO> missedOutQueuedItems = []
-    static List<? extends UploadVO> allFailedItems =  []
-    static List<LinksVO> itemsWith400BadData =  []
-    static List<LinksVO> itemsWith503SlowDown =  []
+    static List<LinksVO> USHERED_LINKS_FOR_TESTING = []
+    static List<ItemsVO> QUEUED_ITEMS_FOR_TESTING = []
+    static List<LinksVO> MISSED_OUT_USHERED_ITEMS = []
+    static List<ItemsVO> MISSED_OUT_QUEUED_ITEMS = []
+    static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
+    static List<LinksVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
+    static List<LinksVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
     static main(args) {
@@ -96,15 +94,15 @@ class ValidateUploadsAndReUploadFailedItems {
 
 
     static void processQueuedCSV() {
-        queuedItemsForTesting = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
-        Set queuedProfiles = queuedItemsForTesting*.archiveProfile as Set
-        log.info("Converted " + queuedItemsForTesting.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
+        QUEUED_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
+        Set queuedProfiles = QUEUED_ITEMS_FOR_TESTING*.archiveProfile as Set
+        log.info("Converted " + QUEUED_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
     }
 
     static void processUsheredCSV() {
-        usheredLinksForTesting = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
-        archiveProfiles = usheredLinksForTesting*.archiveProfile as Set
-        log.info("Converted " + usheredLinksForTesting.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
+        USHERED_LINKS_FOR_TESTING = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
+        archiveProfiles = USHERED_LINKS_FOR_TESTING*.archiveProfile as Set
+        log.info("Converted " + USHERED_LINKS_FOR_TESTING.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
 
@@ -115,17 +113,17 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Queued Items will be ignored for upload")
             return
         }
-        List allFilePaths = usheredLinksForTesting*.path
-        log.info("Searching from ${queuedItemsForTesting?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
+        List allFilePaths = USHERED_LINKS_FOR_TESTING*.path
+        log.info("Searching from ${QUEUED_ITEMS_FOR_TESTING?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
 
-        queuedItemsForTesting.eachWithIndex { queuedItem, index ->
+        QUEUED_ITEMS_FOR_TESTING.eachWithIndex { queuedItem, index ->
             if (!allFilePaths.contains(queuedItem.path)) {
-                missedOutQueuedItems << queuedItem
+                MISSED_OUT_QUEUED_ITEMS << queuedItem
                 log.info("\tFound missing Item [ (# $index). ${queuedItem.archiveProfile}] ${queuedItem.title} ")
             }
         }
-        log.info("${missedOutQueuedItems.size()}/${queuedItemsForTesting.size()} Items found in Queued List that missed upload.")
-        log.info("Affected Profies "  +  (missedOutQueuedItems*.archiveProfile as Set).toString())
+        log.info("${MISSED_OUT_QUEUED_ITEMS.size()}/${QUEUED_ITEMS_FOR_TESTING.size()} Items found in Queued List that missed upload.")
+        log.info("Affected Profies "  +  (MISSED_OUT_QUEUED_ITEMS*.archiveProfile as Set).toString())
     }
 
     static void filterFailedUsheredItems() {
@@ -133,10 +131,10 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("\n\nUshered Items will be ignored for upload")
             return
         }
-        int testableLinksCount = usheredLinksForTesting.size()
+        int testableLinksCount = USHERED_LINKS_FOR_TESTING.size()
         log.info("\n\nTesting ${testableLinksCount} Links in archive for upload-success-confirmation")
 
-        usheredLinksForTesting.eachWithIndex { LinksVO entry, int i ->
+        USHERED_LINKS_FOR_TESTING.eachWithIndex { LinksVO entry, int i ->
             String urlText = ""
             try {
                 urlText = entry.archiveLink.toURL().text
@@ -144,13 +142,13 @@ class ValidateUploadsAndReUploadFailedItems {
                 print("${i},")
             }
             catch (FileNotFoundException e) {
-                missedOutUsheredItems << entry
-                log.info("\nFailed Link (${missedOutUsheredItems.size()} of $testableLinksCount): \"${entry.archiveLink}\" @ ${i}..")
+                MISSED_OUT_USHERED_ITEMS << entry
+                log.info("\nFailed Link (${MISSED_OUT_USHERED_ITEMS.size()} of $testableLinksCount): \"${entry.archiveLink}\" @ ${i}..")
             }
             catch (Exception e) {
                 log.error("This is an Unsual Error. ${entry.archiveLink} Check Manually" + e.message)
                 e.printStackTrace()
-                missedOutUsheredItems << entry
+                MISSED_OUT_USHERED_ITEMS << entry
             }
             if(i> 0 && i%35 == 0){
                 System.gc()
@@ -163,27 +161,27 @@ class ValidateUploadsAndReUploadFailedItems {
     static void  checkIfCode404BadFile(String urlText, LinksVO entry, int counter){
         int checkDownloadOptions = urlText.count("format-group")
         if(checkDownloadOptions < 2){
-            itemsWith400BadData << entry
+            ITEMS_WITH_CODE_404_BAD_DATA << entry
             log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${counter}..")
             moveFile(entry, EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
         }
     }
     static void logUsheredMissedInfo(){
-        String _msg = "\nFound ${missedOutUsheredItems.size()}/${usheredLinksForTesting.size()} failed Ushered Link(s)."
-        ValidateUtil.logPerProfile(_msg,missedOutUsheredItems,"archiveLink")
+        String _msg = "\nFound ${MISSED_OUT_USHERED_ITEMS.size()}/${USHERED_LINKS_FOR_TESTING.size()} failed Ushered Link(s)."
+        ValidateUtil.logPerProfile(_msg,MISSED_OUT_USHERED_ITEMS,"archiveLink")
 
-        String _msg2 = "\nFound ${itemsWith400BadData?.size()}/${usheredLinksForTesting.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"
-        ValidateUtil.logPerProfile(_msg2, itemsWith400BadData,"path")
+        String _msg2 = "\nFound ${ITEMS_WITH_CODE_404_BAD_DATA?.size()}/${USHERED_LINKS_FOR_TESTING.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"
+        ValidateUtil.logPerProfile(_msg2, ITEMS_WITH_CODE_404_BAD_DATA,"path")
     }
 
     static void combineAllFailedItems(){
-        if (missedOutQueuedItems || missedOutUsheredItems) {
-            allFailedItems.addAll(missedOutQueuedItems)
+        if (MISSED_OUT_QUEUED_ITEMS || MISSED_OUT_USHERED_ITEMS) {
+            ALL_FAILED_ITEMS.addAll(MISSED_OUT_QUEUED_ITEMS)
 
-            missedOutUsheredItems.each { failedLink ->
-                allFailedItems.add(failedLink)
+            MISSED_OUT_USHERED_ITEMS.each { failedLink ->
+                ALL_FAILED_ITEMS.add(failedLink)
             }
-            log.info("Combined figure for re-uploading(${missedOutQueuedItems.size()} + ${missedOutUsheredItems.size()}) :" + allFailedItems.size() + " in Profiles: ${allFailedItems*.archiveProfile as Set}" )
+            log.info("Combined figure for re-uploading(${MISSED_OUT_QUEUED_ITEMS.size()} + ${MISSED_OUT_USHERED_ITEMS.size()}) :" + ALL_FAILED_ITEMS.size() + " in Profiles: ${ALL_FAILED_ITEMS*.archiveProfile as Set}" )
         }
     }
 
@@ -200,9 +198,9 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void move503SlowDownFilesToSpecialFolder(){
-        if(missedOutUsheredItems){
+        if(MISSED_OUT_USHERED_ITEMS){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
-            missedOutUsheredItems.eachWithIndex{ LinksVO _missedOutItems, int counter ->
+            MISSED_OUT_USHERED_ITEMS.eachWithIndex{ LinksVO _missedOutItems, int counter ->
                 moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER. "${counter}).")
             }
         }
@@ -219,7 +217,7 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Only stats generated. No Uploading due to Setting")
             return
         }
-        Set<String> profilesWithFailedLinks = allFailedItems*.archiveProfile as Set
+        Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
         _execute(validProfiles, metaDataMap)
@@ -228,13 +226,13 @@ class ValidateUploadsAndReUploadFailedItems {
     static _execute(Set<String> profiles, Hashtable<String, String> metaDataMap){
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = allFailedItems.size()
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()
         ValidateUtil.validateMaxUploadableLimit()
 
         int attemptedItemsTotal = 0
 
         profiles.eachWithIndex { archiveProfile, index ->
-            List<UploadVO> failedVOsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
+            List<UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedVOsForProfile.size()
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {

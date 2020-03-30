@@ -205,7 +205,7 @@ class ArchiveUtil {
             loginSucess = true
         }
         catch (Exception e) {
-            log.info("Exeption in logInToArchiveOrg ${e.message}")
+            log.info("Exception in logInToArchiveOrg ${e.message}")
             e.printStackTrace()
             throw e
         }
