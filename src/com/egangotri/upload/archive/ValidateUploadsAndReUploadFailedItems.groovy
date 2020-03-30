@@ -241,10 +241,6 @@ class ValidateUploadsAndReUploadFailedItems {
                 List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, failedVOsForProfile)
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
-
-/*                List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedVOsForProfile)
-                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadableItems)
-                uploadSuccessCheckingMatrix.put((index + 1), report)*/
                 attemptedItemsTotal += countOfUploadableItems
             }
             else {

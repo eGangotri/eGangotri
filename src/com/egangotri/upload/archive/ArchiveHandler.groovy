@@ -165,33 +165,6 @@ class ArchiveHandler {
         }
     }
 
-   /*
-    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile) {
-        List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
-
-        List<List<Integer>> uploadStatsList = []
-        if (EGangotriUtil.PARTITIONING_ENABLED && uploadables.size() > EGangotriUtil.PARTITION_SIZE) {
-            def partitions = UploadUtils.partition(uploadables, EGangotriUtil.PARTITION_SIZE)
-            log.info(" ${partitions.size()} Browsers will be created for Profile $archiveProfile: ")
-            int partitionCounter = 0
-            for (List<String> partitionedUploadables : partitions) {
-                log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedUploadables.size()} Item(s) queued for upload")
-                List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,partitionedUploadables)
-                storeQueuedItemsInFile(vos)
-                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos )
-                uploadStatsList << uploadStats
-            }
-        } else {
-            log.info("No partitioning")
-            List<ItemsVO> vos = generateVOsFromFileNames(archiveProfile,uploadables)
-            storeQueuedItemsInFile(vos)
-            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,vos)
-            uploadStatsList << uploadStats
-        }
-        uploadStatsList
-    }
-    */
-
     static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, List<? extends UploadVO> uploadVos) {
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadVos.size() > EGangotriUtil.PARTITION_SIZE) {
