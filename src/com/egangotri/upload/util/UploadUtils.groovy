@@ -286,61 +286,6 @@ class UploadUtils {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null)
     }
 
-    static List getAStashOfFilesForUpload(String src) {
-        List<String> filterables = getFilterables()
-        List<String> allPdfs = getAllPdfs(new File(src))
-        if (filterables) {
-            log.info("filterables.size():${filterables.size()} '${filterables[0]}'")
-            log.info("allPdfs2.size() before:${allPdfs.size()} '${allPdfs.first()}'")
-            int count = 0
-
-            def x = ['nnn', 'E:\\bngl2\\85685712 Jennings Vedantic Buddhism Of The Buddha.pdf']
-            def y = "85685712 Jennings Vedantic Buddhism Of The Buddha.pdf"
-            log.info(x.findIndexOf { it =~ /($y)$/ })
-            filterables.each { String filterable ->
-                int count2 = 0
-                try {
-                    int idx = allPdfs.findIndexOf { pdf ->
-                        String y2 = pdf.substring(src.length() + 1)
-
-                        if (count2++ < 10) {
-                            log.info("$filterable == ${y2} ($pdf) " + filterable.equals(y2))
-                        }
-                        filterable.equals(y2)
-                    }
-
-                    if (idx >= 0) {
-                        log.info("${count++}).idx:$idx, $filterable == ${allPdfs.get(idx)}")
-                        allPdfs.remove(idx)
-                    }
-                }
-
-                catch (Exception e) {
-                    log.error(e.message)
-                }
-
-            }
-            log.info("\nallPdfs2.size() after:${allPdfs.size()} '${allPdfs.first()}'")
-        }
-        if (allPdfs?.size() > 100) {
-            return allPdfs[0..100]
-        } else {
-            return allPdfs[0..allPdfs?.size()]
-        }
-
-    }
-
-    static List<String> getFilterables() {
-        String fileName = System.getProperty("user.home") + "${File.separator}eGangotri${File.separator}archiveFileName.txt"
-        List<String> list = new File(fileName).readLines()
-        List<String> filterables = []
-        if (list) {
-            filterables = list[0].split(",").collect { "${it}.pdf" }
-        }
-        return filterables
-    }
-
-
     static <T> List<List<T>> partition(List<T> partitionableList, int size) {
         def partitions = []
         int partitionCount = (int) (partitionableList.size() / size)
@@ -375,11 +320,11 @@ class UploadUtils {
     }
 
     static List randomCreators() {
-        List firstNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
-        List lastNames = UploadUtils.readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
+        List firstNames = readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
+        List lastNames = readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
         Random rnd = new Random()
         List creators = []
-        int MAX_CREATORS = UploadUtils.RANDOM_CREATOR_MAX_LIMIT
+        int MAX_CREATORS = RANDOM_CREATOR_MAX_LIMIT
         int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
         (1..max).each {
             int idx1 = rnd.nextInt(firstNames.size)
