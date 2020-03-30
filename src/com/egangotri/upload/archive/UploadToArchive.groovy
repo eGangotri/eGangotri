@@ -4,6 +4,7 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
+import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -65,7 +66,9 @@ class UploadToArchive {
                     List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
-                    List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, archiveProfile)
+                    List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
+                    List<ItemsVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile,uploadables)
+                    List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, vos)
                     String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
                     uploadSuccessCheckingMatrix.put((index + 1), report)
                 }

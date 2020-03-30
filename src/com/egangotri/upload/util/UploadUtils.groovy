@@ -341,9 +341,9 @@ class UploadUtils {
     }
 
 
-    static def partition(List<String> partitionableList, int size) {
+    static <T> List<List<T>> partition(List<T> partitionableList, int size) {
         def partitions = []
-        int partitionCount = partitionableList.size() / size
+        int partitionCount = (int) (partitionableList.size() / size)
 
         partitionCount.times { partitionNumber ->
             def start = partitionNumber * size

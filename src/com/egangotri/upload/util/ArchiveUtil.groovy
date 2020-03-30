@@ -1,5 +1,6 @@
 package com.egangotri.upload.util
 
+import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -61,6 +62,14 @@ class ArchiveUtil {
         } else{
             new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE).append(appendable)
         }
+    }
+    //create UploadVO
+    static List<ItemsVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
+        List<ItemsVO> vos = []
+        uploadables.each{ uploadable ->
+            vos << new ItemsVO(archiveProfile,uploadable)
+        }
+        return vos
     }
 
     static void storeQueuedItemsInFile(List<UploadVO> uploadVos) {

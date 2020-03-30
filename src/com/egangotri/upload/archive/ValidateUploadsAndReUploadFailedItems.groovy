@@ -234,14 +234,17 @@ class ValidateUploadsAndReUploadFailedItems {
         int attemptedItemsTotal = 0
 
         profiles.eachWithIndex { archiveProfile, index ->
-            List<UploadVO> failedItemsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
-            int countOfUploadableItems = failedItemsForProfile.size()
+            List<UploadVO> failedVOsForProfile = allFailedItems.findAll { it.archiveProfile == archiveProfile }
+            int countOfUploadableItems = failedVOsForProfile.size()
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
-                storeQueuedItemsInFile(failedItemsForProfile)
-                List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedItemsForProfile)
-                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadableItems)
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, failedVOsForProfile)
+                String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
                 uploadSuccessCheckingMatrix.put((index + 1), report)
+
+/*                List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(metaDataMap, failedVOsForProfile)
+                String report = UploadUtils.generateStats([uploadStats], archiveProfile, countOfUploadableItems)
+                uploadSuccessCheckingMatrix.put((index + 1), report)*/
                 attemptedItemsTotal += countOfUploadableItems
             }
             else {

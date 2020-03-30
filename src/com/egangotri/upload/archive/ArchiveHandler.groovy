@@ -165,6 +165,7 @@ class ArchiveHandler {
         }
     }
 
+   /*
     static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, String archiveProfile) {
         List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
 
@@ -189,15 +190,30 @@ class ArchiveHandler {
         }
         uploadStatsList
     }
+    */
 
-    //create UploadVO
-    static List<ItemsVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
-        List<ItemsVO> vos = []
-        uploadables.each{ uploadable ->
-            vos << new ItemsVO(archiveProfile,uploadable)
+    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, List<? extends UploadVO> uploadVos) {
+        List<List<Integer>> uploadStatsList = []
+        if (EGangotriUtil.PARTITIONING_ENABLED && uploadVos.size() > EGangotriUtil.PARTITION_SIZE) {
+            String archiveProfile = uploadVos.first().archiveProfile
+            def partitions = UploadUtils.partition(uploadVos, EGangotriUtil.PARTITION_SIZE)
+            log.info(" ${partitions.size()} Browsers will be created for Profile $archiveProfile: ")
+            int partitionCounter = 0
+            for (def partitionedVos : partitions) {
+                log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedVos.size()} Item(s) queued for upload")
+                storeQueuedItemsInFile(partitionedVos)
+                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,partitionedVos)
+                uploadStatsList << uploadStats
+            }
+        } else {
+            log.info("No partitioning")
+            storeQueuedItemsInFile(uploadVos)
+            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,uploadVos)
+            uploadStatsList << uploadStats
         }
-        return vos
+        uploadStatsList
     }
+
 
     static String uploadOneItem(WebDriver driver, UploadVO uploadVO) {
         String fileNameWithPath = uploadVO.path
