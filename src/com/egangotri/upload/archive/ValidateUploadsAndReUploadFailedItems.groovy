@@ -201,7 +201,7 @@ class ValidateUploadsAndReUploadFailedItems {
         if(MISSED_OUT_USHERED_ITEMS){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
             MISSED_OUT_USHERED_ITEMS.eachWithIndex{ LinksVO _missedOutItems, int counter ->
-                moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER. "${counter}).")
+                moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER, "${counter+1}).")
             }
         }
     }
