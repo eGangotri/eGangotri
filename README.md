@@ -66,7 +66,8 @@ In Home Directory ( for Windows this is typically
 # Remove Lock Screen/Login Screen
 https://www.isunshare.com/windows-10/2-ways-to-automatically-skip-windows-10-login-screen.html
 https://smarttechnicalworld.com/gpedit-msc-windows-10-group-policy-editor/
-
+https://www.windowscentral.com/how-stop-windows-10-showing-welcome-screen-after-feature-updates
+https://www.windowscentral.com/how-disable-microsoft-edges-first-run-page-windows-10
 
 #Additional Tools to Help
 1. https://www.bulkrenameutility.co.uk/Download.php
