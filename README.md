@@ -73,6 +73,11 @@ https://www.windowscentral.com/how-disable-windows-10-lock-screen
 Win-R gpedit.msc -> User Config-> Ad Tm -> Ctrl P -> Persn -> Enable Screen Saver -> Disabled
 
 Seems gpedit.msc is ignored for Windows Home so can only use regedit
+Read Note in:
+Note: If you are using Windows Home, Starter, or Premium edition you will not have access to the group policy editor. Instead you should follow the instructions here.
+https://www.bleepingcomputer.com/tutorials/remove-lock-option-from-ctrl-alt-delete/
+
+
 https://answers.microsoft.com/en-us/windows/forum/all/is-there-a-way-we-can-turn-off-the-whole-lock/81c5c778-e247-45c3-97f1-5b65bd47ddeb
 https://www.windows-commandline.com/disable-screensaver-registry-settings/
 
