@@ -187,9 +187,13 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void moveFile(LinksVO movableItems, String destFolder, String counter = ""){
         try {
-            Files.move(new File(movableItems.path).toPath(),
-                    new File(destFolder +  File.separator + movableItems.title).toPath())
-            log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
+            File movableFile = new File(movableItems?.path?:"")
+            if(movableFile.exists()){
+                Files.move(movableFile.toPath(),
+                        new File(destFolder +  File.separator + movableItems.title).toPath())
+                log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
+            }
+            log.info("\t${counter}File ${movableItems?.title} not found.")
         }
         catch(Exception e){
             log.error("Error moving ${movableItems.path} ${e.message}")
