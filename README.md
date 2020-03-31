@@ -68,6 +68,13 @@ https://www.isunshare.com/windows-10/2-ways-to-automatically-skip-windows-10-log
 https://smarttechnicalworld.com/gpedit-msc-windows-10-group-policy-editor/
 https://www.windowscentral.com/how-stop-windows-10-showing-welcome-screen-after-feature-updates
 https://www.windowscentral.com/how-disable-microsoft-edges-first-run-page-windows-10
+Win-R gpedit.msc -> https://www.howtogeek.com/howto/windows-vista/disableenable-lock-workstation-functionality-windows-l/
+https://www.windowscentral.com/how-disable-windows-10-lock-screen
+Win-R gpedit.msc -> User Config-> Ad Tm -> Ctrl P -> Persn -> Enable Screen Saver -> Disabled
+
+Seems gpedit.msc is ignored for Windows Home so can only use regedit
+https://answers.microsoft.com/en-us/windows/forum/all/is-there-a-way-we-can-turn-off-the-whole-lock/81c5c778-e247-45c3-97f1-5b65bd47ddeb
+https://www.windows-commandline.com/disable-screensaver-registry-settings/
 
 #Additional Tools to Help
 1. https://www.bulkrenameutility.co.uk/Download.php
