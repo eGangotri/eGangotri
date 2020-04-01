@@ -73,7 +73,7 @@ class PreUploadReview {
     static void logOffendingFolders(List<String> setOfOffendingPaths){
         log.info("This upload has following offending paths")
         (setOfOffendingPaths.groupBy {it}.sort { a, b -> b.value.size() <=> a.value.size() }).forEach{k,v ->
-            log.info("$k : ${v.size()}")
+            log.info("$k\n : ${v.size()}")
         }
 
     }

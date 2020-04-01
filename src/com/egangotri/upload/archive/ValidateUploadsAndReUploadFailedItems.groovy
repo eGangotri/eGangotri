@@ -189,11 +189,17 @@ class ValidateUploadsAndReUploadFailedItems {
         try {
             File movableFile = new File(movableItems?.path?:"")
             if(movableFile.exists()){
-                Files.move(movableFile.toPath(),
-                        new File(destFolder +  File.separator + movableItems.title).toPath())
+                File dest = new File(destFolder +  File.separator + movableItems.title)
+                if(dest.exists()){
+                    log.info("\t$dest pre=exists. Will alter title")
+                    dest  = new File(destFolder +  File.separator + movableItems.title + "_1")
+                }
+                Files.move(movableFile.toPath(), dest.toPath())
                 log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
             }
-            log.info("\t${counter}File ${movableItems?.title} not found.")
+            else{
+                log.info("\t${counter}File ${movableItems?.title} not found.")
+            }
         }
         catch(Exception e){
             log.error("Error moving ${movableItems.path} ${e.message}")
