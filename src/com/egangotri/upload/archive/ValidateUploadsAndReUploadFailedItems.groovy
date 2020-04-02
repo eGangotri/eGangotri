@@ -160,7 +160,8 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void  checkIfCode404BadFile(String urlText, LinksVO entry, int counter){
         int checkDownloadOptions = urlText.count("format-group")
-        if(checkDownloadOptions < 2){
+        int _4Files = urlText.count("4 Files")
+        if(checkDownloadOptions < 2 && _4Files == 1){
             ITEMS_WITH_CODE_404_BAD_DATA << entry
             log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${counter}..")
             moveFile(entry, EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
