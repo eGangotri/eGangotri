@@ -20,10 +20,10 @@ class ExecuteBatchJob implements Job {
         }
         String instructions = fileWithInstructions.getText('UTF-8')
         if(!instructions){
-            instructions = DEFAULT_INSTRUCTION + new Date().format('YYYY-MM-DD HH:mm')
+            instructions = DEFAULT_INSTRUCTION + new Date().format('YYYY-MM-dd HH:mm')
         }
         println "cmd /c ${instructions}".execute().text
-        fileWithInstructions.write(DEFAULT_INSTRUCTION + new Date().format('YYYY-MM-DD HH:mm'))
+        fileWithInstructions.write(DEFAULT_INSTRUCTION + new Date().format('YYYY-MM-dd HH:mm'))
         //To reboot use
         //"shutdown /r
     }
