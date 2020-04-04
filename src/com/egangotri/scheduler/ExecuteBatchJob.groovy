@@ -6,7 +6,7 @@ import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
 
 class ExecuteBatchJob implements Job {
-    static final String REMOTE_INSTRUCTIONS_FILE = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + "google_drive" + File.separator + "cronJobInstructions.txt"
+    static final String REMOTE_INSTRUCTIONS_FILE = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + "google_drive" + File.separator + "cron.txt"
     static final String DEFAULT_INSTRUCTION = "echo Hi @"
     void execute(JobExecutionContext context)
             throws JobExecutionException {
