@@ -33,7 +33,7 @@ In Home Directory ( for Windows this is typically
  - java -Dwebdriver.chrome.driver=<PATH_TO_CHROMEDRIVER>chromedriver\chromedriver.exe -jar <PATH_TO_EGANGOTRI_JAR>/eGangotri.jar PRFL1 PRFL2
   
   Example:
-   java -Dwebdriver.chrome.driver=C:\Users\user\chromedriver\chromedriver.exe -jar =C:\Users\user\eGangotri\eGangotri.jar PRFL1 PRFL2
+   java -Dwebdriver.chrome.driver=C:\Users\user\eGangotri\chromedriver\chromedriver.exe -jar =C:\Users\user\eGangotri\eGangotri.jar PRFL1 PRFL2
   
   ** PRFL1 PRFL2 -> Read about how to setup Profile in the Main README
   https://github.com/eGangotri/eGangotri/blob/master/README.md
@@ -41,7 +41,7 @@ In Home Directory ( for Windows this is typically
  In case Chromedriver gets outdated, get latest from 
  https://sites.google.com/a/chromium.org/chromedriver/downloads
  
- and dump it in Home Directory\chromedriver\chromedriver.exe and use this as the path in 
+ and dump it in Home Directory\eGangotri\chromedriver\chromedriver.exe and use this as the path in 
  java -Dwebdriver.chrome.driver....
  
  
