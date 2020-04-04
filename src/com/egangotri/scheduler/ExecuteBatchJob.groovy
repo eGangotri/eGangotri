@@ -25,7 +25,7 @@ class ExecuteBatchJob implements Job {
         fileWithInstructions.write(DEFAULT_INSTRUCTION + new Date().format('YYYY-MM-dd HH:mm'))
         println "cmd /c ${instructions}".execute().text
         //To reboot use
-        //"shutdown /r
+        //shutdown /r
     }
 
 }
