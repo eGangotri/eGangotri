@@ -28,7 +28,7 @@ class GoogleDriveHandler {
         try {
             String userHome = System.getProperty('user.home')
             log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
-            System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}chromedriver${File.separator}chromedriver.exe")
+            System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe")
             // log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
             WebDriver driver = new ChromeDriver()

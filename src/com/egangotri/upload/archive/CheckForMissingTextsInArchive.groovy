@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
 /**
  * Created by user on 1/18/2016.
  * Make sure
- * The chromedriver binary is in the system path, or
+ * The chromedriver binary is in the $HOME_DRECTORY/eGangotri Folder, or
  * use VM Argument -Dwebdriver.chrome.driver=c:/chromedriver.exe
 
  */
