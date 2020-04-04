@@ -9,7 +9,7 @@ import static ch.qos.logback.classic.Level.INFO
 
 def LOG_PATH = "target"
 def USER_HOME = System.getProperty("user.home")
-def GOOGLE_DRIVE_PATH = "$USER_HOME/google_drive/server_logs"
+def GOOGLE_DRIVE_PATH = "$USER_HOME/eGangotri/google_drive/archive_uploader/server_logs"
 def CURRENT_TIME = timestamp("yyyy-MM-dd HH-mm")
 
 appender("Console-Appender", ConsoleAppender) {
