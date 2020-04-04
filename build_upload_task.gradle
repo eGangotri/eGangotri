@@ -27,3 +27,10 @@ task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
+
+task reuploadUsingLinks(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.ReuploadUsingLinks"
+    jvmArgs = applicationDefaultJvmArgs
+    args = []
+}
