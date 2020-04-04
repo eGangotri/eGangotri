@@ -60,7 +60,7 @@ class SettingsUtil {
             if (settingsMetaDataMap.MAX_UPLODABLES) {
                 try {
                     int maxUplodables = Integer.parseInt(settingsMetaDataMap.MAX_UPLODABLES)
-                    if (maxUplodables >= 50 && maxUplodables <= 2100) {
+                    if (maxUplodables >= 50 && maxUplodables <= 1500) {
                         EGangotriUtil.MAX_UPLODABLES = maxUplodables
                     }
                 }
