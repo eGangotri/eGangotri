@@ -340,29 +340,27 @@ class UploadUtils {
         }
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
             def metaDataMap = loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-            String _creator = metaDataMap."${archiveProfile}.creator"
-            if (!_creator) {
+            if (!metaDataMap."${archiveProfile}.creator") {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
             }
+            String _creator = "creator=" + metaDataMap."${archiveProfile}.creator"
 
             String _subjects = metaDataMap."${archiveProfile}.subjects"
             if (!_subjects) {
-                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? "subject=" + _creator.replaceAll("creator=", "") : null
+                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll("creator=", "") : null
             }
 
-            String _lang = metaDataMap."${archiveProfile}.language" ?: "language=${SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE}"
+            String _lang = "language=" + metaDataMap."${archiveProfile}.language" ?: SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE
             String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
-            if (_desc && _desc?.contains("description=")) {
-                _desc = _desc.replaceAll("description=", "")
-            }
+
             String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
             String supplementary_url = desc_and_file_name + AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
-                supplementary_url += AMPERSAND + metaDataMap."${archiveProfile}.collection"
+                supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
-                supplementary_url += AMPERSAND + _subjects
+                supplementary_url += AMPERSAND + "subject=" + _subjects
             }
             if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
                 supplementary_url += AMPERSAND + _creator

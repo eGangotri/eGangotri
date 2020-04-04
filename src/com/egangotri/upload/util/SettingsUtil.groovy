@@ -169,20 +169,8 @@ class SettingsUtil {
     }
 
     static void applySettingsWithReuploaderFlags(List<Boolean> reuploaderFlags = []) {
+        resetValues()
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
-        ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
-        ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING = []
-        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FOR_TESTING = []
-        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
-        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_QUEUED_ITEMS = []
-        ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS =  []
-        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA =  []
-        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN =  []
-        ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
-        ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
-
         applySettings()
         if(reuploaderFlags?.size() == 3){
             SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]
@@ -195,5 +183,20 @@ class SettingsUtil {
         csv = csv.replaceAll(/["|\[|\]|']/, "")
         //csv = csv.replace("[","").replace("]","")
         return csv.split(",")*.trim()
+    }
+
+    static void resetValues(){
+        ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
+        ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
+        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
+        ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING = []
+        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FOR_TESTING = []
+        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_QUEUED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS =  []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA =  []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN =  []
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
+        ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
     }
 }

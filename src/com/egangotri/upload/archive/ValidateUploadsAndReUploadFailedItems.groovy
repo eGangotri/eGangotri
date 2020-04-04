@@ -33,14 +33,18 @@ class ValidateUploadsAndReUploadFailedItems {
         System.exit(0)
     }
 
-    static void execute(def args = [] ){
+    static void execute(def args = [], boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processQueuedCSV()
         processUsheredCSV()
         findQueueItemsNotInUsheredCSV()
-        filterFailedUsheredItems()
-        //(generateFailedLinksFromStaticList) for use in special cases only
-        //ReuploadUsingLinks.generateFailedLinksFromStaticList()
+       if(dontUseFailedLinksFromStaticList) {
+           filterFailedUsheredItems()
+       }
+        else{
+           //(generateFailedLinksFromStaticList) for use in special cases only
+           ReuploadUsingLinks.generateFailedLinksFromStaticList()
+       }
         combineAllFailedItems()
         startReuploadOfFailedItems()
     }
