@@ -34,12 +34,11 @@ task reuploadUsingLinks(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
-/**
- * https://www.windowscentral.com/how-create-and-run-batch-file-windows-10
- * Running batch files on startup
- * Copy shortcut of your batch file to C:\Users\user\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
- */
-
+/*
+   https://www.windowscentral.com/how-create-and-run-batch-file-windows-10
+ View: Running batch files on startup
+ Windows-R shell:script. paste shortcutt your batch will ensure code will run after every restart
+*/
 task cronJob(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.scheduler.RemoteJobScheduler"
