@@ -34,3 +34,10 @@ task reuploadUsingLinks(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
+
+task cronJob(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.scheduler.RemoteJobScheduler"
+    jvmArgs = applicationDefaultJvmArgs
+    args = []
+}
