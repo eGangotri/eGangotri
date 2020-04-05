@@ -528,8 +528,8 @@ class UploadUtils {
         return alertWasDetected
     }
 
-    static getFormattedDateString() {
-        return new SimpleDateFormat(DATE_TIME_PATTERN).format(new Date())
+    static getFormattedDateString(Date date = null) {
+        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date?:new Date())
     }
 
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){

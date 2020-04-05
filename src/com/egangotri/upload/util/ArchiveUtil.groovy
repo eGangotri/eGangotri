@@ -166,10 +166,14 @@ class ArchiveUtil {
                 compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
              }
             int totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS
+            log.info("Start Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS)))
+            log.info("End Time: " +   UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS)))
+
             log.info("Total Time Taken: ${df.format(totalTime/60)} minutes(s) [ ${df.format(totalTime/(60*60))} hour(s)]")
             log.info("Total Items attempted: $attemptedItemsTotal")
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
-            log.info("Average Upload Time: ${df.format((totalTime/60)/attemptedItemsTotal)} minute(s)/item")
+            log.info("Average Upload Time/Item: ${df.format((totalTime/60)/attemptedItemsTotal)} minute(s)/item")
+            log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal/(totalTime/60))} item/minute")
         }
     }
 
