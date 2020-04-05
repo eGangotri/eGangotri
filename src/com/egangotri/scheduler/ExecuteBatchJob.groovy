@@ -26,6 +26,8 @@ class ExecuteBatchJob implements Job {
         println "cmd /c ${instructions}".execute().text
         //To reboot use
         //shutdown /r
+        // TO Close all Chrome Browsers use
+        // TASKKILL /IM chrome.exe /F
     }
 
 }
