@@ -51,11 +51,11 @@ class PreUploadReview {
             }
         }
         log.info("This upload has following Unique Path Endings ${setOfEndings}")
-        logOffendingFolders(setOfOffendingPaths)
         if (profileAndNames) {
             if (profileAndInvalidNames) {
                 log.info("The Following files have names less than ${SettingsUtil.MINIMUM_FILE_NAME_LENGTH} characters")
-                getOffendingFolders(profileAndInvalidNames)
+                getOffendingFiles(profileAndInvalidNames)
+                logOffendingFolders(setOfOffendingPaths)
                 log.info("Cannot proceed because there are file names shorter than the Minimum Requirement Or Have More than ${MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME} Digits in file name.")
             }
             else{
@@ -77,7 +77,7 @@ class PreUploadReview {
         }
 
     }
-    static void getOffendingFolders( Map<String, List<FileData>> profileAndInvalidNames){
+    static void getOffendingFiles(Map<String, List<FileData>> profileAndInvalidNames){
         profileAndInvalidNames.eachWithIndex { Map.Entry<String, List<FileData>> entry, int index ->
             log.info "${index + 1}). ${entry.key}"
             entry.value.eachWithIndex{ FileData item, int i ->

@@ -1,5 +1,6 @@
 package com.egangotri.scheduler
 
+import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import org.quartz.Job
 import org.quartz.JobExecutionContext
