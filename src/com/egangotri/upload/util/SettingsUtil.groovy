@@ -76,33 +76,24 @@ class SettingsUtil {
                 log.info("PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
             }
 
-            if (settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING && settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING == "true") {
+            if (settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING) {
                 EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING = settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean()
-                log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean())
+                log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING)
             }
 
-            if (settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL && settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL == "true") {
+            if (settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
                 EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL = settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean()
-                log.info("ADD_RANDOM_INTEGER_TO_PAGE_URL: " + settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean())
+                log.info("ADD_RANDOM_INTEGER_TO_PAGE_URL: " + EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL)
             }
 
-            if (settingsMetaDataMap.GENERATE_ONLY_URLS && settingsMetaDataMap.GENERATE_ONLY_URLS == "true") {
+            if (settingsMetaDataMap.GENERATE_ONLY_URLS) {
                 EGangotriUtil.GENERATE_ONLY_URLS = settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean()
-                log.info("GENERATE_ONLY_URLS: " + settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean())
+                log.info("GENERATE_ONLY_URLS: " + EGangotriUtil.GENERATE_ONLY_URLS)
             }
 
-            def generateRandomCreatorFlag = settingsMetaDataMap.GENERATE_RANDOM_CREATOR
-            if (generateRandomCreatorFlag) {
-                if (generateRandomCreatorFlag.toLowerCase() != "false")
-                    EGangotriUtil.GENERATE_RANDOM_CREATOR = true
-                //if the value is not a Boolean but a CSV
-                if (generateRandomCreatorFlag.toLowerCase() != "true") {
-                    EGangotriUtil.ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = generateRandomCreatorFlag.split(",").collect {
-                        ->
-                        it.trim()
-                    }
-                }
-                log.info("GENERATE_RANDOM_CREATOR: " + generateRandomCreatorFlag)
+            if (settingsMetaDataMap.GENERATE_ONLY_URL) {
+                EGangotriUtil.GENERATE_RANDOM_CREATOR = settingsMetaDataMap.GENERATE_RANDOM_CREATOR.toBoolean()
+                log.info("GENERATE_RANDOM_CREATOR: " + EGangotriUtil.GENERATE_RANDOM_CREATOR)
             }
 
             if (settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT && settingsMetaDataMap.RANDOM_CREATOR_MAX_LIMIT.isInteger()) {
