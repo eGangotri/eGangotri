@@ -194,10 +194,12 @@ class ArchiveHandler {
         String archiveProfile = uploadVO.archiveProfile
 
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)){
-            String lastStringFragAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameWithPath)
-            String lastStringFragAfterDashWithFileEndingRemoved = '"' + UploadUtils.removeFileEnding(lastStringFragAfterDash) + '"'
-            uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + lastStringFragAfterDashWithFileEndingRemoved : uploadLink
-        }
+            String fileNameOnly = UploadUtils.stripFilePathAndFileEnding(fileNameWithPath)
+            if(fileNameOnly.contains("-")){
+                String strAfterDash = '"' + UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly) + '"'
+                uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + strAfterDash : uploadLink
+            }
+       }
         uploadLink = uploadLink.replaceAll(/[#!]/,"")
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
