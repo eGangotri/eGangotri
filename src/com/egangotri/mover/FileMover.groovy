@@ -25,7 +25,7 @@ class FileMover {
 
         int index = 1
         profiles.each { profile ->
-            String srcDir = metaDataMap["${profile}.src"]
+            String srcDir = metaDataMap["${profile}"]
             String destDir = metaDataMap["${profile}.dest"]
 
             Integer srcFilesCount = noOfFiles(srcDir)
