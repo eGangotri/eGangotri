@@ -6,6 +6,8 @@ import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+import java.nio.file.Files
+
 @Slf4j
 class ValidateUtil {
     static List<LinksVO> csvToUsheredItemsVO(File csvFile) {
@@ -74,6 +76,28 @@ class ValidateUtil {
                     log.info("\t${counter+1}). '" + vo."$propertyAsString" + "'")
                 }
             }
+        }
+    }
+
+    static void moveFile(LinksVO movableItems, String destFolder, String counter = ""){
+        try {
+            File movableFile = new File(movableItems?.path?:"")
+            if(movableFile.exists()){
+                File dest = new File(destFolder +  File.separator + movableItems.title)
+                if(dest.exists()){
+                    log.info("\t$dest pre=exists. Will alter title")
+                    dest  = new File(destFolder +  File.separator + movableItems.title + "_1")
+                }
+                Files.move(movableFile.toPath(), dest.toPath())
+                log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
+            }
+            else{
+                log.info("\t${counter}File ${movableItems?.title} not found.")
+            }
+        }
+        catch(Exception e){
+            log.error("Error moving ${movableItems.path} ${e.message}")
+            e.printStackTrace()
         }
     }
 }

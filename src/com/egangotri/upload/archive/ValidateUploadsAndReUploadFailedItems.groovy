@@ -168,7 +168,7 @@ class ValidateUploadsAndReUploadFailedItems {
         if(checkDownloadOptions < 2 && _4Files == 1){
             ITEMS_WITH_CODE_404_BAD_DATA << entry
             log.info("\nCode 404 Bad Data File: \"${entry.archiveLink}\" Counter # ${counter}..")
-            moveFile(entry, EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
+           ValidateUtil.moveFile(entry, EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
         }
     }
     static void logUsheredMissedInfo(){
@@ -190,33 +190,13 @@ class ValidateUploadsAndReUploadFailedItems {
         }
     }
 
-    static void moveFile(LinksVO movableItems, String destFolder, String counter = ""){
-        try {
-            File movableFile = new File(movableItems?.path?:"")
-            if(movableFile.exists()){
-                File dest = new File(destFolder +  File.separator + movableItems.title)
-                if(dest.exists()){
-                    log.info("\t$dest pre=exists. Will alter title")
-                    dest  = new File(destFolder +  File.separator + movableItems.title + "_1")
-                }
-                Files.move(movableFile.toPath(), dest.toPath())
-                log.info("\t${counter}Moving ${movableItems.title} to ${destFolder}")
-            }
-            else{
-                log.info("\t${counter}File ${movableItems?.title} not found.")
-            }
-        }
-        catch(Exception e){
-            log.error("Error moving ${movableItems.path} ${e.message}")
-            e.printStackTrace()
-        }
-    }
+
 
     static void move503SlowDownFilesToSpecialFolder(){
         if(MISSED_OUT_USHERED_ITEMS){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
             MISSED_OUT_USHERED_ITEMS.eachWithIndex{ LinksVO _missedOutItems, int counter ->
-                moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER, "${counter+1}).")
+                ValidateUtil.moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER, "${counter+1}).")
             }
         }
     }
