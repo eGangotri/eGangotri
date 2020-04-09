@@ -51,13 +51,13 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
         EGangotriUtil.recordProgramStart("findMissedQueueItemsOnlyAndReupload")
-        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload])
+        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload,false])
         execute()
     }
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
         EGangotriUtil.recordProgramStart("findMissedUsheredItemsOnlyAndReupload")
-        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload])
+        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload,false])
         execute()
     }
     static void setCSVsForValidation(def args) {

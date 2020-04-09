@@ -163,10 +163,13 @@ class SettingsUtil {
         resetValues()
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         applySettings()
-        if(reuploaderFlags?.size() == 3){
+        if(reuploaderFlags?.size() >= 3){
             SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]
             SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[1]
             SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[2]
+            if(reuploaderFlags.size() > 3){
+                SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = reuploaderFlags[3]
+            }
         }
     }
 
