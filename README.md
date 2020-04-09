@@ -84,8 +84,9 @@ https://www.windows-commandline.com/disable-screensaver-registry-settings/
 #Additional Tools to Help
 1. https://www.bulkrenameutility.co.uk/Download.php
 2. pdftk https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
+If you prefer the command line you can use
+https://www.pdflabs.com/tools/pdftk-server/
+
 3. Adobe Acrobat
 4. https://bulkresizephotos.com/en
-5. To see your logs online through OneSync:
-https://support.office.com/en-us/article/use-onedrive-to-fetch-files-on-a-pc-70761550-519c-4d45-b780-5a613b2f8822?ui=en-US&rs=en-US&ad=US
-6. snap2html
+5. snap2html
