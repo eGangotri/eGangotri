@@ -360,6 +360,13 @@ class UploadUtils {
                 supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
+                if(_subjects.contains(",")){
+                    if(_subjects.contains(",")){
+                        def regex = /".*?"/
+                        def allSubjects = _subjects.findAll(regex).collect {it -> it.replaceAll(",", " ")}
+                        _subjects = allSubjects.join(",")
+                    }
+                }
                 supplementary_url += AMPERSAND + "subject=" + _subjects
             }
             if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
