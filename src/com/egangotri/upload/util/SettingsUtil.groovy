@@ -91,7 +91,7 @@ class SettingsUtil {
                 log.info("GENERATE_ONLY_URLS: " + EGangotriUtil.GENERATE_ONLY_URLS)
             }
 
-            if (settingsMetaDataMap.GENERATE_ONLY_URL) {
+            if (settingsMetaDataMap.GENERATE_RANDOM_CREATOR) {
                 EGangotriUtil.GENERATE_RANDOM_CREATOR = settingsMetaDataMap.GENERATE_RANDOM_CREATOR.toBoolean()
                 log.info("GENERATE_RANDOM_CREATOR: " + EGangotriUtil.GENERATE_RANDOM_CREATOR)
             }

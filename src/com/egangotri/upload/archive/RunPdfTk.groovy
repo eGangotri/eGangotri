@@ -35,7 +35,7 @@ class RunPdfTk {
             execInstruction.execute().text
             if(new File(repairedFile).exists()){
                 log.info("after execution of  ${src.name}")
-                Files.copy(src.toPath(), new File(_altered, src.name).toPath())
+                Files.move(src.toPath(), new File(_altered, src.name).toPath())
             }
         }
         catch(Exception ex){
