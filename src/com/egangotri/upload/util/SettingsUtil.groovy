@@ -13,6 +13,7 @@ class SettingsUtil {
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static boolean PREVIEW_FILES = true
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
+    static String ENHANCE_IDENTIFIER = true
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS=["freeze", "upload", "_dont"]
 
@@ -122,6 +123,11 @@ class SettingsUtil {
             if (settingsMetaDataMap.DEFAULT_LANGUAGE_ISO_CODE) {
                 DEFAULT_LANGUAGE_ISO_CODE = settingsMetaDataMap.DEFAULT_LANGUAGE_ISO_CODE
                 log.info("DEFAULT_LANGUAGE_ISO_CODE: " + DEFAULT_LANGUAGE_ISO_CODE)
+            }
+
+            if (settingsMetaDataMap.ENHANCE_IDENTIFIER) {
+                ENHANCE_IDENTIFIER = settingsMetaDataMap.DEFAULT_LANGUAGE_ISO_CODE.toBoolean()
+                log.info("ENHANCE_IDENTIFIER: " + ENHANCE_IDENTIFIER)
             }
 
             if (ArchiveUtil.ValidateUploadsAndReUploadFailedItems) {

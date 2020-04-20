@@ -1,2 +1,2 @@
 cd C:\ws\eGangotri
-gradle cronJob
+gradle cronJob 3600

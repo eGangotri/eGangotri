@@ -10,13 +10,20 @@ import org.quartz.impl.StdSchedulerFactory
 
 class RemoteJobScheduler {
     static int CRON_JOB_FREQUENCY_IN_MINUTES = 5
-    static void main(def args) throws Exception {
-        JobDetail job = JobBuilder.newJob(ExecuteBatchJob.class)
-                .withIdentity("executeRemotelyJob", "team-viewer-server-1").build();
+    static void main(String[] args) throws Exception {
+        if(args && args?.first()?.toString()?.isInteger()){
+            CRON_JOB_FREQUENCY_IN_MINUTES = args[0].toInteger()
+        }
+        execute("team-viewer-server-1", ExecuteBatchJob.class)
+    }
+
+    static void execute(String groupName, Class aClass ){
+        JobDetail job = JobBuilder.newJob(aClass)
+                .withIdentity("executeRemotelyJob", groupName).build();
         // Trigger the job to run on the next round minute
         Trigger trigger = TriggerBuilder
                 .newTrigger()
-                .withIdentity("executeRemotelyTrigger", "team-viewer-server-1")
+                .withIdentity("executeRemotelyTrigger", groupName)
                 .withSchedule(
                         SimpleScheduleBuilder.simpleSchedule()
                                 .withIntervalInMinutes(CRON_JOB_FREQUENCY_IN_MINUTES).repeatForever())
