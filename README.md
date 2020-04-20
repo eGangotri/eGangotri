@@ -90,3 +90,11 @@ https://www.pdflabs.com/tools/pdftk-server/
 3. Adobe Acrobat
 4. https://bulkresizephotos.com/en
 5. snap2html
+
+Image Manipulation
+Rotation Error:
+https://savolai.net/software/jpeg-autorotate/
+Explanation: https://www.howtogeek.com/254830/why-your-photos-dont-always-appear-correctly-rotated/
+
+Watermarking:
+https://batchwatermark.com/en
