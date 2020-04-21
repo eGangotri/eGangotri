@@ -126,7 +126,7 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.ENHANCE_IDENTIFIER) {
-                ENHANCE_IDENTIFIER = settingsMetaDataMap.DEFAULT_LANGUAGE_ISO_CODE.toBoolean()
+                ENHANCE_IDENTIFIER = settingsMetaDataMap.ENHANCE_IDENTIFIER.toBoolean()
                 log.info("ENHANCE_IDENTIFIER: " + ENHANCE_IDENTIFIER)
             }
 
