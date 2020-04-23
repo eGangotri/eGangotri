@@ -1,6 +1,6 @@
 applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe"]
 
-task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
+task uploadToArchive(dependsOn: ['snap2htmlCronJob'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
@@ -11,7 +11,7 @@ task uploadToArchive(dependsOn: 'classes', type: JavaExec) {
        args = ["PRFL1","PRFL2"]
       */
 
-    args = ["PRFL1","PRFL2","PRFL3","PRFL4","PRFL5"]
+    args = ["EGANGOTRI_MANU"]
 }
 
 task preUploadReview(dependsOn: 'classes', type: JavaExec) {
@@ -48,7 +48,7 @@ task cronJob(dependsOn: 'classes', type: JavaExec) {
 
 task snap2htmlCronJob(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.scheduler.RemoteJobScheduler"
+    main = "com.egangotri.batch.SnapToHtml"
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
