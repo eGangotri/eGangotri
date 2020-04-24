@@ -1,5 +1,6 @@
 package com.egangotri.upload.gmail
 
+import com.egangotri.mail.MailUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -46,7 +47,7 @@ class GoogleDriveHandler {
 
             WebElement pass = driver.findElement(By.name("password"))
             String kuta = metaDataMap."${loginProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
-            log.info "kuta:${kuta}"
+            log.info "kuta:${EGangotriUtil.hidePassword(kuta)}}"
             pass.sendKeys(kuta)
             pass.sendKeys(Keys.RETURN)
             EGangotriUtil.sleepTimeInSeconds(1)

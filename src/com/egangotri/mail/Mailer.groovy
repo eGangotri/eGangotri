@@ -18,7 +18,7 @@ class Mailer {
         if (!MAILER_TO_EMAILS) {
             SettingsUtil.applyMailerSettings()
         }
-        sendMail(MAILER_TO_EMAILS, subject, msg, attachmentPath)
+        //sendMail(MAILER_TO_EMAILS, subject, msg, attachmentPath)
     }
 
     static void sendMail(List<String> to, String subject, String msg, String attachmentPath = "") {

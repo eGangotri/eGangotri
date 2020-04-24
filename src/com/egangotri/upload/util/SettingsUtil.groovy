@@ -170,7 +170,7 @@ class SettingsUtil {
         }
         if (settingsMetaDataMap.MAILER_PASSWORD) {
             MailUtil.MAILER_PASSWORD = stripQuotes(settingsMetaDataMap.MAILER_PASSWORD)
-            log.info("MAILER_PASSWORD: " + MailUtil.MAILER_PASSWORD)
+            log.info("MAILER_PASSWORD: ${EGangotriUtil.hidePassword(MailUtil.MAILER_PASSWORD)}")
         }
         if (settingsMetaDataMap.MAILER_HOST) {
             MailUtil.MAILER_HOST = stripQuotes(settingsMetaDataMap.MAILER_HOST)

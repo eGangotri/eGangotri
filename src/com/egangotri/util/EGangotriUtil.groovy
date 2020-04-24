@@ -1,5 +1,6 @@
 package com.egangotri.util
 
+import com.egangotri.mail.MailUtil
 import com.egangotri.upload.util.UploadUtils
 import groovy.util.logging.Slf4j
 
@@ -99,6 +100,11 @@ class EGangotriUtil {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE)
     }
 
+    static String hidePassword(String pwd){
+        String hiddenPwd = ""
+        pwd.size().times{hiddenPwd+="*"}
+        return hiddenPwd
+    }
     static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overrideEgangotriWaitingPeriod = false){
         Thread.sleep(overrideEgangotriWaitingPeriod ? (sleepTimeInSeconds*1000).toInteger() : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
     }
