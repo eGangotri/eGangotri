@@ -1,36 +1,45 @@
 package com.egangotri.batch
 
 import com.egangotri.mail.Mailer
+import com.egangotri.upload.util.SettingsUtil
+import groovy.util.logging.Slf4j
 
 import java.text.SimpleDateFormat
 
+@Slf4j
 class SnapToHtml {
-
-    static String srcFolder = "D:\\Treasures25"
-    static String snap2HtmlPath = "D:\\Snap2HTML\\Snap2HTML.exe"
+    static String SNAP2HTML_INSTALLATION_PATH="Snap2HTML.exe"
+    static String FOLDER_FOR_SNAP2HTML_LISTING_GENERATION="."
     static def dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh.mm aa")
-    static String execCmd = """
-    $snap2HtmlPath -path:$srcFolder -outfile:"$srcFolder\\FILE_TITLE.html" -title:"FILE_TITLE"
-    """
+    //Will be initialized in SettingsUtil because its dependencies on other static variable will make it outdated
+    static String execCmd = ""
 
     static void main(String[] args) {
+        if (args && args.size() == 2) {
+            SNAP2HTML_INSTALLATION_PATH = args[0]
+            FOLDER_FOR_SNAP2HTML_LISTING_GENERATION = args[1]
+        }
         try{
             execute(args)
         }
         catch(Exception e){
-            e.printStackTrace()
+            log.error("Snap2Html",e)
         }
     }
 
     static void execute(String[] args){
-        if (args && args.size() == 2) {
-            srcFolder = args[0]
-            snap2HtmlPath = args[1]
+        SettingsUtil.applySnap2HtmlSettings()
+        if(!FOLDER_FOR_SNAP2HTML_LISTING_GENERATION){
+            return
         }
-        println "cmd /c echo Make sure snap2html is on the Path".execute().text
+        println "cmd /c echo Make sure Snap2HTML.exe is installed and is on the Path".execute().text
         String fileTitle = "snap2html @ " + dateFormat.format(new Date())
         execCmd = execCmd.replaceAll('FILE_TITLE', fileTitle)
-        println "cmd /c ${execCmd}".execute().text
-        Mailer.notify("$fileTitle Generated", fileTitle, "${srcFolder}${File.separator}${fileTitle}.html")
+        log.info("SnapToHtml.execCmd: " + SnapToHtml.execCmd)
+        log.info( "cmd /c ${execCmd}".execute().text)
+        File filePath = new File("${FOLDER_FOR_SNAP2HTML_LISTING_GENERATION}${File.separator}${fileTitle}.html")
+        if(filePath.exists()){
+            Mailer.notify(filePath)
+        }
     }
 }

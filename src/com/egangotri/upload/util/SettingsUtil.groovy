@@ -1,5 +1,6 @@
 package com.egangotri.upload.util
 
+import com.egangotri.batch.SnapToHtml
 import com.egangotri.mail.MailUtil
 import com.egangotri.mail.Mailer
 import com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems
@@ -157,12 +158,14 @@ class SettingsUtil {
                 log.info("MINIMUM_FILE_NAME_LENGTH: " + MINIMUM_FILE_NAME_LENGTH)
             }
             applyMailerSettings()
+            applySnap2HtmlSettings()
         }
     }
 
     static stripQuotes(quotedString){
         return quotedString.replaceAll(/["|']/,"")
     }
+
     static void applyMailerSettings(){
         if (settingsMetaDataMap.MAILER_USERNAME) {
             MailUtil.MAILER_USERNAME = stripQuotes(settingsMetaDataMap.MAILER_USERNAME)
@@ -180,6 +183,20 @@ class SettingsUtil {
             MailUtil.MAILER_TO_EMAILS = csvToList(settingsMetaDataMap.MAILER_TO_EMAILS)
             log.info("MAILER_TO_EMAILS: " + MailUtil.MAILER_TO_EMAILS)
         }
+    }
+
+    static void applySnap2HtmlSettings() {
+        if (settingsMetaDataMap.SNAP2HTML_INSTALLATION_PATH) {
+            SnapToHtml.SNAP2HTML_INSTALLATION_PATH = stripQuotes(settingsMetaDataMap.SNAP2HTML_INSTALLATION_PATH)
+            log.info("SNAP2HTML_INSTALLATION_PATH: " + SnapToHtml.SNAP2HTML_INSTALLATION_PATH)
+        }
+        if (settingsMetaDataMap.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION) {
+            SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION = stripQuotes(settingsMetaDataMap.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION)
+            log.info("FOLDER_FOR_SNAP2HTML_LISTING_GENERATION: " + SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION)
+        }
+        SnapToHtml.execCmd = """
+    ${SnapToHtml.SNAP2HTML_INSTALLATION_PATH} -path:${SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION} -outfile:"${SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION}${File.separator}FILE_TITLE.html" -title:"FILE_TITLE"
+    """
     }
 
     static void applySettingsWithReuploaderFlags(List<Boolean> reuploaderFlags = []) {

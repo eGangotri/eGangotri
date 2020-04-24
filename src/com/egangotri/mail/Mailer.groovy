@@ -14,24 +14,28 @@ class Mailer {
         notify("testSub", "testMsg", "D:\\tmp\1.txt")
     }
 
-    static void notify(String subject, String msg, String attachmentPath = "") {
+    static void notify(File attachment) {
+        notify(attachment.name,attachment.name, attachment.absolutePath)
+    }
+
+    static void notify(String subject, String msg, String attachment = null) {
         if (!MAILER_TO_EMAILS) {
             SettingsUtil.applyMailerSettings()
         }
-        //sendMail(MAILER_TO_EMAILS, subject, msg, attachmentPath)
+        sendMail(MAILER_TO_EMAILS, subject, msg, attachment)
     }
 
-    static void sendMail(List<String> to, String subject, String msg, String attachmentPath = "") {
+    static void sendMail(List<String> to, String subject, String msg, String attachment = "") {
         to.forEach { email ->
-            sendMail(email, subject, msg, attachmentPath)
+            sendMail(email, subject, msg, attachment)
         }
     }
 
-    static void sendMail(String to, String subject, String msg, String attachmentPath = "") {
+    static void sendMail(String to, String subject, String msg, String attachment = "") {
         if (!MAILER_USERNAME || !MAILER_PASSWORD || !MAILER_TO_EMAILS) {
             SettingsUtil.applyMailerSettings()
         }
-        log.info("sendMail  To $to Subject: '$subject' Msg: '$msg' ${attachmentPath ? '\nAttachment is ' + attachmentPath : ''}")
+        log.info("Sending eMail:\n  \tTo $to \n\tSubject: '$subject' \n\tMsg: '$msg' ${attachment ? '\n\tAttachment is ' + attachment : ''}")
         Properties props = createProps()
         Session session = createMailSession(props)
 
@@ -43,8 +47,8 @@ class Mailer {
                     InternetAddress.parse(to))
             mimeMessage.setSubject(subject)
 
-            if (attachmentPath) {
-                Multipart multipart = generateMultiPart(msg, attachmentPath)
+            if (attachment) {
+                Multipart multipart = generateMultiPart(msg, attachment)
                 mimeMessage.setContent(multipart)
             } else {
                 mimeMessage.setText(msg)
