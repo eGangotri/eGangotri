@@ -1,5 +1,7 @@
 package com.egangotri.upload.util
 
+import com.egangotri.mail.MailUtil
+import com.egangotri.mail.Mailer
 import com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
@@ -10,20 +12,19 @@ class SettingsUtil {
     static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
-    static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static boolean PREVIEW_FILES = true
+    static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS=["freeze", "upload", "_dont"]
 
     static int MINIMUM_FILE_NAME_LENGTH = 1
-
+    static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
     static void applySettings(boolean createVOSavingFiles = true) {
         UploadUtils.resetGlobalUploadCounter()
         if(createVOSavingFiles){
             ArchiveUtil.createVOSavingFiles()
         }
-        Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
         if (settingsMetaDataMap) {
             if (settingsMetaDataMap.PARTITION_SIZE && settingsMetaDataMap.PARTITION_SIZE.isInteger() && settingsMetaDataMap.PARTITION_SIZE.toInteger() > 0) {
                 try {
@@ -155,7 +156,29 @@ class SettingsUtil {
                 MINIMUM_FILE_NAME_LENGTH = settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH.toInteger()
                 log.info("MINIMUM_FILE_NAME_LENGTH: " + MINIMUM_FILE_NAME_LENGTH)
             }
+            applyMailerSettings()
+        }
+    }
 
+    static stripQuotes(quotedString){
+        return quotedString.replaceAll(/["|']/,"")
+    }
+    static void applyMailerSettings(){
+        if (settingsMetaDataMap.MAILER_USERNAME) {
+            MailUtil.MAILER_USERNAME = stripQuotes(settingsMetaDataMap.MAILER_USERNAME)
+            log.info("MAILER_USERNAME: " + MailUtil.MAILER_USERNAME)
+        }
+        if (settingsMetaDataMap.MAILER_PASSWORD) {
+            MailUtil.MAILER_PASSWORD = stripQuotes(settingsMetaDataMap.MAILER_PASSWORD)
+            log.info("MAILER_PASSWORD: " + MailUtil.MAILER_PASSWORD)
+        }
+        if (settingsMetaDataMap.MAILER_HOST) {
+            MailUtil.MAILER_HOST = stripQuotes(settingsMetaDataMap.MAILER_HOST)
+            log.info("MAILER_HOST: " + MailUtil.MAILER_HOST)
+        }
+        if (settingsMetaDataMap.MAILER_TO_EMAILS) {
+            MailUtil.MAILER_TO_EMAILS = csvToList(settingsMetaDataMap.MAILER_TO_EMAILS)
+            log.info("MAILER_TO_EMAILS: " + MailUtil.MAILER_TO_EMAILS)
         }
     }
 
@@ -175,7 +198,6 @@ class SettingsUtil {
 
     static List csvToList(String csv){
         csv = csv.replaceAll(/["|\[|\]|']/, "")
-        //csv = csv.replace("[","").replace("]","")
         return csv.split(",")*.trim()
     }
 
