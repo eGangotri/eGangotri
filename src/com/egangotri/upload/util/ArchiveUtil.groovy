@@ -3,6 +3,7 @@ package com.egangotri.upload.util
 import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
@@ -22,9 +23,14 @@ class ArchiveUtil {
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
-        WebElement avatar = driver.findElementByClassName("avatar")
-        String userName = avatar.getAttribute("alt")
+        WebElement userMenu =  driver.findElement(By.xpath("//*[@id=\"wrap\"]/topnav-element"))
+        def jsonSlurper = new JsonSlurper()
+        log.info("userName: ${userMenu.getAttribute("config")}")
+
+        String config = userMenu.getAttribute("config")
+        def userName = jsonSlurper.parseText(config).username
         log.info("userName: ${userName}")
+
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
         if(!_startTime){
             UploadUtils.openNewTab(driver)

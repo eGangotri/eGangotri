@@ -11,7 +11,7 @@ task uploadToArchive(dependsOn: ['snap2htmlCronJob'], type: JavaExec) {
        args = ["PRFL1","PRFL2"]
       */
 
-    args = ["EGANGOTRI_MANU"]
+    args = ["EGANGOTRI_MANU_CAT"]
 }
 
 task preUploadReview(dependsOn: 'classes', type: JavaExec) {

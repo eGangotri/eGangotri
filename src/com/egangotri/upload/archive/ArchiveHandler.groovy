@@ -196,7 +196,7 @@ class ArchiveHandler {
         if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)){
             String fileNameOnly = UploadUtils.stripFilePathAndFileEnding(fileNameWithPath)
             if(fileNameOnly.contains("-")){
-                String strAfterDash = '"' + UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly) + '"'
+                String strAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly).trim()
                 uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + strAfterDash : uploadLink
             }
        }
