@@ -173,7 +173,7 @@ class UploadUtils {
         if (excludeFlag) {
             optionsMap.put("excludeFilter", { File file ->
                 file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
-                SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS.stream().anyMatch {
+                SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS*.toLowerCase().stream().anyMatch {
                     String ignorableKeyWords -> file.absolutePath.toLowerCase().contains(ignorableKeyWords)
                 } ||
                         file.name.startsWith(".") ||
