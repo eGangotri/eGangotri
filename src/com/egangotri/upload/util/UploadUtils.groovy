@@ -552,7 +552,7 @@ class UploadUtils {
         String statusMsg = countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
         String report = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
                 "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t $statusMsg"
-        println(report)
+        log.info(report)
         return report
     }
 

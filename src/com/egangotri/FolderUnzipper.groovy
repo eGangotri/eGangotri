@@ -1,10 +1,12 @@
 package com.egangotri
 
+import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
 /**
  * Created by user on 7/11/2015.
  */
+@Slf4j
 class FolderUnzipper {
     static String FOLDER_NAME = "C:\\hw\\amit\\zipp"
     static List<String> ZIP = [".zip", ".rar"]
@@ -39,7 +41,7 @@ class FolderUnzipper {
                         new File(destDir).mkdir()
                     }
                     def ant = new AntBuilder()   // create an antbuilder
-                    println "${file.absolutePath}"
+                    log.info "${file.absolutePath}"
                     ant.unzip(src: file.absolutePath,
                             dest: destDir,
                             overwrite: "false")

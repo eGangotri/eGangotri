@@ -12,10 +12,12 @@ import com.itextpdf.text.DocumentException
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfSmartCopy
+import groovy.util.logging.Slf4j
 
 /**
  * This Class takes in a Folder and splits all pdfs that are above 100 MB.
  */
+@Slf4j
 class PdfSplitter {
     static String SPLIT_FOLDER_NAME = "split"
     static String PDF = ".pdf"
@@ -32,7 +34,7 @@ class PdfSplitter {
 
     static main(args) {
         String args0 = args ? args[0] : null
-        println "args0:$args0"
+        log.info "args0:$args0"
 //        if(args0){
 //            FOLDER_NAME = args0
 //        }
@@ -47,7 +49,7 @@ class PdfSplitter {
 
     void processAFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        println "processAFolder $directory"
+        log.info "processAFolder $directory"
         totalFilesSplittable = 0
         def files = directory.listFiles()
         //GParsPool.withPool {
@@ -58,7 +60,7 @@ class PdfSplitter {
         }
 
         //}
-        println "***Total Files Split: ${totalFilesSplittable}"
+        log.info "***Total Files Split: ${totalFilesSplittable}"
     }
 
     /**
@@ -94,11 +96,11 @@ class PdfSplitter {
             def formattedSize = new BigDecimal(fileSizeInMB).setScale(2, BigDecimal.ROUND_FLOOR)
 
             if (fileSizeInMB < PdfSplitter.THRESHOLD) {
-                System.err.println "( Size: ${formattedSize} Mb) No Need to Split"
+                System.err.log.info "( Size: ${formattedSize} Mb) No Need to Split"
                 return
             }
 
-            println "( Size: ${formattedSize}) will be Split"
+            log.info "( Size: ${formattedSize}) will be Split"
             totalFilesSplittable++
 
             creteSplitFolder(folderAbsolutePath)
@@ -128,12 +130,12 @@ class PdfSplitter {
                 copy.addPage(copy.getImportedPage(splitPdfBySize, i))    /* Import pages from original document */
                 findPdfSize = copy.getCurrentDocumentSize()    /* Estimate PDF size in bytes */
                 combinedsize = (float) findPdfSize / (BYTES_IN_A_KILO)  /* Convert bytes to kilobytes */
-                //println "findPdfSize: $findPdfSize"
-                //println "combinedsize: $combinedsize"
+                //log.info "findPdfSize: $findPdfSize"
+                //log.info "combinedsize: $combinedsize"
                 //should be less than 99 MB
-                //println ("i: $i ,number_of_pages: $number_of_pages")
+                //log.info ("i: $i ,number_of_pages: $number_of_pages")
                 if (combinedsize > (THRESHOLD * BYTES_IN_A_KILO) || i == number_of_pages) {
-                    println "Done creating $splitFileName"
+                    log.info "Done creating $splitFileName"
                     document.close()
                     combinedsize = 0
                 }
@@ -142,7 +144,7 @@ class PdfSplitter {
             if (document.isOpen()) {
                 document.close()
             }
-            println("PDF ($fileName) Split By Size Completed. Number of Documents Created: $pagenumber")
+            log.info("PDF ($fileName) Split By Size Completed. Number of Documents Created: $pagenumber")
         }
         catch (Exception e) {
             e.printStackTrace()
@@ -155,10 +157,10 @@ class PdfSplitter {
 
         if (splitFolder) {
             if (!splitFolder.exists()) {
-                println("${PdfSplitter.SPLIT_FOLDER_NAME} missing. Creating")
+                log.info("${PdfSplitter.SPLIT_FOLDER_NAME} missing. Creating")
                 splitFolder.mkdir()
             } else {
-                println("${PdfSplitter.SPLIT_FOLDER_NAME} already exists.")
+                log.info("${PdfSplitter.SPLIT_FOLDER_NAME} already exists.")
             }
         }
     }

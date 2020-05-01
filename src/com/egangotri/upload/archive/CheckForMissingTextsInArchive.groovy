@@ -17,7 +17,7 @@ class CheckForMissingTextsInArchive {
     static main(args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
-            println "args $args"
+            log.info "args $args"
             archiveProfiles = args.toList()
         }
 

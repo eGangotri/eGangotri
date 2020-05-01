@@ -32,7 +32,7 @@ class SnapToHtml {
         if(!FOLDER_FOR_SNAP2HTML_LISTING_GENERATION){
             return
         }
-        println "cmd /c echo Make sure Snap2HTML.exe is installed and is on the Path".execute().text
+        log.info "cmd /c echo Make sure Snap2HTML.exe is installed and is on the Path".execute().text
         String fileTitle = "snap2html @ " + dateFormat.format(new Date())
         execCmd = execCmd.replaceAll('FILE_TITLE', fileTitle)
         log.info("SnapToHtml.execCmd: " + SnapToHtml.execCmd)

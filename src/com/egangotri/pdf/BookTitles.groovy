@@ -25,7 +25,7 @@ class BookTitles {
         if(args?.size() >0){
             args0 = args[0]
         }
-        //println "args0:$args0"
+        //log.info "args0:$args0"
         log.info("args0:$args0")
 
         //new BookTitles().actor.start()

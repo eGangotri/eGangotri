@@ -6,9 +6,10 @@ import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfImportedPage
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfSmartCopy
+import groovy.util.logging.Slf4j
 
 import java.util.regex.Matcher
-
+@Slf4j
 class PDFSwapForRightToLeftOrder {
 
     static String path = "C:\\q\\q\\q"
@@ -27,7 +28,7 @@ class PDFSwapForRightToLeftOrder {
         List<File> evens = []
         new File(tmpDir).list().each { String fileName ->
             String fullPath = "$tmpDir${File.separator}${fileName}"
-            println "${fullPath}"
+            log.info "${fullPath}"
 
             Matcher matcher = (fileName =~ /-\d+\.pdf/)
             int digits = stripToDigit(matcher ? matcher[0]?.toString() : "")
@@ -35,10 +36,10 @@ class PDFSwapForRightToLeftOrder {
             if (digits > 0) {
                 if ((digits) % 2 == 1) {
                     odds << new File(fullPath)
-                    println "odds: $fileName"
+                    log.info "odds: $fileName"
                 } else {
                     evens << new File(fullPath)
-                    println "evens: $fileName"
+                    log.info "evens: $fileName"
                 }
             }
         }
@@ -49,7 +50,7 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static int stripToDigit(String digits) {
-        println "$fileName: ${digits}"
+        log.info "$fileName: ${digits}"
         if (digits) {
             digits = digits.replace("-", "")
             digits = digits.replace(".pdf", "")
@@ -60,7 +61,7 @@ class PDFSwapForRightToLeftOrder {
             if (digits.startsWith("0")) {
                 digits = digits.replaceFirst("-0", "")
             }
-            println "${digits} "
+            log.info "${digits} "
             return digits as int
         }
 
@@ -69,7 +70,7 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static void concatenatePdfs(List<File> listOfPdfFiles, File outputFile) throws DocumentException, IOException {
-        println("concatenatePdfs for $outputFile")
+        log.info("concatenatePdfs for $outputFile")
         Document document = new Document()
         FileOutputStream outputStream = new FileOutputStream(outputFile)
         PdfCopy copy = new PdfSmartCopy(document, outputStream)
@@ -83,7 +84,7 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static void concatenateOddEvenPdfs(List<File> listOfOddPdfFiles, List<File> listOfEvenPdfFiles, File outputFile) throws DocumentException, IOException {
-        println("concatenatePdfs for $outputFile")
+        log.info("concatenatePdfs for $outputFile")
         Document document = new Document()
         FileOutputStream outputStream = new FileOutputStream(outputFile)
         PdfCopy copy = new PdfSmartCopy(document, outputStream)
@@ -116,7 +117,7 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static PdfReader getReader(String inFile) {
-        System.out.println("Reading " + inFile)
+        System.out.log.info("Reading " + inFile)
         PdfReader reader = new PdfReader(inFile)
         return reader
 
@@ -134,11 +135,11 @@ class PDFSwapForRightToLeftOrder {
         try {
             PdfReader reader = getReader(getFileName())
             int n = reader.getNumberOfPages()
-            System.out.println("Number of pages : " + n)
+            System.out.log.info("Number of pages : " + n)
             int i = 0
             while (i < n) {
                 String outFile = getTmpFileName(i)
-                System.out.println("Writing " + outFile)
+                System.out.log.info("Writing " + outFile)
                 Document document = new Document(reader.getPageSizeWithRotation(1))
                 PdfCopy writer = new PdfCopy(document, new FileOutputStream(outFile))
                 document.open()

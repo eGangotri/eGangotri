@@ -2,10 +2,12 @@ package com.egangotri.scheduler
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import groovy.util.logging.Slf4j
 import org.quartz.Job
 import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
 
+@Slf4j
 class ExecuteBatchJob implements Job {
     static final String  CRON_FILE_PATH = File.separator + "google_drive" + File.separator + "archive_uploader" + File.separator + "cron.txt"
     static final String REMOTE_INSTRUCTIONS_FILE = EGangotriUtil.EGANGOTRI_BASE_DIR + CRON_FILE_PATH
@@ -13,7 +15,7 @@ class ExecuteBatchJob implements Job {
     void execute(JobExecutionContext context)
             throws JobExecutionException {
 
-        println("Cron Job Started");
+        log.info("Cron Job Started");
         //we have to clear it each time so that no instuction is repeated
         File fileWithInstructions = new File(REMOTE_INSTRUCTIONS_FILE)
         if(!fileWithInstructions.exists()){
@@ -24,7 +26,7 @@ class ExecuteBatchJob implements Job {
             instructions = DEFAULT_INSTRUCTION + new Date().format(UploadUtils.DATE_TIME_PATTERN)
         }
         fileWithInstructions.write(DEFAULT_INSTRUCTION + new Date().format(UploadUtils.DATE_TIME_PATTERN))
-        println "cmd /c ${instructions}".execute().text
+        log.info "cmd /c ${instructions}".execute().text
         //To reboot use
         //shutdown /r
         // TO Close all Chrome Browsers use
