@@ -83,7 +83,7 @@ class PdfSplitter {
     void splitPdfIfGreaterThanThreshold(String folderAbsolutePath, File file) {
         try {
             String fileName = file.name
-            print("\t\tProcessing $fileName")
+            log.info("\t\tProcessing $fileName")
 
             //Step 1:
             PdfReader splitPdfBySize = new PdfReader(folderAbsolutePath + "\\" + fileName)
