@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat
 @Slf4j
 class SnapToHtml {
     static String SNAP2HTML_INSTALLATION_PATH="Snap2HTML.exe"
-    static String FOLDER_FOR_SNAP2HTML_LISTING_GENERATION="."
+    static String FOLDER_FOR_SNAP2HTML_LISTING_GENERATION=""
     static def dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh.mm aa")
     //Will be initialized in SettingsUtil because its dependencies on other static variable will make it outdated
     static String execCmd = ""

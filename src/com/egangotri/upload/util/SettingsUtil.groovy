@@ -15,15 +15,16 @@ class SettingsUtil {
     static boolean PREVIEW_FILES = true
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
-    static List<String> ALLOWED_EXTENSIONS = ["pdf"]
-    static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS=["freeze", "upload", "_dont"]
+    static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
+    static List<String> ALLOWED_EXTENSIONS = []
+    static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
 
     static int MINIMUM_FILE_NAME_LENGTH = 1
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
+
     static void applySettings(boolean createVOSavingFiles = true) {
         UploadUtils.resetGlobalUploadCounter()
-        if(createVOSavingFiles){
+        if (createVOSavingFiles) {
             ArchiveUtil.createVOSavingFiles()
         }
         if (settingsMetaDataMap) {
@@ -105,20 +106,28 @@ class SettingsUtil {
                 log.info("IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS: " + EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
             }
 
-            if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
-                IGNORE_EXTENSIONS = csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
-                log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
-            }
             if (settingsMetaDataMap.ALLOWED_EXTENSIONS) {
                 ALLOWED_EXTENSIONS = csvToList(settingsMetaDataMap.ALLOWED_EXTENSIONS)
-                FileUtil.ALLOWED_EXTENSIONS_REGEX =  /.*\./ + ALLOWED_EXTENSIONS.join(/|.*\./)
-                log.info("ALLOWED_EXTENSIONS: " + ALLOWED_EXTENSIONS)
-                log.info("ALLOWED_EXTENSIONS_REGEX: " + FileUtil.ALLOWED_EXTENSIONS_REGEX)
+                if (ALLOWED_EXTENSIONS) {
+                    FileUtil.ALLOWED_EXTENSIONS_REGEX = /.*\./ + ALLOWED_EXTENSIONS.join(/|.*\./)
+                    log.info("ALLOWED_EXTENSIONS: " + ALLOWED_EXTENSIONS)
+                    log.info("ALLOWED_EXTENSIONS_REGEX: " + FileUtil.ALLOWED_EXTENSIONS_REGEX)
+                }
             }
 
-            if(ALLOWED_EXTENSIONS){
+            if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
+                if (!ALLOWED_EXTENSIONS) {
+                    IGNORE_EXTENSIONS = csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
+                    log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
+                } else {
+                    log.info("IGNORE_EXTENSIONS ignored because ALLOWED_EXTENSIONS has values")
+                }
+            }
+
+            if (ALLOWED_EXTENSIONS) {
                 IGNORE_EXTENSIONS = []
             }
+
             if (settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS) {
                 IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = csvToList(settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
                 log.info("IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS: " + IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
@@ -165,11 +174,11 @@ class SettingsUtil {
         }
     }
 
-    static stripQuotes(quotedString){
-        return quotedString.replaceAll(/["|']/,"")
+    static stripQuotes(quotedString) {
+        return quotedString.replaceAll(/["|']/, "")
     }
 
-    static void applyMailerSettings(){
+    static void applyMailerSettings() {
         if (settingsMetaDataMap.MAILER_USERNAME) {
             MailUtil.MAILER_USERNAME = stripQuotes(settingsMetaDataMap.MAILER_USERNAME)
             log.info("MAILER_USERNAME: " + MailUtil.MAILER_USERNAME)
@@ -206,22 +215,22 @@ class SettingsUtil {
         resetValues()
         ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
         applySettings()
-        if(reuploaderFlags?.size() >= 3){
-            SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[0]
-            SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[1]
-            SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS=reuploaderFlags[2]
-            if(reuploaderFlags.size() > 3){
+        if (reuploaderFlags?.size() >= 3) {
+            SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = reuploaderFlags[0]
+            SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = reuploaderFlags[1]
+            SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = reuploaderFlags[2]
+            if (reuploaderFlags.size() > 3) {
                 SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = reuploaderFlags[3]
             }
         }
     }
 
-    static List csvToList(String csv){
-        csv = csv.replaceAll(/["|\[|\]|']/, "")
-        return csv.split(",")*.trim()
+    static List csvToList(String csv) {
+        String _csv = csv.replaceAll(/["|\[|\]|'|\s]/, "").trim()
+            return _csv ? _csv.split(",")*.trim() : []
     }
 
-    static void resetValues(){
+    static void resetValues() {
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
         ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
@@ -229,9 +238,9 @@ class SettingsUtil {
         ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FOR_TESTING = []
         ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
         ValidateUploadsAndReUploadFailedItems.MISSED_OUT_QUEUED_ITEMS = []
-        ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS =  []
-        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA =  []
-        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN =  []
+        ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA = []
+        ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN = []
         ArchiveUtil.generateFolder(EGangotriUtil.CODE_404_BAD_DATA_FOLDER)
         ArchiveUtil.generateFolder(EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER)
     }

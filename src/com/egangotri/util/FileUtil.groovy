@@ -31,7 +31,7 @@ class FileUtil {
 
     static final String PRE_CUTOFF = "pre57"
 
-    static String ALLOWED_EXTENSIONS_REGEX = SettingsUtil.ALLOWED_EXTENSIONS ? /.*.pdf || .*.wav/ : /.*/
+    static String ALLOWED_EXTENSIONS_REGEX = /.*/
 
     static moveDir(String srcDir, String destDir) {
         // create an ant-builder
