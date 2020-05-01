@@ -8,7 +8,6 @@ import groovy.util.logging.Slf4j
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -169,7 +168,7 @@ class UploadUtils {
     static List<String> getAllPdfs(File folder, Boolean excludeFlag) {
         List<String> pdfs = []
         Map optionsMap = [type      : FileType.FILES,
-                          nameFilter: ~(FileUtil.PDF_REGEX)
+                          nameFilter: ~(FileUtil.ALLOWED_EXTENSIONS_REGEX)
         ]
         if (excludeFlag) {
             optionsMap.put("excludeFilter", { File file ->

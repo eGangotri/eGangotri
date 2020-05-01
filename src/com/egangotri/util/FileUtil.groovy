@@ -1,5 +1,6 @@
 package com.egangotri.util
 
+import com.egangotri.upload.util.SettingsUtil
 import groovy.util.logging.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -29,10 +30,8 @@ class FileUtil {
     static final Map<String, String> ALL_FOLDERS = getFoldersCorrespondingToProfile()
 
     static final String PRE_CUTOFF = "pre57"
-    //can be overridden by making PDF_ONLY key in settings.properties = true
-    static Boolean PDF_ONLY = false
 
-    static String PDF_REGEX = PDF_ONLY == true ? /.*.pdf/ : /.*/
+    static String ALLOWED_EXTENSIONS_REGEX = SettingsUtil.ALLOWED_EXTENSIONS ? /.*.pdf || .*.wav/ : /.*/
 
     static moveDir(String srcDir, String destDir) {
         // create an ant-builder

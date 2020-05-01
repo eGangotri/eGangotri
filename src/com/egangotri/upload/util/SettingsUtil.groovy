@@ -2,7 +2,6 @@ package com.egangotri.upload.util
 
 import com.egangotri.batch.SnapToHtml
 import com.egangotri.mail.MailUtil
-import com.egangotri.mail.Mailer
 import com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
@@ -17,6 +16,7 @@ class SettingsUtil {
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
     static List<String> IGNORE_EXTENSIONS = ["jpg","gif","bmp","png", "tif", "tiff","exe","jpeg","msi","ini","bat","jar","chm", "db"]
+    static List<String> ALLOWED_EXTENSIONS = ["pdf"]
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS=["freeze", "upload", "_dont"]
 
     static int MINIMUM_FILE_NAME_LENGTH = 1
@@ -71,12 +71,6 @@ class SettingsUtil {
                 }
                 log.info("MAX_UPLODABLES: " + EGangotriUtil.MAX_UPLODABLES)
             }
-            if (settingsMetaDataMap.PDF_ONLY && settingsMetaDataMap.PDF_ONLY == "true") {
-                FileUtil.PDF_ONLY = settingsMetaDataMap.PDF_ONLY
-                FileUtil.PDF_REGEX = FileUtil.PDF_ONLY ? /.*.pdf/ : /.*/
-                log.info "settingsMetaDataMap.PDF_ONLY ${settingsMetaDataMap.PDF_ONLY}"
-                log.info("PDF_REGEX: " + settingsMetaDataMap.PDF_ONLY.toBoolean() + " " + FileUtil.PDF_ONLY + " " + FileUtil.PDF_REGEX)
-            }
 
             if (settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING) {
                 EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING = settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean()
@@ -115,7 +109,16 @@ class SettingsUtil {
                 IGNORE_EXTENSIONS = csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
                 log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
             }
+            if (settingsMetaDataMap.ALLOWED_EXTENSIONS) {
+                ALLOWED_EXTENSIONS = csvToList(settingsMetaDataMap.ALLOWED_EXTENSIONS)
+                FileUtil.ALLOWED_EXTENSIONS_REGEX =  /.*\./ + ALLOWED_EXTENSIONS.join(/|.*\./)
+                log.info("ALLOWED_EXTENSIONS: " + ALLOWED_EXTENSIONS)
+                log.info("ALLOWED_EXTENSIONS_REGEX: " + FileUtil.ALLOWED_EXTENSIONS_REGEX)
+            }
 
+            if(ALLOWED_EXTENSIONS){
+                IGNORE_EXTENSIONS = []
+            }
             if (settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS) {
                 IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = csvToList(settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
                 log.info("IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS: " + IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
