@@ -386,11 +386,11 @@ class UploadUtils {
         return url
     }
 
-
     static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
         String insertDescription = insertDescriptionInUploadUrl(supplementary_url, fileNameToBeUsedAsUniqueDescription)
-        return ARCHIVE_UPLOAD_URL + insertDescription
+        String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
+        return uploadUrl.replaceAll("\"","'")
     }
 
     static insertDescriptionInUploadUrl(String supplementary_url, String fileNameToBeUsedAsUniqueDescription){

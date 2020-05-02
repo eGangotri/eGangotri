@@ -6,7 +6,7 @@ class UploadVO {
     String path
     String title
 
-    public String toString(){
+    String toString(){
         return archiveProfile + " \n" + uploadLink  + " \n" + path  + " \n" + title
     }
 }
