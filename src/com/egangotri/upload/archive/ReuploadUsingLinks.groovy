@@ -9,13 +9,7 @@ import groovy.util.logging.Slf4j
 class ReuploadUsingLinks {
     //This static variable can only be used with generateFailedLinksFromStaticList()
     static  List<String> STATIC_LIST_OF_BAD_LINKS =
-            [
-    'https://archive.org/details/augustineonthetrinitygarethb.matthewsoup_348_z',
-    'https://archive.org/details/scienceandreligionbybenjaminfloomisgraduateoftheamericaninstituteofphrenology_350_K',
-    'https://archive.org/details/hazlitt1920thinkingasascience_11_M','https://archive.org/details/mentalreality_794_P'
-    ,'https://archive.org/details/metropolisoriginalprogrammeforthebritishpremiereoffritzlangsmetropolisin1927_731_Y'
-    ,'https://archive.org/details/mindbodyandculturegeoffreysamuelcup_223_n'
-    ,'https://archive.org/details/sorensen1998thoughtexperiments_292_N']
+            []
 
     /** This method is used in unique cases.
      *  Where u have a list of failed Archive Urls and you want to use them to reupload them only

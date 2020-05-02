@@ -13,6 +13,7 @@ class EGangotriUtil {
     static long PROGRAM_START_TIME_IN_SECONDS = 0
     static long PROGRAM_END_TIME_IN_SECONDS = 0
 
+
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES

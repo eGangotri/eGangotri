@@ -17,7 +17,8 @@ import java.text.DecimalFormat
 @Slf4j
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
-    static String ARCHIVE_USER_ACCOUNT_URL = "https://archive.org/details/@ACCOUNT_NAME"
+    static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details/"
+    static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}@ACCOUNT_NAME"
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     public static boolean ValidateUploadsAndReUploadFailedItems = false
     private static DecimalFormat df = new DecimalFormat("0.00");
