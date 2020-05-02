@@ -6,7 +6,7 @@ class ItemsVO extends UploadVO {
     ItemsVO(String _archiveProfile, String _fullFilePath){
         super()
         archiveProfile = _archiveProfile
-        uploadLink = generateUploadUrl(archiveProfile, path)
+        uploadLink = generateUploadUrl(archiveProfile, _fullFilePath)
         path = _fullFilePath
         title = stripFilePath(removeFileEnding(path))
     }
