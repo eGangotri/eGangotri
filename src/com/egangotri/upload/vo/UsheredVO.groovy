@@ -6,7 +6,7 @@ class UsheredVO extends UploadVO{
     String archiveLink
 
     UsheredVO(List<String> fields){
-        super("","")
+        super(fields[0],fields[2])
         archiveProfile = fields[0]
         uploadLink = fields[1]?.replaceAll("\"", "'")
         path = fields[2]

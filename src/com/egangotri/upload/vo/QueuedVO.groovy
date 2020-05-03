@@ -15,11 +15,5 @@ class QueuedVO extends UploadVO {
         title = stripFilePath(removeFileEnding(path))
     }
 
-    QueuedVO(List<String> fields){
-        super("","")
-        archiveProfile = fields[0]
-        uploadLink = fields[1]?.replaceAll("\"", "'")
-        path = fields[2]
-        title = fields[3]
-    }
+
 }

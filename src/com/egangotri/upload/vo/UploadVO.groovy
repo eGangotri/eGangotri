@@ -17,6 +17,12 @@ class UploadVO {
         title = stripFilePath(removeFileEnding(path))
     }
 
+    UploadVO(List<String> fields){
+        archiveProfile = fields[0]
+        uploadLink = fields[1]?.replaceAll("\"", "'")
+        path = fields[2]
+        title = fields[3]
+    }
     String toString() {
         return archiveProfile + " \n" + uploadLink + " \n" + path + " \n" + title
     }
