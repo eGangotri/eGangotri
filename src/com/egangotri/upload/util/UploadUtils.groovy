@@ -538,6 +538,10 @@ class UploadUtils {
         return new SimpleDateFormat(DATE_TIME_PATTERN).format(date?:new Date())
     }
 
+    static getFormattedDateString(long date) {
+        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date > 0 ? new Date(date) :new Date())
+    }
+
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){
         int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
         String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")

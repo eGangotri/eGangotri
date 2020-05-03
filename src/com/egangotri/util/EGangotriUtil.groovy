@@ -1,6 +1,6 @@
 package com.egangotri.util
 
-import com.egangotri.mail.MailUtil
+
 import com.egangotri.upload.util.UploadUtils
 import groovy.util.logging.Slf4j
 
@@ -10,8 +10,8 @@ class EGangotriUtil {
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"
 
-    static long PROGRAM_START_TIME_IN_SECONDS = 0
-    static long PROGRAM_END_TIME_IN_SECONDS = 0
+    static long PROGRAM_START_TIME_IN_MILLISECONDS = 0
+    static long PROGRAM_END_TIME_IN_MILLISECONDS = 0
 
 
     static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
@@ -124,12 +124,12 @@ class EGangotriUtil {
     }
 
     static void recordProgramStart(String program = ""){
-        EGangotriUtil.PROGRAM_START_TIME_IN_SECONDS = System.currentTimeSeconds()
-        log.info "Program $program started @ " + UploadUtils.getFormattedDateString()
+        EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS = System.currentTimeMillis()
+        log.info "Program $program started @ " + UploadUtils.getFormattedDateString(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)
     }
 
     static void recordProgramEnd(){
-        EGangotriUtil.PROGRAM_END_TIME_IN_SECONDS = System.currentTimeSeconds()
-        log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString()
+        EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS = System.currentTimeMillis()
+        log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)
     }
 }
