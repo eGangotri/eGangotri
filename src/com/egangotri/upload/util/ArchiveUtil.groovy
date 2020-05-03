@@ -79,6 +79,29 @@ class ArchiveUtil {
         return vos
     }
 
+    static List<UploadVO> generateUploadVoForAllUploadableItems(Collection<String> profiles){
+        List<UploadVO> vos = []
+        profiles.eachWithIndex { String profile, index ->
+            UploadUtils.getUploadablesForProfile(profile).each { String filePath ->
+                UploadVO vo = new UploadVO(profile, filePath)
+                vos << vo
+            }
+        }
+        return vos
+    }
+
+    static void storeAllUplodableItemsInFile(List<UploadVO> uploadVos) {
+        String appendable = ""
+        uploadVos.each{ uploadVo ->
+            appendable += voToCSVString(uploadVo)
+        }
+        if(ValidateUploadsAndReUploadFailedItems){
+            new File(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE).append(appendable)
+        } else{
+            new File(EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE).append(appendable)
+        }
+    }
+
     static void storeQueuedItemsInFile(List<UploadVO> uploadVos) {
         String appendable = ""
         uploadVos.each{ uploadVo ->
@@ -89,8 +112,13 @@ class ArchiveUtil {
         } else{
             new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
         }
-
     }
+    /**
+     *
+     * @param uploadVo
+     * @param _identifier The identifier is used only in UsheredVO to capture the unique Archive Item Id
+     * @return
+     */
     static String voToCSVString(UploadVO uploadVo, String _identifier = null) {
         String archiveProfile = uploadVo.archiveProfile
         String uploadLink = uploadVo.uploadLink
@@ -106,20 +134,27 @@ class ArchiveUtil {
             createValidationFiles()
         }
         else{
+            createAllUploadableVOFiles()
             createQueuedVOFiles()
-            createIdentifierFiles()
+            createUsheredFiles()
         }
+    }
+
+    static void createAllUploadableVOFiles(){
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
+        EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE =
+                EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE)
     }
 
     static void createQueuedVOFiles(){
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
         EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE =
                 EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
     }
 
-    static String createIdentifierFiles() {
+    static String createUsheredFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
         EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE =
                 EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE.replace("{0}",UploadUtils.getFormattedDateString())
@@ -129,6 +164,7 @@ class ArchiveUtil {
 
     static void createValidationFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
+        createValidationAllUplodableFiles()
         createValidationQueuedFiles()
         createValidationUsheredFiles()
     }
@@ -139,10 +175,16 @@ class ArchiveUtil {
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
     }
 
+    static void createValidationAllUplodableFiles(){
+        EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE =
+                EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE)
+    }
+
     static void createValidationQueuedFiles(){
         EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE =
                 EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-        generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
+        generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE)
     }
 
 
