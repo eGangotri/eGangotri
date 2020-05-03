@@ -8,7 +8,7 @@ import static com.egangotri.upload.util.UploadUtils.*
  */
 class QueuedVO extends UploadVO {
     QueuedVO(String _archiveProfile, String _fullFilePath){
-        super()
+        super(_archiveProfile,_fullFilePath)
         archiveProfile = _archiveProfile
         uploadLink = generateUploadUrl(archiveProfile, _fullFilePath)
         path = _fullFilePath
@@ -16,7 +16,7 @@ class QueuedVO extends UploadVO {
     }
 
     QueuedVO(List<String> fields){
-        super()
+        super("","")
         archiveProfile = fields[0]
         uploadLink = fields[1]?.replaceAll("\"", "'")
         path = fields[2]

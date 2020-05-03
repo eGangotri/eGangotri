@@ -15,6 +15,8 @@ class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File USHERED_ITEMS_FILE = null
     static File QUEUED_ITEMS_FILE = null
+    static File ALL_UPLODABLE_ITEMS_FILE = null
+
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
     static List<QueuedVO> QUEUED_ITEMS_FOR_TESTING = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
@@ -59,11 +61,13 @@ class ValidateUploadsAndReUploadFailedItems {
         execute()
     }
     static void setCSVsForValidation(def args) {
-        USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
-        QUEUED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER).listFiles()?.sort { -it.lastModified() }?.head()
+        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER,"")
+        QUEUED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER,"")
+        USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER,"")
 
-        if (!USHERED_ITEMS_FILE) {
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
+
+        if (!ALL_UPLODABLE_ITEMS_FILE) {
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
 
@@ -71,6 +75,12 @@ class ValidateUploadsAndReUploadFailedItems {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
+
+        if (!USHERED_ITEMS_FILE) {
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
+            System.exit(0)
+        }
+
         if (args) {
             log.info "args $args"
             if (args?.size() > 2) {
@@ -94,7 +104,11 @@ class ValidateUploadsAndReUploadFailedItems {
         log.info("Queue File for processing: ${QUEUED_ITEMS_FILE.name}")
     }
 
-
+    static void processAllUplodableCSV() {
+        QUEUED_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
+        Set queuedProfiles = QUEUED_ITEMS_FOR_TESTING*.archiveProfile as Set
+        log.info("Converted " + QUEUED_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
+    }
     static void processQueuedCSV() {
         QUEUED_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
         Set queuedProfiles = QUEUED_ITEMS_FOR_TESTING*.archiveProfile as Set

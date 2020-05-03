@@ -56,6 +56,13 @@ class ValidateUtil {
         return field.replaceAll("\"", "")
     }
 
+    static File getLastModifiedFile(String folderPath, String pattern = "") {
+        FileFilter fileFilter = { File file ->
+            file.name.contains(pattern)
+        } as FileFilter
+        return new File(folderPath).listFiles(fileFilter)?.sort { -it.lastModified() }?.head()
+    }
+
     static validateMaxUploadableLimit(){
         if(ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > EGangotriUtil.MAX_UPLODABLES){
             log.info("Uploadable Count ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} exceeds ${EGangotriUtil.MAX_UPLODABLES}. Cannot proceed. Quitting")
