@@ -176,11 +176,11 @@ class ArchiveUtil {
             log.info("Start Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)))
             log.info("End Time: " +   UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)))
 
-            log.info("Total Time Taken: ${df.format(totalTime/60)} minutes(s) [ ${df.format(totalTime/(60*60))} hour(s)]")
+            log.info("Total Time Taken: ${df.format(totalTime/(60*1000))} minutes(s) [ ${df.format(totalTime/(60*60*1000))} hour(s)]")
             log.info("Total Items attempted: $attemptedItemsTotal")
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
-            log.info("Average Upload Time/Item: ${df.format((totalTime/60)/attemptedItemsTotal)} minute(s)/item")
-            log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal/(totalTime/60))} item/minute")
+            log.info("Average Upload Time/Item: ${df.format((totalTime/(60*1000))/attemptedItemsTotal)} minute(s)/item")
+            log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal/(totalTime/(60*1000)))} item/minute")
         }
     }
 

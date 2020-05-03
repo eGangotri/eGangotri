@@ -19,6 +19,7 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
             copyToQueued(latestTwoFiles.last())
             copyToUshered(latestTwoFiles.first())
         }
+        ValidateUploadsAndReUploadFailedItems.main(new String[0])
         System.exit(0)
     }
     
