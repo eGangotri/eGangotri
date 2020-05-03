@@ -12,7 +12,7 @@ class UploadVO {
 
     UploadVO(String _archiveProfile, String _path) {
         archiveProfile = _archiveProfile
-        uploadLink = generateUploadUrl(archiveProfile, _fullFilePath)
+        uploadLink = generateUploadUrl(archiveProfile, _path)
         path = _path
         title = stripFilePath(removeFileEnding(path))
     }
