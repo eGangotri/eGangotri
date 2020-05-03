@@ -1,5 +1,6 @@
 package com.egangotri.upload.vo
 
+import static com.egangotri.upload.util.UploadUtils.generateUploadUrl
 import static com.egangotri.upload.util.UploadUtils.removeFileEnding
 import static com.egangotri.upload.util.UploadUtils.stripFilePath
 
@@ -11,7 +12,7 @@ class UploadVO {
 
     UploadVO(String _archiveProfile, String _path) {
         archiveProfile = _archiveProfile
-        uploadLink = ""
+        uploadLink = generateUploadUrl(archiveProfile, _fullFilePath)
         path = _path
         title = stripFilePath(removeFileEnding(path))
     }

@@ -220,6 +220,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void combineAllFailedItems(){
         if (MISSED_OUT_QUEUED_ITEMS || MISSED_OUT_USHERED_ITEMS) {
+            ALL_FAILED_ITEMS.addAll(MISSED_OUT_ALL_UPLOADABLE_ITEMS)
             ALL_FAILED_ITEMS.addAll(MISSED_OUT_QUEUED_ITEMS)
 
             MISSED_OUT_USHERED_ITEMS.each { failedLink ->
