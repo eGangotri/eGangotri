@@ -1,6 +1,6 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.vo.QueueableVO
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -19,17 +19,17 @@ class ValidateUtil {
         return items
     }
 
-    static List<QueueableVO> csvToItemsVO(File csvFile) {
-        List<QueueableVO> items = []
+    static List<QueuedVO> csvToItemsVO(File csvFile) {
+        List<QueuedVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            items.add(new QueueableVO(_fields.toList()))
+            items.add(new QueuedVO(_fields.toList()))
         }
         return items
     }
 
     static Tuple statsForItemsVO(String csvFile){
-        List<QueueableVO> vos = csvToItemsVO(new File(csvFile))
+        List<QueuedVO> vos = csvToItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 

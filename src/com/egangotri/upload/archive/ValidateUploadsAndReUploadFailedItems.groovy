@@ -4,7 +4,7 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
-import com.egangotri.upload.vo.QueueableVO
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -16,9 +16,9 @@ class ValidateUploadsAndReUploadFailedItems {
     static File USHERED_ITEMS_FILE = null
     static File QUEUED_ITEMS_FILE = null
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
-    static List<QueueableVO> QUEUED_ITEMS_FOR_TESTING = []
+    static List<QueuedVO> QUEUED_ITEMS_FOR_TESTING = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
-    static List<QueueableVO> MISSED_OUT_QUEUED_ITEMS = []
+    static List<QueuedVO> MISSED_OUT_QUEUED_ITEMS = []
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
     static List<UsheredVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
     static List<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []

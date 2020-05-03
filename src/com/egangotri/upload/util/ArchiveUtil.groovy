@@ -1,6 +1,6 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.vo.QueueableVO
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.json.JsonSlurper
@@ -71,10 +71,10 @@ class ArchiveUtil {
         }
     }
     //create UploadVO
-    static List<QueueableVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
-        List<QueueableVO> vos = []
+    static List<QueuedVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
+        List<QueuedVO> vos = []
         uploadables.each{ uploadable ->
-            vos << new QueueableVO(archiveProfile,uploadable)
+            vos << new QueuedVO(archiveProfile,uploadable)
         }
         return vos
     }
