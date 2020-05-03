@@ -1,7 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.SettingsUtil
-import com.egangotri.upload.vo.LinksVO
+import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -35,7 +35,7 @@ class ReuploadUsingLinks {
 
     static void generateFailedLinksFromStaticList(){
         log.info("generating vos from static list of Links with size: " + STATIC_LIST_OF_BAD_LINKS.size())
-        ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING.eachWithIndex{ LinksVO entry, int i ->
+        ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING.eachWithIndex{ UsheredVO entry, int i ->
             if(STATIC_LIST_OF_BAD_LINKS*.trim().contains(entry.archiveLink)){
                 log.info("entry.uploadLink: " + entry.uploadLink)
                 ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS << entry

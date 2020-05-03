@@ -2,10 +2,10 @@ package com.egangotri.upload.vo
 
 import com.egangotri.upload.util.ArchiveUtil
 
-class LinksVO extends UploadVO{
+class UsheredVO extends UploadVO{
     String archiveLink
 
-    LinksVO(List<String> fields){
+    UsheredVO(List<String> fields){
         super()
         archiveProfile = fields[0]
         uploadLink = fields[1]?.replaceAll("\"", "'")

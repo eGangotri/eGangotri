@@ -4,26 +4,24 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
-import com.egangotri.upload.vo.ItemsVO
-import com.egangotri.upload.vo.LinksVO
+import com.egangotri.upload.vo.QueueableVO
+import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-
-import java.nio.file.Files
 
 @Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File USHERED_ITEMS_FILE = null
     static File QUEUED_ITEMS_FILE = null
-    static List<LinksVO> USHERED_LINKS_FOR_TESTING = []
-    static List<ItemsVO> QUEUED_ITEMS_FOR_TESTING = []
-    static List<LinksVO> MISSED_OUT_USHERED_ITEMS = []
-    static List<ItemsVO> MISSED_OUT_QUEUED_ITEMS = []
+    static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
+    static List<QueueableVO> QUEUED_ITEMS_FOR_TESTING = []
+    static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
+    static List<QueueableVO> MISSED_OUT_QUEUED_ITEMS = []
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
-    static List<LinksVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
-    static List<LinksVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
+    static List<UsheredVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
+    static List<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
     static main(args) {
@@ -138,7 +136,7 @@ class ValidateUploadsAndReUploadFailedItems {
         int testableLinksCount = USHERED_LINKS_FOR_TESTING.size()
         log.info("\n\nTesting ${testableLinksCount} Links in archive for upload-success-confirmation")
 
-        USHERED_LINKS_FOR_TESTING.eachWithIndex { LinksVO entry, int i ->
+        USHERED_LINKS_FOR_TESTING.eachWithIndex { UsheredVO entry, int i ->
             String urlText = ""
             try {
                 urlText = entry.archiveLink.toURL().text
@@ -162,7 +160,7 @@ class ValidateUploadsAndReUploadFailedItems {
         logUsheredMissedInfo()
     }
 
-    static void  checkIfCode404BadFile(String urlText, LinksVO entry, int counter){
+    static void  checkIfCode404BadFile(String urlText, UsheredVO entry, int counter){
         int checkDownloadOptions = urlText.count("format-group")
         int _4Files = urlText.count("4 Files")
         if(checkDownloadOptions < 2 && _4Files == 1){
@@ -195,7 +193,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static void move503SlowDownFilesToSpecialFolder(){
         if(MISSED_OUT_USHERED_ITEMS){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
-            MISSED_OUT_USHERED_ITEMS.eachWithIndex{ LinksVO _missedOutItems, int counter ->
+            MISSED_OUT_USHERED_ITEMS.eachWithIndex{ UsheredVO _missedOutItems, int counter ->
                 ValidateUtil.moveFile(_missedOutItems,EGangotriUtil.CODE_503_SLOW_DOWN_FOLDER, "${counter+1}).")
             }
         }

@@ -3,7 +3,6 @@ package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
-import com.egangotri.upload.vo.ItemsVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By

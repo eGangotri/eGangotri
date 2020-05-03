@@ -1,7 +1,7 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.vo.ItemsVO
-import com.egangotri.upload.vo.LinksVO
+import com.egangotri.upload.vo.QueueableVO
+import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -10,37 +10,37 @@ import java.nio.file.Files
 
 @Slf4j
 class ValidateUtil {
-    static List<LinksVO> csvToUsheredItemsVO(File csvFile) {
-        List<LinksVO> items = []
+    static List<UsheredVO> csvToUsheredItemsVO(File csvFile) {
+        List<UsheredVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            items.add(new LinksVO(_fields.toList()))
+            items.add(new UsheredVO(_fields.toList()))
         }
         return items
     }
 
-    static List<ItemsVO> csvToItemsVO(File csvFile) {
-        List<ItemsVO> items = []
+    static List<QueueableVO> csvToItemsVO(File csvFile) {
+        List<QueueableVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
-            items.add(new ItemsVO(_fields.toList()))
+            items.add(new QueueableVO(_fields.toList()))
         }
         return items
     }
 
     static Tuple statsForItemsVO(String csvFile){
-        List<ItemsVO> vos = csvToItemsVO(new File(csvFile))
+        List<QueueableVO> vos = csvToItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
     static Tuple statsForUsheredItemsVO(String csvFile){
-        List<LinksVO> vos = csvToUsheredItemsVO(new File(csvFile))
+        List<UsheredVO> vos = csvToUsheredItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
     static Tuple statsForVOs(List<? extends UploadVO> vos){
         if(!vos) return new Tuple(0,"0")
-        String desc = vos?.first()?.getClass()?.simpleName == LinksVO.simpleName ? "item(s) were ushered for upload" : "item(s) were queued for upload"
+        String desc = vos?.first()?.getClass()?.simpleName == UsheredVO.simpleName ? "item(s) were ushered for upload" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
 
         int totalItems = 0
@@ -79,7 +79,7 @@ class ValidateUtil {
         }
     }
 
-    static void moveFile(LinksVO movableItems, String destFolder, String counter = ""){
+    static void moveFile(UsheredVO movableItems, String destFolder, String counter = ""){
         try {
             File movableFile = new File(movableItems?.path?:"")
             if(movableFile.exists()){
