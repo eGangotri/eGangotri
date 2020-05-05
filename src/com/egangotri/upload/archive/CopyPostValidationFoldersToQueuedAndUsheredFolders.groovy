@@ -12,7 +12,6 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
     static main(args) {
         log.info("Getting latest Files from ${EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER}")
 
-        copyToQueued(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"queued"))
         copyToUshered(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"ushered"))
         copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"all"))
 
@@ -28,10 +27,6 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
 
     def static copyToUshered(File src) {
         copy(src, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
-    }
-
-    def static copyToQueued(File src) {
-        copy(src, EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
     }
 
     def static copyToAllUplodables(File src) {

@@ -98,21 +98,10 @@ class ArchiveUtil {
         if(ValidateUploadsAndReUploadFailedItems){
             new File(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE).append(appendable)
         } else{
-            new File(EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE).append(appendable)
+            new File(EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE).append(appendable)
         }
     }
 
-    static void storeQueuedItemsInFile(List<UploadVO> uploadVos) {
-        String appendable = ""
-        uploadVos.each{ uploadVo ->
-            appendable += voToCSVString(uploadVo)
-        }
-        if(ValidateUploadsAndReUploadFailedItems){
-            new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE).append(appendable)
-        } else{
-            new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE).append(appendable)
-        }
-    }
     /**
      *
      * @param uploadVo
@@ -135,23 +124,15 @@ class ArchiveUtil {
         }
         else{
             createAllUploadableVOFiles()
-            createQueuedVOFiles()
             createUsheredFiles()
         }
     }
 
     static void createAllUploadableVOFiles(){
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
-        EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE =
-                EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-        generateFile(EGangotriUtil.ARCHIVE_ALL_UPLODABLE_ITEMS_FILE)
-    }
-
-    static void createQueuedVOFiles(){
-        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
-        EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE =
-                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-        generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE)
+        EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE =
+                EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE.replace("{0}",UploadUtils.getFormattedDateString())
+        generateFile(EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE)
     }
 
     static String createUsheredFiles() {
@@ -165,7 +146,6 @@ class ArchiveUtil {
     static void createValidationFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
         createValidationAllUplodableFiles()
-        createValidationQueuedFiles()
         createValidationUsheredFiles()
     }
 
@@ -180,13 +160,6 @@ class ArchiveUtil {
                 EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE)
     }
-
-    static void createValidationQueuedFiles(){
-        EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE =
-                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE.replace("{0}",UploadUtils.getFormattedDateString())
-        generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE)
-    }
-
 
     static void generateFolder(String folderName) {
         File folder = new File(folderName)
@@ -209,10 +182,10 @@ class ArchiveUtil {
                 log.info "$k) $v"
             }
             if(ValidateUploadsAndReUploadFailedItems) {
-                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
+                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
             }
             else {
-                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
+                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE)
              }
             long totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS-EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS
             log.info("Start Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)))

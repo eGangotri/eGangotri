@@ -4,7 +4,6 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
-import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -14,15 +13,12 @@ import groovy.util.logging.Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File USHERED_ITEMS_FILE = null
-    static File QUEUED_ITEMS_FILE = null
     static File ALL_UPLODABLE_ITEMS_FILE = null
 
     static List<UploadVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
-    static List<UploadVO> QUEUED_ITEMS_FOR_TESTING = []
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
 
     static List<UploadVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
-    static List<UploadVO> MISSED_OUT_QUEUED_ITEMS = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
 
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
@@ -40,10 +36,9 @@ class ValidateUploadsAndReUploadFailedItems {
     static void execute(def args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
-        processQueuedCSV()
         processUsheredCSV()
-        findAllUploadableItemsNotInQueuedCSV()
-        findQueueItemsNotInUsheredCSV()
+        findAllUploadableItemsNotInUsheredCSV()
+        findAllUploadableItemsNotInUsheredCSV()
        if(dontUseFailedLinksFromStaticList) {
            filterFailedUsheredItems()
        }
@@ -68,17 +63,10 @@ class ValidateUploadsAndReUploadFailedItems {
     }
     static void setCSVsForValidation(String[] args) {
         ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER,"")
-        QUEUED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER,"")
         USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER,"")
-
 
         if (!ALL_UPLODABLE_ITEMS_FILE) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
-            System.exit(0)
-        }
-
-        if (!QUEUED_ITEMS_FILE) {
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
 
@@ -89,33 +77,27 @@ class ValidateUploadsAndReUploadFailedItems {
 
         if (args) {
             log.info "args $args"
-            if (args?.size() > 3) {
-                log.error("Only 3 File Name(s) can be accepted.Cannot proceed. Quitting")
+            if (args?.size() > 2) {
+                log.error("Only 2 File Name(s) can be accepted.Cannot proceed. Quitting")
                 System.exit(0)
             }
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
-            String _file_2 = args[1].endsWith(".csv") ? args[1] : args[1] + ".csv"
-            String _file_3 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
+            String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
 
             ALL_UPLODABLE_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER + File.separator + _file_1)
-            QUEUED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_2)
-            USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_3)
+            USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_2)
 
             if (!ALL_UPLODABLE_ITEMS_FILE) {
                 log.error("No such File ${ALL_UPLODABLE_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
-            if (!QUEUED_ITEMS_FILE) {
-                log.error("No such File ${QUEUED_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
-                System.exit(0)
-            }
+
             if (!USHERED_ITEMS_FILE) {
                 log.error("No such File ${USHERED_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
         }
         log.info("All Uploadable File for processing: ${ALL_UPLODABLE_ITEMS_FILE.name}")
-        log.info("Queue File for processing: ${QUEUED_ITEMS_FILE.name}")
         log.info("Identifier File for processing: ${USHERED_ITEMS_FILE.name}")
     }
 
@@ -124,11 +106,6 @@ class ValidateUploadsAndReUploadFailedItems {
         Set allUploadableProfiles = ALL_UPLOADABLE_ITEMS_FOR_TESTING*.archiveProfile as Set
         log.info("Converted " + ALL_UPLOADABLE_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${allUploadableProfiles.toString()}")
     }
-    static void processQueuedCSV() {
-        QUEUED_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(QUEUED_ITEMS_FILE)
-        Set queuedProfiles = QUEUED_ITEMS_FOR_TESTING*.archiveProfile as Set
-        log.info("Converted " + QUEUED_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${queuedProfiles.toString()}")
-    }
 
     static void processUsheredCSV() {
         USHERED_LINKS_FOR_TESTING = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
@@ -136,37 +113,24 @@ class ValidateUploadsAndReUploadFailedItems {
         log.info("Converted " + USHERED_LINKS_FOR_TESTING.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
     }
 
-    static void findAllUploadableItemsNotInQueuedCSV() {
-        List queuedItemsPath = QUEUED_ITEMS_FOR_TESTING*.path
-        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} All Uploadable Item(s) that were never queued in ${queuedItemsPath.size()} Items")
-
-        ALL_UPLOADABLE_ITEMS_FOR_TESTING.eachWithIndex { allUploadableItem, index ->
-            if (!queuedItemsPath.contains(allUploadableItem.path)) {
-                MISSED_OUT_ALL_UPLOADABLE_ITEMS << allUploadableItem
-                log.info("\tFound missing Item [ (# $index). ${allUploadableItem.archiveProfile}] ${allUploadableItem.title} ")
-            }
-        }
-        log.info("${MISSED_OUT_ALL_UPLOADABLE_ITEMS.size()}/${ALL_UPLOADABLE_ITEMS_FOR_TESTING.size()} Items found in All Uploadable List that missed upload.")
-        log.info("Affected Profies "  +  (MISSED_OUT_ALL_UPLOADABLE_ITEMS*.archiveProfile as Set).toString())
-    }
     // This function produces QueuedItem - usheredItem
     //Queued Item is a superset of usheredItem
-    static void findQueueItemsNotInUsheredCSV() {
+    static void findAllUploadableItemsNotInUsheredCSV() {
         if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Queued Items will be ignored for upload")
             return
         }
         List allFilePaths = USHERED_LINKS_FOR_TESTING*.path
-        log.info("Searching from ${QUEUED_ITEMS_FOR_TESTING?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
+        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
 
-        QUEUED_ITEMS_FOR_TESTING.eachWithIndex { queuedItem, index ->
-            if (!allFilePaths.contains(queuedItem.path)) {
-                MISSED_OUT_QUEUED_ITEMS << queuedItem
-                log.info("\tFound missing Item [ (# $index). ${queuedItem.archiveProfile}] ${queuedItem.title} ")
+        ALL_UPLOADABLE_ITEMS_FOR_TESTING.eachWithIndex { allUploadedItem, index ->
+            if (!allFilePaths.contains(allUploadedItem.path)) {
+                MISSED_OUT_ALL_UPLOADABLE_ITEMS << allUploadedItem
+                log.info("\tFound missing Item [ (# $index). ${allUploadedItem.archiveProfile}] ${allUploadedItem.title} ")
             }
         }
-        log.info("${MISSED_OUT_QUEUED_ITEMS.size()}/${QUEUED_ITEMS_FOR_TESTING.size()} Items found in Queued List that missed upload.")
-        log.info("Affected Profies "  +  (MISSED_OUT_QUEUED_ITEMS*.archiveProfile as Set).toString())
+        log.info("${MISSED_OUT_ALL_UPLOADABLE_ITEMS.size()}/${ALL_UPLOADABLE_ITEMS_FOR_TESTING.size()} Items found in Queued List that missed upload.")
+        log.info("Affected Profies "  +  (MISSED_OUT_ALL_UPLOADABLE_ITEMS*.archiveProfile as Set).toString())
     }
 
     static void filterFailedUsheredItems() {
@@ -219,14 +183,13 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void combineAllFailedItems(){
-        if (MISSED_OUT_ALL_UPLOADABLE_ITEMS || MISSED_OUT_QUEUED_ITEMS || MISSED_OUT_USHERED_ITEMS) {
+        if (MISSED_OUT_ALL_UPLOADABLE_ITEMS || MISSED_OUT_USHERED_ITEMS) {
             ALL_FAILED_ITEMS.addAll(MISSED_OUT_ALL_UPLOADABLE_ITEMS)
-            ALL_FAILED_ITEMS.addAll(MISSED_OUT_QUEUED_ITEMS)
 
             MISSED_OUT_USHERED_ITEMS.each { failedLink ->
                 ALL_FAILED_ITEMS.add(failedLink)
             }
-            log.info("Combined figure for re-uploading(${MISSED_OUT_QUEUED_ITEMS.size()} + ${MISSED_OUT_USHERED_ITEMS.size()}) :" + ALL_FAILED_ITEMS.size() + " in Profiles: ${ALL_FAILED_ITEMS*.archiveProfile as Set}" )
+            log.info("Combined figure for re-uploading(${MISSED_OUT_ALL_UPLOADABLE_ITEMS.size()} + ${MISSED_OUT_USHERED_ITEMS.size()}) :" + ALL_FAILED_ITEMS.size() + " in Profiles: ${ALL_FAILED_ITEMS*.archiveProfile as Set}" )
         }
     }
 

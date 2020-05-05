@@ -233,11 +233,11 @@ class SettingsUtil {
     static void resetValues() {
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
         ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FILE = null
+        ValidateUploadsAndReUploadFailedItems.ALL_UPLODABLE_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING = []
-        ValidateUploadsAndReUploadFailedItems.QUEUED_ITEMS_FOR_TESTING = []
+        ValidateUploadsAndReUploadFailedItems.ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
         ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
-        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_QUEUED_ITEMS = []
+        ValidateUploadsAndReUploadFailedItems.MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
         ValidateUploadsAndReUploadFailedItems.ALL_FAILED_ITEMS = []
         ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_404_BAD_DATA = []
         ValidateUploadsAndReUploadFailedItems.ITEMS_WITH_CODE_503_SLOW_DOWN = []

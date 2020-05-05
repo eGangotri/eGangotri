@@ -177,13 +177,11 @@ class ArchiveHandler {
             int partitionCounter = 0
             for (def partitionedVos : partitions) {
                 log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedVos.size()} Item(s) queued for upload")
-                storeQueuedItemsInFile(partitionedVos)
                 List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,partitionedVos)
                 uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            storeQueuedItemsInFile(uploadVos)
             List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,uploadVos)
             uploadStatsList << uploadStats
         }
