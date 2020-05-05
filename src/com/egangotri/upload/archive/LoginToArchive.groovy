@@ -24,7 +24,7 @@ class LoginToArchive {
         def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         archiveProfiles.each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
-            WebDriver driver = new ChromeDriver()
+            ChromeDriver driver = new ChromeDriver()
             ArchiveUtil.logInToArchiveOrg(driver, metaDataMap, archiveProfile)
             getResultsCount(driver, true)
         }

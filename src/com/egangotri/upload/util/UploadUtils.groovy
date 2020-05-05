@@ -8,7 +8,6 @@ import groovy.util.logging.Slf4j
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -256,7 +255,7 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
-    static void clickChooseFilesToUploadButtonAndPasteFilePath(WebDriver driver, String fileNameWithPath) {
+    static void clickChooseFilesToUploadButtonAndPasteFilePath(ChromeDriver driver, String fileNameWithPath) {
         //Note this id is already tested to be clickable
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
@@ -475,7 +474,7 @@ class UploadUtils {
         return true
     }
 
-    static void openNewTab(ChromeDriver driver, float sleepTimeInSeconds = 0.1) {
+    static boolean openNewTab(ChromeDriver driver, float sleepTimeInSeconds = 0.1) {
         try {
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
@@ -485,15 +484,17 @@ class UploadUtils {
         }
         catch (Exception _ex) {
             log.error("openNewTab Exception: ${_ex.message}")
+            return false
         }
+        return true
     }
 
-    static void minimizeBrowser(WebDriver driver) {
+    static void minimizeBrowser(ChromeDriver driver) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.blur()");
     }
 
-    static void closeBrowser(WebDriver driver) {
+    static void closeBrowser(ChromeDriver driver) {
         driver.quit()
     }
 
@@ -515,7 +516,7 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
-    static boolean checkAlert(WebDriver driver, Boolean accept = true) {
+    static boolean checkAlert(ChromeDriver driver, Boolean accept = true) {
         boolean alertWasDetected = false
         try {
             WebDriverWait webDriverWait = new WebDriverWait(driver, 1)

@@ -23,7 +23,7 @@ class ArchiveUtil {
     public static boolean ValidateUploadsAndReUploadFailedItems = false
     private static DecimalFormat df = new DecimalFormat("0.00");
 
-    static void getResultsCount(WebDriver driver, Boolean _startTime = true) {
+    static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
         WebElement userMenu =  driver.findElement(By.xpath("//*[@id=\"wrap\"]/topnav-element"))
         def jsonSlurper = new JsonSlurper()
         log.info("userName: ${userMenu.getAttribute("config")}")
@@ -50,7 +50,7 @@ class ArchiveUtil {
         }
     }
 
-    static void navigateLoginLogic(WebDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
+    static void navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
         boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
         if (!loginSuccess) {
             log.info("Login failed once for ${archiveProfile}. will give it one more shot")

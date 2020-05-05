@@ -7,7 +7,6 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -25,7 +24,7 @@ class ArchiveHandler {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
         try {
-            WebDriver driver = new ChromeDriver()
+            ChromeDriver driver = new ChromeDriver()
             String archiveProfile = uploadVos.first().archiveProfile
             List<String> uploadables = uploadVos*.path
             navigateLoginLogic(driver, metaDataMap, archiveProfile)
@@ -54,7 +53,9 @@ class ArchiveHandler {
                             }
 
                             log.info "\nUploading: ${uploadVo.title} @ tabNo:$tabIndex"
-                            UploadUtils.openNewTab(driver)
+                            if(!UploadUtils.openNewTab(driver)){
+                                uploadFailureCount++
+                            }
 
                             //Switch to new Tab
                             boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
@@ -77,7 +78,9 @@ class ArchiveHandler {
                                 uploadFailureCount++
                                 log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.title}').")
                                 try {
-                                        UploadUtils.openNewTab(driver)
+                                        if(!UploadUtils.openNewTab(driver)){
+                                            uploadFailureCount++
+                                        }
                                         tabIndex++
                                         boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                         if (!tabSwitched) {
@@ -126,7 +129,7 @@ class ArchiveHandler {
         EGangotriUtil.sleepTimeInSeconds(4)
         try {
 
-            WebDriver driver = new ChromeDriver()
+            ChromeDriver driver = new ChromeDriver()
             driver.get(archiveUrl)
             def results = []
             if (fileNames) {
@@ -187,7 +190,7 @@ class ArchiveHandler {
     }
 
 
-    static String uploadOneItem(WebDriver driver, UploadVO uploadVO) {
+    static String uploadOneItem(ChromeDriver driver, UploadVO uploadVO) {
         String fileNameWithPath = uploadVO.path
         String uploadLink = uploadVO.uploadLink
         String archiveProfile = uploadVO.archiveProfile

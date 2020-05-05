@@ -6,7 +6,7 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
-import org.openqa.selenium.WebDriver
+import org.openqa.selenium.ChromeDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -32,7 +32,7 @@ class GoogleDriveHandler {
             System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe")
             // log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
-            WebDriver driver = new ChromeDriver()
+            ChromeDriver driver = new ChromeDriver()
             driver.get("https://accounts.google.com")
             WebElement id = driver.findElement(By.id("identifierId"))
 
