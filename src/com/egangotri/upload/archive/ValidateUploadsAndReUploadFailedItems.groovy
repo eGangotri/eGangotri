@@ -138,7 +138,7 @@ class ValidateUploadsAndReUploadFailedItems {
 
     static void findAllUploadableItemsNotInQueuedCSV() {
         List queuedItemsPath = QUEUED_ITEMS_FOR_TESTING*.path
-        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} All Uploadable Item(s) that were never queued in ${queuedItemsPath.size()} identifiers")
+        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} All Uploadable Item(s) that were never queued in ${queuedItemsPath.size()} Items")
 
         ALL_UPLOADABLE_ITEMS_FOR_TESTING.eachWithIndex { allUploadableItem, index ->
             if (!queuedItemsPath.contains(allUploadableItem.path)) {

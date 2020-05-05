@@ -14,7 +14,7 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
 
         copyToQueued(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"queued"))
         copyToUshered(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"ushered"))
-        copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"upload"))
+        copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"all"))
 
         ValidateUploadsAndReUploadFailedItems.main(new String[0])
         System.exit(0)

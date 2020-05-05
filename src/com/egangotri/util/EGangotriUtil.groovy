@@ -32,7 +32,7 @@ class EGangotriUtil {
     static String ARCHIVE_ALL_UPLODABLE_ITEMS_FILE = EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER + File.separator + "item_{0}.csv"
     static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + "item_{0}.csv"
 
-    static String ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "all_uplodable_items_{0}.csv"
+    static String ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "all_uploadable_items_{0}.csv"
     static String ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "queued_item_{0}.csv"
     static String ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "ushered_item_{0}.csv"
     static
