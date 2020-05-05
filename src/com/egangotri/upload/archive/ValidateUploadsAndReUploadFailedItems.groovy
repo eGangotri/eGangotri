@@ -18,11 +18,11 @@ class ValidateUploadsAndReUploadFailedItems {
     static File ALL_UPLODABLE_ITEMS_FILE = null
 
     static List<UploadVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
-    static List<QueuedVO> QUEUED_ITEMS_FOR_TESTING = []
+    static List<UploadVO> QUEUED_ITEMS_FOR_TESTING = []
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
 
     static List<UploadVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
-    static List<QueuedVO> MISSED_OUT_QUEUED_ITEMS = []
+    static List<UploadVO> MISSED_OUT_QUEUED_ITEMS = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
 
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
@@ -37,7 +37,7 @@ class ValidateUploadsAndReUploadFailedItems {
         System.exit(0)
     }
 
-    static void execute(def args = [], boolean dontUseFailedLinksFromStaticList = true){
+    static void execute(def args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
         processQueuedCSV()
@@ -211,7 +211,7 @@ class ValidateUploadsAndReUploadFailedItems {
         }
     }
     static void logUsheredMissedInfo(){
-        String _msg = "\nFound ${MISSED_OUT_USHERED_ITEMS.size()}/${USHERED_LINKS_FOR_TESTING.size()} failed Ushered Link(s)."
+       String _msg = "\nFound ${MISSED_OUT_USHERED_ITEMS.size()}/${USHERED_LINKS_FOR_TESTING.size()} failed Ushered Link(s)."
         ValidateUtil.logPerProfile(_msg,MISSED_OUT_USHERED_ITEMS,"archiveLink")
 
         String _msg2 = "\nFound ${ITEMS_WITH_CODE_404_BAD_DATA?.size()}/${USHERED_LINKS_FOR_TESTING.size()} Code 400 Bad Data Files: (repair with pdftk and reupload manually)"
@@ -219,7 +219,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void combineAllFailedItems(){
-        if (MISSED_OUT_QUEUED_ITEMS || MISSED_OUT_USHERED_ITEMS) {
+        if (MISSED_OUT_ALL_UPLOADABLE_ITEMS || MISSED_OUT_QUEUED_ITEMS || MISSED_OUT_USHERED_ITEMS) {
             ALL_FAILED_ITEMS.addAll(MISSED_OUT_ALL_UPLOADABLE_ITEMS)
             ALL_FAILED_ITEMS.addAll(MISSED_OUT_QUEUED_ITEMS)
 
@@ -247,7 +247,6 @@ class ValidateUploadsAndReUploadFailedItems {
             move503SlowDownFilesToSpecialFolder()
             return
         }
-
         if(SettingsUtil.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS){
             log.info("Only stats generated. No Uploading due to Setting")
             return

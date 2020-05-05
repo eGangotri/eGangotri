@@ -9,11 +9,5 @@ import static com.egangotri.upload.util.UploadUtils.*
 class QueuedVO extends UploadVO {
     QueuedVO(String _archiveProfile, String _fullFilePath){
         super(_archiveProfile,_fullFilePath)
-        archiveProfile = _archiveProfile
-        uploadLink = generateUploadUrl(archiveProfile, _fullFilePath)
-        path = _fullFilePath
-        title = stripFilePath(removeFileEnding(path))
     }
-
-
 }
