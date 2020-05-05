@@ -55,6 +55,7 @@ class ArchiveHandler {
                             log.info "\nUploading: ${uploadVo.title} @ tabNo:$tabIndex"
                             if(!UploadUtils.openNewTab(driver)){
                                 uploadFailureCount++
+                                continue
                             }
 
                             //Switch to new Tab
