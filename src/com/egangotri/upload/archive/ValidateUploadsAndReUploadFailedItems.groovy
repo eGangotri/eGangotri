@@ -175,7 +175,7 @@ class ValidateUploadsAndReUploadFailedItems {
             return
         }
         int testableLinksCount = USHERED_LINKS_FOR_TESTING.size()
-        log.info("\n\nTesting ${testableLinksCount} Links in archive for upload-success-confirmation")
+        log.info("\n\nTesting ${testableLinksCount} Links in archive to be tested for upload-success-confirmation")
 
         USHERED_LINKS_FOR_TESTING.eachWithIndex { UsheredVO entry, int i ->
             String urlText = ""
