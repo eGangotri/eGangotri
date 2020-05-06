@@ -51,10 +51,24 @@ class ArchiveUtil {
     }
 
     static void navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
-        boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+        List<String> kuta = [metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}" as String]
+        if(metaDataMap."${EGangotriUtil.KUTA_SECOND}"){
+            kuta << metaDataMap."${EGangotriUtil.KUTA_SECOND}"
+        }
+
+        boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.first())
         if (!loginSuccess) {
             log.info("Login failed once for ${archiveProfile}. will give it one more shot")
-            loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+            loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.first())
+
+            if (kuta.size() > 1 && !loginSuccess) {
+                log.info("Login with Second Password ${archiveProfile}. Attempt 1")
+                loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
+                if (!loginSuccess) {
+                    log.info("Login with Second Password ${archiveProfile}. will give it one more shot")
+                    loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
+                }
+            }
         }
         if (!loginSuccess) {
             log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
@@ -208,7 +222,7 @@ class ArchiveUtil {
                 equality)
 
     }
-    static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile) {
+    static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile, String kuta = "") {
         boolean loginSucess = false
         try {
             driver.get(ArchiveUtil.ARCHIVE_LOGIN_URL)
@@ -220,7 +234,9 @@ class ArchiveUtil {
 
             String username = metaDataMap."${archiveProfile}"
             id.sendKeys(username)
-            String kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
+            if(!kuta){
+                kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
+            }
             pass.sendKeys(kuta)
             //button.click doesnt work
             button.submit()

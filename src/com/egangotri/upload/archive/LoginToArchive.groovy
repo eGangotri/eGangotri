@@ -25,7 +25,7 @@ class LoginToArchive {
         archiveProfiles.each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
             ChromeDriver driver = new ChromeDriver()
-            ArchiveUtil.logInToArchiveOrg(driver, metaDataMap, archiveProfile)
+            ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)
             getResultsCount(driver, true)
         }
         EGangotriUtil.recordProgramEnd()

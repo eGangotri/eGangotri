@@ -102,12 +102,12 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS) {
-                EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = csvToList(settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
+                EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = EGangotriUtil.csvToList(settingsMetaDataMap.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
                 log.info("IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS: " + EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS)
             }
 
             if (settingsMetaDataMap.ALLOWED_EXTENSIONS) {
-                ALLOWED_EXTENSIONS = csvToList(settingsMetaDataMap.ALLOWED_EXTENSIONS)
+                ALLOWED_EXTENSIONS = EGangotriUtil.csvToList(settingsMetaDataMap.ALLOWED_EXTENSIONS)
                 if (ALLOWED_EXTENSIONS) {
                     FileUtil.ALLOWED_EXTENSIONS_REGEX = /.*\./ + ALLOWED_EXTENSIONS.join(/|.*\./)
                     log.info("ALLOWED_EXTENSIONS: " + ALLOWED_EXTENSIONS)
@@ -117,7 +117,7 @@ class SettingsUtil {
 
             if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
                 if (!ALLOWED_EXTENSIONS) {
-                    IGNORE_EXTENSIONS = csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
+                    IGNORE_EXTENSIONS = EGangotriUtil.csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
                     log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
                 } else {
                     log.info("IGNORE_EXTENSIONS ignored because ALLOWED_EXTENSIONS has values")
@@ -129,7 +129,7 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS) {
-                IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = csvToList(settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
+                IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = EGangotriUtil.csvToList(settingsMetaDataMap.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
                 log.info("IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS: " + IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS)
             }
 
@@ -192,7 +192,7 @@ class SettingsUtil {
             log.info("MAILER_HOST: " + MailUtil.MAILER_HOST)
         }
         if (settingsMetaDataMap.MAILER_TO_EMAILS) {
-            MailUtil.MAILER_TO_EMAILS = csvToList(settingsMetaDataMap.MAILER_TO_EMAILS)
+            MailUtil.MAILER_TO_EMAILS = EGangotriUtil.csvToList(settingsMetaDataMap.MAILER_TO_EMAILS)
             log.info("MAILER_TO_EMAILS: " + MailUtil.MAILER_TO_EMAILS)
         }
     }
@@ -223,11 +223,6 @@ class SettingsUtil {
                 SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = reuploaderFlags[3]
             }
         }
-    }
-
-    static List csvToList(String csv) {
-        String _csv = csv.replaceAll(/["|\[|\]|'|\s]/, "").trim()
-            return _csv ? _csv.split(",")*.trim() : []
     }
 
     static void resetValues() {

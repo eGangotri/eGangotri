@@ -69,6 +69,7 @@ class EGangotriUtil {
     static final String USER_ID = "userId"
     //password
     static final String KUTA = "kuta"
+    static final String KUTA_SECOND = "kuta2"
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
     static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
@@ -133,4 +134,11 @@ class EGangotriUtil {
         EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS = System.currentTimeMillis()
         log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)
     }
+
+
+    static List csvToList(String csv) {
+        String _csv = csv.replaceAll(/["|\[|\]|'|\s]/, "").trim()
+        return _csv ? _csv.split(",")*.trim() : []
+    }
+
 }
