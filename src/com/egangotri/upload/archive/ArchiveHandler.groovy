@@ -27,96 +27,99 @@ class ArchiveHandler {
             ChromeDriver driver = new ChromeDriver()
             String archiveProfile = uploadVos.first().archiveProfile
             List<String> uploadables = uploadVos*.path
-            navigateLoginLogic(driver, metaDataMap, archiveProfile)
-                if (uploadVos) {
-                    log.info "Ready to upload ${uploadables.size()} Items(s) for Profile ${uploadVos.first().archiveProfile}"
-                    //Start Upload of First File in Root Tab
-                    log.info "Uploading: ${uploadVos.first().title}"
-                    EGangotriUtil.sleepTimeInSeconds(0.2)
-                    getResultsCount(driver, true)
-                    try {
-                        uploadOneItem(driver, uploadVos.first())
-                        countOfUploadedItems++
-                    }
-                    catch (Exception e) {
-                        log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
-                        uploadFailureCount++
-                    }
-                    // Upload Remaining Files by generating New Tabs
-                    if (uploadables.size() > 1) {
-                        int tabIndex = 1
-                        for (uploadVo in uploadVos.drop(1)) {
-                            if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
-                                String errMsg = "Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg"
-                                log.info(errMsg)
-                                throw new Exception(errMsg)
-                            }
+            if (!navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
+                log.info("cant continue. Login Failed")
+                return [countOfUploadedItems, uploadFailureCount]
+            }
+            if (uploadVos) {
+                log.info "Ready to upload ${uploadables.size()} Items(s) for Profile ${uploadVos.first().archiveProfile}"
+                //Start Upload of First File in Root Tab
+                log.info "Uploading: ${uploadVos.first().title}"
+                EGangotriUtil.sleepTimeInSeconds(0.2)
+                getResultsCount(driver, true)
+                try {
+                    uploadOneItem(driver, uploadVos.first())
+                    countOfUploadedItems++
+                }
+                catch (Exception e) {
+                    log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
+                    uploadFailureCount++
+                }
+                // Upload Remaining Files by generating New Tabs
+                if (uploadables.size() > 1) {
+                    int tabIndex = 1
+                    for (uploadVo in uploadVos.drop(1)) {
+                        if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
+                            String errMsg = "Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg"
+                            log.info(errMsg)
+                            throw new Exception(errMsg)
+                        }
 
-                            log.info "\nUploading: ${uploadVo.title} @ tabNo:$tabIndex"
-                            if(!UploadUtils.openNewTab(driver)){
-                                uploadFailureCount++
-                                continue
-                            }
+                        log.info "\nUploading: ${uploadVo.title} @ tabNo:$tabIndex"
+                        if (!UploadUtils.openNewTab(driver)) {
+                            uploadFailureCount++
+                            continue
+                        }
 
-                            //Switch to new Tab
-                            boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
-                            if (_tabSwitched) {
-                                tabIndex++
-                            } else {
-                                log.info("Tab Creation Failed during uppload of ${uploadVo.title}.")
-                                uploadFailureCount++
-                                continue
-                            }
+                        //Switch to new Tab
+                        boolean _tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                        if (_tabSwitched) {
+                            tabIndex++
+                        } else {
+                            log.info("Tab Creation Failed during uppload of ${uploadVo.title}.")
+                            uploadFailureCount++
+                            continue
+                        }
 
-                            //Start Upload
+                        //Start Upload
+                        try {
+                            uploadOneItem(driver, uploadVo)
+                        }
+                        catch (UnhandledAlertException uae) {
+                            log.error("UnhandledAlertException while uploading(${uploadVo.title}.")
+                            log.error("will proceed to next tab: ${uae.message}")
+                            UploadUtils.hitEnterKey()
+                            uploadFailureCount++
+                            log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.title}').")
                             try {
+                                if (!UploadUtils.openNewTab(driver)) {
+                                    uploadFailureCount++
+                                }
+                                tabIndex++
+                                boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
+                                if (!tabSwitched) {
+                                    log.error("tab not switched. contiuing to next")
+                                    continue
+                                }
                                 uploadOneItem(driver, uploadVo)
+                                log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.title}'")
                             }
-                            catch (UnhandledAlertException uae) {
-                                log.error("UnhandledAlertException while uploading(${uploadVo.title}.")
-                                log.error("will proceed to next tab: ${uae.message}")
+                            catch (UnhandledAlertException uae2) {
+                                log.info("UnhandledAlertException while uploading(${uploadVo.title}).\n will proceed to next tab: ${uae2.message}")
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
-                                log.info("Attempt-2 following UnhandledAlertException for ('${uploadVo.title}').")
-                                try {
-                                        if(!UploadUtils.openNewTab(driver)){
-                                            uploadFailureCount++
-                                        }
-                                        tabIndex++
-                                        boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
-                                        if (!tabSwitched) {
-                                        log.error("tab not switched. contiuing to next")
-                                        continue
-                                    }
-                                    uploadOneItem(driver, uploadVo)
-                                    log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.title}'")
-                                }
-                                catch (UnhandledAlertException uae2) {
-                                    log.info("UnhandledAlertException while uploading(${uploadVo.title}).\n will proceed to next tab: ${uae2.message}")
-                                    UploadUtils.hitEnterKey()
-                                    uploadFailureCount++
-                                    log.info("Failed. Attempt-2 for (${uploadVo.title}). following UnhandledAlertException")
-                                    continue
-                                }
-                                catch (Exception e) {
-                                    log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
-                                    uploadFailureCount++
-                                    continue
-                                }
+                                log.info("Failed. Attempt-2 for (${uploadVo.title}). following UnhandledAlertException")
+                                continue
                             }
                             catch (Exception e) {
                                 log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
                                 uploadFailureCount++
                                 continue
                             }
-                            countOfUploadedItems++
                         }
+                        catch (Exception e) {
+                            log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
+                            uploadFailureCount++
+                            continue
+                        }
+                        countOfUploadedItems++
                     }
-                    getResultsCount(driver, false)
-                    UploadUtils.minimizeBrowser(driver)
-                } else {
-                    log.info "No File uploadable for profile $archiveProfile"
                 }
+                getResultsCount(driver, false)
+                UploadUtils.minimizeBrowser(driver)
+            } else {
+                log.info "No File uploadable for profile $archiveProfile"
+            }
         }
         catch (Exception e) {
             e.printStackTrace()
@@ -164,7 +167,7 @@ class ArchiveHandler {
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
             String uploadLink = UploadUtils.generateUploadUrl(archiveProfile, fileName)
-            log.info("${tabIndex+1}) [$archiveProfile] $uploadLink")
+            log.info("${tabIndex + 1}) [$archiveProfile] $uploadLink")
         }
     }
 
@@ -177,12 +180,12 @@ class ArchiveHandler {
             int partitionCounter = 0
             for (def partitionedVos : partitions) {
                 log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedVos.size()} Item(s) queued for upload")
-                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,partitionedVos)
+                List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, partitionedVos)
                 uploadStatsList << uploadStats
             }
         } else {
             log.info("No partitioning")
-            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap,uploadVos)
+            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, uploadVos)
             uploadStatsList << uploadStats
         }
         uploadStatsList
@@ -194,14 +197,14 @@ class ArchiveHandler {
         String uploadLink = uploadVO.uploadLink
         String archiveProfile = uploadVO.archiveProfile
 
-        if(EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)){
+        if (EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)) {
             String fileNameOnly = UploadUtils.stripFilePathAndFileEnding(fileNameWithPath)
-            if(fileNameOnly.contains("-")){
+            if (fileNameOnly.contains("-")) {
                 String strAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly).trim()
                 uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + strAfterDash : uploadLink
             }
-       }
-        uploadLink = uploadLink.replaceAll(/[#!]/,"")
+        }
+        uploadLink = uploadLink.replaceAll(/[#!]/, "")
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
         //Go to URL
@@ -267,7 +270,7 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
-        if(EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL){
+        if (EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
             identifier = enhanceIdentifier(identifier)
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
@@ -277,7 +280,7 @@ class ArchiveHandler {
             boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
             //for a strange reason the first tab doesnt have alert
             //after that have alert. alert text is always nulll
-            if(alertWasDetected){
+            if (alertWasDetected) {
                 log.info("alert detected while identifier was being tweaked")
                 pgUrlInputField.click()
                 pgUrlInputField.sendKeys(Keys.ENTER)
@@ -289,7 +292,7 @@ class ArchiveHandler {
             identifier = identifierNowInTextBox
         }
         log.info("\tidentifier: ${identifier}")
-        storeArchiveIdentifierInFile(uploadVO,identifier)
+        storeArchiveIdentifierInFile(uploadVO, identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
         wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))

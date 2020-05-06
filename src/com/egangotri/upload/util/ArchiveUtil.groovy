@@ -50,7 +50,7 @@ class ArchiveUtil {
         }
     }
 
-    static void navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
+    static boolean navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
         List<String> kuta = [metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"] as List<String>
         if(metaDataMap."${EGangotriUtil.KUTA_SECOND}"){
             kuta << metaDataMap."${EGangotriUtil.KUTA_SECOND}"
@@ -59,14 +59,14 @@ class ArchiveUtil {
         boolean loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.first())
         if (!loginSuccess) {
             log.info("Login failed once for ${archiveProfile}. will give it one more shot")
-            loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.first())
+            //loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.first())
 
             if (kuta.size() > 1 && !loginSuccess) {
                 log.info("Login with Second Password ${archiveProfile}. Attempt 1")
                 loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
                 if (!loginSuccess) {
                     log.info("Login with Second Password ${archiveProfile}. will give it one more shot")
-                    loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
+                    //loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
                 }
             }
         }
@@ -74,6 +74,7 @@ class ArchiveUtil {
             log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
             throw new Exception("Not Continuing because of Login Failure twice")
         }
+        return loginSuccess
     }
 
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
@@ -238,9 +239,7 @@ class ArchiveUtil {
                 kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             }
             pass.sendKeys(kuta)
-            //button.click doesnt work
             button.submit()
-            //pass.click()
             EGangotriUtil.sleepTimeInSeconds(0.2)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
             wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)))
@@ -249,7 +248,6 @@ class ArchiveUtil {
         catch (Exception e) {
             log.info("Exception in logInToArchiveOrg ${e.message}")
             e.printStackTrace()
-            throw e
         }
         return loginSucess
     }
