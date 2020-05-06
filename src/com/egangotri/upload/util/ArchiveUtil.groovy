@@ -51,7 +51,7 @@ class ArchiveUtil {
     }
 
     static void navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception{
-        List<String> kuta = [metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}" as String]
+        List<String> kuta = [metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"] as List<String>
         if(metaDataMap."${EGangotriUtil.KUTA_SECOND}"){
             kuta << metaDataMap."${EGangotriUtil.KUTA_SECOND}"
         }
