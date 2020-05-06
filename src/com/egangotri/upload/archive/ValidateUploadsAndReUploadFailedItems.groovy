@@ -38,7 +38,6 @@ class ValidateUploadsAndReUploadFailedItems {
         processAllUplodableCSV()
         processUsheredCSV()
         findAllUploadableItemsNotInUsheredCSV()
-        findAllUploadableItemsNotInUsheredCSV()
        if(dontUseFailedLinksFromStaticList) {
            filterFailedUsheredItems()
        }
@@ -62,8 +61,8 @@ class ValidateUploadsAndReUploadFailedItems {
         execute()
     }
     static void setCSVsForValidation(String[] args) {
-        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER,"")
-        USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER,"")
+        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
+        USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
 
         if (!ALL_UPLODABLE_ITEMS_FILE) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
@@ -97,8 +96,8 @@ class ValidateUploadsAndReUploadFailedItems {
                 System.exit(0)
             }
         }
-        log.info("All Uploadable File for processing: ${ALL_UPLODABLE_ITEMS_FILE.name}")
-        log.info("Identifier File for processing: ${USHERED_ITEMS_FILE.name}")
+        log.info("ALL_UPLODABLE_ITEMS_FILE for processing: ${ALL_UPLODABLE_ITEMS_FILE.name}")
+        log.info("USHERED_ITEMS_FILE for processing: ${USHERED_ITEMS_FILE.name}")
     }
 
     static void processAllUplodableCSV() {
@@ -120,11 +119,11 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Queued Items will be ignored for upload")
             return
         }
-        List allFilePaths = USHERED_LINKS_FOR_TESTING*.path
-        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} Queued Item(s) that were never upload-ushered in ${allFilePaths.size()} identifiers")
+        List usheredLinksPaths = USHERED_LINKS_FOR_TESTING*.path
+        log.info("Searching from ${ALL_UPLOADABLE_ITEMS_FOR_TESTING?.size()} Queued Item(s) that were never upload-ushered in ${USHERED_LINKS_FOR_TESTING.size()} identifiers")
 
         ALL_UPLOADABLE_ITEMS_FOR_TESTING.eachWithIndex { allUploadedItem, index ->
-            if (!allFilePaths.contains(allUploadedItem.path)) {
+            if (!usheredLinksPaths.contains(allUploadedItem.path)) {
                 MISSED_OUT_ALL_UPLOADABLE_ITEMS << allUploadedItem
                 log.info("\tFound missing Item [ (# $index). ${allUploadedItem.archiveProfile}] ${allUploadedItem.title} ")
             }
@@ -139,8 +138,11 @@ class ValidateUploadsAndReUploadFailedItems {
             return
         }
         int testableLinksCount = USHERED_LINKS_FOR_TESTING.size()
-        log.info("\n\nTesting ${testableLinksCount} Links in archive to be tested for upload-success-confirmation")
-
+        if(!testableLinksCount){
+            log.info("No Items in Upload Ushered File")
+            return
+        }
+        log.info("\nTesting ${testableLinksCount} Links in archive to be tested for upload-success-confirmation")
         USHERED_LINKS_FOR_TESTING.eachWithIndex { UsheredVO entry, int i ->
             String urlText = ""
             try {
@@ -227,10 +229,12 @@ class ValidateUploadsAndReUploadFailedItems {
         ValidateUtil.validateMaxUploadableLimit()
 
         int attemptedItemsTotal = 0
+        ArchiveUtil.storeAllUplodableItemsInFile(ALL_FAILED_ITEMS)
 
         profiles.eachWithIndex { archiveProfile, index ->
             List<UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll { it.archiveProfile == archiveProfile }
             int countOfUploadableItems = failedVOsForProfile.size()
+
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
                 List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, failedVOsForProfile)
