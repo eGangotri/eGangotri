@@ -29,7 +29,7 @@ class PreUploadReview {
         List<String> setOfOffendingPaths = []
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
-        log.info("This Execution will target Files of Cumulative Size ${ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
         profiles.eachWithIndex { archiveProfile, index ->
             List<String> uploadablesForProfile = UploadUtils.getUploadablesForProfile(archiveProfile)
             if (uploadablesForProfile) {
