@@ -30,8 +30,8 @@ class PreUploadReview {
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
-        long sizeInMB =  ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION
-        long sizeInGB =  sizeInMB/1024
+        long sizeInMB = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION
+        long sizeInGB = sizeInMB/1024
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInMB} MB (== ${sizeInGB} GB)")
         profiles.eachWithIndex { archiveProfile, index ->
             List<String> uploadablesForProfile = UploadUtils.getUploadablesForProfile(archiveProfile)
