@@ -224,10 +224,17 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Only stats generated. No Uploading due to Setting")
             return
         }
-        Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
-        _execute(validProfiles, metaDataMap)
+
+        if(ALL_FAILED_ITEMS>0){
+            Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
+            Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+            Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
+            _execute(validProfiles, metaDataMap)
+        }
+        else{
+            log.info("All Items were successfully uploaded.")
+            System.exit(0)
+        }
     }
 
     static _execute(Set<String> profiles, Hashtable<String, String> metaDataMap){

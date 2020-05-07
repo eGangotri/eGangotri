@@ -17,7 +17,7 @@ class ExecuteBatchJob implements Job {
 
     static final String RESTART_TEAMVIEWER = 'TASKKILL /IM TEAMVIEWER.exe /F && "C:\\Program Files (x86)\\TeamViewer\\TeamViewer.exe"'
     static final String RESTART_CHROME = 'TASKKILL /IM chrome.exe /F && "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"'
-    static final String RESTART_SYSTEM = 'shutdown /r '
+    static final String RESTART_SYSTEM = 'shutdown /r'
 
     static final Map<String, String> COMMON_INSTRUCTIONS_MAP =
             ["D": DEFAULT_INSTRUCTION + "<---", "T":RESTART_TEAMVIEWER, "C":RESTART_CHROME, "R": RESTART_SYSTEM]
