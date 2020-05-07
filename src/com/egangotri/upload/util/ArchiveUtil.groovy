@@ -279,12 +279,10 @@ class ArchiveUtil {
     static Long getGrandTotalOfFileSizeOfAllUploadables(Collection<String> profiles){
         Long totalSize = 0
         List<String> allUploadables = getAllUploadables(profiles)
-        List<Long> sizes = allUploadables.collect { String filePath ->
-             new File(filePath).size() as long
+        allUploadables.each { String filePath ->
+            totalSize += new File(filePath).size() as long
         }
-
-        totalSize = sizes.sum() as Long
-        return totalSize
+        return totalSize/(1024*1024)
     }
 
     static List<String> getAllUploadables(Collection<String> profiles){
