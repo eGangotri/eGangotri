@@ -14,6 +14,12 @@ class ExecuteBatchJob implements Job {
     static final String  CRON_FILE_PATH = File.separator + "google_drive" + File.separator + "archive_uploader" + File.separator + "cron.txt"
     static final String REMOTE_INSTRUCTIONS_FILE = EGangotriUtil.EGANGOTRI_BASE_DIR + CRON_FILE_PATH
     static final String DEFAULT_INSTRUCTION = "echo Hi @"
+
+    static final String RESTART_TEAMVIEWER = 'TASKKILL /IM TEAMVIEWER.exe /F && "C:\\Program Files (x86)\\TeamViewer\\TeamViewer.exe"'
+    static final String RESTART_CHROME = 'TASKKILL /IM chrome.exe /F && "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"'
+
+    static final Map<String, String> COMMON_INSTRUCTIONS_MAP = ["D": DEFAULT_INSTRUCTION + "<---", "T":RESTART_TEAMVIEWER, "C":RESTART_CHROME]
+
     void execute(JobExecutionContext context)
             throws JobExecutionException {
 
@@ -25,10 +31,15 @@ class ExecuteBatchJob implements Job {
         if(!fileWithInstructions.exists()){
             fileWithInstructions.createNewFile()
         }
-        String instructions = fileWithInstructions.getText('UTF-8')
+        String instructions = fileWithInstructions.getText('UTF-8').trim()
+
         if(!instructions){
-            instructions = DEFAULT_INSTRUCTION + dateFormat.format(new Date())
+            instructions = COMMON_INSTRUCTIONS_MAP.D + dateFormat.format(new Date())
         }
+        if(COMMON_INSTRUCTIONS_MAP.keySet().contains(instructions)){
+            instructions = COMMON_INSTRUCTIONS_MAP.get(instructions)
+        }
+        //reset instruction
         fileWithInstructions.write(DEFAULT_INSTRUCTION + dateFormat.format(new Date()))
         log.info "cmd /c ${instructions}".execute().text
         //To reboot use
