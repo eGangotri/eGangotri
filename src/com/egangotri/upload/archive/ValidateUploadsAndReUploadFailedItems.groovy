@@ -49,15 +49,15 @@ class ValidateUploadsAndReUploadFailedItems {
         startReuploadOfFailedItems()
     }
 
-    static void findMissedQueueItemsOnlyAndReupload(boolean reupload = true){
+    static void findMissedQueueItemsOnlyAndReupload(boolean generateStatsOnly = true){
         EGangotriUtil.recordProgramStart("findMissedQueueItemsOnlyAndReupload")
-        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!reupload,false])
+        SettingsUtil.applySettingsWithReuploaderFlags([false,true,!generateStatsOnly,false])
         execute()
     }
 
-    static void findMissedUsheredItemsOnlyAndReupload(boolean reupload = false){
+    static void findMissedUsheredItemsOnlyAndReupload(boolean generateStatsOnly = false){
         EGangotriUtil.recordProgramStart("findMissedUsheredItemsOnlyAndReupload")
-        SettingsUtil.applySettingsWithReuploaderFlags([true,false,reupload,false])
+        SettingsUtil.applySettingsWithReuploaderFlags([true,false,generateStatsOnly,false])
         execute()
     }
     static void setCSVsForValidation(String[] args) {
@@ -101,12 +101,20 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void processAllUplodableCSV() {
+        if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            log.info("Queued Items will be ignored for upload")
+            return
+        }
         ALL_UPLOADABLE_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(ALL_UPLODABLE_ITEMS_FILE)
         Set allUploadableProfiles = ALL_UPLOADABLE_ITEMS_FOR_TESTING*.archiveProfile as Set
         log.info("Converted " + ALL_UPLOADABLE_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${allUploadableProfiles.toString()}")
     }
 
     static void processUsheredCSV() {
+        if(SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            log.info("Queued Items will be ignored for upload")
+            return
+        }
         USHERED_LINKS_FOR_TESTING = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
         archiveProfiles = USHERED_LINKS_FOR_TESTING*.archiveProfile as Set
         log.info("Converted " + USHERED_LINKS_FOR_TESTING.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
@@ -115,8 +123,8 @@ class ValidateUploadsAndReUploadFailedItems {
     // This function produces QueuedItem - usheredItem
     //Queued Item is a superset of usheredItem
     static void findAllUploadableItemsNotInUsheredCSV() {
-        if(SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
-            log.info("Queued Items will be ignored for upload")
+        if(SettingsUtil.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS){
+            MISSED_OUT_ALL_UPLOADABLE_ITEMS = ALL_UPLOADABLE_ITEMS_FOR_TESTING
             return
         }
         List usheredLinksPaths = USHERED_LINKS_FOR_TESTING*.path

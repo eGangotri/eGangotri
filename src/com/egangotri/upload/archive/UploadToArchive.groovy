@@ -41,13 +41,11 @@ class UploadToArchive {
         if(previewSuccess){
             execute(purgedProfiles, metaDataMap)
             if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0){
-                log.info("Will now check if all queued items were successful")
-                ValidateUploadsAndReUploadFailedItems.findMissedQueueItemsOnlyAndReupload()
                 log.info("Going to sleep for 1 Hour...\n")
                 //Wait for 1 Hour and check Links also
                 Thread.sleep(1000*60*60)
-                log.info("\nWill now check if all ushered items were successful")
-                ValidateUploadsAndReUploadFailedItems.findMissedUsheredItemsOnlyAndReupload()
+                log.info("Will now reupload any missed item...\n")
+                ValidateUploadsAndReUploadFailedItems.main(new String[0])
             }
         }
         System.exit(0)
