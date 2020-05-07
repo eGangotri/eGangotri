@@ -217,7 +217,6 @@ class ArchiveUtil {
 
     static void compareQueuedWithUsheredStats(String queuedFile, String usheredFile){
         Tuple statsForQueued = ValidateUtil.statsForItemsVO(queuedFile)
-        log.info("\n")
         Tuple statsForUshered = ValidateUtil.statsForUsheredItemsVO(usheredFile)
         String equality = (statsForQueued[0] == statsForUshered[0]) ? "Yes" : "\nNo. Short by ${Math.abs(statsForUshered[0] - statsForQueued[0])} item(s)"
         log.info("Are No of Queued Items ( [${statsForQueued[1]}] = ${statsForQueued[0]}) equal to ( [${statsForUshered[1]}] = ${statsForUshered[0]}) Upload-Ushered Items? " +
