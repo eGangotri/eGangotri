@@ -1,7 +1,5 @@
 package com.egangotri
 
-import com.itextpdf.text.Document
-import com.itextpdf.text.pdf.PdfCopy
 import groovy.util.logging.Slf4j
 
 @Slf4j

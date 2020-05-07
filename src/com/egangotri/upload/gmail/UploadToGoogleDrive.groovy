@@ -3,7 +3,6 @@ package com.egangotri.upload.gmail
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-import org.slf4j.*
 
 @Slf4j
 class UploadToGoogleDrive {
@@ -32,7 +31,7 @@ class UploadToGoogleDrive {
             folders.eachWithIndex { String folder, idx ->
                 log.info("folder: $folder")
                 File directory = new File(folder)
-                int countOfUploadablePdfs = UploadUtils.getAllPdfs(directory)?.size()
+                int countOfUploadablePdfs = UploadUtils.getAllFiles(directory)?.size()
                 if (countOfUploadablePdfs) {
                     log.info "UploadToGoogleDrive: Upload $countOfUploadablePdfs docs to $directory"
                     boolean success = GoogleDriveHandler.loginAndUpload(metaDataMap, uploadProfile, folder)

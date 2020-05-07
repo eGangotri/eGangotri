@@ -53,6 +53,6 @@ class FileMover {
     }
 
     static Integer noOfFiles(String dirName) {
-        return UploadUtils.getAllPdfs(new File(dirName))?.size()
+        return UploadUtils.getAllFiles(new File(dirName))?.size()
     }
 }

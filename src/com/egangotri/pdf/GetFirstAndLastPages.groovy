@@ -2,11 +2,8 @@ package com.egangotri.pdf
 
 import com.itextpdf.text.Document
 import com.itextpdf.text.DocumentException
-import com.itextpdf.text.pdf.PdfContentByte
 import com.itextpdf.text.pdf.PdfCopy
-import com.itextpdf.text.pdf.PdfImportedPage
 import com.itextpdf.text.pdf.PdfReader
-import com.itextpdf.text.pdf.PdfWriter
 import groovy.util.logging.Slf4j
 
 /**

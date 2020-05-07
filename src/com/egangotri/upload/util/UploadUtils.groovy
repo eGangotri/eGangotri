@@ -89,13 +89,13 @@ class UploadUtils {
         return encoded.join("")
     }
 
-    static boolean hasAtleastOneUploadablePdfForProfile(String archiveProfile) {
+    static boolean hasAtleastOneUploadableFileForProfile(String archiveProfile) {
         List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
         boolean atlestOne = false
         log.info "folders: $folders"
-        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOnePdfInPreCutOffFolders(folders)) {
+        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOneFileInPreCutOffFolders(folders)) {
             atlestOne = true
-        } else if (hasAtleastOnePdfExcludePreCutOff(folders)) {
+        } else if (hasAtleastOneFileExcludePreCutOff(folders)) {
             atlestOne = true
         }
         log.info "atlestOne[$archiveProfile]: $atlestOne"
@@ -122,29 +122,29 @@ class UploadUtils {
     }
 
 
-    static boolean hasAtleastOnePdf(File folder) {
-        return hasAtleastOnePdf(folder, false)
+    static boolean hasAtleastOneFile(File folder) {
+        return hasAtleastOneFile(folder, false)
     }
 
-    static boolean hasAtleastOnePdf(File folder, boolean excludePreCutOff) {
-        return getAllPdfs(folder, excludePreCutOff)?.size()
+    static boolean hasAtleastOneFile(File folder, boolean excludePreCutOff) {
+        return getAllFiles(folder, excludePreCutOff)?.size()
     }
 
-    static boolean hasAtleastOnePdfExcludePreCutOff(File folder) {
-        return hasAtleastOnePdf(folder, true)
+    static boolean hasAtleastOneFileExcludePreCutOff(File folder) {
+        return hasAtleastOneFile(folder, true)
     }
 
-    static boolean hasAtleastOnePdfExcludePreCutOff(List<File> folders) {
+    static boolean hasAtleastOneFileExcludePreCutOff(List<File> folders) {
         boolean atlestOne = false
         folders.each { folder ->
-            if (hasAtleastOnePdfExcludePreCutOff(folder)) {
+            if (hasAtleastOneFileExcludePreCutOff(folder)) {
                 atlestOne = true
             }
         }
         return atlestOne
     }
 
-    static boolean hasAtleastOnePdfInPreCutOffFolders(List<File> folders) {
+    static boolean hasAtleastOneFileInPreCutOffFolders(List<File> folders) {
         boolean atlestOne = false
         if (getItemsInPreCutOffFolders(folders)) {
             atlestOne = true
@@ -153,19 +153,19 @@ class UploadUtils {
     }
 
     static List<String> getAllItemsExceptPreCutOff(File folder) {
-        getAllPdfs(folder, true)
+        getAllFiles(folder, true)
     }
 
     static List<String> getAllItemsExceptPreCutOff(List<File> folders) {
-        List<String> pdfs = []
+        List<String> files = []
         folders.each { folder ->
-            pdfs.addAll(getAllItemsExceptPreCutOff(folder))
+            files.addAll(getAllItemsExceptPreCutOff(folder))
         }
-        return pdfs
+        return files
     }
 
-    static List<String> getAllPdfs(File folder, Boolean excludeFlag) {
-        List<String> pdfs = []
+    static List<String> getAllFiles(File folder, Boolean excludeFlag) {
+        List<String> files = []
         Map optionsMap = [type      : FileType.FILES,
                           nameFilter: ~(FileUtil.ALLOWED_EXTENSIONS_REGEX)
         ]
@@ -185,24 +185,23 @@ class UploadUtils {
             return []
         }
         folder.traverse(optionsMap) {
-            pdfs << it.absolutePath
+            files << it.absolutePath
         }
-        return pdfs.sort()
+        return files.sort()
     }
 
     static excludableItems(String file){
 
     }
-    static List<String> getAllPdfs(File folder) {
-        return getAllPdfs(folder, false)
+    static List<String> getAllFiles(File folder) {
+        return getAllFiles(folder, false)
     }
 
-    static List<String> getPdfsInPreCutOffFolder(File folder) {
-        List<String> pdfs = []
+    static List<String> getFilesInPreCutOffFolder(File folder) {
+        List<String> files = []
         Map optionsMap = [type  : FileType.FILES,
                           filter: {
-                              it.absolutePath.contains(FileUtil.PRE_CUTOFF) /*&&
-                                      it.name.endsWith(EGangotriUtil.PDF)*/
+                              it.absolutePath.contains(FileUtil.PRE_CUTOFF)
                           }
         ]
         if (!folder.exists()) {
@@ -212,17 +211,17 @@ class UploadUtils {
         folder.traverse(optionsMap) {
             log.info ">>>" + it
             log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
-            pdfs << it.absolutePath
+            files << it.absolutePath
         }
-        return pdfs
+        return files
     }
 
     static List<String> getItemsInPreCutOffFolders(List<File> folders) {
-        List<String> pdfs = []
+        List<String> files = []
         folders.each { folder ->
-            pdfs.addAll(getPdfsInPreCutOffFolder(folder))
+            files.addAll(getFilesInPreCutOffFolder(folder))
         }
-        return pdfs
+        return files
     }
 
     static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
@@ -543,7 +542,7 @@ class UploadUtils {
         return new SimpleDateFormat(DATE_TIME_PATTERN).format(date > 0 ? new Date(date) :new Date())
     }
 
-    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUploadablePdfs){
+    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles){
         int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
         String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
         String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
@@ -553,8 +552,8 @@ class UploadUtils {
         String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
         log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
-        String statusMsg = countOfUploadablePdfs == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
-        String report = "$archiveProfile, \t Total $countOfUploadablePdfs,\t " +
+        String statusMsg = countOfUplodableFiles == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
+        String report = "$archiveProfile, \t Total $countOfUplodableFiles,\t " +
                 "Attempted Upload Count $countOfUploadedItems,\t with  ${exceptionCount} Exceptions \t $statusMsg"
         log.info(report)
         return report

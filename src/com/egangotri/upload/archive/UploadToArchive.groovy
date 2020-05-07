@@ -57,6 +57,9 @@ class UploadToArchive {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
+
+        ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
+
         ValidateUtil.validateMaxUploadableLimit()
         int attemptedItemsTotal = 0
         List<UploadVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)

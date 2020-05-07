@@ -8,10 +8,8 @@ package com.egangotri.pdf
 */
 
 import com.itextpdf.text.Document
-import com.itextpdf.text.DocumentException
 import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfReader
-import com.itextpdf.text.pdf.PdfSmartCopy
 import groovy.util.logging.Slf4j
 
 /**

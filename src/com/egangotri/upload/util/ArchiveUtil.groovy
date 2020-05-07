@@ -20,6 +20,7 @@ class ArchiveUtil {
     static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details/"
     static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}@ACCOUNT_NAME"
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
+    static Long GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     public static boolean ValidateUploadsAndReUploadFailedItems = false
     private static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -274,6 +275,17 @@ class ArchiveUtil {
 
     static int getGrandTotalOfAllUploadables(Collection<String> profiles){
         return getAllUploadables(profiles).size()
+    }
+
+    static Long getGrandTotalOfFileSizeOfAllUploadables(Collection<String> profiles){
+        Long totalSize = 0
+        List<String> allUploadables = getAllUploadables(profiles)
+        List<Long> sizes = allUploadables.collect { String filePath ->
+             new File(filePath).size() as long
+        }
+
+        totalSize = sizes.sum() as Long
+        return totalSize
     }
 
     static List<String> getAllUploadables(Collection<String> profiles){
