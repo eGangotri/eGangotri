@@ -41,6 +41,8 @@ class ExecuteBatchJob implements Job {
         if(COMMON_INSTRUCTIONS_MAP.keySet().contains(instructions*.toUpperCase())){
             instructions = COMMON_INSTRUCTIONS_MAP.get(instructions)
         }
+        log.info "Instruction for execution will be: cmd /c ${instructions}".execute().text
+
         //reset instruction
         fileWithInstructions.write(DEFAULT_INSTRUCTION + dateFormat.format(new Date()))
         log.info "cmd /c ${instructions}".execute().text
