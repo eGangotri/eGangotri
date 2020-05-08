@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.awt.Robot
 import java.awt.Toolkit
+
 @Slf4j
 class UploadUtils {
 
@@ -172,9 +173,9 @@ class UploadUtils {
         if (excludeFlag) {
             optionsMap.put("excludeFilter", { File file ->
                 file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
-                SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS*.toLowerCase().stream().anyMatch {
-                    String ignorableKeyWords -> file.absolutePath.toLowerCase().contains(ignorableKeyWords)
-                } ||
+                        SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS*.toLowerCase().stream().anyMatch {
+                            String ignorableKeyWords -> file.absolutePath.toLowerCase().contains(ignorableKeyWords)
+                        } ||
                         file.name.startsWith(".") ||
                         !file.name.contains(".") ||
                         SettingsUtil.IGNORE_EXTENSIONS.contains(getFileEnding(file.name).toLowerCase())
@@ -190,9 +191,10 @@ class UploadUtils {
         return files.sort()
     }
 
-    static excludableItems(String file){
+    static excludableItems(String file) {
 
     }
+
     static List<String> getAllFiles(File folder) {
         return getAllFiles(folder, false)
     }
@@ -357,12 +359,17 @@ class UploadUtils {
                 supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
-                if(_subjects.contains(",")){
-                    if(_subjects.contains(",")){
-                        def regex = /".*?"/
-                        def allSubjects = _subjects.findAll(regex).collect {it -> it.replaceAll(",", " ")}
-                        _subjects = allSubjects.join(",")
+                if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'") )) {
+                    def doubleQuoteRegex = /".*?"/
+                    def singleQuoteRegex = /'.*?'/
+                    def subjectsInsideSingleQuotes =  _subjects.findAll(singleQuoteRegex)
+                    def subjectsInsideDoubleQuotes =  _subjects.findAll(doubleQuoteRegex)
+                    def both = subjectsInsideSingleQuotes + subjectsInsideDoubleQuotes
+                    both.each{ it ->
+                        _subjects = _subjects.replaceAll(it,"")
                     }
+                    def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll{ String item-> !item.isEmpty()}
+                    _subjects = allSubjects.join(",")
                 }
                 supplementary_url += AMPERSAND + "subject=" + _subjects
             }
@@ -388,10 +395,10 @@ class UploadUtils {
         String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
         String insertDescription = insertDescriptionInUploadUrl(supplementary_url, fileNameToBeUsedAsUniqueDescription)
         String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
-        return uploadUrl.replaceAll("\"","'")
+        return uploadUrl.replaceAll("\"", "'")
     }
 
-    static insertDescriptionInUploadUrl(String supplementary_url, String fileNameToBeUsedAsUniqueDescription){
+    static insertDescriptionInUploadUrl(String supplementary_url, String fileNameToBeUsedAsUniqueDescription) {
         return supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
     }
 
@@ -535,14 +542,14 @@ class UploadUtils {
     }
 
     static getFormattedDateString(Date date = null) {
-        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date?:new Date())
+        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date ?: new Date())
     }
 
     static getFormattedDateString(long date) {
-        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date > 0 ? new Date(date) :new Date())
+        return new SimpleDateFormat(DATE_TIME_PATTERN).format(date > 0 ? new Date(date) : new Date())
     }
 
-    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles){
+    static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles) {
         int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
         String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
         String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
@@ -560,6 +567,7 @@ class UploadUtils {
     }
 
 }
+
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
