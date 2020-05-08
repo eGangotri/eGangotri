@@ -39,7 +39,7 @@ class ExecuteBatchJob implements Job {
         if(!instructions){
             instructions = COMMON_INSTRUCTIONS_MAP.D + dateFormat.format(new Date())
         }
-        if(instructions?.size() == 1 && COMMON_INSTRUCTIONS_MAP.keySet().contains(instructions.toUpperCase())){
+        if(instructions?.trim()?.length() == 1 && COMMON_INSTRUCTIONS_MAP.keySet().contains(instructions.toUpperCase())){
             instructions = COMMON_INSTRUCTIONS_MAP.get(instructions)
         }
         log.info "Instruction for execution will be: cmd /c ${instructions}"
