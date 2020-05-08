@@ -34,7 +34,6 @@ class ExecuteBatchJob implements Job {
             fileWithInstructions.createNewFile()
         }
         String instructions = fileWithInstructions.getText('UTF-8').trim()
-        log.info "Instruction from file: cmd /c ${instructions}"
 
         if(!instructions){
             instructions = COMMON_INSTRUCTIONS_MAP.D + dateFormat.format(new Date())
