@@ -46,6 +46,19 @@ class UploadToArchive {
                 Thread.sleep(1000*60*60)
                 log.info("Will now reupload any missed item...\n")
                 ValidateUploadsAndReUploadFailedItems.main(new String[0])
+                if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0) {
+                    log.info("Second Sleep Session started...\n")
+                    //Wait for 1 Hour and check Links also
+                    Thread.sleep(1000 * 60 * 60)
+                    log.info("Second check/reupload started...\n")
+                    CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
+                    if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0){
+                        log.info("Every file was uploaded succefully. Aum Shanti\n")
+                    }
+                    else {
+                        log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status\n")
+                    }
+                }
             }
         }
         System.exit(0)

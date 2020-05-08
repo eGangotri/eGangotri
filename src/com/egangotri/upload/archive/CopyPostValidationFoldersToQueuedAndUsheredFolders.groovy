@@ -10,13 +10,16 @@ import java.nio.file.Files
 class CopyPostValidationFoldersToQueuedAndUsheredFolders {
 
     static main(args) {
-        log.info("Getting latest Files from ${EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER}")
+        execute(args)
+        System.exit(0)
+    }
 
+    def static execute(String[] args){
+        log.info("Getting latest Files from ${EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER}")
         copyToUshered(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"ushered"))
         copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"all"))
 
         ValidateUploadsAndReUploadFailedItems.main(new String[0])
-        System.exit(0)
     }
 
     def static copy(File src, String folderName) {
