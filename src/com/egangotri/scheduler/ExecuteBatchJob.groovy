@@ -38,7 +38,7 @@ class ExecuteBatchJob implements Job {
         if(!instructions){
             instructions = COMMON_INSTRUCTIONS_MAP.D + dateFormat.format(new Date())
         }
-        if(COMMON_INSTRUCTIONS_MAP.keySet().contains(instructions)){
+        if(COMMON_INSTRUCTIONS_MAP.keySet()*.toUpperCase().contains(instructions)){
             instructions = COMMON_INSTRUCTIONS_MAP.get(instructions)
         }
         //reset instruction
