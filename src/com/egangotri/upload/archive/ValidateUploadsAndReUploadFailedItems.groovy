@@ -5,6 +5,7 @@ import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.UsheredVO
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -15,10 +16,10 @@ class ValidateUploadsAndReUploadFailedItems {
     static File USHERED_ITEMS_FILE = null
     static File ALL_UPLODABLE_ITEMS_FILE = null
 
-    static List<UploadVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
+    static List<QueuedVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
 
-    static List<UploadVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
+    static List<QueuedVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
 
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
@@ -26,14 +27,14 @@ class ValidateUploadsAndReUploadFailedItems {
     static List<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
-    static main(args) {
+    static main(String[] args) {
         EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
         SettingsUtil.applySettingsWithReuploaderFlags()
         execute(args)
         System.exit(0)
     }
 
-    static void execute(def args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
+    static void execute(String[] args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
         processUsheredCSV()
@@ -230,7 +231,7 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
+        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap) as Set
         _execute(validProfiles, metaDataMap)
     }
 

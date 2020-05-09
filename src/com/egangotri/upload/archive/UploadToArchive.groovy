@@ -1,6 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
@@ -31,7 +32,7 @@ class UploadToArchive {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap)
+        Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
         boolean previewSuccess = true
 
         if(SettingsUtil.PREVIEW_FILES){
@@ -69,17 +70,17 @@ class UploadToArchive {
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         ValidateUtil.validateMaxUploadableLimit()
         int attemptedItemsTotal = 0
-        List<UploadVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
+        List<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
         profiles.eachWithIndex { archiveProfile, index ->
-            Integer countOfUploadableItems = UploadUtils.getCountOfUploadableItemsForProfile(archiveProfile)
+            Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
                 if (EGangotriUtil.GENERATE_ONLY_URLS) {
-                    List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
+                    List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
-                    List<String> uploadables = UploadUtils.getUploadablesForProfile(archiveProfile)
+                    List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
                     List<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile,uploadables)
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, vos)
                     String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)

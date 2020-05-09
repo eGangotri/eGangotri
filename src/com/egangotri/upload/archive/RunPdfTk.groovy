@@ -18,7 +18,7 @@ class RunPdfTk {
 
     static File _repaired = new File(directory,"_repaired")
     static File _altered = new File(directory, "_altered")
-    static main(args) {
+    static main(String[] args) {
         if(args){
             directory = new File(args[0])
         }

@@ -11,7 +11,7 @@ class SnapToHtml {
     static String SNAP2HTML_INSTALLATION_PATH="Snap2HTML.exe"
     static String FOLDER_FOR_SNAP2HTML_LISTING_GENERATION=""
     static String DATE_TIME_AM_PATTERN = "dd-MMM-yyyy hh.mm aa"
-    static def dateFormat = new SimpleDateFormat(DATE_TIME_AM_PATTERN)
+    static SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_AM_PATTERN)
     //Will be initialized in SettingsUtil because its dependencies on other static variable will make it outdated
     static String execCmd = ""
 

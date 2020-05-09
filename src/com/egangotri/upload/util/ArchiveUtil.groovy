@@ -20,17 +20,17 @@ class ArchiveUtil {
     static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details/"
     static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}@ACCOUNT_NAME"
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
-    static Long GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
+    static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean ValidateUploadsAndReUploadFailedItems = false
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
         WebElement userMenu =  driver.findElement(By.xpath("//*[@id=\"wrap\"]/topnav-element"))
-        def jsonSlurper = new JsonSlurper()
+        JsonSlurper jsonSlurper = new JsonSlurper()
         log.info("userName: ${userMenu.getAttribute("config")}")
 
         String config = userMenu.getAttribute("config")
-        def userName = jsonSlurper.parseText(config).username
+        String userName = jsonSlurper.parseText(config).username
         log.info("userName: ${userName}")
 
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
@@ -86,7 +86,7 @@ class ArchiveUtil {
             new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE).append(appendable)
         }
     }
-    //create UploadVO
+    //create QueuedVO
     static List<QueuedVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables){
         List<QueuedVO> vos = []
         uploadables.each{ uploadable ->
@@ -95,21 +95,21 @@ class ArchiveUtil {
         return vos
     }
 
-    static List<UploadVO> generateUploadVoForAllUploadableItems(Collection<String> profiles){
-        List<UploadVO> vos = []
+    static List<QueuedVO> generateUploadVoForAllUploadableItems(Collection<String> profiles){
+        List<QueuedVO> vos = []
         profiles.eachWithIndex { String profile, index ->
-            UploadUtils.getUploadablesForProfile(profile).each { String filePath ->
-                UploadVO vo = new UploadVO(profile, filePath)
+            FileRetrieverUtil.getUploadablesForProfile(profile).each { String filePath ->
+                QueuedVO vo = new QueuedVO(profile, filePath)
                 vos << vo
             }
         }
         return vos
     }
 
-    static void storeAllUplodableItemsInFile(List<UploadVO> uploadVos) {
+    static void storeAllUplodableItemsInFile(List<? extends UploadVO> vos) {
         String appendable = ""
-        uploadVos.each{ uploadVo ->
-            appendable += voToCSVString(uploadVo)
+        vos.each{ vo ->
+            appendable += voToCSVString(vo)
         }
         if(ValidateUploadsAndReUploadFailedItems){
             new File(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE).append(appendable)
@@ -276,7 +276,7 @@ class ArchiveUtil {
         return getAllUploadables(profiles).size()
     }
 
-    static Long getGrandTotalOfFileSizeOfAllUploadables(Collection<String> profiles){
+    static BigDecimal getGrandTotalOfFileSizeOfAllUploadables(Collection<String> profiles){
         Long totalSize = 0
         List<String> allUploadables = getAllUploadables(profiles)
         allUploadables.each { String filePath ->
@@ -288,11 +288,18 @@ class ArchiveUtil {
     static List<String> getAllUploadables(Collection<String> profiles){
         List<String> allUploadables = []
         profiles.eachWithIndex { String profile, index ->
-            allUploadables.addAll(UploadUtils.getUploadablesForProfile(profile))
+            allUploadables.addAll(FileRetrieverUtil.getUploadablesForProfile(profile))
         }
         return allUploadables
     }
     static Collection<String> filterInvalidProfiles(Collection<String> profiles, Hashtable<String, String> metaDataMap){
         return profiles.findAll { profile -> UploadUtils.checkIfArchiveProfileHasValidUserName(metaDataMap, profile)} as Set
+    }
+
+    static restrictExtensionsToPdfOnlyForAcccountsMarkedIgnoreCreatorSettings(String profile){
+        if(EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains((profile))){
+            SettingsUtil.ALLOWED_EXTENSIONS = []
+            SettingsUtil.IGNORE_EXTENSIONS = []
+        }
     }
 }

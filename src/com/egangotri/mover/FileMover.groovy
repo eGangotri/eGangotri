@@ -1,6 +1,6 @@
 package com.egangotri.mover
 
-
+import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
@@ -11,7 +11,7 @@ class FileMover {
     static Map<String, List<String>> srcDestMap
     static List profiles = []
 
-    static main(args) {
+    static main(String [] args) {
         if (args) {
             log.info "args $args"
             profiles = args.toList()
@@ -53,6 +53,6 @@ class FileMover {
     }
 
     static Integer noOfFiles(String dirName) {
-        return UploadUtils.getAllFiles(new File(dirName))?.size()
+        return FileRetrieverUtil.getAllFiles(new File(dirName))?.size()
     }
 }

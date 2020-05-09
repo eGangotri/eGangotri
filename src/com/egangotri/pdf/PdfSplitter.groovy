@@ -22,15 +22,15 @@ class PdfSplitter {
     static String FOLDER_NAME = "C:\\hw\\megha"
     static List ignoreList = [SPLIT_FOLDER_NAME]
 
-    static Float THRESHOLD = 95.00
-    static Float BYTES_IN_A_KILO = 1024.0
+    static Float THRESHOLD = 95.0f
+    static Float BYTES_IN_A_KILO = 1024.0f
 
     static boolean onlyRootDirAndNoSubDirs = true
 
     int totalFilesSplittable = 0
     boolean allSplitFilesInPlace = true
 
-    static main(args) {
+    static main(String[] args) {
         String args0 = args ? args[0] : null
         log.info "args0:$args0"
 //        if(args0){
@@ -86,19 +86,18 @@ class PdfSplitter {
             //Step 1:
             PdfReader splitPdfBySize = new PdfReader(folderAbsolutePath + "\\" + fileName)
 
-            def bytes = file.length()
+            long bytes = file.length()
 
-            def kilobytes = (bytes / BYTES_IN_A_KILO)
-            def fileSizeInMB = (kilobytes / BYTES_IN_A_KILO)
+            double kilobytes = (bytes / BYTES_IN_A_KILO)
+            double fileSizeInMB = (kilobytes / BYTES_IN_A_KILO)
 
-            def formattedSize = new BigDecimal(fileSizeInMB).setScale(2, BigDecimal.ROUND_FLOOR)
 
             if (fileSizeInMB < PdfSplitter.THRESHOLD) {
-                System.err.log.info "( Size: ${formattedSize} Mb) No Need to Split"
+                log.info "( Size: ${fileSizeInMB.round(2)} Mb) No Need to Split"
                 return
             }
 
-            log.info "( Size: ${formattedSize}) will be Split"
+            log.info "( Size: ${fileSizeInMB.round(2)}) will be Split"
             totalFilesSplittable++
 
             creteSplitFolder(folderAbsolutePath)
@@ -113,8 +112,8 @@ class PdfSplitter {
 
             int number_of_pages = splitPdfBySize.getNumberOfPages()
             int pagenumber = 1               /* To generate file name dynamically */
-            int findPdfSize                 /* To get PDF size in bytes */
-            float combinedsize = 0          /* To convert this to Kilobytes and estimate new PDF size */
+            long findPdfSize                 /* To get PDF size in bytes */
+            double combinedsize = 0          /* To convert this to Kilobytes and estimate new PDF size */
 
             for (int i = 1; i <= number_of_pages; i++) {
                 if (combinedsize == 0 && i != 1) {             /* Generate new file only for second time when first document size
@@ -163,7 +162,7 @@ class PdfSplitter {
         }
     }
 
-    def getSplitFolder(String folderName = null) {
+    String getSplitFolder(String folderName = null) {
         String rootDir
         if (allSplitFilesInPlace) {
             rootDir = PdfSplitter.FOLDER_NAME

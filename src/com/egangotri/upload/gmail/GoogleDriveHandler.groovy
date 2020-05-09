@@ -6,7 +6,6 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
-import org.openqa.selenium.ChromeDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -64,7 +63,7 @@ class GoogleDriveHandler {
         return res
     }
 
-    static void uploadToDrive(def driver, String folderName) {
+    static void uploadToDrive(ChromeDriver driver, String folderName) {
         driver.findElement(By.xpath("//div[contains(text(),'My Drive')]")).click()
         driver.findElement(By.xpath("/html/body/div[12]")).click()
         UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)

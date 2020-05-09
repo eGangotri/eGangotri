@@ -1,6 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
@@ -17,7 +18,7 @@ class PreUploadReview {
         }
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings(false)
-        Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap)
+        Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
         preview(purgedProfiles)
         System.exit(0)
     }
@@ -28,13 +29,13 @@ class PreUploadReview {
         Set<String> setOfEndings = [] as Set
         List<String> setOfOffendingPaths = []
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
-        ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
+        ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
-        long sizeInMB = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION
-        long sizeInGB = sizeInMB/1024
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInMB} MB (== ${sizeInGB} GB)")
+        BigDecimal sizeInMB = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
+        BigDecimal sizeInGB = sizeInMB/1024
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInMB.round(2)} MB (== ${sizeInGB.round(2)} GB)")
         profiles.eachWithIndex { archiveProfile, index ->
-            List<String> uploadablesForProfile = UploadUtils.getUploadablesForProfile(archiveProfile)
+            List<String> uploadablesForProfile = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
             if (uploadablesForProfile) {
                 List<FileData> shortNames = []
                 List<FileData> names = []

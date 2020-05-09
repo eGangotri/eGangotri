@@ -26,7 +26,7 @@ class ReuploadUsingLinks {
      * Then upload the VOS
      */
 
-    static main(args) {
+    static main(String[] args) {
         EGangotriUtil.recordProgramStart("ReuploadUsingLinks")
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,false])
         ValidateUploadsAndReUploadFailedItems.execute(args,false)

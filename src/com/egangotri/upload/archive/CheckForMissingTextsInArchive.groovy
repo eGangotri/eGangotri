@@ -14,7 +14,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class CheckForMissingTextsInArchive {
 
-    static main(args) {
+    static main(String[] args) {
         List archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
             log.info "args $args"

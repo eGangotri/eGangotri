@@ -117,7 +117,7 @@ class PDFSwapForRightToLeftOrder {
     }
 
     static PdfReader getReader(String inFile) {
-        System.out.log.info("Reading " + inFile)
+        log.info("Reading " + inFile)
         PdfReader reader = new PdfReader(inFile)
         return reader
 
@@ -135,11 +135,11 @@ class PDFSwapForRightToLeftOrder {
         try {
             PdfReader reader = getReader(getFileName())
             int n = reader.getNumberOfPages()
-            System.out.log.info("Number of pages : " + n)
+            log.info("Number of pages : " + n)
             int i = 0
             while (i < n) {
                 String outFile = getTmpFileName(i)
-                System.out.log.info("Writing " + outFile)
+                log.info("Writing " + outFile)
                 Document document = new Document(reader.getPageSizeWithRotation(1))
                 PdfCopy writer = new PdfCopy(document, new FileOutputStream(outFile))
                 document.open()

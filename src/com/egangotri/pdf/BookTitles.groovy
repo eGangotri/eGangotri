@@ -20,7 +20,7 @@ class BookTitles {
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
     static List<Integer> kriIds = []
-    static main(args) {
+    static main(String[] args) {
         String args0 = ""
         if(args?.size() >0){
             args0 = args[0]

@@ -14,10 +14,10 @@ class FolderUnzipper {
     static boolean inSeparateFolder = false
     static boolean multiThreaded = false
 
-    static main(args) {
+    static main(String[] args) {
         File directory = new File(FOLDER_NAME)
         if (multiThreaded) {
-            List files = directory.listFiles()
+            List<File> files = directory.listFiles().toList()
             GParsPool.withPool {
                 files.eachParallel { File file ->
                     unZip(file)
@@ -32,20 +32,24 @@ class FolderUnzipper {
 
     }
 
-    static unZip(File file) {
+    static void unZip(File file) {
         String destDir = FOLDER_NAME
-        if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && ( file.name.endsWith(ZIP[0]) || (file.name.endsWith(ZIP[1])) ) )
-                {
-                    if (inSeparateFolder) {
-                        destDir = FOLDER_NAME + File.separator + (file.name - ZIP)
-                        new File(destDir).mkdir()
-                    }
-                    def ant = new AntBuilder()   // create an antbuilder
-                    log.info "${file.absolutePath}"
-                    ant.unzip(src: file.absolutePath,
-                            dest: destDir,
-                            overwrite: "false")
-                }
+        if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && (file.name.endsWith(ZIP[0]) || (file.name.endsWith(ZIP[1])))) {
+            if (inSeparateFolder) {
+                destDir = FOLDER_NAME + File.separator + (file.name - ZIP)
+                new File(destDir).mkdir()
+            }
+            def ant = new groovy.ant.AntBuilder()   // create an antbuilder
+            log.info "${file.absolutePath}"
+
+            ant.with {
+                echo 'begin unzipping'
+                unzip(src: file.absolutePath,
+                        dest: destDir,
+                        overwrite: "false")
+                echo 'done unzipping'
+            }
+        }
     }
 }
 

@@ -8,7 +8,7 @@ class RenameFilesInDir {
     static String FOLDER_NAME = "G:\\OctoberBooks\\prtiek\\pratiekMan - Copy\\17Oct"
     static String RENAMED_FOLDER_NAME = "renamed"
     int totalFilesSplittable = 0
-    static main(args) {
+    static main(String[] args) {
         String args0 = ""//args[0]
         log.info "args0:$args0"
         File directory = new File(args0?:RenameFilesInDir.FOLDER_NAME)

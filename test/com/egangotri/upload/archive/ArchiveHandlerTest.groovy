@@ -19,18 +19,4 @@ class ArchiveHandlerTest extends Specification {
         log.info result
         result == 25
     }*/
-
-/*    def "test preCutOffSubFolders"(){
-        log.info "preCutOffSubFolders"
-        setup:
-        GroovyMock(FileUtil, global: true)
-        FileUtil.PRE_CUTOFF >> "preCutOff"
-
-        when:
-        def preCutOffFolders = ArchiveHandler.preCutOffSubFolders( "C:\\hw\\amit")
-        def result = true
-        then:
-        log.info preCutOffFolders
-        assert result == true
-    }*/
 }

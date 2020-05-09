@@ -46,18 +46,13 @@ class SettingsUtil {
                 try {
                     Float calibrateTimes = Float.parseFloat(settingsMetaDataMap.ADJUST_SLEEP_TIMES)
                     if (calibrateTimes >= 0.1 && calibrateTimes <= 5) {
-                        EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC *= calibrateTimes
+                        EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC = EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * calibrateTimes as int
                     }
                 }
                 catch (Exception e) {
                     log.info("ADJUST_SLEEP_TIMES is not a valid decimal mumber. will not be considered")
                 }
                 log.info("ADJUST_SLEEP_TIMES: " + settingsMetaDataMap.ADJUST_SLEEP_TIMES)
-            }
-
-            if (settingsMetaDataMap.PRECUTOFF_PROFILE) {
-                EGangotriUtil.PRECUTOFF_PROFILE = settingsMetaDataMap.PRECUTOFF_PROFILE
-                log.info("PRECUTOFF_PROFILE: " + EGangotriUtil.PRECUTOFF_PROFILE)
             }
 
             if (settingsMetaDataMap.MAX_UPLODABLES) {
@@ -174,7 +169,7 @@ class SettingsUtil {
         }
     }
 
-    static stripQuotes(quotedString) {
+    static stripQuotes(String quotedString) {
         return quotedString.replaceAll(/["|']/, "")
     }
 

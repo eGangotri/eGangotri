@@ -20,7 +20,7 @@ class MailUtil {
     static String MAILER_HOST = "smtp.gmail.com"
     static List<String> MAILER_TO_EMAILS = []
 
-    static generateMultiPart(String msg, String attachmentPath) {
+    static Multipart generateMultiPart(String msg, String attachmentPath) {
         BodyPart messageBodyPart = new MimeBodyPart()
         messageBodyPart.setText(msg)
 

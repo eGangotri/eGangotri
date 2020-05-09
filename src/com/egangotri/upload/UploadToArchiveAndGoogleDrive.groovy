@@ -14,22 +14,22 @@ import org.slf4j.*
 @Slf4j
 class UploadToArchiveAndGoogleDrive {
     static
-    final List ARCHIVE_PROFILES = []
-    static final List UPLOAD_PROFILES = [UploadToGoogleDrive.UPLOAD_PROFILE.BM, UploadToGoogleDrive.UPLOAD_PROFILE.MM]
+    final Set<String> ARCHIVE_PROFILES = [] as Set
+    static final Set<String> UPLOAD_PROFILES = [] as Set
 
-    static main(args) {
-        List archiveProfiles = ARCHIVE_PROFILES
-        List uploadProfiles = UPLOAD_PROFILES
+    static main(String[] args) {
+        Set<String> archiveProfiles = ARCHIVE_PROFILES
+        Set<String> uploadProfiles = UPLOAD_PROFILES
 
         if (args) {
            log.info "args $args"
             args.toList().each { String arg ->
                 String[] argVals = arg.split("=")
                 if (argVals[0] == "-u") {
-                    uploadProfiles = argVals[1].split(",").collect{it.trim()}
+                    uploadProfiles = argVals[1].split(",").collect{it.trim()} as Set
                 }
                 else if (argVals[0] == "-a") {
-                    archiveProfiles = argVals[1].split(",").collect{it.trim()}
+                    archiveProfiles = argVals[1].split(",").collect{it.trim()} as Set
                 }
             }
 

@@ -41,7 +41,7 @@ class UploadUtils {
     static int RANDOM_CREATOR_MAX_LIMIT = 50
 
     static readTextFileAndDumpToList(String fileName) {
-        List list = []
+        List<String> list = []
         File file = new File(fileName)
         def line = ""
         file.withReader { reader ->
@@ -55,7 +55,7 @@ class UploadUtils {
     static Hashtable<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
-        Hashtable<String, String> metaDataMap = [:]
+        Hashtable<String, String> metaDataMap = new Hashtable<String, String>()
 
         if (propertiesFile.exists()) {
             propertiesFile.withInputStream {
@@ -65,7 +65,7 @@ class UploadUtils {
 
             properties.entrySet().each { entry ->
                 String key = entry.key
-                String val = new String(entry.value.getBytes("ISO-8859-1"), "UTF-8")
+                String val = new String(entry.value.toString().getBytes("ISO-8859-1"), "UTF-8")
                 if (key.endsWith(".description")) {
                     val = encodeString(val)
                 }
@@ -90,141 +90,12 @@ class UploadUtils {
         return encoded.join("")
     }
 
-    static boolean hasAtleastOneUploadableFileForProfile(String archiveProfile) {
-        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { new File(it) }
-        boolean atlestOne = false
-        log.info "folders: $folders"
-        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile) && hasAtleastOneFileInPreCutOffFolders(folders)) {
-            atlestOne = true
-        } else if (hasAtleastOneFileExcludePreCutOff(folders)) {
-            atlestOne = true
-        }
-        log.info "atlestOne[$archiveProfile]: $atlestOne"
-        return atlestOne
-    }
-
-    static List<String> getUploadablesForProfile(String archiveProfile) {
-        List<File> folders = pickFolderBasedOnArchiveProfile(archiveProfile).collect { String fileName -> fileName ? new File(fileName) : null }
-        List<String> items = []
-        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
-            items = getItemsInPreCutOffFolders(folders)
-        } else {
-            items = getAllItemsExceptPreCutOff(folders)
-        }
-        return items
-    }
-
-    static int getCountOfUploadableItemsForProfile(String archiveProfile) {
-        return getUploadablesForProfile(archiveProfile)?.size()
-    }
 
     static void resetGlobalUploadCounter() {
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
     }
 
 
-    static boolean hasAtleastOneFile(File folder) {
-        return hasAtleastOneFile(folder, false)
-    }
-
-    static boolean hasAtleastOneFile(File folder, boolean excludePreCutOff) {
-        return getAllFiles(folder, excludePreCutOff)?.size()
-    }
-
-    static boolean hasAtleastOneFileExcludePreCutOff(File folder) {
-        return hasAtleastOneFile(folder, true)
-    }
-
-    static boolean hasAtleastOneFileExcludePreCutOff(List<File> folders) {
-        boolean atlestOne = false
-        folders.each { folder ->
-            if (hasAtleastOneFileExcludePreCutOff(folder)) {
-                atlestOne = true
-            }
-        }
-        return atlestOne
-    }
-
-    static boolean hasAtleastOneFileInPreCutOffFolders(List<File> folders) {
-        boolean atlestOne = false
-        if (getItemsInPreCutOffFolders(folders)) {
-            atlestOne = true
-        }
-        return atlestOne
-    }
-
-    static List<String> getAllItemsExceptPreCutOff(File folder) {
-        getAllFiles(folder, true)
-    }
-
-    static List<String> getAllItemsExceptPreCutOff(List<File> folders) {
-        List<String> files = []
-        folders.each { folder ->
-            files.addAll(getAllItemsExceptPreCutOff(folder))
-        }
-        return files
-    }
-
-    static List<String> getAllFiles(File folder, Boolean excludeFlag) {
-        List<String> files = []
-        Map optionsMap = [type      : FileType.FILES,
-                          nameFilter: ~(FileUtil.ALLOWED_EXTENSIONS_REGEX)
-        ]
-        if (excludeFlag) {
-            optionsMap.put("excludeFilter", { File file ->
-                file.absolutePath.toLowerCase().contains(FileUtil.PRE_CUTOFF) ||
-                        SettingsUtil.IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS*.toLowerCase().stream().anyMatch {
-                            String ignorableKeyWords -> file.absolutePath.toLowerCase().contains(ignorableKeyWords)
-                        } ||
-                        file.name.startsWith(".") ||
-                        !file.name.contains(".") ||
-                        SettingsUtil.IGNORE_EXTENSIONS.contains(getFileEnding(file.name).toLowerCase())
-            })
-        }
-        if (!folder.exists()) {
-            log.error("$folder doesnt exist. returning")
-            return []
-        }
-        folder.traverse(optionsMap) {
-            files << it.absolutePath
-        }
-        return files.sort()
-    }
-
-    static excludableItems(String file) {
-
-    }
-
-    static List<String> getAllFiles(File folder) {
-        return getAllFiles(folder, false)
-    }
-
-    static List<String> getFilesInPreCutOffFolder(File folder) {
-        List<String> files = []
-        Map optionsMap = [type  : FileType.FILES,
-                          filter: {
-                              it.absolutePath.contains(FileUtil.PRE_CUTOFF)
-                          }
-        ]
-        if (!folder.exists()) {
-            log.error("$folder doesnt exist. returning")
-            return []
-        }
-        folder.traverse(optionsMap) {
-            log.info ">>>" + it
-            log.info "${it.absolutePath.contains(FileUtil.PRE_CUTOFF)}"
-            files << it.absolutePath
-        }
-        return files
-    }
-
-    static List<String> getItemsInPreCutOffFolders(List<File> folders) {
-        List<String> files = []
-        folders.each { folder ->
-            files.addAll(getFilesInPreCutOffFolder(folder))
-        }
-        return files
-    }
 
     static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
         boolean success = false
@@ -313,21 +184,21 @@ class UploadUtils {
         if (!RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]) {
             RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"] = randomCreators()
         }
-        List randomCreators = RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
+        List<String> randomCreators = RANDOM_CREATOR_BY_PROFILE_MAP["${archiveProfile}"]
         String randomPick = randomCreators[new Random().nextInt(randomCreators.size)]
         return "creator=${randomPick}"
     }
 
-    static List randomCreators() {
-        List firstNames = readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
-        List lastNames = readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
+    static List<String> randomCreators() {
+        List<String> firstNames = readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
+        List<String>  lastNames = readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
         Random rnd = new Random()
-        List creators = []
+        List<String>  creators = []
         int MAX_CREATORS = RANDOM_CREATOR_MAX_LIMIT
         int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
         (1..max).each {
-            int idx1 = rnd.nextInt(firstNames.size)
-            int idx2 = rnd.nextInt(lastNames.size)
+            int idx1 = rnd.nextInt(firstNames.size())
+            int idx2 = rnd.nextInt(lastNames.size())
             creators << "${firstNames[idx1].trim().capitalize()} ${lastNames[idx2].trim().capitalize()}"
         }
         return creators
@@ -455,17 +326,6 @@ class UploadUtils {
         return title.contains(separator) ? title.split("-").last() : title
     }
 
-    static List<String> pickFolderBasedOnArchiveProfile(String archiveProfile) {
-        List folderName = []
-        if (EGangotriUtil.isAPreCutOffProfile(archiveProfile)) {
-            folderName = FileUtil.ALL_FOLDERS.values().toList()
-        } else {
-            folderName = [FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"]
-        }
-        //log.info "pickFolderBasedOnArchiveProfile($archiveProfile): $folderName"
-        return folderName
-    }
-
     static boolean switchToLastOpenTab(ChromeDriver driver) {
         try {
             ArrayList<String> chromeTabsList = new ArrayList<String>(driver.getWindowHandles())
@@ -480,7 +340,7 @@ class UploadUtils {
         return true
     }
 
-    static boolean openNewTab(ChromeDriver driver, float sleepTimeInSeconds = 0.1) {
+    static boolean openNewTab(ChromeDriver driver, BigDecimal sleepTimeInSeconds = 0.1) {
         try {
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
@@ -541,20 +401,20 @@ class UploadUtils {
         return alertWasDetected
     }
 
-    static getFormattedDateString(Date date = null) {
+    static String getFormattedDateString(Date date = null) {
         return new SimpleDateFormat(DATE_TIME_PATTERN).format(date ?: new Date())
     }
 
-    static getFormattedDateString(long date) {
+    static String getFormattedDateString(long date) {
         return new SimpleDateFormat(DATE_TIME_PATTERN).format(date > 0 ? new Date(date) : new Date())
     }
 
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles) {
-        int uplddSum = uploadStats.collect { elem -> elem.first() }.sum()
+        Integer uplddSum = uploadStats.collect { List<Integer> elem -> elem.first() }.sum() as Integer
         String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
         String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
 
-        int excSum = uploadStats.collect { elem -> elem.last() }.sum()
+        Integer excSum = uploadStats.collect { elem -> elem.last() }.sum() as int
         String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
         String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
         log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")

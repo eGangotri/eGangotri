@@ -40,7 +40,6 @@ class EGangotriUtil {
     static final String CODE_404_BAD_DATA_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "_code404_rejectedFiles"
     static final String CODE_503_SLOW_DOWN_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "_code503_rejectedFiles"
 
-    static String PRECUTOFF_PROFILE = ""
     static final int UPLOAD_FAILURE_THRESHOLD = 5
     static int MAX_UPLODABLES = 1000
     static int ARCHIVE_WAITING_PERIOD_ONE_SEC = 1000
@@ -57,8 +56,8 @@ class EGangotriUtil {
     static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = true
 
     //using ("A".."z" ) will introduce non-alpha chars
-    static final List ASCII_ALPHA_CHARS =  ("A".."Z").toList() + ("a".."z").toList()
-    static final def ASCII_CHARS_SIZE =  ASCII_ALPHA_CHARS.size()
+    static final List ASCII_ALPHA_CHARS = ("A".."Z").toList() + ("a".."z").toList()
+    static final def ASCII_CHARS_SIZE = ASCII_ALPHA_CHARS.size()
 
 
     static final int TIMEOUT_IN_TWO_SECONDS = 5
@@ -80,17 +79,18 @@ class EGangotriUtil {
         Properties properties = new Properties()
         File propertiesFile = new File(propertyFileName)
 
-        if(!propertiesFile.exists()){
+        if (!propertiesFile.exists()) {
             log.info("$propertyFileName not found.")
             return []
         }
 
-       List profiles = []
+        List profiles = []
 
         properties.load(propertiesFile.newDataInputStream())
-        properties.each{ key, v -> if (!key.contains(KUTA) ) {
-            profiles << key
-        }
+        properties.each { key, v ->
+            if (!key.toString().contains(KUTA)) {
+                profiles << key
+            }
         }
         return profiles
     }
@@ -103,34 +103,31 @@ class EGangotriUtil {
         return getAllProfiles(ARCHIVE_PROPERTIES_FILE)
     }
 
-    static String hidePassword(String pwd){
+    static String hidePassword(String pwd) {
         String hiddenPwd = ""
-        pwd.size().times{hiddenPwd+="*"}
+        pwd.size().times { hiddenPwd += "*" }
         return hiddenPwd
     }
-    static void sleepTimeInSeconds(Float sleepTimeInSeconds, boolean overrideEgangotriWaitingPeriod = false){
-        Thread.sleep(overrideEgangotriWaitingPeriod ? (sleepTimeInSeconds*1000).toInteger() : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
+
+    static void sleepTimeInSeconds(BigDecimal sleepTimeInSeconds, boolean overrideEgangotriWaitingPeriod = false) {
+        Thread.sleep(overrideEgangotriWaitingPeriod ? (sleepTimeInSeconds * 1000).toInteger() : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
     }
 
-    static List getAllUploadProfiles() {
+    static List<String> getAllUploadProfiles() {
         Properties properties = new Properties()
         File propertiesFile = new File(UPLOAD_PROFILES_PROPERTIES_FILE)
         propertiesFile.withInputStream { stream ->
             properties.load(stream)
         }
-        return properties.values().toList()
+        return properties.values()*.toString().toList()
     }
 
-    static boolean isAPreCutOffProfile(String archiveProfile) {
-        return (archiveProfile == PRECUTOFF_PROFILE)
-    }
-
-    static void recordProgramStart(String program = ""){
+    static void recordProgramStart(String program = "") {
         EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS = System.currentTimeMillis()
         log.info "Program $program started @ " + UploadUtils.getFormattedDateString(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)
     }
 
-    static void recordProgramEnd(){
+    static void recordProgramEnd() {
         EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS = System.currentTimeMillis()
         log.info "Program Execution ended @ " + UploadUtils.getFormattedDateString(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)
     }

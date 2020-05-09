@@ -34,31 +34,4 @@ class UploadUtilsSpec extends Specification {
         expect: ""
         assert val != null
     }
-
-
-    void "test getPdfsInPreCutOffFolder for a folder containing a pdf in a directory which doesnt have the word pre57 "() {
-        given: "pdf in a non-pre57 file system"
-        def folder = new File("target/test")
-        def file = File.createTempFile("abc", ".pdf", folder)
-        List list = UploadUtils.getFilesInPreCutOffFolder(folder)
-
-        expect: "list is empty"
-        log.info "folder path is " +  folder.absolutePath
-        log.info "list $list"
-        list.isEmpty()
-    }
-
-    void "test getPdfsInPreCutOffFolder for a folder containing a pdf in pre57 folder"() {
-        given: "a pdf in a pre57 folder"
-        def folder = File.createTempDir()
-        def file = File.createTempFile("abc", ".pdf", folder)
-        List list = UploadUtils.getFilesInPreCutOffFolder(folder)
-
-        expect: "list should have been populated"
-        log.info "folder path is " +  folder.absolutePath
-        log.info "list $list"
-        list.size() > 0
-    }
-
-
 }
