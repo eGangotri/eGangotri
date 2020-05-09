@@ -11,7 +11,7 @@ task uploadToArchive(dependsOn: ['snap2htmlCronJob'], type: JavaExec) {
        args = ["PRFL1","PRFL2"]
       */
 
-    args = ["PRFL1"]
+    args = ["PRFL1_SWAMI"]
 }
 
 task preUploadReview(dependsOn: 'classes', type: JavaExec) {

@@ -19,7 +19,7 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
         copyToUshered(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"ushered"))
         copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"all"))
 
-        ValidateUploadsAndReUploadFailedItems.main(new String[0])
+        ValidateUploadsAndReUploadFailedItems.execute(new String[0])
     }
 
     def static copy(File src, String folderName) {

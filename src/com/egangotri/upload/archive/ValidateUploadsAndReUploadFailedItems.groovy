@@ -5,7 +5,6 @@ import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.UsheredVO
-import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -16,10 +15,10 @@ class ValidateUploadsAndReUploadFailedItems {
     static File USHERED_ITEMS_FILE = null
     static File ALL_UPLODABLE_ITEMS_FILE = null
 
-    static List<QueuedVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
+    static List<UploadVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
     static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
 
-    static List<QueuedVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
+    static List<UploadVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
     static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
 
     static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
@@ -27,14 +26,18 @@ class ValidateUploadsAndReUploadFailedItems {
     static List<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
-    static main(String[] args) {
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
-        SettingsUtil.applySettingsWithReuploaderFlags()
+    static main(args) {
         execute(args)
         System.exit(0)
     }
 
-    static void execute(String[] args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
+    static void execute(String[] args){
+        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
+        SettingsUtil.applySettingsWithReuploaderFlags()
+        startValidation(args)
+    }
+
+    static void startValidation(def args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
         processUsheredCSV()
@@ -53,13 +56,13 @@ class ValidateUploadsAndReUploadFailedItems {
     static void findMissedQueueItemsOnlyAndReupload(boolean generateStatsOnly = true){
         EGangotriUtil.recordProgramStart("findMissedQueueItemsOnlyAndReupload")
         SettingsUtil.applySettingsWithReuploaderFlags([false,true,!generateStatsOnly,false])
-        execute()
+        startValidation()
     }
 
     static void findMissedUsheredItemsOnlyAndReupload(boolean generateStatsOnly = false){
         EGangotriUtil.recordProgramStart("findMissedUsheredItemsOnlyAndReupload")
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,generateStatsOnly,false])
-        execute()
+        startValidation()
     }
     static void setCSVsForValidation(String[] args) {
         ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
@@ -231,11 +234,11 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap) as Set
-        _execute(validProfiles, metaDataMap)
+        Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
+        executeReupload(validProfiles, metaDataMap)
     }
 
-    static _execute(Set<String> profiles, Hashtable<String, String> metaDataMap){
+    static executeReupload(Set<String> profiles, Hashtable<String, String> metaDataMap){
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()

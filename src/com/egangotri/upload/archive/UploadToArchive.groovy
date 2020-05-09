@@ -46,7 +46,7 @@ class UploadToArchive {
                 //Wait for 1 Hour and check Links also
                 Thread.sleep(1000*60*60)
                 log.info("Will now reupload any missed item...\n")
-                ValidateUploadsAndReUploadFailedItems.main(new String[0])
+                ValidateUploadsAndReUploadFailedItems.execute(new String[0])
                 if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0) {
                     log.info("Second Sleep Session started...\n")
                     //Wait for 1 Hour and check Links also

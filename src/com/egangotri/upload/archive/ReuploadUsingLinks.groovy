@@ -29,7 +29,7 @@ class ReuploadUsingLinks {
     static main(String[] args) {
         EGangotriUtil.recordProgramStart("ReuploadUsingLinks")
         SettingsUtil.applySettingsWithReuploaderFlags([true,false,false])
-        ValidateUploadsAndReUploadFailedItems.execute(args,false)
+        ValidateUploadsAndReUploadFailedItems.startValidation(args,false)
         System.exit(0)
     }
 

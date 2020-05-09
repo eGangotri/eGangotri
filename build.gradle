@@ -63,7 +63,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "DT"]
+    args = [ "PRFL1_SWAMI"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -116,9 +116,7 @@ dependencies {
     compile 'com.itextpdf:itextpdf:5.5.13.1'
     compile 'org.apache.poi:poi:4.1.2'
     compile 'commons-io:commons-io:2.6'
-/*
-    compile 'org.apache.ant:ant:1.10.7'
-*/
+
     compile group: 'org.codehaus.groovy', name: 'groovy-ant', version: '3.0.3'
 
     compile 'javax.mail:mail:1.5.0-b01'
