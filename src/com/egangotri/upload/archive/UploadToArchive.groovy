@@ -54,10 +54,10 @@ class UploadToArchive {
                     log.info("Second check/reupload started...\n")
                     CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
                     if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0){
-                        log.info("Every file was uploaded succefully. Aum Shanti\n")
+                        log.info("All missed files were uploaded succesfully. `Aum Shanti`\n")
                     }
                     else {
-                        log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status\n")
+                        log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status manually\n")
                     }
                 }
             }

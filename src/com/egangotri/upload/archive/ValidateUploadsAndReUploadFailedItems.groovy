@@ -207,8 +207,6 @@ class ValidateUploadsAndReUploadFailedItems {
         }
     }
 
-
-
     static void move503SlowDownFilesToSpecialFolder(){
         if(MISSED_OUT_USHERED_ITEMS){
             log.info("\n\nStarting moving 503 Slow Down Item(s)")
@@ -217,7 +215,6 @@ class ValidateUploadsAndReUploadFailedItems {
             }
         }
     }
-
 
     static void startReuploadOfFailedItems() {
         if(SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN){
@@ -229,6 +226,7 @@ class ValidateUploadsAndReUploadFailedItems {
             return
         }
         if(!ALL_FAILED_ITEMS){
+            ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
             log.info("Rejoice !!! There is no Failed Item. So quitting")
             return
         }
