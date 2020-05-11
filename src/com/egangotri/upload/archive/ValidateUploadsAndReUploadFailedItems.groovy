@@ -217,6 +217,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void startReuploadOfFailedItems() {
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()
         if(SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN){
             move503SlowDownFilesToSpecialFolder()
             return
@@ -239,7 +240,6 @@ class ValidateUploadsAndReUploadFailedItems {
     static executeReupload(Set<String> profiles, Hashtable<String, String> metaDataMap){
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()
         ValidateUtil.validateMaxUploadableLimit()
 
         int attemptedItemsTotal = 0
