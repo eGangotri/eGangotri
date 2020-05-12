@@ -1,11 +1,9 @@
 ### Gradle template
 ./target/
 *.log
-.gradle
 build/
 .idea
 *.iml
-gradle/
 gradlew
 gradlew.bat
 # Ignore Gradle GUI config
@@ -16,7 +14,6 @@ gradle-app.setting
 
 # Cache of project
 /build
-/.gradle
 /.idea
 .gradletasknamecache
 
