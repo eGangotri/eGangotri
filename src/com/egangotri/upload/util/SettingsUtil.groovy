@@ -133,7 +133,7 @@ class SettingsUtil {
                 log.info("DEFAULT_LANGUAGE_ISO_CODE: " + DEFAULT_LANGUAGE_ISO_CODE)
             }
 
-            if (ArchiveUtil.ValidateUploadsAndReUploadFailedItems) {
+            if (ArchiveUtil.VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS) {
                 if (settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
                     IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS: " + IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS)
@@ -208,7 +208,7 @@ class SettingsUtil {
 
     static void applySettingsWithReuploaderFlags(List<Boolean> reuploaderFlags = []) {
         resetValues()
-        ArchiveUtil.ValidateUploadsAndReUploadFailedItems = true
+        ArchiveUtil.VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = true
         applySettings()
         if (reuploaderFlags?.size() >= 3) {
             SettingsUtil.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = reuploaderFlags[0]

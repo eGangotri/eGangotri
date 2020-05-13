@@ -6,7 +6,6 @@ import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.QueuedVO
-import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -70,7 +69,7 @@ class UploadToArchive {
         EGangotriUtil.recordProgramStart("eGangotri Archiver")
         ValidateUtil.validateMaxUploadableLimit()
         int attemptedItemsTotal = 0
-        List<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
+        Set<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
         profiles.eachWithIndex { archiveProfile, index ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
@@ -81,7 +80,7 @@ class UploadToArchive {
                     ArchiveHandler.generateAllUrls(archiveProfile, uploadables)
                 } else {
                     List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
-                    List<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile,uploadables)
+                    Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile,uploadables)
                     List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, vos)
                     String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
                     uploadSuccessCheckingMatrix.put((index + 1), report)

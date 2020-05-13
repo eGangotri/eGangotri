@@ -17,4 +17,14 @@ class UsheredVO extends UploadVO{
     public String toString(){
         return super.toString() + " \n" + archiveLink
     }
+
+    @Override
+    boolean equals(Object vo){
+        return super.equals(vo)
+    }
+
+    @Override
+    int hashCode(){
+        return super.hashCode()
+    }
 }

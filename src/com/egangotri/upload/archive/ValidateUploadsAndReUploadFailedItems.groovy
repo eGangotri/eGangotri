@@ -4,6 +4,7 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -15,29 +16,29 @@ class ValidateUploadsAndReUploadFailedItems {
     static File USHERED_ITEMS_FILE = null
     static File ALL_UPLODABLE_ITEMS_FILE = null
 
-    static List<UploadVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
-    static List<UsheredVO> USHERED_LINKS_FOR_TESTING = []
+    static Set<QueuedVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = [] as Set
+    static Set<UsheredVO> USHERED_LINKS_FOR_TESTING = []
 
-    static List<UploadVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
-    static List<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
+    static Set<QueuedVO> MISSED_OUT_ALL_UPLOADABLE_ITEMS = []
+    static Set<UsheredVO> MISSED_OUT_USHERED_ITEMS = []
 
-    static List<? extends UploadVO> ALL_FAILED_ITEMS =  []
-    static List<UsheredVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
-    static List<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
+    static Set<? extends UploadVO> ALL_FAILED_ITEMS =  []
+    static Set<UsheredVO> ITEMS_WITH_CODE_404_BAD_DATA =  []
+    static Set<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
-    static main(args) {
+    static main(String[] args) {
         execute(args)
         System.exit(0)
     }
 
-    static void execute(String[] args){
-        EGangotriUtil.recordProgramStart("ValidateUploadsAndReUploadFailedItems")
+    static void execute(String[] args, String programName = "ValidateUploadsAndReUploadFailedItems"){
+        EGangotriUtil.recordProgramStart(programName)
         SettingsUtil.applySettingsWithReuploaderFlags()
         startValidation(args)
     }
 
-    static void startValidation(def args = [] as String[], boolean dontUseFailedLinksFromStaticList = true){
+    static void startValidation(String[] args = null, boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
         processUsheredCSV()
@@ -109,9 +110,9 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Queued Items will be ignored for upload")
             return
         }
-        ALL_UPLOADABLE_ITEMS_FOR_TESTING = ValidateUtil.csvToItemsVO(ALL_UPLODABLE_ITEMS_FILE)
+        ALL_UPLOADABLE_ITEMS_FOR_TESTING = ValidateUtil.csvToQueuedVO(ALL_UPLODABLE_ITEMS_FILE)
         Set allUploadableProfiles = ALL_UPLOADABLE_ITEMS_FOR_TESTING*.archiveProfile as Set
-        log.info("Converted " + ALL_UPLOADABLE_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in " + "Profiles ${allUploadableProfiles.toString()}")
+        log.info("Converted " + ALL_UPLOADABLE_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in Profiles ${allUploadableProfiles.toString()}")
     }
 
     static void processUsheredCSV() {
@@ -121,7 +122,7 @@ class ValidateUploadsAndReUploadFailedItems {
         }
         USHERED_LINKS_FOR_TESTING = ValidateUtil.csvToUsheredItemsVO(USHERED_ITEMS_FILE)
         archiveProfiles = USHERED_LINKS_FOR_TESTING*.archiveProfile as Set
-        log.info("Converted " + USHERED_LINKS_FOR_TESTING.size() + " links of upload-ushered Item(s) from CSV in " + "Profiles ${archiveProfiles.toString()}")
+        log.info("Converted " + USHERED_LINKS_FOR_TESTING.size() + " links of upload-ushered Item(s) from CSV in Profiles ${archiveProfiles.toString()}")
     }
 
     // This function produces QueuedItem - usheredItem
@@ -246,7 +247,7 @@ class ValidateUploadsAndReUploadFailedItems {
         ArchiveUtil.storeAllUplodableItemsInFile(ALL_FAILED_ITEMS)
 
         profiles.eachWithIndex { archiveProfile, index ->
-            List<UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll { it.archiveProfile == archiveProfile }
+            Set<UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll { it.archiveProfile == archiveProfile } as Set<QueuedVO>
             int countOfUploadableItems = failedVOsForProfile.size()
 
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"

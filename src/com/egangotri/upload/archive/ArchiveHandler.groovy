@@ -2,7 +2,7 @@ package com.egangotri.upload.archive
 
 
 import com.egangotri.upload.util.UploadUtils
-import com.egangotri.upload.vo.UploadVO
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -20,7 +20,7 @@ import static com.egangotri.upload.util.ArchiveUtil.*
 class ArchiveHandler {
 
     static List<Integer> uploadAllItemsToArchiveByProfile(
-            Map metaDataMap, List<UploadVO> uploadVos) {
+            Map metaDataMap, Set<QueuedVO> uploadVos) {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
         try {
@@ -171,14 +171,14 @@ class ArchiveHandler {
         }
     }
 
-    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, List<? extends UploadVO> uploadVos) {
+    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, Set<QueuedVO> uploadVos) {
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadVos.size() > EGangotriUtil.PARTITION_SIZE) {
             String archiveProfile = uploadVos.first().archiveProfile
-            def partitions = UploadUtils.partition(uploadVos, EGangotriUtil.PARTITION_SIZE)
+            Set<Set<QueuedVO>> partitions = UploadUtils.partition(uploadVos as List<QueuedVO>, EGangotriUtil.PARTITION_SIZE)
             log.info(" ${partitions.size()} Browsers will be created for Profile $archiveProfile: ")
             int partitionCounter = 0
-            for (def partitionedVos : partitions) {
+            for (Set<QueuedVO> partitionedVos : partitions) {
                 log.info("Batch # ${++partitionCounter}/${partitions.size()}. ${partitionedVos.size()} Item(s) queued for upload")
                 List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, partitionedVos)
                 uploadStatsList << uploadStats
@@ -192,7 +192,7 @@ class ArchiveHandler {
     }
 
 
-    static String uploadOneItem(ChromeDriver driver, UploadVO uploadVO) {
+    static String uploadOneItem(ChromeDriver driver, QueuedVO uploadVO) {
         String fileNameWithPath = uploadVO.path
         String uploadLink = uploadVO.uploadLink
         String archiveProfile = uploadVO.archiveProfile

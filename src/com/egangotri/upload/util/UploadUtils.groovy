@@ -1,6 +1,6 @@
 package com.egangotri.upload.util
 
-
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.io.FileType
@@ -156,7 +156,7 @@ class UploadUtils {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null)
     }
 
-    static <T> List<List<T>> partition(List<T> partitionableList, int size) {
+    static <QueuedVO> Set<Set<QueuedVO>> partition(List<QueuedVO> partitionableList, int size) {
         def partitions = []
         int partitionCount = (int) (partitionableList.size() / size)
 
@@ -167,7 +167,7 @@ class UploadUtils {
         }
 
         if (partitionableList.size() % size) partitions << partitionableList[partitionCount * size..-1]
-        return partitions
+        return partitions as Set<Set<QueuedVO>>
     }
 
     static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit() {
@@ -340,7 +340,7 @@ class UploadUtils {
         return true
     }
 
-    static boolean openNewTab(ChromeDriver driver, BigDecimal sleepTimeInSeconds = 0.1) {
+    static boolean openNewTab(ChromeDriver driver, double sleepTimeInSeconds = 0.1) {
         try {
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)

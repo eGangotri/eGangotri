@@ -14,4 +14,13 @@ class QueuedVO extends UploadVO {
     QueuedVO(List<String> fields){
         super(fields)
     }
+    @Override
+    boolean equals(Object vo){
+        return super.equals(vo)
+    }
+
+    @Override
+    int hashCode(){
+        return super.hashCode()
+    }
 }

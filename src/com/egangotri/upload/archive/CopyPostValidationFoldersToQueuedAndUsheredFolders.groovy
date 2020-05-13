@@ -1,5 +1,6 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -19,7 +20,9 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
         copyToUshered(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"ushered"))
         copyToAllUplodables(ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER,"all"))
 
-        ValidateUploadsAndReUploadFailedItems.execute(new String[0])
+        ArchiveUtil.createValidationAllUplodableFiles()
+        ArchiveUtil.createValidationUsheredFiles()
+        ValidateUploadsAndReUploadFailedItems.execute(new String[0], "ValidateUsingPostValidationFolder")
     }
 
     def static copy(File src, String folderName) {

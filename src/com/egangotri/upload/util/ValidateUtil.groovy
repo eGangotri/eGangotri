@@ -10,8 +10,8 @@ import java.nio.file.Files
 
 @Slf4j
 class ValidateUtil {
-    static List<UsheredVO> csvToUsheredItemsVO(File csvFile) {
-        List<UsheredVO> items = []
+    static Set<UsheredVO> csvToUsheredItemsVO(File csvFile) {
+        Set<UsheredVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
             items.add(new UsheredVO(_fields.toList()))
@@ -19,8 +19,8 @@ class ValidateUtil {
         return items
     }
 
-    static List<QueuedVO> csvToItemsVO(File csvFile) {
-        List<QueuedVO> items = []
+    static Set<QueuedVO> csvToQueuedVO(File csvFile) {
+        Set<QueuedVO> items = []
         csvFile.splitEachLine("\"\\s*,") { fields ->
             def _fields = fields.collect { stripDoubleQuotes(it.trim()) }
             items.add(new QueuedVO(_fields.toList()))
@@ -29,16 +29,16 @@ class ValidateUtil {
     }
 
     static Tuple statsForItemsVO(String csvFile){
-        List<QueuedVO> vos = csvToItemsVO(new File(csvFile))
+        Set<QueuedVO> vos = csvToQueuedVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
     static Tuple statsForUsheredItemsVO(String csvFile){
-        List<UsheredVO> vos = csvToUsheredItemsVO(new File(csvFile))
+        Set<UsheredVO> vos = csvToUsheredItemsVO(new File(csvFile))
         return statsForVOs(vos)
     }
 
-    static Tuple statsForVOs(List<? extends UploadVO> vos){
+    static Tuple statsForVOs(Set<? extends UploadVO> vos){
         if(!vos) return new Tuple(0,"0")
         String desc = vos?.first()?.getClass()?.simpleName == UsheredVO.simpleName ? "item(s) were ushered for upload" : "item(s) were queued for upload"
         def vosGrouped = vos.groupBy { item -> item.archiveProfile}
@@ -71,11 +71,11 @@ class ValidateUtil {
         log.info("Total Uploadable Count for Current Execution ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
     }
 
-    static void logPerProfile(String msg, List<? extends UploadVO> vos, String propertyAsString){
+    static void logPerProfile(String msg, Set<? extends UploadVO> vos, String propertyAsString){
         log.info(msg)
         if(vos.size()){
             log.info("Affected Profile(s)" +  (vos*.archiveProfile as Set).toString())
-            Map<String,List<? extends UploadVO>> groupedByProfile = vos.groupBy{ def vo -> vo.archiveProfile}
+            Map<String,Set<? extends UploadVO>> groupedByProfile = vos.groupBy{ def vo -> vo.archiveProfile} as Map<String, Set<? extends UploadVO>>
 
             groupedByProfile.keySet().each{ _prfName ->
                 log.info("${_prfName}:")
