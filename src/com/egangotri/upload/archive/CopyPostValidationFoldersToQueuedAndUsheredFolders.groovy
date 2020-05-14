@@ -10,7 +10,7 @@ import java.nio.file.Files
 @Slf4j
 class CopyPostValidationFoldersToQueuedAndUsheredFolders {
 
-    static main(String[] args) {
+    static void main(String[] args) {
         execute(args)
         System.exit(0)
     }
