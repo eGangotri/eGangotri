@@ -20,7 +20,11 @@ class UsheredVO extends UploadVO{
 
     @Override
     boolean equals(Object vo){
-        return super.equals(vo)
+        if (this == vo) return true;
+        if (!vo) return false;
+        if (this.getClass() != vo.getClass()) return false;
+        def _vo = (UsheredVO) vo;
+        return this.path == _vo.path && this.archiveProfile == _vo.archiveProfile
     }
 
     @Override
