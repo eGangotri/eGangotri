@@ -18,8 +18,8 @@ class SettingsUtil {
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
-
-    static int MINIMUM_FILE_NAME_LENGTH = 1
+    static int REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES = 60
+    static int MINIMUM_FILE_NAME_LENGTH = 25
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
 
     static void applySettings(boolean createVOSavingFiles = true) {
@@ -164,6 +164,12 @@ class SettingsUtil {
                 MINIMUM_FILE_NAME_LENGTH = settingsMetaDataMap.MINIMUM_FILE_NAME_LENGTH.toInteger()
                 log.info("MINIMUM_FILE_NAME_LENGTH: " + MINIMUM_FILE_NAME_LENGTH)
             }
+
+            if (settingsMetaDataMap.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES && settingsMetaDataMap.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES.isInteger()) {
+                REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES = settingsMetaDataMap.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES.toInteger()
+                log.info("REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES: " + REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES)
+            }
+
             applyMailerSettings()
             applySnap2HtmlSettings()
         }
