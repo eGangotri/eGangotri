@@ -128,9 +128,9 @@ class ArchiveUtil {
             log.info("${counter} added. Were there duplicates ? ${vos.size() == counter ? 'No' : 'Yes'} diff is " + (vos.size() - counter))
         }
         else{
-            appendable += voToCSVString(vos)
+            appendable += vosToCSVString(vos)
+            log.info("Added ${vos.size()} ")
         }
-
         appendableFile.append(appendable)
     }
 
@@ -150,7 +150,7 @@ class ArchiveUtil {
         return appendable
     }
 
-    static String voToCSVString(Set<UploadVO> uploadVos) {
+    static String vosToCSVString(Set<UploadVO> uploadVos) {
         String appendable = ""
         uploadVos.each{ vo ->
             appendable += voToCSVString(vo)

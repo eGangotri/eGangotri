@@ -3,7 +3,7 @@ package com.egangotri.upload.vo
 import com.egangotri.upload.util.ArchiveUtil
 import groovy.transform.EqualsAndHashCode
 
-@EqualsAndHashCode
+@EqualsAndHashCode(includes="archiveProfile, path")
 class UsheredVO extends UploadVO{
     String archiveLink
 
