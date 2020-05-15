@@ -115,17 +115,21 @@ class ArchiveUtil {
         File appendableFile = new File(appendableFilePath)
         //check if it has entries. if yes make sure there is no duplication
         Set<QueuedVO> alreadyIn = ValidateUtil.csvToQueuedVO(appendableFile)
-        log.info("${alreadyIn.size()} already exist in queue record. ${vos.size()} will be added minus duplicates")
         String appendable = ""
-        int counter = 0
-        vos.each { vo ->
-            if (!alreadyIn.contains(vo)) {
-                appendable += voToCSVString(vo)
-                counter++
+        if(alreadyIn){
+            log.info("${alreadyIn.size()} already exist in queue record. ${vos.size()} will be added minus duplicates")
+            int counter = 0
+            vos.each { vo ->
+                if (!alreadyIn.contains(vo)) {
+                    appendable += voToCSVString(vo)
+                    counter++
+                }
             }
+            log.info("${counter} added. Were there duplicates ? ${vos.size() == counter ? 'No' : 'Yes'} diff is " + (vos.size() - counter))
         }
-        log.info("${counter} added. Were there duplicates ? ${vos.size() == counter ? 'No' : 'Yes'} diff is " + (vos.size() - counter))
-
+        else{
+            appendable += voToCSVString(vos)
+        }
 
         appendableFile.append(appendable)
     }
@@ -143,6 +147,14 @@ class ArchiveUtil {
         String title = UploadUtils.stripFilePath(fileNameWithPath)
         String _idntfier = _identifier ? ",\"$_identifier\"" : ""
         String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\" ${_idntfier}\n"
+        return appendable
+    }
+
+    static String voToCSVString(Set<UploadVO> uploadVos) {
+        String appendable = ""
+        uploadVos.each{ vo ->
+            appendable += voToCSVString(vo)
+        }
         return appendable
     }
 

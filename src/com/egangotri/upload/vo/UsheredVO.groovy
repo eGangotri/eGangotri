@@ -1,7 +1,9 @@
 package com.egangotri.upload.vo
 
 import com.egangotri.upload.util.ArchiveUtil
+import groovy.transform.EqualsAndHashCode
 
+@EqualsAndHashCode
 class UsheredVO extends UploadVO{
     String archiveLink
 
@@ -16,19 +18,5 @@ class UsheredVO extends UploadVO{
     @Override
     public String toString(){
         return super.toString() + " \n" + archiveLink
-    }
-
-    @Override
-    boolean equals(Object vo){
-        if (this == vo) return true;
-        if (!vo) return false;
-        if (this.getClass() != vo.getClass()) return false;
-        def _vo = (UsheredVO) vo;
-        return this.path == _vo.path && this.archiveProfile == _vo.archiveProfile
-    }
-
-    @Override
-    int hashCode(){
-        return super.hashCode()
     }
 }

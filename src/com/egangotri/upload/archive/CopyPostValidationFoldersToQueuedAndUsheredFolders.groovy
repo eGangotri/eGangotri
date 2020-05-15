@@ -28,7 +28,13 @@ class CopyPostValidationFoldersToQueuedAndUsheredFolders {
     def static copy(File src, String folderName) {
         File destFileName = new File(folderName + File.separator + src.name)
         log.info("copying \n\t${src.name} \n\tto \n\t${destFileName.parent} ")
-        Files.copy(src.toPath(), destFileName.toPath())
+        if(!destFileName.exists())
+        {
+            Files.copy(src.toPath(), destFileName.toPath())
+        }
+        else{
+            log.info("File already exists: \t${destFileName.parent}.Skipping... ")
+        }
     }
 
     def static copyToUshered(File src) {
