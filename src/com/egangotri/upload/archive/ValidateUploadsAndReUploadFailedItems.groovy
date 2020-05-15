@@ -66,11 +66,11 @@ class ValidateUploadsAndReUploadFailedItems {
         startValidation()
     }
     static void setCSVsForValidation(String[] args) {
-        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
+        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
         USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
 
         if (!ALL_UPLODABLE_ITEMS_FILE) {
-            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
+            log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
 
@@ -88,11 +88,11 @@ class ValidateUploadsAndReUploadFailedItems {
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
 
-            ALL_UPLODABLE_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER + File.separator + _file_1)
+            ALL_UPLODABLE_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_1)
             USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_2)
 
             if (!ALL_UPLODABLE_ITEMS_FILE) {
-                log.error("No such File ${ALL_UPLODABLE_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER}.Cannot proceed. Quitting")
+                log.error("No such File ${ALL_UPLODABLE_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
 

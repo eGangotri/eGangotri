@@ -2,7 +2,6 @@ package com.egangotri.upload.util
 
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
-import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -168,7 +167,7 @@ class ArchiveUtil {
     }
 
     static void createAllUploadableVOFiles() {
-        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER)
+        generateFolder(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
         EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE =
                 EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE.replace("{0}", UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE)

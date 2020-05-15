@@ -23,15 +23,15 @@ class EGangotriUtil {
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
 
-    static final String ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_all_uploadables"
+    static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_all_queued"
     static final String ARCHIVE_ITEMS_USHERED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_ushered"
     static final String ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_post_validation"
 
-    static String ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE = EGangotriUtil.ARCHIVE_ITEMS_ALL_UPLOADABLES_FOLDER + File.separator + "ushered_item_{0}.csv"
-    static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + "all_uploadable_item_{0}.csv"
+    static String ARCHIVE_ALL_UPLOADABLE_ITEMS_FILE = EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + "ushered_items_{0}.csv"
+    static String ARCHIVE_ITEMS_USHERED_FOR_UPLOAD_FILE = EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + "queued_items_{0}.csv"
 
-    static String ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "all_uploadable_post_validation_item_{0}.csv"
-    static String ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "ushered_post_validation_item_{0}.csv"
+    static String ARCHIVE_ITEMS_ALL_UPLOADABLES_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "queued_post_validation_items_{0}.csv"
+    static String ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE = EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER + File.separator + "ushered_post_validation_items_{0}.csv"
     static
     final String UPLOAD_PROFILES_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "uploadProfiles" + PROPERTIES
 
