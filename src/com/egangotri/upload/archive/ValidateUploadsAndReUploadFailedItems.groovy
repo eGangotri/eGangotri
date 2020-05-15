@@ -27,7 +27,7 @@ class ValidateUploadsAndReUploadFailedItems {
     static Set<UsheredVO> ITEMS_WITH_CODE_503_SLOW_DOWN =  []
 
 
-    static main(String[] args) {
+    static void main(String[] args) {
         execute(args)
         System.exit(0)
     }
