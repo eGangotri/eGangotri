@@ -6,7 +6,7 @@ import static com.egangotri.upload.util.UploadUtils.generateUploadUrl
 import static com.egangotri.upload.util.UploadUtils.removeFileEnding
 import static com.egangotri.upload.util.UploadUtils.stripFilePath
 
-@EqualsAndHashCode(includes="archiveProfile, path")
+@EqualsAndHashCode(includes='archiveProfile, path')
 class UploadVO {
     String archiveProfile
     String uploadLink
