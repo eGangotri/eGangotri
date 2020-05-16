@@ -43,13 +43,13 @@ class UploadToArchive {
             if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0){
                 log.info("Going to sleep for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES} minutes ...\n")
                 //Wait for 1 Hour and check Links also
-                Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES)
+                Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
                 log.info("Will now reupload any missed item...\n")
                 ValidateUploadsAndReUploadFailedItems.execute(new String[0])
                 if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0) {
                     log.info("Second Sleep Session started...\n")
                     //Wait for some time and check Links also
-                    Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES)
+                    Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
                     log.info("Second check/reupload started...\n")
                     CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
                     if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0){
