@@ -30,9 +30,9 @@ appender("File-Appender", FileAppender) {
 appender("RollingFile-Appender", RollingFileAppender) {
     file = "${LOG_PATH}/egangotri_rolling.log"
     rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = "${LOG_ARCHIVE}/rollingfile.log%d{yyyy-MM-dd}.log"
+        fileNamePattern = "${LOG_ARCHIVE}/rollingfile_%d{yyyy-MM-dd}.log"
+        maxFileSize = "10MB"
         maxHistory = 30
-        totalSizeCap = "10MB"
     }
     encoder(PatternLayoutEncoder) {
         pattern = "%msg%n"
