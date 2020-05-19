@@ -3,6 +3,7 @@ package com.egangotri.upload.archive
 
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
+import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -192,7 +193,7 @@ class ArchiveHandler {
     }
 
 
-    static String uploadOneItem(ChromeDriver driver, QueuedVO uploadVO) {
+    static<T extends UploadVO> String uploadOneItem(ChromeDriver driver, T uploadVO) {
         String fileNameWithPath = uploadVO.path
         String uploadLink = uploadVO.uploadLink
         String archiveProfile = uploadVO.archiveProfile
