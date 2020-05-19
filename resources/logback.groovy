@@ -3,11 +3,11 @@ import ch.qos.logback.classic.PatternLayout
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.FileAppender
-import org.apache.log4j.RollingFileAppender
-
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
 import static ch.qos.logback.classic.Level.INFO
 
 def LOG_PATH = "target"
+def LOG_ARCHIVE = "${LOG_PATH}/archive"
 def USER_HOME = System.getProperty("user.home")
 def GOOGLE_DRIVE_PATH = "$USER_HOME/eGangotri/google_drive/archive_uploader/server_logs"
 def CURRENT_TIME = timestamp("yyyy-MM-dd HH-mm")
@@ -27,6 +27,18 @@ appender("File-Appender", FileAppender) {
     }
 }
 
+appender("RollingFile-Appender", RollingFileAppender) {
+    file = "${LOG_PATH}/egangotri_rolling.log"
+    rollingPolicy(TimeBasedRollingPolicy) {
+        fileNamePattern = "${LOG_ARCHIVE}/rollingfile.log%d{yyyy-MM-dd}.log"
+        maxHistory = 30
+        totalSizeCap = "10MB"
+    }
+    encoder(PatternLayoutEncoder) {
+        pattern = "%msg%n"
+    }
+}
+
 //With this Setting your logs will end up in
 appender("Google-Drive-Appender", FileAppender) {
     file = "${GOOGLE_DRIVE_PATH}/egangotri_${CURRENT_TIME}.log"
@@ -36,5 +48,5 @@ appender("Google-Drive-Appender", FileAppender) {
         outputPatternAsHeader = false
     }
 }
-logger("com.egangotri", INFO, ["Console-Appender", "File-Appender","Google-Drive-Appender" ], false)
+logger("com.egangotri", INFO, ["Console-Appender", "File-Appender","Google-Drive-Appender", "RollingFile-Appender" ], false)
 root(INFO, ["Console-Appender"])
