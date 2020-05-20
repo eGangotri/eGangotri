@@ -6,6 +6,9 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class EGangotriUtil {
+    static{
+        System.setProperty("webdriver.chrome.silentOutput", "true");
+    }
     static final String HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"

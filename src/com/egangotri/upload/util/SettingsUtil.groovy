@@ -23,7 +23,6 @@ class SettingsUtil {
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
 
     static void applySettings(boolean createVOSavingFiles = true) {
-        System.setProperty("webdriver.chrome.silentOutput", "true");
         UploadUtils.resetGlobalUploadCounter()
         if (createVOSavingFiles) {
             ArchiveUtil.createVOSavingFiles()
