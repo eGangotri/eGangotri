@@ -247,10 +247,10 @@ class ValidateUploadsAndReUploadFailedItems {
         ArchiveUtil.storeAllUplodableItemsInFile(ALL_FAILED_ITEMS)
 
         profiles.eachWithIndex { archiveProfile, index ->
-            Set<UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll { it.archiveProfile == archiveProfile } as Set<QueuedVO>
+            Set<? extends UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll {def vo -> vo.archiveProfile == archiveProfile } as Set<? extends UploadVO>
             int countOfUploadableItems = failedVOsForProfile.size()
 
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+            log.info "${index + 1}). Starting Validation upload(s) in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
                 List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, failedVOsForProfile)
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)
