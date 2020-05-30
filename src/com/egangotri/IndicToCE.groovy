@@ -7,13 +7,15 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class IndicToCE {
-    static final int yearToConvert = 1940
+    static final int yearToConvert = 4090
 
     static final int shakaYearDiff = 78
+    static final int saptarshiYearDiff = 3076
     static final int vkYearDiff = 56 //actually 56.7
 
     static main(String[] args) {
         log.info "Shaka Yr $yearToConvert is ${yearToConvert + shakaYearDiff} CE"
         log.info "Vikram Yr $yearToConvert is ${yearToConvert - vkYearDiff} CE"
+        log.info "Saptarshi Yr $yearToConvert is ${yearToConvert - saptarshiYearDiff} CE"
     }
 }

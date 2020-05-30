@@ -9,7 +9,7 @@ class LoginToGoogleDrive {
 
     static final List<String> LOGIN_PROFILES = EGangotriUtil.GOOGLE_PROFILES
 
-    static main(String[] args) {
+    static void main(String[] args) {
        log.info "start$args"
         List<String> loginProfiles = LOGIN_PROFILES
         if (args) {
