@@ -13,7 +13,7 @@ class IndicToCE {
     static final int saptarshiYearDiff = 3076
     static final int vkYearDiff = 56 //actually 56.7
 
-    static main(String[] args) {
+    static void main(String[] args) {
         log.info "Shaka Yr $yearToConvert is ${yearToConvert + shakaYearDiff} CE"
         log.info "Vikram Yr $yearToConvert is ${yearToConvert - vkYearDiff} CE"
         log.info "Saptarshi Yr $yearToConvert is ${yearToConvert - saptarshiYearDiff} CE"
