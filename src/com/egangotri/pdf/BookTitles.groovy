@@ -14,13 +14,13 @@ class BookTitles {
     static List ignoreList = []
 
     static String PDF = "pdf"
-    static boolean includeNumberOfPages = true
-    static boolean includeIndex = true
-    static boolean onlyRootDirAndNoSubDirs = false
+    static boolean includeNumberOfPages = false
+    static boolean includeIndex = false
+    static boolean onlyRootDirAndNoSubDirs = true
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
     static List<Integer> kriIds = []
-    static main(String[] args) {
+    static void main(String[] args) {
         String args0 = ""
         if(args?.size() >0){
             args0 = args[0]

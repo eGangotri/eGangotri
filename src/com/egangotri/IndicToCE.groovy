@@ -7,15 +7,31 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class IndicToCE {
-    static final int yearToConvert = 4090
+    static final List<Integer> yearsToConvert = [5035, 1880, 2018]
 
     static final int shakaYearDiff = 78
-    static final int saptarshiYearDiff = 3076
-    static final int vkYearDiff = 56 //actually 56.7
+    static final int saptarshiYearDiff = -3076
+    static final int vkYearDiff = -56 //actually 56.7
+    //shubh samvat
+    static final int shubhSamvatDiff = 1825
 
     static void main(String[] args) {
-        log.info "Shaka Yr $yearToConvert is ${yearToConvert + shakaYearDiff} CE"
-        log.info "Vikram Yr $yearToConvert is ${yearToConvert - vkYearDiff} CE"
-        log.info "Saptarshi Yr $yearToConvert is ${yearToConvert - saptarshiYearDiff} CE"
+        List<List<Integer>> allConverstions = []
+        yearsToConvert.forEach { yearToConvert ->
+            List<Integer> convertedYear = []
+            convertedYear << yearToConvert + shakaYearDiff
+            convertedYear << yearToConvert + vkYearDiff
+            convertedYear << yearToConvert + saptarshiYearDiff
+            convertedYear << yearToConvert + shubhSamvatDiff
+            log.info "Shaka Yr $yearToConvert is ${convertedYear[0]} CE"
+            log.info "Vikram Yr $yearToConvert is ${convertedYear[1]} CE"
+            log.info "Saptarshi Yr $yearToConvert is ${convertedYear[2]} CE"
+            log.info "Shubh Yr $yearToConvert is ${convertedYear[3]} CE"
+            allConverstions << convertedYear
+        }
+        allConverstions.each { List<Integer> _yrs ->
+
+
+        }
     }
 }

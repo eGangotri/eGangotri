@@ -171,7 +171,7 @@ class UploadUtils {
     }
 
     static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit() {
-        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
+        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING) {
             throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
         }
     }
