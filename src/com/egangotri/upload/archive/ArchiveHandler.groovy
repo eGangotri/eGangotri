@@ -174,7 +174,7 @@ class ArchiveHandler {
         }
     }
 
-    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, Set<QueuedVO> uploadVos) {
+    static List<List<Integer>> performPartitioningAndUploadToArchive(Map metaDataMap, Set<? extends UploadVO> uploadVos) {
         List<List<Integer>> uploadStatsList = []
         if (EGangotriUtil.PARTITIONING_ENABLED && uploadVos.size() > EGangotriUtil.PARTITION_SIZE) {
             String archiveProfile = uploadVos.first().archiveProfile

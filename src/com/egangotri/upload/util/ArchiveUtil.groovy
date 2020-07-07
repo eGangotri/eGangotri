@@ -118,7 +118,7 @@ class ArchiveUtil {
         Set<QueuedVO> alreadyIn = ValidateUtil.csvToQueuedVO(appendableFile)
         String appendable = ""
         if(alreadyIn){
-            log.info("${alreadyIn.size()} already exist in queue record. ${vos.size()} will be added minus duplicates")
+            log.info("${alreadyIn.size()} already exist in ($appendableFilePath) queue record. ${vos.size()} will be added minus duplicates")
             int counter = 0
             vos.each { vo ->
                 if (!alreadyIn.contains(vo)) {
