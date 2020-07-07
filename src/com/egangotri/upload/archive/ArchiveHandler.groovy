@@ -207,7 +207,7 @@ class ArchiveHandler {
                 uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + strAfterDash : uploadLink
             }
             if(uploadLink.contains("subject=null")){
-                uploadLink = uploadLink.replaceAll("subject=null","subject=${strAfterDash}")
+                uploadLink = uploadLink.replaceAll("subject=null","subject=${strAfterDash?:fileNameOnly}")
             }
         }
         uploadLink = uploadLink.replaceAll(/[#!]/, "")

@@ -113,6 +113,9 @@ class EGangotriUtil {
     }
 
     static void sleepTimeInSeconds(double sleepTimeInSeconds, boolean overrideEgangotriWaitingPeriod = false) {
+        if(sleepTimeInSeconds>30){
+            sleepTimeInSeconds = 30
+        }
         Thread.sleep(overrideEgangotriWaitingPeriod ? (sleepTimeInSeconds * 1000).toInteger() : (EGangotriUtil.ARCHIVE_WAITING_PERIOD_ONE_SEC * sleepTimeInSeconds).toInteger())
     }
 

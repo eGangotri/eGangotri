@@ -9,7 +9,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class BookTitles {
 
-    static String FOLDER_NAME = "G:\\Sri Krishan Museum Kurukshetra"
+    static String FOLDER_NAME = "D:\\Treasures26\\_vicky\\june20\\_ur\\_old"
 
     static List ignoreList = []
 

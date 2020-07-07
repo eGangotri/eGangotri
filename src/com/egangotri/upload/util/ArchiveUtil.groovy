@@ -24,11 +24,13 @@ class ArchiveUtil {
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
-        WebElement userMenu = driver.findElement(By.xpath("//*[@id=\"wrap\"]/topnav-element"))
+        EGangotriUtil.sleepTimeInSeconds(2, true)
+        WebElement userMenu = driver.findElement(By.xpath("//*[@id=\"topnav\"]/ia-topnav"))
         JsonSlurper jsonSlurper = new JsonSlurper()
-        log.info("userName: ${userMenu.getAttribute("config")}")
 
         String config = userMenu.getAttribute("config")
+        log.info("config: ${config}")
+
         String userName = jsonSlurper.parseText(config).username
         log.info("userName: ${userName}")
 
@@ -264,7 +266,7 @@ class ArchiveUtil {
             button.submit()
             EGangotriUtil.sleepTimeInSeconds(0.2)
             WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-            wait.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.USER_MENU_ID)))
+            //wait.until(ExpectedConditions.elementToBeClickable(By.className("user-info")))
             loginSucess = true
         }
         catch (Exception e) {
