@@ -9,6 +9,10 @@ import org.quartz.JobExecutionException
 
 import java.text.SimpleDateFormat
 
+/***
+ *
+ * Use google drive account for archive[dot]org[dot]uploader[@]gmail.com
+ */
 @Slf4j
 class ExecuteBatchJob implements Job {
     static final String  CRON_FILE_PATH = File.separator + "google_drive" + File.separator + "archive_uploader" + File.separator + "cron.txt"
