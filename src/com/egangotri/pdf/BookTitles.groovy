@@ -9,36 +9,36 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class BookTitles {
 
-    static String FOLDER_NAME = "D:\\Treasures26\\_vicky\\june20\\_ur\\_old"
+    static String FOLDER_NAME = "D:\\Treasures26\\"
 
     static List ignoreList = []
 
     static String PDF = "pdf"
-    static boolean includeNumberOfPages = false
-    static boolean includeIndex = false
-    static boolean onlyRootDirAndNoSubDirs = true
+    static boolean includeNumberOfPages = true
+    static boolean includeIndex = true
+    static boolean onlyRootDirAndNoSubDirs = false
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
     static List<Integer> kriIds = []
     static void main(String[] args) {
-        String args0 = ""
-        if(args?.size() >0){
-            args0 = args[0]
-        }
-        //log.info "args0:$args0"
-        log.info("args0:$args0")
+        execute(args)
+    }
 
-        //new BookTitles().actor.start()
+    static void execute(String[] args = []){
+        if(args?.size() >0){
+            FOLDER_NAME = args[0]
+        }
+        log.info("args0:$FOLDER_NAME")
+
         //if only the directory specified
         if (BookTitles.onlyRootDirAndNoSubDirs) {
-            new BookTitles().processOneFolder(args0 ?: BookTitles.FOLDER_NAME)
+            new BookTitles().processOneFolder(BookTitles.FOLDER_NAME)
         } else {
             //if everything
-            new BookTitles().procAdInfinitum(args0 ?: BookTitles.FOLDER_NAME)
+            new BookTitles().procAdInfinitum(BookTitles.FOLDER_NAME)
         }
         log.info("${ kriIds.sort()}")
         log.info( "Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}")
-
     }
 
     void processOneFolder(String folderAbsolutePath) {

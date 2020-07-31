@@ -1,15 +1,23 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.pdf.BookTitles
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 @Slf4j
 class PreUploadReview {
     static int MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME = 6
+    static Set<String> setOfEndings = [] as Set
+    static List<String> setOfOffendingPaths = []
+    static Map<String, List<FileData>> profileAndInvalidNames = [:]
+    static Map<String, List<FileData>> profileAndNames = [:]
+    static int GRAND_TOTAL_OF_PDF_PAGES = 0
+
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {
@@ -24,37 +32,16 @@ class PreUploadReview {
     }
 
     static boolean preview(Set<String> profiles) {
-        Map<String, List<FileData>> profileAndInvalidNames = [:]
-        Map<String, List<FileData>> profileAndNames = [:]
-        Set<String> setOfEndings = [] as Set
-        List<String> setOfOffendingPaths = []
+
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal sizeInMB = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
         BigDecimal sizeInGB = sizeInMB/1024
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInMB.round(2)} MB (== ${sizeInGB.round(2)} GB)")
-        profiles.eachWithIndex { archiveProfile, index ->
-            List<String> uploadablesForProfile = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
-            if (uploadablesForProfile) {
-                List<FileData> shortNames = []
-                List<FileData> names = []
-                uploadablesForProfile.each { String entry ->
-                    setOfEndings << UploadUtils.getFileEnding(entry)
-                    String stripPath = UploadUtils.stripFilePath(entry)
-                    names << new FileData(stripPath, entry)
-                    if (stripPath.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
-                        String stripTitle = UploadUtils.stripFileTitle(entry)
-                        setOfOffendingPaths << stripTitle
-                        shortNames << new FileData(stripPath, entry)
-                    }
-                }
-                if (shortNames) {
-                    profileAndInvalidNames.put(archiveProfile, shortNames)
-                }
-                profileAndNames.put(archiveProfile, names)
-            }
-        }
+
+        statsForUploadables(profiles)
+
         log.info("This upload has following Unique Path Endings ${setOfEndings}")
         if (profileAndNames) {
             if (profileAndInvalidNames) {
@@ -70,11 +57,38 @@ class PreUploadReview {
                     log.info "${index + 1}). ${entry.key}"
                     log.info("\t${entry.value.join("\n\t")}")
                 }
+                log.info("Total Count of Pages for Pdfs only: " + GRAND_TOTAL_OF_PDF_PAGES)
             }
             return profileAndInvalidNames.size() == 0
         }
     }
 
+    static void statsForUploadables(Set<String> profiles){
+        profiles.eachWithIndex { archiveProfile, index ->
+            List<String> uploadablesForProfile = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
+            if (uploadablesForProfile) {
+                List<FileData> shortNames = []
+                List<FileData> names = []
+                int totalCountOfPages = 0
+                uploadablesForProfile.each { String entry ->
+                    FileData fileData = new FileData(entry)
+                    totalCountOfPages += fileData.numberOfPagesInPdf
+                    names << fileData
+                    if (fileData.title.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
+                        setOfOffendingPaths << fileData.parentFolder
+                        shortNames << new FileData(fileData.title, entry)
+                    }
+                }
+                GRAND_TOTAL_OF_PDF_PAGES += totalCountOfPages
+
+                if (shortNames) {
+                    profileAndInvalidNames.put(archiveProfile, shortNames)
+                }
+                profileAndNames.put(archiveProfile, names)
+            }
+        }
+
+    }
     static void logOffendingFolders(List<String> setOfOffendingPaths){
         log.info("This upload has following offending paths")
         (setOfOffendingPaths.groupBy {it}.sort { a, b -> b.value.size() <=> a.value.size() }).forEach{k,v ->
@@ -95,16 +109,31 @@ class PreUploadReview {
     }
 }
 
-
 class FileData {
-    String path
     String title
+    String absPath
+    String parentFolder
+    String fileEnding
+    int numberOfPagesInPdf = 0
 
-    FileData(String _path, String _title){
-        path = _path
+    FileData(String entry){
+        this.absPath = entry
+        this.fileEnding = UploadUtils.getFileEnding(this.absPath)
+        this.title = UploadUtils.stripFilePath(this.absPath)
+        this.parentFolder = UploadUtils.stripFileTitle(this.absPath)
+        if(EGangotriUtil.PDF.endsWith(fileEnding)){
+            PdfReader pdfReader = new PdfReader(this.absPath)
+            this.numberOfPagesInPdf = pdfReader.getNumberOfPages()
+        }
+    }
+
+    FileData(String _title, String _absPath){
         title = _title
+        absPath = _absPath
     }
     String toString(){
-        return "${path} [\t ${title} ]"
+        //striptitle, "$entry "
+        return "${title}${this.numberOfPagesInPdf > 0 ? '[ ' + this.numberOfPagesInPdf + ' Pages]':''} [\t ${parentFolder} ]"
     }
 }
+
