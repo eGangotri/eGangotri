@@ -74,6 +74,7 @@ class PreUploadReview {
                     FileData fileData = new FileData(entry)
                     totalCountOfPages += fileData.numberOfPagesInPdf
                     names << fileData
+                    setOfEndings << fileData.fileEnding
                     if (fileData.title.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
                         setOfOffendingPaths << fileData.parentFolder
                         shortNames << new FileData(fileData.title, entry)
