@@ -55,13 +55,15 @@ class PreUploadReview {
                 profileAndNames.eachWithIndex { Map.Entry<String, List<FileData>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
                     log.info("\t${entry.value.join("\n\t")}")
-                    int totalPagesInProfile = entry.value*.numberOfPagesInPdf.sum()
+                    long totalPagesInProfile = entry.value*.numberOfPagesInPdf.sum() as long
                     if(totalPagesInProfile > 0){
                         log.info("\tTotal Pages in Profile(${entry.key}): ${}")
                     }
                     log.info("\tTotal File Size in Profile(${entry.key}): ${sizeInfo(entry.value*.sizeInMB.sum() as BigDecimal)}\n")
                 }
-                log.info("Total Count of Pages for Pdfs only: " + GRAND_TOTAL_OF_PDF_PAGES)
+                if(GRAND_TOTAL_OF_PDF_PAGES > 0){
+                    log.info("Total Count of Pages for Pdfs only: " + GRAND_TOTAL_OF_PDF_PAGES)
+                }
             }
             return profileAndInvalidNames.size() == 0
         }
