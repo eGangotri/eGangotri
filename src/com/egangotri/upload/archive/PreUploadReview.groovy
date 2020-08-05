@@ -37,8 +37,7 @@ class PreUploadReview {
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal sizeInMB = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
-        BigDecimal sizeInGB = sizeInMB/1024
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInMB.round(2)} MB (== ${sizeInGB.round(2)} GB)")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInfo(sizeInMB)}")
 
         statsForUploadables(profiles)
 
@@ -56,6 +55,8 @@ class PreUploadReview {
                 profileAndNames.eachWithIndex { Map.Entry<String, List<FileData>> entry, int index ->
                     log.info "${index + 1}). ${entry.key}"
                     log.info("\t${entry.value.join("\n\t")}")
+                    log.info("\tTotal Pages in Profile(${entry.key}): ${entry.value*.numberOfPagesInPdf.sum()}")
+                    log.info("\tTotal File Size in Profile(${entry.key}): ${sizeInfo(entry.value*.sizeInMB.sum() as BigDecimal)}\n")
                 }
                 log.info("Total Count of Pages for Pdfs only: " + GRAND_TOTAL_OF_PDF_PAGES)
             }
@@ -108,6 +109,11 @@ class PreUploadReview {
     static boolean fileNameHasOverAllowedDigits(String fileName) {
         return fileName.findAll( /\d+/ ).join("").size() > MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME
     }
+
+    static String sizeInfo(BigDecimal sizeInMB){
+        BigDecimal sizeInGB = sizeInMB/1024
+        return "${sizeInMB.round(2)} MB (== ${sizeInGB.round(2)} GB)"
+    }
 }
 
 class FileData {
@@ -116,6 +122,7 @@ class FileData {
     String parentFolder
     String fileEnding
     int numberOfPagesInPdf = 0
+    BigDecimal sizeInMB = 0
 
     FileData(String entry){
         this.absPath = entry
@@ -126,6 +133,7 @@ class FileData {
             PdfReader pdfReader = new PdfReader(this.absPath)
             this.numberOfPagesInPdf = pdfReader.getNumberOfPages()
         }
+        sizeInMB = (new File(this.absPath).size()/ (1024 * 1024)) as BigDecimal
     }
 
     FileData(String _title, String _absPath){
@@ -134,7 +142,9 @@ class FileData {
     }
     String toString(){
         //striptitle, "$entry "
-        return "${title}${this.numberOfPagesInPdf > 0 ? '[ ' + this.numberOfPagesInPdf + ' Pages]':''} [\t ${parentFolder} ]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? '[' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} MB[${parentFolder} ]"
     }
+
+
 }
 
