@@ -147,7 +147,7 @@ class FileData {
     }
     String toString(){
         //striptitle, "$entry "
-        return "${title}${this.numberOfPagesInPdf > 0 ? '[' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} MB[${parentFolder} ]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? '[' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} MB [${parentFolder} ]"
     }
 
 
