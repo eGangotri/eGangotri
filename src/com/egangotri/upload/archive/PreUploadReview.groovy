@@ -57,12 +57,12 @@ class PreUploadReview {
                     log.info("\t${entry.value.join("\n\t")}")
                     long totalPagesInProfile = entry.value*.numberOfPagesInPdf.sum() as long
                     if(totalPagesInProfile > 0){
-                        log.info("\tTotal Pages in Profile(${entry.key}): ${}")
+                        log.info("\tTotal No. of Pages in Profile[pdf only](${entry.key}): ${totalPagesInProfile}")
                     }
                     log.info("\tTotal File Size in Profile(${entry.key}): ${sizeInfo(entry.value*.sizeInMB.sum() as BigDecimal)}\n")
                 }
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
-                    log.info("Total Count of Pages for Pdfs only: " + GRAND_TOTAL_OF_PDF_PAGES)
+                    log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
             }
             return profileAndInvalidNames.size() == 0
