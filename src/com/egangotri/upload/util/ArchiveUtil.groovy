@@ -25,6 +25,7 @@ class ArchiveUtil {
 
     static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
+        return
         WebElement userMenu = driver.findElement(By.xpath("//*[@id=\"topnav\"]/ia-topnav"))
         JsonSlurper jsonSlurper = new JsonSlurper()
 

@@ -52,14 +52,17 @@ class PreUploadReview {
             else{
                 log.info("All texts are above minimum file length requirement")
                 log.info("The Following are the files that will be uploaded")
-                profileAndNames.eachWithIndex { Map.Entry<String, List<FileData>> entry, int index ->
-                    log.info "${index + 1}). ${entry.key}"
-                    log.info("\t${entry.value.join("\n\t")}")
-                    long totalPagesInProfile = entry.value*.numberOfPagesInPdf.sum() as long
-                    if(totalPagesInProfile > 0){
-                        log.info("\tTotal No. of Pages in Profile[pdf only](${entry.key}): ${totalPagesInProfile}")
+                profileAndNames.eachWithIndex { Map.Entry<String, List<FileData>> entries, int index ->
+                    log.info "${index + 1}). ${entries.key}"
+                    entries.value.eachWithIndex { FileData entry, int counter ->
+                        log.info("\t${counter}). ${entry}")
                     }
-                    log.info("\tTotal File Size in Profile(${entry.key}): ${sizeInfo(entry.value*.sizeInMB.sum() as BigDecimal)}\n")
+
+                    long totalPagesInProfile = entries.value*.numberOfPagesInPdf.sum() as long
+                    if(totalPagesInProfile > 0){
+                        log.info("\tTotal No. of Pages in Profile[pdf only](${entries.key}): ${totalPagesInProfile}")
+                    }
+                    log.info("\tTotal File Size in Profile(${entries.key}): ${sizeInfo(entries.value*.sizeInMB.sum() as BigDecimal)}\n")
                 }
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
@@ -117,7 +120,7 @@ class PreUploadReview {
 
     static String sizeInfo(BigDecimal sizeInMB){
         BigDecimal sizeInGB = sizeInMB/1024
-        return "${sizeInMB.round(2)} MB (== ${sizeInGB.round(2)} GB)"
+        return sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB"
     }
 }
 
@@ -147,7 +150,7 @@ class FileData {
     }
     String toString(){
         //striptitle, "$entry "
-        return "${title}${this.numberOfPagesInPdf > 0 ? '[' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} MB [${parentFolder} ]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} \n\t\t[${parentFolder}]"
     }
 
 
