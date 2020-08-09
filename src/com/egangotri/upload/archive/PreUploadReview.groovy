@@ -55,7 +55,7 @@ class PreUploadReview {
                 profileAndNames.eachWithIndex { Map.Entry<String, List<FileData>> entries, int index ->
                     log.info "${index + 1}). ${entries.key}"
                     entries.value.eachWithIndex { FileData entry, int counter ->
-                        log.info("\t${counter}). ${entry}")
+                        log.info("\t${counter+1}). ${entry}")
                     }
 
                     long totalPagesInProfile = entries.value*.numberOfPagesInPdf.sum() as long
