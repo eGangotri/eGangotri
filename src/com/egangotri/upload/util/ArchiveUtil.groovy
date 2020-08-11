@@ -18,24 +18,22 @@ class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details/"
     static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}@ACCOUNT_NAME"
+    static String ARCHIVE_USER_NAME = ""
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
     private static DecimalFormat df = new DecimalFormat("0.00");
 
-    static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
-        if(!_startTime){
-            UploadUtils.openNewTab(driver)
-        }
+    static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
-        driver.get("https://archive.org/account/index.php")
-        new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
-
-        WebElement userMenu = driver.findElement(By.className("col-xs-12"))
-        String userName = userMenu.text.split("\\r\\n|\\r|\\n").first()
-
-        String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
-        if (!_startTime) {
+        if(resultsCountAtStartTime){
+            driver.get("https://archive.org/account/index.php")
+            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+            WebElement userMenu = driver.findElement(By.className("col-xs-12"))
+            ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
+        }
+        String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
+        if (!resultsCountAtStartTime) {
             UploadUtils.openNewTab(driver)
             UploadUtils.switchToLastOpenTab(driver)
             driver.navigate().to(archiveUserAccountUrl)
@@ -45,8 +43,8 @@ class ArchiveUtil {
         webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
         WebElement resultsCount = driver.findElementByClassName("results_count")
         if (resultsCount) {
-            log.info("Results Count at ${_startTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
-            if (!_startTime) {
+            log.info("Results Count at ${resultsCountAtStartTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
+            if (!resultsCountAtStartTime) {
                 log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
             }
         }
