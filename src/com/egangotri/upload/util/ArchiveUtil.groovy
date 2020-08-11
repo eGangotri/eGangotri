@@ -24,16 +24,15 @@ class ArchiveUtil {
     private static DecimalFormat df = new DecimalFormat("0.00");
 
     static void getResultsCount(ChromeDriver driver, Boolean _startTime = true) {
+        if(!_startTime){
+            UploadUtils.openNewTab(driver)
+        }
         EGangotriUtil.sleepTimeInSeconds(2, true)
-        return
-        WebElement userMenu = driver.findElement(By.xpath("//*[@id=\"topnav\"]/ia-topnav"))
-        JsonSlurper jsonSlurper = new JsonSlurper()
+        driver.get("https://archive.org/account/index.php")
+        new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
 
-        String config = userMenu.getAttribute("config")
-        log.info("config: ${config}")
-
-        String userName = jsonSlurper.parseText(config).username
-        log.info("userName: ${userName}")
+        WebElement userMenu = driver.findElement(By.className("col-xs-12"))
+        String userName = userMenu.text.split("\\r\\n|\\r|\\n").first()
 
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", userName.toLowerCase())
         if (!_startTime) {

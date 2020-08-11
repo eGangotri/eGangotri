@@ -67,6 +67,8 @@ class PreUploadReview {
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
+                log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+                log.info(" Total File Size ${sizeInfo(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
             }
             return profileAndInvalidNames.size() == 0
         }
