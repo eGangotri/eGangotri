@@ -298,6 +298,7 @@ class ArchiveHandler {
             identifier = identifierNowInTextBox
         }
         log.info("\tidentifier: ${identifier}")
+        log.info("\tAccess Url: ${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}")
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
