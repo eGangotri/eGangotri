@@ -48,7 +48,7 @@ class FileMover {
                     rep += ":\tNothing was moved"
                 }
                 else{
-                    rep += (srcFilesCountAfterMove-srcFilesCountBeforeMove == diff ? 'Success' : 'Failure!!!!')
+                    rep += (srcFilesCountBeforeMove-srcFilesCountAfterMove == diff ? 'Success' : 'Failure!!!!')
                 }
 
             }
