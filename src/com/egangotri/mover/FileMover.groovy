@@ -11,7 +11,7 @@ class FileMover {
     static Map<String, List<String>> srcDestMap
     static List profiles = []
 
-    static main(String [] args) {
+    static void main(String [] args) {
         if (args) {
             log.info "args $args"
             profiles = args.toList()
@@ -26,24 +26,32 @@ class FileMover {
         int index = 1
         profiles.each { profile ->
             String srcDir = metaDataMap["${profile}"]
-            String destDir = metaDataMap["${profile}.dest"]
+            String[] srcDirArr = srcDir.split("\\\\")
+            srcDirArr[1] += "${File.separator}_freeze"
+            String destDir = srcDirArr.join(File.separator)
 
-            Integer srcFilesCount = noOfFiles(srcDir)
-            Integer dirFlesCountBeforeMove = noOfFiles(destDir)
-            FileUtil.moveDir(srcDir, destDir)
-            Integer dirFlesCountAfterMove = noOfFiles(destDir)
+            Integer srcFilesCountBeforeMove = noOfFiles(srcDir)
+            Integer destFilesCountBeforeMove = noOfFiles(destDir)
+            println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
+            FileUtil.movePdfsInDir(srcDir, destDir)
+            Integer srcFilesCountAfterMove = noOfFiles(srcDir)
+            Integer destFlesCountAfterMove = noOfFiles(destDir)
 
-            Integer diff = Math.subtractExact(dirFlesCountAfterMove, dirFlesCountBeforeMove)
-            String rep = "$srcDir"
-            if(!srcFilesCount){
+            Integer diff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
+            String rep = ""
+            if(!srcFilesCountBeforeMove){
                 rep += ":\tNothing to Move"
             }
             else {
-                rep +=", \t $srcFilesCount,\t $destDir[bef:$dirFlesCountBeforeMove after:$dirFlesCountAfterMove],\t ${diff} \t"
-                rep += (srcFilesCount == diff ? 'Success' : 'Failure!!!!')
+                rep +=", \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${diff} \t"
+                if(diff == 0){
+                    rep += ":\tNothing was moved"
+                }
+                else{
+                    rep += (srcFilesCountAfterMove-srcFilesCountBeforeMove == diff ? 'Success' : 'Failure!!!!')
+                }
+
             }
-
-
             uploadSuccessCheckingMatrix.put((index++), rep)
         }
 
@@ -52,7 +60,11 @@ class FileMover {
         }
     }
 
+    static String dirStats(String dir, int countBefore, int countAfter){
+        return "$dir[bef:$countBefore after:$countAfter]"
+    }
+
     static Integer noOfFiles(String dirName) {
-        return FileRetrieverUtil.getAllFiles(new File(dirName))?.size()
+        return FileRetrieverUtil.getAllPdfFilesIncludingInIgnoredExtensions(new File(dirName))?.size()
     }
 }

@@ -32,7 +32,7 @@ class FileUtil {
     static String ALLOWED_EXTENSIONS_REGEX = /.*/
     static String PDF_ONLY_REGEX = /.*\.pdf/
 
-    static moveDir(String srcDir, String destDir) {
+    static moveDir(String srcDir, String destDir, customInclusionFilter = "") {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
         log.info("Src $srcDir " + "dst: $destDir")
@@ -42,11 +42,15 @@ class FileUtil {
             // notice nested Ant task
             move(todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true') {
                 fileset(dir: srcDir) {
-                    include(name: "**/*.*")
+                    include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
                 }
             }
             echo 'done moving'
         }
+    }
+
+    static movePdfsInDir(String srcDir, String destDir) {
+        moveDir(srcDir,destDir,"**/*.pdf")
     }
 }
 
