@@ -88,7 +88,7 @@ class PreUploadReview {
                     setOfEndings << fileData.fileEnding
                     if (fileData.title.length() < SettingsUtil.MINIMUM_FILE_NAME_LENGTH) {
                         setOfOffendingPaths << fileData.parentFolder
-                        shortNames << new FileData(fileData.title, entry)
+                        shortNames << new FileData(entry)
                     }
                 }
                 GRAND_TOTAL_OF_PDF_PAGES += totalCountOfPages
