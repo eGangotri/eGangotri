@@ -144,7 +144,7 @@ class FileData {
             PdfReader pdfReader = new PdfReader(this.absPath)
             this.numberOfPagesInPdf = pdfReader.getNumberOfPages()
         }
-        sizeInKB = (new File(this.absPath).size()/ (1024)) as BigDecimal
+        sizeInKB = (new File(this.absPath).size()/ 1024) as BigDecimal
     }
 
     FileData(String _title, String _absPath){
