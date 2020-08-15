@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.pdf.BookTitles
+
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
@@ -62,7 +62,7 @@ class PreUploadReview {
                     if(totalPagesInProfile > 0){
                         log.info("\tTotal No. of Pages in Profile[pdf only](${entries.key}): ${totalPagesInProfile}")
                     }
-                    log.info("\tTotal File Size in Profile(${entries.key}): ${sizeInfo(entries.value*.sizeInMB.sum() as BigDecimal)}\n")
+                    log.info("\tTotal File Size in Profile(${entries.key}): ${sizeInfo(entries.value*.sizeInKB.sum() as BigDecimal)}\n")
                 }
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
@@ -120,9 +120,10 @@ class PreUploadReview {
         return fileName.findAll( /\d+/ ).join("").size() > MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME
     }
 
-    static String sizeInfo(BigDecimal sizeInMB){
+    static String sizeInfo(BigDecimal sizeInKB){
+        BigDecimal sizeInMB = sizeInKB/1024
         BigDecimal sizeInGB = sizeInMB/1024
-        return sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB"
+        return sizeInKB >= 1024 ? (sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB") : "${sizeInKB.round(2)} MB"
     }
 }
 
@@ -132,7 +133,7 @@ class FileData {
     String parentFolder
     String fileEnding
     int numberOfPagesInPdf = 0
-    BigDecimal sizeInMB = 0
+    BigDecimal sizeInKB = 0
 
     FileData(String entry){
         this.absPath = entry
@@ -143,7 +144,7 @@ class FileData {
             PdfReader pdfReader = new PdfReader(this.absPath)
             this.numberOfPagesInPdf = pdfReader.getNumberOfPages()
         }
-        sizeInMB = (new File(this.absPath).size()/ (1024 * 1024)) as BigDecimal
+        sizeInKB = (new File(this.absPath).size()/ (1024)) as BigDecimal
     }
 
     FileData(String _title, String _absPath){
@@ -151,10 +152,7 @@ class FileData {
         absPath = _absPath
     }
     String toString(){
-        //striptitle, "$entry "
-        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInMB)} \n\t\t[${parentFolder}]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInKB)} \n\t\t[${parentFolder}]"
     }
-
-
 }
 
