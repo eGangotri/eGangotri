@@ -298,13 +298,18 @@ class ArchiveUtil {
         return getAllUploadables(profiles).size()
     }
 
+    /**
+     *
+     * @param profiles
+     * @return Size in KB
+     */
     static BigDecimal getGrandTotalOfFileSizeOfAllUploadables(Collection<String> profiles) {
         Long totalSize = 0
         List<String> allUploadables = getAllUploadables(profiles)
         allUploadables.each { String filePath ->
             totalSize += new File(filePath).size() as long
         }
-        return totalSize / (1024 * 1024)
+        return totalSize / 1024
     }
 
     static List<String> getAllUploadables(Collection<String> profiles) {
