@@ -37,18 +37,18 @@ class FileMover {
             Integer srcFilesCountAfterMove = noOfFiles(srcDir)
             Integer destFlesCountAfterMove = noOfFiles(destDir)
 
-            Integer diff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
+            Integer destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
             String rep = ""
             if(!srcFilesCountBeforeMove){
                 rep += ":\tNothing to Move"
             }
             else {
-                rep +=", \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${diff} \t"
-                if(diff == 0){
+                rep +=", \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${destFolderDiff} \t"
+                if(destFolderDiff == 0){
                     rep += ":\tNothing was moved"
                 }
                 else{
-                    rep += (srcFilesCountBeforeMove-srcFilesCountAfterMove == diff ? 'Success' : 'Failure!!!!')
+                    rep += (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
                 }
 
             }

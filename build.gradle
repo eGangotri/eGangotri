@@ -48,7 +48,7 @@ sourceSets {
 task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   [ "MM"  ]
+    args =   [ "RO"  ]
     jvmArgs = applicationDefaultJvmArgs
 }
 
@@ -63,7 +63,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "PRFL1_SWAMI"]
+    args = [ "RORI"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -71,7 +71,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "DT"]
+    args = [ "RORI"]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -84,7 +84,7 @@ task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.BookTitles"
-    args = [ "F:\\eGangotri"]
+    args = [ "D:\\Treasures27\\Serfoji"]
 }
 
 task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
