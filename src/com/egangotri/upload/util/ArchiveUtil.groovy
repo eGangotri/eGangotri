@@ -26,6 +26,7 @@ class ArchiveUtil {
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
+        try{
         if(resultsCountAtStartTime){
             driver.get("https://archive.org/account/index.php")
             new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
@@ -47,6 +48,12 @@ class ArchiveUtil {
             if (!resultsCountAtStartTime) {
                 log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
             }
+        }
+
+        }
+        catch(Exception e){
+            e.printStackTrace()
+            log.error(e.message)
         }
     }
 

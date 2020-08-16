@@ -133,7 +133,7 @@ class FileData {
     String parentFolder
     String fileEnding
     int numberOfPagesInPdf = 0
-    BigDecimal sizeInKB = 0
+    BigDecimal sizeInKB = 0.0
 
     FileData(String entry){
         this.absPath = entry
