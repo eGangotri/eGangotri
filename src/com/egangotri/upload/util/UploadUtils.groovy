@@ -69,7 +69,7 @@ class UploadUtils {
                 if (key.endsWith(".description")) {
                     val = encodeString(val)
                 }
-                metaDataMap.put(key, val)
+                metaDataMap.put(key.trim(), val.trim())
             }
 
             metaDataMap.each {
