@@ -32,20 +32,22 @@ class FileMover {
 
             Integer srcFilesCountBeforeMove = noOfFiles(srcDir)
             Integer destFilesCountBeforeMove = noOfFiles(destDir)
-            println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
-            FileUtil.movePdfsInDir(srcDir, destDir)
+            if(srcFilesCountBeforeMove){
+                println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
+                FileUtil.movePdfsInDir(srcDir, destDir)
+            }
             Integer srcFilesCountAfterMove = noOfFiles(srcDir)
             Integer destFlesCountAfterMove = noOfFiles(destDir)
 
             Integer destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
             String rep = ""
             if(!srcFilesCountBeforeMove){
-                rep += ":\tNothing to Move"
+                rep += "${profile}:\tNothing to Move"
             }
             else {
-                rep +=", \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${destFolderDiff} \t"
+                rep +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${destFolderDiff} \t"
                 if(destFolderDiff == 0){
-                    rep += ":\tNothing was moved"
+                    rep += "${profile}:\tNothing was moved"
                 }
                 else{
                     rep += (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
