@@ -3,6 +3,8 @@ package com.egangotri.pdf
 import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
+import java.text.SimpleDateFormat
+
 /**
  * All Titles of PDF's in a Folder and SubFolders
  */
@@ -10,6 +12,9 @@ import groovy.util.logging.Slf4j
 class BookTitles {
 
     static String FOLDER_NAME = "D:\\Treasures26\\"
+    //static String beforeDate = "" //format DD-MM-YYYY
+    static String afterDate = "23-08-2020" //format DD-MM-YYYY
+    static long afterDateAsLong = 0
 
     static List ignoreList = []
 
@@ -27,6 +32,12 @@ class BookTitles {
     static void execute(String[] args = []){
         if(args?.size() >0){
             FOLDER_NAME = args[0]
+            if(args?.size() > 1){
+                afterDate = args[1]
+            }
+        }
+        if(afterDate) {
+            afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime()
         }
         log.info("args0:$FOLDER_NAME")
 
@@ -43,11 +54,11 @@ class BookTitles {
 
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-
-        log.info( "reading Folder $directory")
+        log.info("Reading Folder ${directory}" + (afterDateAsLong ? " for Files after ${afterDate}" :''))
         int index = 0
         for (File file : directory.listFiles()) {
-            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)) {
+            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)
+                && (!afterDateAsLong || (afterDateAsLong && file.lastModified() > afterDateAsLong) ) ) {
                 //getIds(file)
                 printFileName(folderAbsolutePath, file, ++index)
             }

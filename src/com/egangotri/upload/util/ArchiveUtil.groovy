@@ -16,8 +16,8 @@ import java.text.DecimalFormat
 @Slf4j
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
-    static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details/"
-    static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}@ACCOUNT_NAME"
+    static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details"
+    static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}/@ACCOUNT_NAME"
     static String ARCHIVE_USER_NAME = ""
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
