@@ -12,8 +12,7 @@ import java.text.SimpleDateFormat
 class BookTitles {
 
     static String FOLDER_NAME = "D:\\Treasures26\\"
-    //static String beforeDate = "" //format DD-MM-YYYY
-    static String afterDate = "23-08-2020" //format DD-MM-YYYY
+    static String afterDate = "" //format DD-MM-YYYY
     static long afterDateAsLong = 0
 
     static List ignoreList = []
@@ -37,7 +36,17 @@ class BookTitles {
             }
         }
         if(afterDate) {
-            afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime()
+            if( afterDate.equalsIgnoreCase('today')){
+                Calendar date = new GregorianCalendar();
+                date.set(Calendar.HOUR_OF_DAY, 0);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.MILLISECOND, 0);
+                afterDateAsLong = date.time.time
+            }
+            else {
+                afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime()
+            }
         }
         log.info("args0:$FOLDER_NAME")
 
