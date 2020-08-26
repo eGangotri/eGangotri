@@ -5,7 +5,7 @@ task uploadToArchive(dependsOn: ['snap2htmlCronJob', 'refreshFocusLogFiles'], ty
     main = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args = ["PRFL1","PRFL2"]  */
-    args = ["RORI"]
+    args = ["ANON5"]
 }
 
 task preUploadReview(dependsOn: 'classes', type: JavaExec) {
