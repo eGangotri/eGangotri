@@ -63,7 +63,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "URDU_DUNIYA", "EGANGOTRI_EBOOKS"]
+    args = [ "JNGM"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -77,11 +77,11 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.BookTitles"
-    //args = [folder, date only OR today , hour only]
-    //args = [ "D:\\Treasures28\\bala", '25-08-2020', '5']
+    //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
 
     // 'today' is a possible option for date
-    args = [ "D:\\Treasures28\\smp", 'today', 10]
+    args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM", 'today', 12]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {

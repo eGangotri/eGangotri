@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 @Slf4j
 class BookTitles {
 
-    static String FOLDER_NAME = "D:\\Treasures26\\"
+    static List<String> FOLDER_NAME = ["D:\\Treasures26\\"]
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
@@ -26,7 +26,6 @@ class BookTitles {
     static boolean onlyRootDirAndNoSubDirs = false
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
-    static List<Integer> kriIds = []
 
     static void main(String[] args) {
         execute(args)
@@ -34,7 +33,8 @@ class BookTitles {
 
     static void execute(String[] args = []) {
         if (args?.size() > 0) {
-            FOLDER_NAME = args[0]
+            String args0 = args[0]
+            FOLDER_NAME = args0.split(",")*.trim().toList()
             if (args?.size() > 1) {
                 afterDate = args[1]
                 if (args?.size() > 2) {
@@ -61,20 +61,21 @@ class BookTitles {
         }
         log.info("args0:$FOLDER_NAME")
 
-        //if only the directory specified
-        if (BookTitles.onlyRootDirAndNoSubDirs) {
-            new BookTitles().processOneFolder(BookTitles.FOLDER_NAME)
-        } else {
-            //if everything
-            new BookTitles().procAdInfinitum(BookTitles.FOLDER_NAME)
+        for(String folder: FOLDER_NAME){
+            //if only the directory specified
+            if (BookTitles.onlyRootDirAndNoSubDirs) {
+                new BookTitles().processOneFolder(folder)
+            } else {
+                //if everything
+                new BookTitles().procAdInfinitum(folder)
+            }
         }
-        log.info("${kriIds.sort()}")
         log.info("Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}")
     }
 
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        log.info("Reading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour} Hours" : ''))
+        log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour} Hours" : ''))
         int index = 0
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
