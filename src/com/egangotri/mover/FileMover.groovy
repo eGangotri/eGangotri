@@ -10,7 +10,7 @@ import groovy.util.logging.Slf4j
 class FileMover {
     static Map<String, List<String>> srcDestMap
     static List profiles = []
-
+    static int totalFilesMoved = 0
     static void main(String [] args) {
         if (args) {
             log.info "args $args"
@@ -40,12 +40,14 @@ class FileMover {
             Integer destFlesCountAfterMove = noOfFiles(destDir)
 
             Integer destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
+            totalFilesMoved += destFolderDiff
+
             String rep = ""
             if(!srcFilesCountBeforeMove){
                 rep += "${profile}:\tNothing to Move"
             }
             else {
-                rep +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t ${destFolderDiff} \t"
+                rep +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t Moved ${destFolderDiff} files\t"
                 if(destFolderDiff == 0){
                     rep += "${profile}:\tNothing was moved"
                 }
@@ -59,6 +61,9 @@ class FileMover {
 
         uploadSuccessCheckingMatrix.each { k, v ->
             log.info "$k) $v"
+            if(totalFilesMoved){
+                log.info "Total Files moved ${totalFilesMoved}"
+            }
         }
     }
 
