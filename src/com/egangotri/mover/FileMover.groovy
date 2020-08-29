@@ -61,9 +61,9 @@ class FileMover {
 
         uploadSuccessCheckingMatrix.each { k, v ->
             log.info "$k) $v"
-            if(totalFilesMoved){
-                log.info "Total Files moved ${totalFilesMoved}"
-            }
+        }
+        if(totalFilesMoved){
+            log.info "Total Files moved ${totalFilesMoved}"
         }
     }
 
