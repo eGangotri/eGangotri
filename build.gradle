@@ -63,7 +63,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "JNGM"]
+    args = [ "MASS_ANON"]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -71,7 +71,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "RORI","SANJEEVANI", "JNGM"/*, "SMP"*/]
+    args = [ "ANON4"/*, "SMP"*/]
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
@@ -79,9 +79,10 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     main = "com.egangotri.pdf.BookTitles"
     //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
 
-    // 'today' is a possible option for date
-    args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM", 'today', 12]
+    args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM", 'today-1', 12]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {

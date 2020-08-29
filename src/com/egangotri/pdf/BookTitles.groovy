@@ -48,12 +48,22 @@ class BookTitles {
             }
         }
         if (afterDate) {
-            if (afterDate.equalsIgnoreCase('today')) {
+            if (afterDate.toLowerCase().startsWith("today")) {
                 Calendar date = new GregorianCalendar();
+                if(afterDate.contains("-")){
+                    try{
+                        int diff = -1*Integer.parseInt(afterDate.split("-")[1].trim())
+                        date.add(Calendar.DAY_OF_YEAR,diff)
+                    }
+                    catch(Exception e){
+                        log.error("parse error", e)
+                    }
+                }
                 date.set(Calendar.HOUR_OF_DAY, afterHour);
                 date.set(Calendar.MINUTE, 0);
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
+                afterDate =  new SimpleDateFormat("dd-MMM-yy").format(date.time)
                 afterDateAsLong = date.time.time
             } else {
                 afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour*60*60*1000)
@@ -75,7 +85,7 @@ class BookTitles {
 
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour} Hours" : ''))
+        log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : ''))
         int index = 0
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
