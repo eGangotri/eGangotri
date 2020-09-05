@@ -210,7 +210,8 @@ class ArchiveHandler {
                 uploadLink = uploadLink.replaceAll("subject=null","subject=${strAfterDash?:fileNameOnly}")
             }
         }
-        uploadLink = uploadLink.replaceAll(/[#!]/, "")
+
+        uploadLink = uploadLink.replaceAll(/[#!]/, "").replaceAll("null"," ")
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
         //Go to URL
