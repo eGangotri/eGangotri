@@ -212,6 +212,7 @@ class ArchiveHandler {
         }
 
         uploadLink = uploadLink.replaceAll(/[#!]/, "").replaceAll("null"," ")
+        //uploadLink += "&uploader=info@archive.org" 
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
         //Go to URL

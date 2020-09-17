@@ -36,17 +36,22 @@ class FileUtil {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
         log.info("Src $srcDir " + "dst: $destDir")
-
-        ant.with {
-            echo 'started moving'
-            // notice nested Ant task
-            move(todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true') {
-                fileset(dir: srcDir) {
-                    include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
+        try {
+            ant.with {
+                echo 'started moving'
+                // notice nested Ant task
+                move(todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true') {
+                    fileset(dir: srcDir) {
+                        include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
+                    }
                 }
+                echo 'done moving'
             }
-            echo 'done moving'
         }
+        catch(Exception e){
+            log.error("Error in Moving Folder ${srcDir}", e)
+        }
+
     }
 
     static movePdfsInDir(String srcDir, String destDir) {

@@ -17,6 +17,7 @@ import java.text.DecimalFormat
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
     static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details"
+    static final String ARCHIVE_HOME = "https://archive.org/account/index.php"
     static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}/@ACCOUNT_NAME"
     static String ARCHIVE_USER_NAME = ""
     static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
@@ -28,10 +29,16 @@ class ArchiveUtil {
         EGangotriUtil.sleepTimeInSeconds(2, true)
         try{
         if(resultsCountAtStartTime){
-            driver.get("https://archive.org/account/index.php")
-            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
-            WebElement userMenu = driver.findElement(By.className("col-xs-12"))
-            ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
+            println("going to $ARCHIVE_HOME")
+            driver.get(ARCHIVE_HOME)
+            println("reached $ARCHIVE_HOME")
+            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
+            //new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+            //WebElement userMenu = driver.findElement(By.className("col-xs-12"))
+            //ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
+            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
+            println("userMenu.getAttribute(\"src\") ${userMenu.getAttribute("src")}")
+            ARCHIVE_USER_NAME = userMenu.getAttribute("src").split("/serve/%40")[1].split("/")[0]
         }
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
         if (!resultsCountAtStartTime) {
