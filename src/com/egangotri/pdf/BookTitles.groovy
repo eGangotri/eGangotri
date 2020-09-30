@@ -18,7 +18,7 @@ class BookTitles {
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
 
-    static List ignoreList = []
+    static List ignoreList = ['otro']
 
     static String PDF = "pdf"
     static boolean includeNumberOfPages = true
@@ -96,13 +96,20 @@ class BookTitles {
                 createDateAsLong = attr.creationTime().toMillis()
             }
 
-            if (!file.isDirectory() && !ignoreList.contains(file.name.toString()) && file.name.endsWith(PDF)
+            if (!file.isDirectory() && !inIgnoreList(file) && file.name.endsWith(PDF)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 printFileName(folderAbsolutePath, file, ++index)
             }
         }
     }
 
+    static boolean inIgnoreList(File file){
+        String absPath = file.absolutePath.toString()
+        def invalid = ignoreList.findAll { ignorableKeyword ->
+            absPath.contains(ignorableKeyword)
+        }
+        return invalid?.size()
+    }
     /**
      * if you have one folder and you want it to go one level deep to process multiple foldrs within
      */

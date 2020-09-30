@@ -7,7 +7,7 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class IndicToCE {
-    static final List<Integer> yearsToConvert = [5047]
+    static final List<Integer> yearsToConvert = [1784,1929]
 
     static final int shakaYearDiff = 78
     static final int saptarshiYearDiff = -3076

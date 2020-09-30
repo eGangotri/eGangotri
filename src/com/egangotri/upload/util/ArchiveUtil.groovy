@@ -33,12 +33,12 @@ class ArchiveUtil {
             driver.get(ARCHIVE_HOME)
             println("reached $ARCHIVE_HOME")
             new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
-            //new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
-            //WebElement userMenu = driver.findElement(By.className("col-xs-12"))
-            //ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
-            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
-            println("userMenu.getAttribute(\"src\") ${userMenu.getAttribute("src")}")
-            ARCHIVE_USER_NAME = userMenu.getAttribute("src").split("/serve/%40")[1].split("/").first().toLowerCase()
+            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+            WebElement userMenu = driver.findElement(By.className("col-xs-12"))
+            ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
+//            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
+//            println("userMenu.getAttribute(\"src\") ${userMenu.getAttribute("src")}")
+//            ARCHIVE_USER_NAME = userMenu.getAttribute("src").split("/serve/%40")[1].split("/").first().toLowerCase()
         }
         String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
         if (!resultsCountAtStartTime) {
