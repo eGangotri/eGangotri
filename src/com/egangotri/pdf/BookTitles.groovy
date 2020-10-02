@@ -98,7 +98,12 @@ class BookTitles {
 
             if (!file.isDirectory() && !inIgnoreList(file) && file.name.endsWith(PDF)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
-                printFileName(folderAbsolutePath, file, ++index)
+                try{
+                    printFileName(folderAbsolutePath, file, ++index)
+                }
+                catch(Exception e){
+                    log.info("Error reading file. will continue" + e)
+                }
             }
         }
     }
@@ -106,9 +111,9 @@ class BookTitles {
     static boolean inIgnoreList(File file){
         String absPath = file.absolutePath.toString()
         def invalid = ignoreList.findAll { ignorableKeyword ->
-            absPath.contains(ignorableKeyword)
+            absPath.containsIgnoreCase(ignorableKeyword)
         }
-        return invalid?.size()
+        return invalid?.size() > 0
     }
     /**
      * if you have one folder and you want it to go one level deep to process multiple foldrs within
@@ -127,7 +132,7 @@ class BookTitles {
 
         //Then get in Sub-directories and process them
         for (File subDirectory : directory.listFiles()) {
-            if (subDirectory.isDirectory() && !ignoreList.contains(subDirectory.name.toString())) {
+            if (subDirectory.isDirectory() && !inIgnoreList(subDirectory)) {
                 procAdInfinitum(subDirectory.absolutePath)
             }
         }
