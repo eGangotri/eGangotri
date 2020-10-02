@@ -86,6 +86,7 @@ class BookTitles {
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
         log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : ''))
+        log.info("Already read ${TOTAL_NUM_PAGES} pages in ${TOTAL_FILES} files")
         int index = 0
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
