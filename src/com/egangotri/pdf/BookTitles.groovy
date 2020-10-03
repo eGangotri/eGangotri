@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 /**
@@ -80,13 +81,19 @@ class BookTitles {
                 new BookTitles().procAdInfinitum(folder)
             }
         }
-        log.info("Total Files: ${TOTAL_FILES}  \t\t Total Pages: ${TOTAL_NUM_PAGES}")
+        log.info("Total Files: ${${formatInteger(TOTAL_FILES)}}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}")
     }
-
+    static String formatInteger(Integer _formattable){
+        def pattern = "##,##,##,###"
+        def moneyform = new DecimalFormat(pattern)
+        return moneyform.format(_formattable.toLong())
+    }
     void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
         log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : ''))
-        log.info("Already read ${TOTAL_NUM_PAGES} pages in ${TOTAL_FILES} files")
+        if(TOTAL_NUM_PAGES>0){
+            log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES)} files")
+        }
         int index = 0
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
