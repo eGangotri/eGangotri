@@ -81,7 +81,7 @@ class BookTitles {
                 new BookTitles().procAdInfinitum(folder)
             }
         }
-        log.info("Total Files: ${${formatInteger(TOTAL_FILES)}}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}")
+        log.info("Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}")
     }
     static String formatInteger(Integer _formattable){
         def pattern = "##,##,##,###"
