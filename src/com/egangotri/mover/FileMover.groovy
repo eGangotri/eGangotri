@@ -25,38 +25,51 @@ class FileMover {
 
         int index = 1
         profiles.each { profile ->
+            String report = ""
             String srcDir = metaDataMap["${profile}"]
-            String[] srcDirArr = srcDir.split("\\\\")
-            srcDirArr[1] += "${File.separator}_freeze"
-            String destDir = srcDirArr.join(File.separator)
+            String[] srcDirArr = srcDir?.split("\\\\")
+            Integer srcFilesCountBeforeMove = 0
+            Integer destFilesCountBeforeMove = 0
+            Integer srcFilesCountAfterMove = 0
+            Integer destFlesCountAfterMove = 0
+            Integer destFolderDiff = 0
 
-            Integer srcFilesCountBeforeMove = noOfFiles(srcDir)
-            Integer destFilesCountBeforeMove = noOfFiles(destDir)
-            if(srcFilesCountBeforeMove){
-                println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
-                FileUtil.movePdfsInDir(srcDir, destDir)
-            }
-            Integer srcFilesCountAfterMove = noOfFiles(srcDir)
-            Integer destFlesCountAfterMove = noOfFiles(destDir)
+            if(srcDirArr){
+                srcDirArr[1] += "${File.separator}_freeze"
+                String destDir = srcDirArr.join(File.separator)
 
-            Integer destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
-            totalFilesMoved.add(destFolderDiff)
+                srcFilesCountBeforeMove = noOfFiles(srcDir)
+                destFilesCountBeforeMove = noOfFiles(destDir)
+                if(srcFilesCountBeforeMove){
+                    println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
+                    FileUtil.movePdfsInDir(srcDir, destDir)
+                }
+                srcFilesCountAfterMove = noOfFiles(srcDir)
+                destFlesCountAfterMove = noOfFiles(destDir)
 
-            String rep = ""
-            if(!srcFilesCountBeforeMove){
-                rep += "${profile}:\tNothing to Move"
+                destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
+                totalFilesMoved.add(destFolderDiff)
+                if(!srcFilesCountBeforeMove){
+                    report += "${profile}:\tNothing to Move"
+                }
+                else {
+                    report +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t Moved ${destFolderDiff} files\t"
+                    if(destFolderDiff == 0){
+                        report += "${profile}:\tNothing was moved"
+                    }
+                    else{
+                        report += (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
+                    }
+
+                }
             }
             else {
-                rep +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t Moved ${destFolderDiff} files\t"
-                if(destFolderDiff == 0){
-                    rep += "${profile}:\tNothing was moved"
-                }
-                else{
-                    rep += (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
-                }
-
+                report += "${profile}:\tNo Such Profile"
             }
-            uploadSuccessCheckingMatrix.put((index++), rep)
+
+
+
+            uploadSuccessCheckingMatrix.put((index++), report)
         }
 
         uploadSuccessCheckingMatrix.each { k, v ->

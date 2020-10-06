@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 /**
