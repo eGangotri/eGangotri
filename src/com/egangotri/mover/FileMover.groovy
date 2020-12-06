@@ -11,6 +11,8 @@ class FileMover {
     static Map<String, List<String>> srcDestMap
     static List profiles = []
     static List<Integer> totalFilesMoved = []
+    static List<Integer> preMoveCount = []
+    static List<String> successes = []
     static void main(String [] args) {
         if (args) {
             log.info "args $args"
@@ -39,6 +41,7 @@ class FileMover {
                 String destDir = srcDirArr.join(File.separator)
 
                 srcFilesCountBeforeMove = noOfFiles(srcDir)
+                preMoveCount.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
                 if(srcFilesCountBeforeMove){
                     println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
@@ -58,7 +61,9 @@ class FileMover {
                         report += "${profile}:\tNothing was moved"
                     }
                     else{
-                        report += (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
+                        String success = (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
+                        successes.add(success)
+                        report += success
                     }
 
                 }
@@ -66,9 +71,6 @@ class FileMover {
             else {
                 report += "${profile}:\tNo Such Profile"
             }
-
-
-
             uploadSuccessCheckingMatrix.put((index++), report)
         }
 
@@ -76,7 +78,7 @@ class FileMover {
             log.info "$k) $v"
         }
         if(totalFilesMoved){
-            log.info "Total Files moved ${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}"
+            log.info "Total Files ( of ${preMoveCount.join("+")})  moved ${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}" + " [ ${successes.join("+")} ]"
         }
     }
 
