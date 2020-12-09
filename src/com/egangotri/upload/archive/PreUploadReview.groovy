@@ -123,7 +123,7 @@ class PreUploadReview {
     static String sizeInfo(BigDecimal sizeInKB){
         BigDecimal sizeInMB = sizeInKB/1024
         BigDecimal sizeInGB = sizeInMB/1024
-        return sizeInKB >= 1024 ? (sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB") : "${sizeInKB.round(2)} MB"
+        return sizeInKB >= 1024 ? (sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB") : "${sizeInKB.round(2)} KB"
     }
 }
 

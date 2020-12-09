@@ -278,8 +278,9 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
-        if (EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
-            identifier = enhanceIdentifier(identifier)
+        //if (EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
+        if(true){
+            identifier = enhanceIdentifierByAppending(identifier)
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()

@@ -19,7 +19,7 @@ class FileUtil {
 
         for (Enumeration e = properties.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement()
-            String val = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")
+            String val = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")?.trim()
             if (!key.contains(".")) {
                 profileAndFolder.put(key, val)
             }

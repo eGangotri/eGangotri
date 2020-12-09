@@ -298,7 +298,18 @@ class ArchiveUtil {
         }
     }
 
-    static String enhanceIdentifier(String originalIdentifier) {
+    static String enhanceIdentifierByAppending(String originalIdentifier) {
+        //identifier length shouldnt be more that 101 chars
+        if (originalIdentifier.length() > 95) {
+            originalIdentifier = originalIdentifier.substring(0, 95)
+        }
+        Random _rndm = new Random()
+        String randomString = _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
+        String enhancedIdentifier = randomString + "${originalIdentifier}_";
+        return enhancedIdentifier
+    }
+
+    static String enhanceIdentifierByPrepending(String originalIdentifier) {
         //identifier length shouldnt be more that 101 chars
         if (originalIdentifier.length() > 95) {
             originalIdentifier = originalIdentifier.substring(0, 95)
@@ -307,7 +318,6 @@ class ArchiveUtil {
         String enhancedIdentifier = "${originalIdentifier}_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
         return enhancedIdentifier
     }
-
     static int getGrandTotalOfAllUploadables(Collection<String> profiles) {
         return getAllUploadables(profiles).size()
     }
