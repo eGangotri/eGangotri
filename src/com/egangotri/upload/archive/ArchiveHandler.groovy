@@ -8,11 +8,9 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
-import org.openqa.selenium.PageLoadStrategy
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -280,7 +278,7 @@ class ArchiveHandler {
 
         //if (EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
         if(true){
-            identifier = enhanceIdentifierByAppending(identifier)
+            identifier = extendIdentifierByPrepending(identifier)
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()

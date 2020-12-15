@@ -298,26 +298,29 @@ class ArchiveUtil {
         }
     }
 
-    static String enhanceIdentifierByAppending(String originalIdentifier) {
+    static String extendIdentifierByPrepending(String originalIdentifier) {
+        return extendIdentifier(originalIdentifier)
+    }
+
+    static String extendIdentifierByAppending(String originalIdentifier) {
+        return extendIdentifier(originalIdentifier, false);
+    }
+
+    static String extendIdentifier(String originalIdentifier, Boolean prepend = true) {
         //identifier length shouldnt be more that 101 chars
         if (originalIdentifier.length() > 95) {
             originalIdentifier = originalIdentifier.substring(0, 95)
         }
         Random _rndm = new Random()
-        String randomString = _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
-        String enhancedIdentifier = randomString + "${originalIdentifier}_";
+        String randomString = EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
+
+        3.times {
+            randomString += EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
+        }
+        String enhancedIdentifier = prepend ? "${randomString}_${originalIdentifier}" : "${originalIdentifier}_${randomString}"
         return enhancedIdentifier
     }
 
-    static String enhanceIdentifierByPrepending(String originalIdentifier) {
-        //identifier length shouldnt be more that 101 chars
-        if (originalIdentifier.length() > 95) {
-            originalIdentifier = originalIdentifier.substring(0, 95)
-        }
-        Random _rndm = new Random()
-        String enhancedIdentifier = "${originalIdentifier}_" + _rndm.nextInt(1000) + "_" + EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
-        return enhancedIdentifier
-    }
     static int getGrandTotalOfAllUploadables(Collection<String> profiles) {
         return getAllUploadables(profiles).size()
     }
