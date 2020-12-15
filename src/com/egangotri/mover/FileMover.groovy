@@ -79,8 +79,8 @@ class FileMover {
         }
         if(totalFilesMoved){
             log.info "Total Files \n" +
-                     "(of ${preMoveCount.reverse().join("+")} =${preMoveCount.sum()}) moved \n" +
-                    "${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}" + " [ ${successes.join("+")} (${successes.size()}) ]"
+                     "PreMove [${preMoveCount.reverse().join("+")}=${preMoveCount.sum()}] moved \n" +
+                     "Post-Move ${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}" + " [ ${successes.join("+")} (${successes.size()}) ]"
         }
     }
 
