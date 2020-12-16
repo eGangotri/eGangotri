@@ -21,6 +21,9 @@ class FileMover {
         new FileMover().move()
     }
 
+    static String SUCCESS_STRING = 'Success'
+    static String FAILURE_STRING = 'Failure!!!!'
+
     void move() {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
@@ -61,7 +64,7 @@ class FileMover {
                         report += "${profile}:\tNothing was moved"
                     }
                     else{
-                        String success = (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? 'Success' : 'Failure!!!!')
+                        String success = (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? SUCCESS_STRING : FAILURE_STRING)
                         successes.add(success)
                         report += success
                     }
@@ -78,10 +81,16 @@ class FileMover {
             log.info "$k) $v"
         }
         if(totalFilesMoved){
-            log.info "Total Files \n" +
-                     "PreMove [${preMoveCount.reverse().join("+")}=${preMoveCount.sum()}] moved \n" +
-                     "Post-Move ${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}" + " [ ${successes.join("+")} (${successes.size()}) ]"
+            log.info """Total Files:
+                      PreMove   [${preMoveCount.reverse().join("+")}=${preMoveCount.sum()}] moving 
+                      Post-Move [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
+                      [ ${successes.join("+")} ]
+                      [${successCount(successes, true)}(S)+${successCount(successes, false)}(F)]=(${successes.size()}) ]"""
         }
+    }
+
+    static String successCount(List successes, boolean forSuccess = true){
+        return successes.count{forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING };
     }
 
     static String dirStats(String dir, int countBefore, int countAfter){
