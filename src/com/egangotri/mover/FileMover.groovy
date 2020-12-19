@@ -59,9 +59,12 @@ class FileMover {
                     report += "${profile}:\tNothing to Move"
                 }
                 else {
-                    report +="${profile}: \t ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},\t ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)},\t Moved ${destFolderDiff} files\t"
+                    report +="""${profile}: 
+                                     ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},
+                                     ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)}
+                                     Moved ${destFolderDiff} files.\n"""
                     if(destFolderDiff == 0){
-                        report += "${profile}:\tNothing was moved"
+                        report += "${profile}:\nNothing was moved"
                     }
                     else{
                         String success = (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? SUCCESS_STRING : FAILURE_STRING)
