@@ -4,6 +4,8 @@ package com.egangotri.util
 import com.egangotri.upload.util.UploadUtils
 import groovy.util.logging.Slf4j
 
+import java.text.SimpleDateFormat
+
 @Slf4j
 class EGangotriUtil {
     static{
@@ -143,5 +145,4 @@ class EGangotriUtil {
         String _csv = csv.replaceAll(/["|\[|\]|'|\s]/, "").trim()
         return _csv ? _csv.split(",")*.trim() : []
     }
-
 }

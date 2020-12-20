@@ -18,6 +18,7 @@ class FileMover {
             log.info "args $args"
             profiles = args.toList()
         }
+        log.info("FileMover started for ${profiles.size()} Profiles on ${UploadUtils.getFormattedDateString()}")
         new FileMover().move()
     }
 
@@ -47,7 +48,7 @@ class FileMover {
                 preMoveCount.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
                 if(srcFilesCountBeforeMove){
-                    println("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
+                    log.info("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
                     FileUtil.movePdfsInDir(srcDir, destDir)
                 }
                 srcFilesCountAfterMove = noOfFiles(srcDir)
