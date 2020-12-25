@@ -9,34 +9,36 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class ZipMover {
     static String srcFolder = ''
-    static List CODES = ["JB", "JM", "VN", "MB", "SN", "KS", "VM", "RORI", "ABSP", "VK"]
-    static Map CODE_TO_FOLDER_MAP = [:]
+    static List<String> CODES = []
+    static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
+    static DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
 
     static void main(String[] args) {
         if (args) {
             log.info "args $args"
             srcFolder = args[0]
+            CODES = args[1].split(",")*.trim() as List
         }
         File downloadFolder = new File(srcFolder)
-        downloadFolder.listFiles(validFiles())
-        log.info("ZipMover started for ${downloadFolder}")
-
+        log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
         File[] zips = downloadFolder.listFiles(validFiles())
-        log.info("ZipMover started for ${zips}  on ${UploadUtils.getFormattedDateString()}")
-        setCodeToFolderMap()
-        new ZipMover().move(zips)
+        if(zips){
+            log.info("ZipMover started for ${zips*.name.join(",\n")}")
+            new ZipMover().move(zips)
+        }
+        else{
+            log.info("No Zips")
+        }
     }
     void move(File[] zips) {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
         zips.each { zipFile ->
-            String destDir = metaDataMap[CODE_TO_FOLDER_MAP[zipFile.name.split("-").first()]]
-
+            String code = zipFile.name.split("-")?.first()
+            String destDir = metaDataMap[getCodeToFolderMap(code)]
             log.info("destDir; ${destDir}")
-            //FileUtil.moveZip(zipFile.absolutePath, destDir)
+            FileUtil.moveAndUnzip(zipFile, destDir)
         }
     }
-
-
 
     static FileFilter validFiles() {
         FileFilter fileFilter = { File file ->
@@ -58,24 +60,35 @@ class ZipMover {
         return valid
     }
 
-    static void setCodeToFolderMap() {
-        CODE_TO_FOLDER_MAP.put("JB", "JNGM")
-        CODE_TO_FOLDER_MAP.put("JM", "JNGM_BOOKS")
-        CODE_TO_FOLDER_MAP.put("VN", "VN2")
-        CODE_TO_FOLDER_MAP.put("MB", "MUM")
-        CODE_TO_FOLDER_MAP.put("ANON6", "ANON6")
+    static Map setCodeToFolderMap() {
+        Map c2FMap = [:]
+        c2FMap.put("JB", "JNGM_BOOKS")
+        c2FMap.put("JM", "JNGM")
+        c2FMap.put("VN", "VN2")
+        c2FMap.put("MB", "MUM")
+        c2FMap.put("ANON6", "ANON6")
 
-        CODE_TO_FOLDER_MAP.put("SN", "SANJEEVANI")
-        CODE_TO_FOLDER_MAP.put("VM", "VED_MANDIR")
-        CODE_TO_FOLDER_MAP.put("KS", "PSTK_DVTA")
+        c2FMap.put("SN", "SANJEEVANI")
+        c2FMap.put("VM", "VED_MANDIR")
+        c2FMap.put("KS", "PSTK_DVTA")
 
-        CODE_TO_FOLDER_MAP.put("RORI", "RORI")
+        c2FMap.put("RORI", "RORI")
 
-        CODE_TO_FOLDER_MAP.put("VK", "VK")
-        CODE_TO_FOLDER_MAP.put("SR", "SR")
+        c2FMap.put("VK", "VK")
+        c2FMap.put("SR", "SR")
+        return c2FMap
 
     }
 
+    static String getCodeToFolderMap(String code){
+        if(CODE_TO_FOLDER_MAP.containsKey(code)){
+            return CODE_TO_FOLDER_MAP[code]
+        }
+        else if (CODES.contains(code)) {
+            return code
+        }
+        else return DEFAULT_LOCAL_FOLDER_CODE
+    }
 }
 
 

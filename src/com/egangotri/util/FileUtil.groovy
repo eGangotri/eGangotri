@@ -1,9 +1,7 @@
 package com.egangotri.util
 
-import com.egangotri.upload.util.SettingsUtil
+
 import groovy.util.logging.Slf4j
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @Slf4j
 class FileUtil {
@@ -48,14 +46,14 @@ class FileUtil {
                 echo 'done moving'
             }
         }
-        catch(Exception e){
+        catch (Exception e) {
             log.error("Error in Moving Folder ${srcDir}", e)
         }
 
     }
 
     static movePdfsInDir(String srcDir, String destDir) {
-        moveDir(srcDir,destDir,"**/*.pdf")
+        moveDir(srcDir, destDir, "**/*.pdf")
     }
 
     static moveZip(String zipFile, String destDir) {
@@ -65,14 +63,42 @@ class FileUtil {
         try {
             ant.with {
                 echo 'Started moving'
-                move(file: zipFile, todir:destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true')
+                move(file: zipFile, todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true')
                 echo 'Done moving'
             }
         }
-        catch(Exception e){
+        catch (Exception e) {
             log.error("Error in Moving Zip File ${zipFile}", e)
+            throw e
+        }
+    }
+
+
+    static moveAndUnzip(File zipFile, String destDir) {
+        try {
+            moveZip(zipFile.absolutePath, destDir)
+            unzipFile(zipFile.name, destDir)
+        }
+        catch (Exception e) {
+            log.error("Error in Moving/UnZip File ${zipFile}", e)
+        }
+    }
+
+    static unzipFile(String zipFileName, String destDir) {
+        // create an ant-builder
+        def ant = new groovy.ant.AntBuilder()
+        log.info("Src $zipFileName " + "dst: $destDir")
+        try {
+            ant.with {
+                echo 'Start unzipping'
+                unzip(src: destDir + File.separator + zipFileName, dest: destDir, overwrite: 'false')
+                echo 'Done unzipping'
+            }
+        }
+        catch (Exception e) {
+            log.error("Error in unzipping Zip File ${zipFileName}", e)
+            throw e
         }
     }
 }
-
 
