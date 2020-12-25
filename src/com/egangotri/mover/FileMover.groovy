@@ -94,7 +94,7 @@ class FileMover {
     }
 
     static String successCount(List successes, boolean forSuccess = true){
-        return successes.count{forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING };
+        return successes.count{forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING }
     }
 
     static String dirStats(String dir, int countBefore, int countAfter){

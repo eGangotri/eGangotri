@@ -57,6 +57,22 @@ class FileUtil {
     static movePdfsInDir(String srcDir, String destDir) {
         moveDir(srcDir,destDir,"**/*.pdf")
     }
+
+    static moveZip(String zipFile, String destDir) {
+        // create an ant-builder
+        def ant = new groovy.ant.AntBuilder()
+        log.info("Src $zipFile " + "dst: $destDir")
+        try {
+            ant.with {
+                echo 'Started moving'
+                move(file: zipFile, todir:destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true')
+                echo 'Done moving'
+            }
+        }
+        catch(Exception e){
+            log.error("Error in Moving Zip File ${zipFile}", e)
+        }
+    }
 }
 
 
