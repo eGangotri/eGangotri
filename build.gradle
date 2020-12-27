@@ -63,7 +63,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["MUM" ]
+    args = ["VED_MANDIR" ]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -71,7 +71,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "VN"] //"VN", "VN2" , "JNGM_BOOKS","KHEM","SMP_PHD"
+    args = [  "VED_MANDIR" ] //"VN", "VN2" , "JNGM_BOOKS","KHEM","SMP_PHD"
 }
 
 task zipMover(dependsOn: 'classes', type: JavaExec) {
@@ -79,7 +79,7 @@ task zipMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.ZipMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "C:\\Users\\Chetan Pandey\\Downloads", "JB, JM, VN, MB, SN, KS, VM, RORI, ABSP, VK, ANON6"]
+    args = [ ]
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {

@@ -8,8 +8,7 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class ZipMover {
-    static String srcFolder = ''
-    static List<String> CODES = []
+    static String srcFolder = System.getProperty("user.home") + File.separator + "Downloads"
     static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
     static DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
 
@@ -17,7 +16,6 @@ class ZipMover {
         if (args) {
             log.info "args $args"
             srcFolder = args[0]
-            CODES = args[1].split(",")*.trim() as List
         }
         File downloadFolder = new File(srcFolder)
         log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
@@ -50,7 +48,7 @@ class ZipMover {
 
     static Boolean isValidCode(String fileName) {
         boolean valid = false
-        CODES.forEach { code ->
+        CODE_TO_FOLDER_MAP.keySet().forEach { code ->
             {
                 if (fileName.startsWith("${code}-")) {
                     valid = true
@@ -63,6 +61,8 @@ class ZipMover {
     static Map setCodeToFolderMap() {
         Map c2FMap = [:]
         c2FMap.put("JB", "JNGM_BOOKS")
+        c2FMap.put("JN", "JNGM_BOOKS")
+        c2FMap.put("JNGM", "JNGM_BOOKS")
         c2FMap.put("JM", "JNGM")
         c2FMap.put("VN", "VN2")
         c2FMap.put("MB", "MUM")
@@ -76,16 +76,16 @@ class ZipMover {
 
         c2FMap.put("VK", "VK")
         c2FMap.put("SR", "SR")
+        c2FMap.put("VM", "VED_MANDIR")
+        c2FMap.put("RORI", "RORI")
+        c2FMap.put("ABSP", "ABSP")
+        c2FMap.put("VK", "VK")
         return c2FMap
-
     }
 
     static String getCodeToFolderMap(String code){
         if(CODE_TO_FOLDER_MAP.containsKey(code)){
             return CODE_TO_FOLDER_MAP[code]
-        }
-        else if (CODES.contains(code)) {
-            return code
         }
         else return DEFAULT_LOCAL_FOLDER_CODE
     }
