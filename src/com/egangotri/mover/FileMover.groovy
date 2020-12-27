@@ -20,17 +20,14 @@ class FileMover {
         if (args) {
             log.info "args $args"
             profiles = args.toList()
-            log.info "profiles $profiles"
-            log.info "overWriteFlag $OVERWRITE_FLAG"
             if (profiles.last().equalsIgnoreCase("false") || profiles.last().equalsIgnoreCase("true")) {
                 OVERWRITE_FLAG = BooleanUtils.toBoolean(profiles.last().toLowerCase())
                 profiles.remove(profiles.last())
             }
-            log.info "profiles $profiles"
-            log.info "overWriteFlag $OVERWRITE_FLAG"
 
         }
         log.info("FileMover started for ${profiles.size()} Profiles on ${UploadUtils.getFormattedDateString()}")
+        log.info "profiles $profiles overWriteFlag $OVERWRITE_FLAG"
         new FileMover().move()
     }
 
