@@ -71,7 +71,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  "VED_MANDIR" ] //"VN", "VN2" , "JNGM_BOOKS","KHEM","SMP_PHD"
+    args = [  "VED_MANDIR", "true" ] //"VN", "VN2" , "JNGM_BOOKS","KHEM","SMP_PHD"
 }
 
 task zipMover(dependsOn: 'classes', type: JavaExec) {

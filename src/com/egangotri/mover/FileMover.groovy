@@ -5,6 +5,7 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.BooleanUtils
 
 @Slf4j
 class FileMover {
@@ -13,10 +14,21 @@ class FileMover {
     static List<Integer> totalFilesMoved = []
     static List<Integer> preMoveCount = []
     static List<String> successes = []
-    static void main(String [] args) {
+    static OVERWRITE_FLAG = false
+
+    static void main(String[] args) {
         if (args) {
             log.info "args $args"
             profiles = args.toList()
+            log.info "profiles $profiles"
+            log.info "overWriteFlag $OVERWRITE_FLAG"
+            if (profiles.last().equalsIgnoreCase("false") || profiles.last().equalsIgnoreCase("true")) {
+                OVERWRITE_FLAG = BooleanUtils.toBoolean(profiles.last().toLowerCase())
+                profiles.remove(profiles.last())
+            }
+            log.info "profiles $profiles"
+            log.info "overWriteFlag $OVERWRITE_FLAG"
+
         }
         log.info("FileMover started for ${profiles.size()} Profiles on ${UploadUtils.getFormattedDateString()}")
         new FileMover().move()
@@ -40,42 +52,39 @@ class FileMover {
             Integer destFlesCountAfterMove = 0
             Integer destFolderDiff = 0
 
-            if(srcDirArr){
+            if (srcDirArr) {
                 srcDirArr[1] += "${File.separator}_freeze"
                 String destDir = srcDirArr.join(File.separator)
 
                 srcFilesCountBeforeMove = noOfFiles(srcDir)
                 preMoveCount.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
-                if(srcFilesCountBeforeMove){
+                if (srcFilesCountBeforeMove) {
                     log.info("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
-                    FileUtil.movePdfsInDir(srcDir, destDir)
+                    FileUtil.movePdfsInDir(srcDir, destDir, OVERWRITE_FLAG)
                 }
                 srcFilesCountAfterMove = noOfFiles(srcDir)
                 destFlesCountAfterMove = noOfFiles(destDir)
 
                 destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
                 totalFilesMoved.add(destFolderDiff)
-                if(!srcFilesCountBeforeMove){
+                if (!srcFilesCountBeforeMove) {
                     report += "${profile}:\tNothing to Move"
-                }
-                else {
-                    report +="""${profile}: 
-                                     ${dirStats(srcDir,srcFilesCountBeforeMove,srcFilesCountAfterMove)},
-                                     ${dirStats(destDir,destFilesCountBeforeMove,destFlesCountAfterMove)}
+                } else {
+                    report += """${profile}: 
+                                     ${dirStats(srcDir, srcFilesCountBeforeMove, srcFilesCountAfterMove)},
+                                     ${dirStats(destDir, destFilesCountBeforeMove, destFlesCountAfterMove)}
                                      Moved ${destFolderDiff} files.\n"""
-                    if(destFolderDiff == 0){
+                    if (destFolderDiff == 0) {
                         report += "${profile}:\nNothing was moved"
-                    }
-                    else{
-                        String success = (srcFilesCountBeforeMove-srcFilesCountAfterMove == destFolderDiff ? SUCCESS_STRING : FAILURE_STRING)
+                    } else {
+                        String success = (srcFilesCountBeforeMove - srcFilesCountAfterMove == destFolderDiff ? SUCCESS_STRING : FAILURE_STRING)
                         successes.add(success)
                         report += success
                     }
 
                 }
-            }
-            else {
+            } else {
                 report += "${profile}:\tNo Such Profile"
             }
             uploadSuccessCheckingMatrix.put((index++), report)
@@ -84,7 +93,7 @@ class FileMover {
         uploadSuccessCheckingMatrix.each { k, v ->
             log.info "$k) $v"
         }
-        if(totalFilesMoved){
+        if (totalFilesMoved) {
             log.info """Total Files:
                       PreMove   [${preMoveCount.reverse().join("+")}=${preMoveCount.sum()}] moving 
                       Post-Move [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
@@ -93,11 +102,11 @@ class FileMover {
         }
     }
 
-    static String successCount(List successes, boolean forSuccess = true){
-        return successes.count{forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING }
+    static String successCount(List successes, boolean forSuccess = true) {
+        return successes.count { forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING }
     }
 
-    static String dirStats(String dir, int countBefore, int countAfter){
+    static String dirStats(String dir, int countBefore, int countAfter) {
         return "$dir[bef:$countBefore after:$countAfter]"
     }
 

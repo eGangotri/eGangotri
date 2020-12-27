@@ -30,15 +30,15 @@ class FileUtil {
     static String ALLOWED_EXTENSIONS_REGEX = /.*/
     static String PDF_ONLY_REGEX = /.*\.pdf/
 
-    static moveDir(String srcDir, String destDir, customInclusionFilter = "") {
+    static moveDir(String srcDir, String destDir, customInclusionFilter = "",boolean overWriteFlag = false) {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
-        log.info("Src $srcDir " + "dst: $destDir")
+        log.info("Src $srcDir dst: $destDir customInclusionFilter:${customInclusionFilter} overWriteFlag:${overWriteFlag}")
         try {
             ant.with {
                 echo 'started moving'
                 // notice nested Ant task
-                move(todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true') {
+                move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
                     fileset(dir: srcDir) {
                         include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
                     }
@@ -52,8 +52,8 @@ class FileUtil {
 
     }
 
-    static movePdfsInDir(String srcDir, String destDir) {
-        moveDir(srcDir, destDir, "**/*.pdf")
+    static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
+        moveDir(srcDir, destDir, "**/*.pdf", overWriteFlag)
     }
 
     static moveZip(String zipFile, String destDir) {
