@@ -67,6 +67,8 @@ class ZipMover {
         c2FMap.put("VN", "VN2")
         c2FMap.put("MB", "MUM")
         c2FMap.put("ANON6", "ANON6")
+        c2FMap.put("GNJ", "GNJ")
+
 
         c2FMap.put("SN", "SANJEEVANI")
         c2FMap.put("VM", "VED_MANDIR")
@@ -80,6 +82,7 @@ class ZipMover {
         c2FMap.put("RORI", "RORI")
         c2FMap.put("ABSP", "ABSP")
         c2FMap.put("VK", "VK")
+        c2FMap.put("ST", "SARVESH")
         return c2FMap
     }
 
