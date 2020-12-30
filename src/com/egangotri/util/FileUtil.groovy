@@ -2,6 +2,7 @@ package com.egangotri.util
 
 
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.FileDeleteStrategy
 
 @Slf4j
 class FileUtil {
@@ -88,7 +89,7 @@ class FileUtil {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
         log.info("Src $zipFileName " + "dst: $destDir")
-
+        Set<File> deletables = [] as Set
         try {
             ant.with {
                 log.info ('Start unzipping')
@@ -101,16 +102,7 @@ class FileUtil {
             throw e
         }
         String newFolderAfterZip = zipFileName.replaceAll("\\.zip|\\.rar", "")
-
-        File[] unzippedFolders = new File(destDir).listFiles(new FilenameFilter() {
-            @Override
-            boolean accept(File dir, String name) {
-                log.info("dir: $dir $name")
-                File f = new File(dir, name)
-                log.info("is Dir ${f.isDirectory()} name starts with  ${name.startsWith(newFolderAfterZip.substring(0,3))}}")
-                return ( f.isDirectory()  && name.startsWith(newFolderAfterZip.substring(0,3)))
-            }
-        })
+        File[] unzippedFolders = getUnzippedFolderName(destDir,newFolderAfterZip)
 
         log.info("unzippedFolder: ${unzippedFolders}")
         unzippedFolders.each {File unzippedFolder ->
@@ -124,8 +116,7 @@ class FileUtil {
                     }
                     echo "Done moving zipped files to main folder for ${unzippedFolder}"
                 }
-                log.info("Deleting unzipped Folder: ${unzippedFolders}")
-                unzippedFolder.delete();
+                deletables << unzippedFolder
             }
             catch (Exception e) {
                 log.error("Error moving zipped files to ${destDir}", e)
@@ -133,8 +124,24 @@ class FileUtil {
             }
 
         }
-        log.info("Deleting Original Zip File: ${zipFile}" + (zipFile.delete()? '': 'Un') + "Successful")
+        deletables << zipFile
+        deletables.each { deletableFile ->
+            log.info("Deleting File: ${deletableFile.name}")
+            FileDeleteStrategy.FORCE.delete(deletableFile)
+        }
+    }
 
+    static File[] getUnzippedFolderName(String directory, String folderName){
+        return new File(directory).listFiles(new FilenameFilter() {
+            @Override
+            boolean accept(File dir, String name) {
+                log.info("dir: $dir $name")
+                File f = new File(dir, name)
+                log.info("is Dir ${f.isDirectory()} name starts with  ${name.startsWith(folderName.substring(0,3))}}")
+                return ( f.isDirectory()  && name.startsWith(folderName.substring(0,3)))
+            }
+        })
     }
 }
+
 
