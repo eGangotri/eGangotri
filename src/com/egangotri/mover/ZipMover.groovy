@@ -21,7 +21,7 @@ class ZipMover {
         log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
         File[] zips = downloadFolder.listFiles(validFiles())
         if(zips){
-            log.info("ZipMover started for ${zips*.name.join(",\n")}")
+            log.info("ZipMover started for \n${zips*.name.join(",\n")}")
             new ZipMover().move(zips)
         }
         else{
@@ -33,7 +33,6 @@ class ZipMover {
         zips.each { zipFile ->
             String code = zipFile.name.split("-")?.first()
             String destDir = metaDataMap[getCodeToFolderMap(code)]
-            log.info("destDir; ${destDir}")
             FileUtil.moveAndUnzip(zipFile, destDir)
         }
     }

@@ -3,6 +3,12 @@ package com.egangotri.util
 
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileDeleteStrategy
+import org.apache.commons.io.FileUtils
+
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.util.zip.ZipFile
 
 @Slf4j
 class FileUtil {
@@ -37,14 +43,14 @@ class FileUtil {
         log.info("Src $srcDir dst: $destDir customInclusionFilter:${customInclusionFilter} overWriteFlag:${overWriteFlag}")
         try {
             ant.with {
-                log.info('started moving')
+                log.info("started moving")
                 // notice nested Ant task
                 move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
                     fileset(dir: srcDir) {
                         include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
                     }
                 }
-                log.info('done moving')
+                log.info("done moving")
             }
         }
         catch (Exception e) {
@@ -60,7 +66,7 @@ class FileUtil {
     static moveAndUnzip(File srcZipFile, String destDir) {
         try {
             moveZip(srcZipFile.absolutePath, destDir)
-            unzipFile(destDir,srcZipFile.name)
+            unzipFile(destDir, srcZipFile.name)
         }
         catch (Exception e) {
             log.error("Error in Moving/UnZip File ${srcZipFile}", e)
@@ -70,13 +76,9 @@ class FileUtil {
     static moveZip(String srcZipFile, String destDir) {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
-        log.info("Src $srcZipFile " + "dst: $destDir")
+        log.info("Moving:\nSrc $srcZipFile to " + "\nDestDir: $destDir")
         try {
-            ant.with {
-                log.info('Started moving')
-                move(file: srcZipFile, todir: destDir, verbose: 'true', overwrite: 'false', preservelastmodified: 'true')
-                log.info('Done moving')
-            }
+            FileUtils.moveFileToDirectory(new File(srcZipFile), new File(destDir), false)
         }
         catch (Exception e) {
             log.error("Error in Moving Zip File ${srcZipFile}", e)
@@ -85,50 +87,52 @@ class FileUtil {
     }
 
     static unzipFile(String destDir, String zipFileName) {
-        unzipFile(new File(destDir,zipFileName))
+        unzipFile(new File(destDir, zipFileName))
     }
 
     static unzipFile(File zipFile) {
-        log.info("unzipping  ${zipFile.getAbsolutePath()}")
+        log.info("Unzipping  ${zipFile.getAbsolutePath()} having ${countEntriesInZipFile(zipFile)} entries")
         Set<File> deletables = [] as Set
 
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
         try {
             ant.with {
-                log.info('Start unzipping')
+                log.info("Start unzipping " + zipFile.name)
                 unzip(src: zipFile.getAbsolutePath(), dest: zipFile.parent, overwrite: 'false')
-                log.info('Done unzipping')
+                log.info("Done unzipping")
             }
         }
         catch (Exception e) {
             log.error("Error in unzipping Zip File ${zipFile}", e)
             throw e
         }
+
         File[] unzippedFolders = getUnzippedFolderName(zipFile)
 
-        log.info("unzippedFolder: ${unzippedFolders}")
         unzippedFolders.each { File unzippedFolder ->
-            try {
-                ant.with {
-                    log.info('Start moving zipped files to main folder')
-                    move(todir: zipFile.parent, overwrite: 'false') {
-                        fileset(dir: unzippedFolder.absolutePath) {
-                            include(name: "**/*.pdf")
-                        }
+            log.info("Moving ${unzippedFolder.list().size()} pdfs in ${unzippedFolder.name} to ${zipFile.parent}")
+            listPdfs(unzippedFolder).each { _pdf ->
+                {
+                    try {
+                        FileUtils.moveFileToDirectory(_pdf, new File(zipFile.parent), false)
                     }
-                    echo "Done moving zipped files to main folder for ${unzippedFolder}"
+                    catch (Exception e) {
+                        log.error("Error moving zipped files to ${zipFile.parent}", e)
+                    }
                 }
-                deletables << unzippedFolder
             }
-            catch (Exception e) {
-                log.error("Error moving zipped files to ${zipFile.parent}", e)
-                throw e
-            }
+            deletables << unzippedFolder
+
         }
         deletables << zipFile
         deletables.each { deletableFile ->
-            log.info("Deleting File: ${deletableFile.name} (${deletableFile.delete() ? '': 'Un'}Successful)")
+            if((deletableFile.isDirectory() && deletableFile.list().size() === 0) || !deletableFile.isDirectory()){
+                log.info("Deleting File: ${deletableFile.absolutePath} (${deletableFile.delete() ? '' : 'Un'}Successful)")
+            }
+            else{
+                log.info("${deletableFile.name} not deleted as it is a Non-Empty Directory")
+            }
         }
     }
 
@@ -140,6 +144,20 @@ class FileUtil {
                 return (f.isDirectory() && name.startsWith(zipFile.name.substring(0, 3)))
             }
         })
+    }
+
+    static File[] listPdfs(File folder) {
+        return folder.listFiles(new FilenameFilter() {
+            @Override
+            boolean accept(File dir, String name) {
+                return name.endsWith(".pdf")
+            }
+        })
+    }
+
+    static int countEntriesInZipFile(File zipFile) {
+        def zip = new ZipFile(zipFile)
+        return zip.size()
     }
 }
 
