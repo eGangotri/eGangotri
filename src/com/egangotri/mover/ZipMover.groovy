@@ -8,7 +8,8 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class ZipMover {
-    static String srcFolder = System.getProperty("user.home") + File.separator + "Downloads"
+    static String SRC_FOLDER = System.getProperty("user.home") + File.separator + "Downloads"
+    static String UPLOAD_REPORT_FILE = ""
     static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
     static String DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
     static List ALL_ZIP_FILES_PROCESSED = []
@@ -16,18 +17,19 @@ class ZipMover {
     static void main(String[] args) {
         if (args) {
             log.info "args $args"
-            srcFolder = args[0]
+            UPLOAD_REPORT_FILE = args[0]
+            if(args.size()> 1){
+                SRC_FOLDER = args[1]
+            }
         }
-        File downloadFolder = new File(srcFolder)
+        File downloadFolder = new File(SRC_FOLDER)
         log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
         File[] zips = downloadFolder.listFiles(validFiles())
         if (zips) {
             log.info("ZipMover started for \n${zips*.name.join(",\n")}")
             moveZips(zips)
-            File reportFile = new File(srcFolder, "9 jan 2021.txt")
-            if(reportFile.exists()){
-                compareZippedFilesToReportedFilesList(reportFile)
-            }
+            compareZippedFilesToReportedFilesList()
+
         } else {
             log.info("No Zips")
         }
@@ -97,12 +99,15 @@ class ZipMover {
         } else return DEFAULT_LOCAL_FOLDER_CODE
     }
 
-    static List<String> compareZippedFilesToReportedFilesList(File reportFile) {
-        List<String> ALL_FILES_IN_LIST = processUploadReportFile(reportFile)
-        println("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
-        def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
-        def subtraction = ALL_ZIP_FILES_PROCESSED - intersection
-        println(" Following Files ${intersection.size() === ALL_ZIP_FILES_PROCESSED.size()} ${subtraction.join("\n")} not found")
+    static List<String> compareZippedFilesToReportedFilesList() {
+        File uploadReportFile = new File(SRC_FOLDER, UPLOAD_REPORT_FILE)
+        if(uploadReportFile.exists()){
+            List<String> ALL_FILES_IN_LIST = processUploadReportFile(uploadReportFile)
+            println("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
+            def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
+            def subtraction = ALL_ZIP_FILES_PROCESSED - intersection
+            println("Following ${subtraction.size()} pdf(s) \n${subtraction.join("\n")} not found")
+        }
     }
 
     static List<String> processUploadReportFile(File reportFile) {
@@ -119,7 +124,6 @@ class ZipMover {
                     //(2).	****Brihadaranya Satika Bhashyam Sanskrit Printed (incomplete) - Mumukshu Bhawan Collection-009.pdf	ERROR-READING	  	2.75 GB
 
                     String[] token = matcher[0].toString().split(/\s/, 2)
-                    println("${token}")
                     titles << token[1].trim()
                 }
             }
