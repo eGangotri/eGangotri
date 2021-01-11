@@ -1,6 +1,6 @@
 package com.egangotri.util
 
-
+import com.egangotri.mover.ZipMover
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileDeleteStrategy
 import org.apache.commons.io.FileUtils
@@ -107,18 +107,19 @@ class FileUtil {
             log.error("Error in unzipping Zip File ${zipFile}", e)
             throw e
         }
-
         File[] unzippedFolders = getUnzippedFolderName(zipFile)
+        log.info("Moving ${unzippedFolders}")
 
         unzippedFolders.each { File unzippedFolder ->
             log.info("Moving ${unzippedFolder.list().size()} pdfs in ${unzippedFolder.name} to ${zipFile.parent}")
             listPdfs(unzippedFolder).each { _pdf ->
                 {
+                    ZipMover.ALL_ZIP_FILES_PROCESSED << _pdf.name
                     try {
                         FileUtils.moveFileToDirectory(_pdf, new File(zipFile.parent), false)
                     }
                     catch (Exception e) {
-                        log.error("Error moving zipped files to ${zipFile.parent}", e)
+                        log.error("Error moving zipped file (${_pdf.name})to ${zipFile.parent}", e)
                     }
                 }
             }
@@ -127,10 +128,14 @@ class FileUtil {
         }
         deletables << zipFile
         deletables.each { deletableFile ->
-            if((deletableFile.isDirectory() && deletableFile.list().size() === 0) || !deletableFile.isDirectory()){
+            if ((deletableFile.isDirectory() && deletableFile.list().size() === 0)) {
                 log.info("Deleting File: ${deletableFile.absolutePath} (${deletableFile.delete() ? '' : 'Un'}Successful)")
             }
-            else{
+            //File.delete() doesnt work so have to use this
+            else if (deletableFile.name.endsWith(".zip")) {
+                log.info("Deleting File: ${deletableFile.absolutePath}")
+                ant.delete(file: "${deletableFile.getAbsolutePath()}")
+            } else {
                 log.info("${deletableFile.name} not deleted as it is a Non-Empty Directory")
             }
         }

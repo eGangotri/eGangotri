@@ -1,6 +1,6 @@
 package com.egangotri.mover
 
-import com.egangotri.upload.util.FileRetrieverUtil
+
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
@@ -10,7 +10,8 @@ import groovy.util.logging.Slf4j
 class ZipMover {
     static String srcFolder = System.getProperty("user.home") + File.separator + "Downloads"
     static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
-    static DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
+    static String DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
+    static List ALL_ZIP_FILES_PROCESSED = []
 
     static void main(String[] args) {
         if (args) {
@@ -20,15 +21,20 @@ class ZipMover {
         File downloadFolder = new File(srcFolder)
         log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
         File[] zips = downloadFolder.listFiles(validFiles())
-        if(zips){
+        if (zips) {
             log.info("ZipMover started for \n${zips*.name.join(",\n")}")
-            new ZipMover().move(zips)
-        }
-        else{
+            moveZips(zips)
+            File reportFile = new File(srcFolder, "9 jan 2021.txt")
+            if(reportFile.exists()){
+                compareZippedFilesToReportedFilesList(reportFile)
+            }
+        } else {
             log.info("No Zips")
         }
+
     }
-    void move(File[] zips) {
+
+    static void moveZips(File[] zips) {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
         zips.each { zipFile ->
             String code = zipFile.name.split("-")?.first()
@@ -57,7 +63,7 @@ class ZipMover {
         return valid
     }
 
-    static Map setCodeToFolderMap() {
+    static Map<String, String> setCodeToFolderMap() {
         Map c2FMap = [:]
         c2FMap.put("JB", "JNGM_BOOKS")
         c2FMap.put("JN", "JNGM_BOOKS")
@@ -85,11 +91,40 @@ class ZipMover {
         return c2FMap
     }
 
-    static String getCodeToFolderMap(String code){
-        if(CODE_TO_FOLDER_MAP.containsKey(code)){
+    static String getCodeToFolderMap(String code) {
+        if (CODE_TO_FOLDER_MAP.containsKey(code)) {
             return CODE_TO_FOLDER_MAP[code]
+        } else return DEFAULT_LOCAL_FOLDER_CODE
+    }
+
+    static List<String> compareZippedFilesToReportedFilesList(File reportFile) {
+        List<String> ALL_FILES_IN_LIST = processUploadReportFile(reportFile)
+        println("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
+        def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
+        def subtraction = ALL_ZIP_FILES_PROCESSED - intersection
+        println(" Following Files ${intersection.size() === ALL_ZIP_FILES_PROCESSED.size()} ${subtraction.join("\n")} not found")
+    }
+
+    static List<String> processUploadReportFile(File reportFile) {
+        String line = ""
+        List<String> titles = []
+        reportFile.withReader { reader ->
+            while ((line = reader.readLine()) != null) {
+                //This will not work always because some file have errors
+                //def pattern = ~/pdf\s\d.*\s\d.*\.\d.*\sMB/
+                def pattern = ~/\(\d.*\)\.\s.*.pdf/
+                def matcher = (line =~ pattern).findAll()
+                if (matcher) {
+                    //(1). Bhagvad Gita Vira Shaiva Bhashyam by Dr. T.G.Sidhhapparadhya Part 2 - Jangamwadi Math Collection.pdf 394 147.19 MB
+                    //(2).	****Brihadaranya Satika Bhashyam Sanskrit Printed (incomplete) - Mumukshu Bhawan Collection-009.pdf	ERROR-READING	  	2.75 GB
+
+                    String[] token = matcher[0].toString().split(/\s/, 2)
+                    println("${token}")
+                    titles << token[1].trim()
+                }
+            }
         }
-        else return DEFAULT_LOCAL_FOLDER_CODE
+        return titles
     }
 }
 
