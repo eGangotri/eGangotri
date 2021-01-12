@@ -103,10 +103,10 @@ class ZipMover {
         File uploadReportFile = new File(SRC_FOLDER, UPLOAD_REPORT_FILE)
         if(uploadReportFile.exists()){
             List<String> ALL_FILES_IN_LIST = processUploadReportFile(uploadReportFile)
-            println("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
+            log.info("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
             def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
-            def subtraction = ALL_ZIP_FILES_PROCESSED - intersection
-            println("Following ${subtraction.size()} pdf(s) \n${subtraction.join("\n")} not found")
+            def subtraction = ALL_FILES_IN_LIST - intersection
+            log.info("Following pdf(s) \n${subtraction.join("\n")} \n[Count: ${subtraction.size()} ] not found")
         }
     }
 
@@ -128,6 +128,7 @@ class ZipMover {
                 }
             }
         }
+        log.info("Found ${titles.size()} titles in report")
         return titles
     }
 }
