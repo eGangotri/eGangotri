@@ -75,7 +75,7 @@ class ZipMover {
         c2FMap.put("MB", "MUM")
         c2FMap.put("ANON6", "ANON6")
         c2FMap.put("GNJ", "GNJ")
-
+        c2FMap.put("PN", "PUNEET")
 
         c2FMap.put("SN", "SANJEEVANI")
         c2FMap.put("VM", "VED_MANDIR")
@@ -90,6 +90,7 @@ class ZipMover {
         c2FMap.put("ABSP", "ABSP")
         c2FMap.put("VK", "VK")
         c2FMap.put("ST", "SARVESH")
+        c2FMap.put("AA", "AA")
         return c2FMap
     }
 
@@ -106,7 +107,7 @@ class ZipMover {
             log.info("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
             def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
             def subtraction = ALL_FILES_IN_LIST - intersection
-            log.info("Following pdf(s) \n${subtraction.join("\n")} \n[Count: ${subtraction.size()} ] not found")
+            log.info("Following pdf(s) \n${subtraction.join("\n")} \n[Count: ${subtraction.size()} ] from ${ALL_FILES_IN_LIST.size()} not found")
         }
     }
 
