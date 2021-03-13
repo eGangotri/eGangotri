@@ -37,12 +37,23 @@ class ZipMover {
     }
 
     static void moveZips(File[] zips) {
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
+        String destDir = ""
         zips.each { zipFile ->
-            String code = zipFile.name.split("-")?.first()
-            String destDir = metaDataMap[getCodeToFolderMap(code)]
+            destDir = getDestDirByZipFileName(zipFile)
             FileUtil.moveAndUnzip(zipFile, destDir)
         }
+        if(destDir){
+            Runtime.getRuntime().exec("explorer.exe /select," + destDir)
+        }
+    }
+    static getDestDirByZipFileName(File zipFile){
+        String code = zipFile.name.split("-")?.first()?.toUpperCase()
+        return getDestDirByCode(code)
+    }
+
+    static getDestDirByCode(String code){
+        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
+        return metaDataMap[getCodeToFolderMap(code)]
     }
 
     static FileFilter validFiles() {
@@ -57,7 +68,7 @@ class ZipMover {
         boolean valid = false
         CODE_TO_FOLDER_MAP.keySet().forEach { code ->
             {
-                if (fileName.startsWith("${code}-")) {
+                if (fileName.toUpperCase().startsWith("${code}-")) {
                     valid = true
                 }
             }
@@ -67,26 +78,24 @@ class ZipMover {
 
     static Map<String, String> setCodeToFolderMap() {
         Map c2FMap = [:]
-        c2FMap.put("JB", "JNGM_BOOKS")
-        c2FMap.put("JN", "JNGM_BOOKS")
-        c2FMap.put("JNGM", "JNGM_BOOKS")
-        c2FMap.put("JM", "JNGM")
+        c2FMap.put("JB", "JNGM")
+        c2FMap.put("JNGM", "JNGM")
+        c2FMap.put("JM", "JNGM_MANU")
         c2FMap.put("VN", "VN2")
-        c2FMap.put("MB", "MUM")
+        c2FMap.put("MB", "MB")
         c2FMap.put("ANON6", "ANON6")
-        c2FMap.put("GNJ", "GNJ")
+        c2FMap.put("MUTHU", "MUTHU")
+        c2FMap.put("MORI", "MORI")
         c2FMap.put("PN", "PUNEET")
-
         c2FMap.put("SN", "SANJEEVANI")
         c2FMap.put("VM", "VED_MANDIR")
         c2FMap.put("KS", "PSTK_DVTA")
 
         c2FMap.put("RORI", "RORI")
-
+        c2FMap.put("ORIM", "ORIM")
         c2FMap.put("VK", "VK")
         c2FMap.put("SR", "SR")
         c2FMap.put("VM", "VED_MANDIR")
-        c2FMap.put("RORI", "RORI")
         c2FMap.put("ABSP", "ABSP")
         c2FMap.put("VK", "VK")
         c2FMap.put("ST", "SARVESH")
@@ -107,7 +116,8 @@ class ZipMover {
             log.info("ALL_ZIP_FILES_PROCESSED: $ALL_ZIP_FILES_PROCESSED")
             def intersection = ALL_ZIP_FILES_PROCESSED.intersect(ALL_FILES_IN_LIST)
             def subtraction = ALL_FILES_IN_LIST - intersection
-            log.info("Following pdf(s) \n${subtraction.join("\n")} \n[Count: ${subtraction.size()} ] from ${ALL_FILES_IN_LIST.size()} not found")
+            log.info("Dumped ${ALL_ZIP_FILES_PROCESSED.size()} titles in Zips")
+            //log.info("Following pdf(s) \n${subtraction.join("\n")} \n[Count: ${subtraction.size()} ] from ${ALL_FILES_IN_LIST.size()} not found")
         }
     }
 
@@ -129,7 +139,7 @@ class ZipMover {
                 }
             }
         }
-        log.info("Found ${titles.size()} titles in report")
+        log.info("Found ${titles.size()} titles in Report")
         return titles
     }
 }

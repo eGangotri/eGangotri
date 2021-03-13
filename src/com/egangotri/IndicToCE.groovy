@@ -12,6 +12,7 @@ class IndicToCE {
     static final int shakaYearDiff = 78
     static final int saptarshiYearDiff = -3076
     static final int vkYearDiff = -56 //actually 56.7
+    static final int bengaliYearDiff = 594
     //shubh samvat
     static final int shubhSamvatDiff = 1825
 
