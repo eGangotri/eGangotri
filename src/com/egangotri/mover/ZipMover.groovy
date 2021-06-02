@@ -10,6 +10,7 @@ import groovy.util.logging.Slf4j
 class ZipMover {
     static String SRC_FOLDER = System.getProperty("user.home") + File.separator + "Downloads"
     static String UPLOAD_REPORT_FILE = ""
+    static List<String> EXCLUDABLE_CODES = ["KS"]
     static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
     static String DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
     static List ALL_ZIP_FILES_PROCESSED = []
@@ -25,6 +26,7 @@ class ZipMover {
         File downloadFolder = new File(SRC_FOLDER)
         log.info("Read Download Folder ${downloadFolder} on ${UploadUtils.getFormattedDateString()}")
         File[] zips = downloadFolder.listFiles(validFiles())
+        log.info("zips ${zips}");
         if (zips) {
             log.info("ZipMover started for \n${zips*.name.join(",\n")}")
             moveZips(zips)
@@ -77,7 +79,7 @@ class ZipMover {
     }
 
     static Map<String, String> setCodeToFolderMap() {
-        Map c2FMap = [:]
+        Map<String, String> c2FMap = [:]
         c2FMap.put("JB", "JNGM")
         c2FMap.put("JNGM", "JNGM")
         c2FMap.put("JM", "JNGM_MANU")
@@ -85,13 +87,14 @@ class ZipMover {
         c2FMap.put("MB", "MB")
         c2FMap.put("ANON6", "ANON6")
         c2FMap.put("MUTHU", "MUTHU")
+        c2FMap.put("BMB", "MUTHU")
         c2FMap.put("MORI", "MORI")
         c2FMap.put("PN", "PUNEET")
         c2FMap.put("SN", "SANJEEVANI")
         c2FMap.put("VM", "VED_MANDIR")
         c2FMap.put("KS", "PSTK_DVTA")
 
-        c2FMap.put("RORI", "RORI")
+        c2FMap.put("LBS", "LBS")
         c2FMap.put("ORIM", "ORIM")
         c2FMap.put("VK", "VK")
         c2FMap.put("SR", "SR")
@@ -100,7 +103,18 @@ class ZipMover {
         c2FMap.put("VK", "VK")
         c2FMap.put("ST", "SARVESH")
         c2FMap.put("AA", "AA")
-        return c2FMap
+        c2FMap.put("KRI", "KRI")
+        return removeExcludables(c2FMap)
+    }
+
+    static removeExcludables(Map<String,String> c2FMap){
+        EXCLUDABLE_CODES.forEach { String code ->
+            if(c2FMap.containsKey(code)){
+                c2FMap.remove(code);
+            }
+        }
+        println("${c2FMap}")
+        return c2FMap;
     }
 
     static String getCodeToFolderMap(String code) {
