@@ -43,7 +43,7 @@ class FileUtil {
         log.info("Src $srcDir dst: $destDir customInclusionFilter:${customInclusionFilter} overWriteFlag:${overWriteFlag}")
         try {
             ant.with {
-                log.info("started moving")
+                log.info("Started moving")
                 // notice nested Ant task
                 move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
                     fileset(dir: srcDir) {
@@ -66,7 +66,9 @@ class FileUtil {
     static moveAndUnzip(File srcZipFile, String destDir) {
         try {
             moveZip(srcZipFile.absolutePath, destDir)
-            unzipFile(destDir, srcZipFile.name)
+            if(!ZipMover.ONLY_MOVE_DONT_UNZIP){
+                unzipFile(destDir, srcZipFile.name)
+            }
         }
         catch (Exception e) {
             log.error("Error in Moving/UnZip File ${srcZipFile}", e)

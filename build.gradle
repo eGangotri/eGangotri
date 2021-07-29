@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["LBS" ]
+    args = ["EGM" ]
 }
 
 task fileMover(dependsOn: 'classes', type: JavaExec) {
@@ -59,7 +59,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "PSTK_DVTA" ,"true"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","VED_MANDIR"
+    args = [ "PUNEET","PSTK_DVTA","MB" ,"false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
 }
 
 task zipMover(dependsOn: 'classes', type: JavaExec) {

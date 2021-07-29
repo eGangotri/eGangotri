@@ -10,7 +10,8 @@ import groovy.util.logging.Slf4j
 class ZipMover {
     static String SRC_FOLDER = System.getProperty("user.home") + File.separator + "Downloads"
     static String UPLOAD_REPORT_FILE = ""
-    static List<String> EXCLUDABLE_CODES = ["KS"]
+    static List<String> EXCLUDABLE_CODES = []
+    static Boolean ONLY_MOVE_DONT_UNZIP = false
     static Map<String, String> CODE_TO_FOLDER_MAP = setCodeToFolderMap()
     static String DEFAULT_LOCAL_FOLDER_CODE = "ANON6"
     static List ALL_ZIP_FILES_PROCESSED = []
@@ -29,7 +30,7 @@ class ZipMover {
         log.info("zips ${zips}");
         if (zips) {
             log.info("ZipMover started for \n${zips*.name.join(",\n")}")
-            moveZips(zips)
+            moveZipsAndUnzip(zips)
             compareZippedFilesToReportedFilesList()
 
         } else {
@@ -38,7 +39,7 @@ class ZipMover {
 
     }
 
-    static void moveZips(File[] zips) {
+    static void moveZipsAndUnzip(File[] zips) {
         String destDir = ""
         zips.each { zipFile ->
             destDir = getDestDirByZipFileName(zipFile)
@@ -70,7 +71,7 @@ class ZipMover {
         boolean valid = false
         CODE_TO_FOLDER_MAP.keySet().forEach { code ->
             {
-                if (fileName.toUpperCase().startsWith("${code}-")) {
+                if (fileName.toUpperCase().startsWith("${code}")) {
                     valid = true
                 }
             }

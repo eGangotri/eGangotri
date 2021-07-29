@@ -225,7 +225,7 @@ class UploadUtils {
             String _desc = metaDataMap."${archiveProfile}.description"
 
             String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
-            String supplementary_url = desc_and_file_name + AMPERSAND + _lang
+            String supplementary_url = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
