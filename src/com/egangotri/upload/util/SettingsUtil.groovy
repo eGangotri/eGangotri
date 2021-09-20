@@ -204,11 +204,21 @@ class SettingsUtil {
             log.info("SNAP2HTML_INSTALLATION_PATH: " + SnapToHtml.SNAP2HTML_INSTALLATION_PATH)
         }
         if (settingsMetaDataMap.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION) {
-            SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION = stripQuotes(settingsMetaDataMap.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION)
-            log.info("FOLDER_FOR_SNAP2HTML_LISTING_GENERATION: " + SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION)
+            SnapToHtml.SNAP2HTML_REPO = stripQuotes(settingsMetaDataMap.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION)
+            log.info("FOLDER_FOR_SNAP2HTML_LISTING_GENERATION: " + SnapToHtml.SNAP2HTML_REPO)
         }
-        SnapToHtml.execCmd = """
-    ${SnapToHtml.SNAP2HTML_INSTALLATION_PATH} -path:${SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION} -outfile:"${SnapToHtml.FOLDER_FOR_SNAP2HTML_LISTING_GENERATION}${File.separator}FILE_TITLE.html" -title:"FILE_TITLE"
+
+        if (settingsMetaDataMap.FOLDER_TO_GENERATE_SNAP2HTML_OF) {
+            SnapToHtml.FOLDER_TO_GENERATE_SNAP2HTML_OF = stripQuotes(settingsMetaDataMap.FOLDER_TO_GENERATE_SNAP2HTML_OF)
+            log.info("FOLDER_TO_GENERATE_SNAP2HTML_OF: " + SnapToHtml.FOLDER_TO_GENERATE_SNAP2HTML_OF)
+        }
+
+        File listingFolder = new File(SnapToHtml.SNAP2HTML_REPO)
+        if (!listingFolder.exists()) {
+            listingFolder.mkdir()
+        }
+        SnapToHtml.SNAP2HTML_EXEC_CMD = """
+    ${SnapToHtml.SNAP2HTML_INSTALLATION_PATH} -path:${SnapToHtml.FOLDER_TO_GENERATE_SNAP2HTML_OF} -outfile:"${SnapToHtml.SNAP2HTML_REPO}${File.separator}FILE_TITLE.html" -title:"FILE_TITLE"
     """
     }
 

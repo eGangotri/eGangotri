@@ -4,14 +4,12 @@ package com.egangotri.util
 import com.egangotri.upload.util.UploadUtils
 import groovy.util.logging.Slf4j
 
-import java.text.SimpleDateFormat
-
 @Slf4j
 class EGangotriUtil {
     static{
         System.setProperty("webdriver.chrome.silentOutput", "true");
     }
-    static final String HOME = System.getProperty('user.home')
+    static final String USER_HOME = System.getProperty('user.home')
     static final String PDF = ".pdf"
     static final String PROPERTIES = ".properties"
 
@@ -19,7 +17,7 @@ class EGangotriUtil {
     static long PROGRAM_END_TIME_IN_MILLISECONDS = 0
 
 
-    static final String EGANGOTRI_BASE_DIR = HOME + File.separator + "eGangotri"
+    static final String EGANGOTRI_BASE_DIR = USER_HOME + File.separator + "eGangotri"
 
     static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
