@@ -252,7 +252,8 @@ class ArchiveHandler {
                 log.info("\t'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
             }
         }
-        //UploadUtils.checkAlert(driver)
+        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
+
         WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
 

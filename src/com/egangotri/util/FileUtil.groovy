@@ -80,7 +80,7 @@ class FileUtil {
         def ant = new groovy.ant.AntBuilder()
         log.info("Moving:\nSrc $srcZipFile to " + "\nDestDir: $destDir")
         try {
-            FileUtils.moveFileToDirectory(new File(srcZipFile), new File(destDir), false)
+            FileUtils.moveFileToDirectory(new File(srcZipFile), new File(destDir), true)
         }
         catch (Exception e) {
             log.error("Error in Moving Zip File ${srcZipFile}", e)

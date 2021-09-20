@@ -50,7 +50,7 @@ class ZipMover {
         }
     }
     static getDestDirByZipFileName(File zipFile){
-        String code = zipFile.name.split("-")?.first()?.toUpperCase()
+        String code = zipFile.name.split(/\s*-/)?.first()?.toUpperCase()
         return getDestDirByCode(code)
     }
 
@@ -96,6 +96,7 @@ class ZipMover {
         c2FMap.put("KS", "PSTK_DVTA")
 
         c2FMap.put("LBS", "LBS")
+        c2FMap.put("LB", "BV")
         c2FMap.put("ORIM", "ORIM")
         c2FMap.put("VK", "VK")
         c2FMap.put("SR", "SR")
@@ -105,6 +106,7 @@ class ZipMover {
         c2FMap.put("ST", "SARVESH")
         c2FMap.put("AA", "AA")
         c2FMap.put("KRI", "KRI")
+        c2FMap.put("BV", "BV")
         return removeExcludables(c2FMap)
     }
 

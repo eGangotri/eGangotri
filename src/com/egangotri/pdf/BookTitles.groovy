@@ -6,7 +6,6 @@ import groovy.util.logging.Slf4j
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 /**
@@ -23,7 +22,7 @@ class BookTitles {
     static List ignoreList = ['otro']
 
     static String PDF = "pdf"
-    static boolean includeNumberOfPages = true
+    static boolean INCLUDE_NUMBER_OF_PAGES = true
     static boolean includeIndex = true
     static boolean onlyRootDirAndNoSubDirs = false
     static int TOTAL_FILES = 0
@@ -105,7 +104,7 @@ class BookTitles {
                 createDateAsLong = attr.creationTime().toMillis()
             }
 
-            if (!file.isDirectory() && !inIgnoreList(file) && file.name.endsWith(PDF)
+            if (!file.isDirectory() && !inIgnoreList(file)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 try{
                     printFileName(folderAbsolutePath, file, ++index)
@@ -150,13 +149,13 @@ class BookTitles {
     void printFileName(String folderAbsolutePath, File file, int index) {
         int numberOfPages = 0
 
-        if (includeNumberOfPages) {
+        if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
             PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
             numberOfPages = pdfReader.getNumberOfPages()
             incrementTotalPageCount(numberOfPages)
         }
 
-        log.info("${includeIndex ? index + ').' : ''} ${file.name} ${includeNumberOfPages ? ', ' + numberOfPages + ' Pages' : ''}")
+        log.info("${includeIndex ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}")
         incrementFileCount()
     }
 
