@@ -16,7 +16,7 @@ class FileMover {
     static List<Integer> preMoveCountDest = []
     static List<Integer> postMoveCountSrc = []
     static List<Integer> postMoveCountDest = []
-    static List<String> successes = []
+    static List<String> successStatuses = []
     static Boolean OVERWRITE_FLAG = false
 
     static void main(String[] args) {
@@ -35,6 +35,7 @@ class FileMover {
     }
 
     static String SUCCESS_STRING = 'Success'
+    static String SUCCESS_WITH_OVERWRITE_ISSUES_STRING = 'Possible OverWrite Issues'
     static String FAILURE_STRING = 'Failure!!!!'
 
     void move() {
@@ -80,13 +81,11 @@ class FileMover {
                                      ${dirStats(destDir, destFilesCountBeforeMove, destFlesCountAfterMove)}
                                      Moved ${destFolderDiff} files.\n"""
                     if (destFolderDiff == 0) {
-                        report += "${profile}:\nNothing was moved"
-                    } else {
-                        String success = (srcFilesCountBeforeMove - srcFilesCountAfterMove == destFolderDiff ? SUCCESS_STRING : FAILURE_STRING)
-                        successes.add(success)
-                        report += success
+                        report += "${profile}:\nNothing was moved\n"
                     }
-
+                        String success = getSuccessString(srcFilesCountBeforeMove, srcFilesCountAfterMove, destFolderDiff)
+                        successStatuses.add(success)
+                        report += success
                 }
             } else {
                 report += "${profile}:\tNo Such Profile"
@@ -99,19 +98,23 @@ class FileMover {
         }
         if (totalFilesMoved) {
             log.info """Total Files:
-                      PreMove Src  [${preMoveCountSrc.reverse().join("+")}=${preMoveCountSrc.sum()}]  
-                      PreMove Dest  [${preMoveCountDest.reverse().join("+")}=${preMoveCountDest.sum()}]  
-                      PostMove Src  [${postMoveCountSrc.reverse().join("+")}=${postMoveCountSrc.sum()}]  
-                      PostMove Src  [${postMoveCountDest.reverse().join("+")}=${postMoveCountDest.sum()}]  
+                      PreMove Src  ${statsRow(preMoveCountSrc)}
+                      PreMove Dest ${statsRow(preMoveCountDest)}
+                      PostMove Src ${statsRow(postMoveCountSrc)}
+                      PostMove Dest ${statsRow(postMoveCountDest)} 
 
-                      total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
-                      [ ${successes.join("+")} ]
-                      [${successCount(successes, true)}(S)+${successCount(successes, false)}(F)]=(${successes.size()}) ]"""
+                      Total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
+                      [ ${successStatuses.join("+")} ]
+                      [${successCount( SUCCESS_STRING)}(S)+${successCount( FAILURE_STRING)}(F)+${successCount( SUCCESS_WITH_OVERWRITE_ISSUES_STRING)}(OverWriteError)]=(${successStatuses.size()}) ]"""
         }
     }
 
-    static String successCount(List successes, boolean forSuccess = true) {
-        return successes.count { forSuccess ? it == SUCCESS_STRING : it != SUCCESS_STRING }
+    static String statsRow(List moveCountList){
+        return "[${moveCountList.reverse().join("+")}=${moveCountList.sum()}]"
+
+    }
+    static String successCount( String statusString) {
+        return successStatuses.count { it == statusString }
     }
 
     static String dirStats(String dir, int countBefore, int countAfter) {
@@ -120,5 +123,14 @@ class FileMover {
 
     static Integer noOfFiles(String dirName) {
         return FileRetrieverUtil.getAllPdfFilesIncludingInIgnoredExtensions(new File(dirName))?.size()
+    }
+
+    static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
+        boolean grossMovementDiff = (srcFilesCountBeforeMove - srcFilesCountAfterMove) == destFolderDiff
+        String success = grossMovementDiff ? SUCCESS_STRING : FAILURE_STRING
+        if(success === SUCCESS_STRING && srcFilesCountAfterMove != 0){
+                success = SUCCESS_WITH_OVERWRITE_ISSUES_STRING
+        }
+        return success;
     }
 }
