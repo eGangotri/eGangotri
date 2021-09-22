@@ -37,7 +37,7 @@ class FileMover {
     static String SUCCESS_STRING = 'Success'
     static String POSSIBLE_OVERWRITE_ISSUES_STRING = 'Possible OverWrite Issues'
     static String FAILURE_STRING = 'Failure!!!!'
-    static String NOTHING_TO_MOVE = 'Nothing To MoveFailure!!!!'
+    static String NOTHING_TO_MOVE = 'Nothing To Move'
 
     void move() {
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
