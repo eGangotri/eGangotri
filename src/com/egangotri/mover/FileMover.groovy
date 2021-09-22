@@ -12,9 +12,12 @@ class FileMover {
     static Map<String, List<String>> srcDestMap
     static List profiles = []
     static List<Integer> totalFilesMoved = []
-    static List<Integer> preMoveCount = []
+    static List<Integer> preMoveCountSrc = []
+    static List<Integer> preMoveCountDest = []
+    static List<Integer> postMoveCountSrc = []
+    static List<Integer> postMoveCountDest = []
     static List<String> successes = []
-    static OVERWRITE_FLAG = false
+    static Boolean OVERWRITE_FLAG = false
 
     static void main(String[] args) {
         if (args) {
@@ -54,14 +57,18 @@ class FileMover {
                 String destDir = srcDirArr.join(File.separator)
 
                 srcFilesCountBeforeMove = noOfFiles(srcDir)
-                preMoveCount.push(srcFilesCountBeforeMove)
+                preMoveCountSrc.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
+                preMoveCountDest.push(destFilesCountBeforeMove)
                 if (srcFilesCountBeforeMove) {
                     log.info("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
                     FileUtil.movePdfsInDir(srcDir, destDir, OVERWRITE_FLAG)
                 }
                 srcFilesCountAfterMove = noOfFiles(srcDir)
+                postMoveCountSrc.push(srcFilesCountAfterMove)
+
                 destFlesCountAfterMove = noOfFiles(destDir)
+                postMoveCountDest.push(destFlesCountAfterMove)
 
                 destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
                 totalFilesMoved.add(destFolderDiff)
@@ -92,8 +99,12 @@ class FileMover {
         }
         if (totalFilesMoved) {
             log.info """Total Files:
-                      PreMove   [${preMoveCount.reverse().join("+")}=${preMoveCount.sum()}] moving 
-                      Post-Move [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
+                      PreMove Src  [${preMoveCountSrc.reverse().join("+")}=${preMoveCountSrc.sum()}]  
+                      PreMove Dest  [${preMoveCountDest.reverse().join("+")}=${preMoveCountDest.sum()}]  
+                      PostMove Src  [${postMoveCountSrc.reverse().join("+")}=${postMoveCountSrc.sum()}]  
+                      PostMove Src  [${postMoveCountDest.reverse().join("+")}=${postMoveCountDest.sum()}]  
+
+                      total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
                       [ ${successes.join("+")} ]
                       [${successCount(successes, true)}(S)+${successCount(successes, false)}(F)]=(${successes.size()}) ]"""
         }
