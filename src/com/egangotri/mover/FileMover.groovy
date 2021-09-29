@@ -63,7 +63,7 @@ class FileMover {
                 destFilesCountBeforeMove = noOfFiles(destDir)
                 preMoveCountDest.push(destFilesCountBeforeMove)
                 if (srcFilesCountBeforeMove) {
-                    log.info("Moving $srcFilesCountBeforeMove files from ${srcDir} to ${destDir}")
+                    log.info("Moving $srcFilesCountBeforeMove files from \n${srcDir} to \n${destDir}")
                     FileUtil.movePdfsInDir(srcDir, destDir, OVERWRITE_FLAG)
                 }
                 srcFilesCountAfterMove = noOfFiles(srcDir)

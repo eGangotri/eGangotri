@@ -40,23 +40,39 @@ class FileUtil {
     static moveDir(String srcDir, String destDir, customInclusionFilter = "", boolean overWriteFlag = false) {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
-        log.info("Src $srcDir dst: $destDir customInclusionFilter:${customInclusionFilter} overWriteFlag:${overWriteFlag}")
+        log.info("Src $srcDir dst: \n$destDir " +
+                "\ncustomInclusionFilter:${customInclusionFilter}" +
+                " \noverWriteFlag:${overWriteFlag}")
         try {
-            ant.with {
-                log.info("Started moving")
-                // notice nested Ant task
-                move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
-                    fileset(dir: srcDir) {
-                        include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
+            def pdfs = new File(srcDir).list({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+            log.info("Started moving \n\t${pdfs.join(",\n\t")}")
+            List duplicates = duplicateFileNamesInSrcAndDest(srcDir,destDir)
+            if(!duplicates && !overWriteFlag){
+                ant.with {
+                    // notice nested Ant task
+                    move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
+                        fileset(dir: srcDir) {
+                            include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
+                        }
                     }
+                    log.info("done moving")
                 }
-                log.info("done moving")
+            }
+            else{
+             log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
+                     "\n\t${duplicates.join(",\n\t")} \nWill not move anything")
             }
         }
         catch (Exception e) {
             log.error("Error in Moving Folder ${srcDir}", e)
         }
 
+    }
+
+    static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir){
+        File[] srcPdfs = new File(srcDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+        File[] destPdfs = new File(destDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+        return srcPdfs*.getName().intersect((destPdfs*.getName()))
     }
 
     static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
