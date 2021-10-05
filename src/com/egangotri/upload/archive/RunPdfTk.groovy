@@ -14,11 +14,11 @@ import java.nio.file.Files
 @Slf4j
 class RunPdfTk {
     //    static File directory = new File(EGangotriUtil.CODE_404_BAD_DATA_FOLDER+File.separator+"pdf")
-    static File directory = new File("E:\\Sri Vatsa\\Books\\_code404_rejectedFiles")
+    static File directory = new File("C:\\Treasures41\\Mumukshu\\New folder")
 
     static File _repaired = new File(directory,"_repaired")
     static File _altered = new File(directory, "_altered")
-    static main(String[] args) {
+    static void main(String[] args) {
         if(args){
             directory = new File(args[0])
         }
