@@ -72,7 +72,7 @@ class FileUtil {
     static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir){
         File[] srcPdfs = new File(srcDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
         File[] destPdfs = new File(destDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
-        return srcPdfs*.getName().intersect((destPdfs*.getName()))
+        return (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())): []
     }
 
     static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
