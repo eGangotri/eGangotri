@@ -47,7 +47,7 @@ class FileUtil {
             def pdfs = new File(srcDir).list({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
             log.info("Started moving \n\t${pdfs.join(",\n\t")}")
             List duplicates = duplicateFileNamesInSrcAndDest(srcDir,destDir)
-            if(!duplicates && !overWriteFlag){
+            if(overWriteFlag || !duplicates){
                 ant.with {
                     // notice nested Ant task
                     move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {

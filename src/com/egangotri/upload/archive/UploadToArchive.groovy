@@ -40,7 +40,7 @@ class UploadToArchive {
 
         if(previewSuccess){
             execute(purgedProfiles, metaDataMap)
-            if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0 && SettingsUtil.ccc){
+            if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0 && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING){
                 log.info("Going to sleep for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES} minutes ...@${UploadUtils.getFormattedDateString()}\n")
                 //Wait for 1 Hour and check Links also
                 Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)

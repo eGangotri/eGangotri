@@ -100,11 +100,8 @@ class FileMover {
 
                       Total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
                       [ ${successStatuses.join("+")} ]
-                      [ ${successCount(SUCCESS_STRING)}(S)+
-                        ${successCount(FAILURE_STRING)}(F)+
-                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)
-                        ${successCount(NOTHING_TO_MOVE)}(N2M)
-                        ]=(${successStatuses.size()}) ]"""
+                      [ ${successCount(SUCCESS_STRING)}(S)+${successCount(FAILURE_STRING)}(F)+
+                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)+${successCount(NOTHING_TO_MOVE)}(N2M)]=(${successStatuses.size()}) ]"""
         }
     }
 
@@ -131,6 +128,7 @@ class FileMover {
         }
         else {
             boolean grossMovementDiff = (srcFilesCountBeforeMove - srcFilesCountAfterMove) == destFolderDiff
+            log.info("${grossMovementDiff} = (${srcFilesCountBeforeMove} - $srcFilesCountAfterMove) == ${destFolderDiff}\n")
             String success = grossMovementDiff ? SUCCESS_STRING : FAILURE_STRING
             if (success === SUCCESS_STRING && srcFilesCountAfterMove != 0) {
                 success = POSSIBLE_OVERWRITE_ISSUES_STRING

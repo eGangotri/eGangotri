@@ -172,7 +172,7 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
-                REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING
+                REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING.toBoolean()
                 log.info("REUPLOAD_OF_FAILED_ITEMS_ON_SETTING: " + REUPLOAD_OF_FAILED_ITEMS_ON_SETTING)
             }
             applyMailerSettings()
