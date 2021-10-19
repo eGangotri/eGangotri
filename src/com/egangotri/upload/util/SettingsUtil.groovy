@@ -19,6 +19,7 @@ class SettingsUtil {
     static List<String> ALLOWED_EXTENSIONS = []
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
     static int REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES = 60
+    static boolean REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = true
     static int MINIMUM_FILE_NAME_LENGTH = 25
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
 
@@ -170,6 +171,10 @@ class SettingsUtil {
                 log.info("REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES: " + REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES)
             }
 
+            if (settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
+                REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING
+                log.info("REUPLOAD_OF_FAILED_ITEMS_ON_SETTING: " + REUPLOAD_OF_FAILED_ITEMS_ON_SETTING)
+            }
             applyMailerSettings()
             applySnap2HtmlSettings()
         }
