@@ -2,7 +2,6 @@ package com.egangotri.pdf
 
 import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
-import static groovy.io.FileType.FILES
 
 @Slf4j
 class Tally {
@@ -18,6 +17,9 @@ class Tally {
     static List<String>  MATCHING = [];
     static List<String>  UNCHECKABLE = [];
     static int INTRO_PAGE_ADJUSTMENT = 1
+    static List<String>  REPORT = [];
+
+
     static void main(String[] args) {
         execute(args)
     }
@@ -38,6 +40,7 @@ class Tally {
             //if only the directory specified
             if (onlyRootDirAndNoSubDirs) {
                 processOneFolder(TIF_FOLDER[i], PDF_FOLDERS[i])
+                log.info(REPORT)
             } else {
                 //if everything
                 //procAdInfinitum(folder)
@@ -56,13 +59,10 @@ class Tally {
                 try {
                     index++
                     log.info("tifSubDirectory ${tifSubDirectory}")
-                    List tifs = new File(tifSubDirectory).eachFileRecurse(FILES) {
-                        if(it.name.endsWithIgnoreCase('.tif')) {
-                            println it
-                        }
-                    }
-                    int tifCount2 = tifs.size()
-                    log.info("tifCount ${tifCount2}")
+                    def tifs = tifSubDirectory.list({d, f-> f ==~ /(?i).*.tif/ } as FilenameFilter)
+
+                    int tifCount = tifs.size()
+                    log.info("tifCount ${tifCount}")
 
                     File pdfFile = new File( pdfFolder, tifSubDirectory.name + ".pdf")
                     if (!pdfFile.exists()) {
@@ -71,7 +71,6 @@ class Tally {
                         continue;
                     }
                     int pdfPageCount = getPdfPageCount(pdfFile)
-                    int tifCount = new File(tifSubDirectory).list({d, f-> f ==~ /.*.tif/ } as FilenameFilter)
 
                     log.info("""${index}). Checking Tiff Count in 
                             ${tifSubDirectory} equals 
@@ -133,12 +132,13 @@ class Tally {
         if (pdfFile.name.endsWith(PDF)) {
             log.info(pdfFile.getAbsolutePath())
             PdfReader pdfReader = new PdfReader(pdfFile.getAbsolutePath())
-            numberOfPages = pdfReader.getNumberOfPages()
+            numberOfPages = pdfReader.getNumberOfPages() - INTRO_PAGE_ADJUSTMENT
         }
         return numberOfPages;
     }
 
     static String addReport(String report){
+        REPORT.push(report)
         log.info(report)
     }
 
