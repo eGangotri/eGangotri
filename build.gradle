@@ -78,8 +78,15 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "D:\\Treasures35\\LBS"]
+    args = [ "E:\\ramtek3"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
+}
+
+task tally(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.pdf.Tally"
+    //args = [tifFolder, pdfFolder ]
+    args = [ "D:\\NMM\\August-2019\\01-08-2019", "E:\\ramtek-1"]
 }
 
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -88,6 +95,7 @@ task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
+
 
 task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -99,28 +107,6 @@ task refreshFocusLogFiles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.StartFreshLogFile"
     args = [""]
-}
-
-//task UploadToArchiveAndGoogleDrive(dependsOn: 'classes', type: JavaExec) {
-//    classpath = sourceSets.main.runtimeClasspath
-//    println "UploadToArchiveAndGoogleDrive: ${sourceSets.main.runtimeClasspath}"
-//    main = "com.egangotri.upload.UploadToArchiveAndGoogleDrive"
-//    jvmArgs = applicationDefaultJvmArgs
-//    args = [ "-a=DT, RK, IB, JG", "-u=BM, MM"]
-//}
-
-task loginToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.gmail.LoginToGoogleDrive"
-    args =   [ "ANON3"  ]
-    jvmArgs = applicationDefaultJvmArgs
-}
-
-task uploadToGoogleDrive(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.gmail.UploadToGoogleDrive"
-    args = [ "MM", "BM" ]
-    jvmArgs = applicationDefaultJvmArgs
 }
 
 configurations {

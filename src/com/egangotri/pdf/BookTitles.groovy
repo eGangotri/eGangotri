@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 @Slf4j
 class BookTitles {
 
-    static List<String> FOLDER_NAME = ["D:\\Treasures26\\"]
+    static List<String> FOLDER_NAME = ["E:\\ramtek211Dec\\"]
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
