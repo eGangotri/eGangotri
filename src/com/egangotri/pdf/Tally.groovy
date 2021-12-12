@@ -12,12 +12,12 @@ class Tally {
     static String PDF = "pdf"
     static boolean onlyRootDirAndNoSubDirs = true
 
-    static List<String>  NOT_CREATED = [];
-    static List<String>  NON_MATCHING = [];
-    static List<String>  MATCHING = [];
-    static List<String>  UNCHECKABLE = [];
+    static List<String> NOT_CREATED = [];
+    static List<String> NON_MATCHING = [];
+    static List<String> MATCHING = [];
+    static List<String> UNCHECKABLE = [];
     static int INTRO_PAGE_ADJUSTMENT = 1
-    static List<String>  REPORT = [];
+    static List<String> REPORT = [];
 
 
     static void main(String[] args) {
@@ -36,17 +36,17 @@ class Tally {
         log.info("args0:$TIF_FOLDER")
         log.info("args1:$PDF_FOLDERS")
 
-        for(int i = 0; i < TIF_FOLDER.size();i++){
+        for (int i = 0; i < TIF_FOLDER.size(); i++) {
             //if only the directory specified
             if (onlyRootDirAndNoSubDirs) {
                 processOneFolder(TIF_FOLDER[i], PDF_FOLDERS[i])
-                log.info(REPORT)
             } else {
                 //if everything
                 //procAdInfinitum(folder)
             }
+            printReport()
+
         }
-       // log.info("Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}")
     }
 
     static void processOneFolder(String tifFolder, String pdfFolder) {
@@ -54,17 +54,19 @@ class Tally {
         log.info("\nReading Tif Folder ${tifDirectory}")
 
         int index = 0
-        for (File tifSubDirectory : tifDirectory.listFiles()) {
+        List tifDirFiles = tifDirectory.listFiles()
+        List pdfFiles = new File(pdfFolder).list({ d, f -> f ==~ /(?i).*.pdf/ } as FilenameFilter)
+
+
+        for (File tifSubDirectory : tifDirFiles) {
             if (tifSubDirectory.isDirectory() && !inIgnoreList(tifSubDirectory)) {
                 try {
                     index++
                     log.info("tifSubDirectory ${tifSubDirectory}")
-                    def tifs = tifSubDirectory.list({d, f-> f ==~ /(?i).*.tif/ } as FilenameFilter)
-
+                    def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
                     int tifCount = tifs.size()
-                    log.info("tifCount ${tifCount}")
 
-                    File pdfFile = new File( pdfFolder, tifSubDirectory.name + ".pdf")
+                    File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
                     if (!pdfFile.exists()) {
                         addReport("Error ${pdfFile} was never created");
                         NOT_CREATED.push(pdfFile);
@@ -78,25 +80,37 @@ class Tally {
                     if (pdfPageCount === tifCount) {
                         MATCHING.push(pdfFile);
                         addReport("pdf ${pdfFile}(${pdfPageCount}) Page Count == PNG Count ${(tifCount)}\n");
-                    }
-                    else {
-                        if(pdfPageCount>0){
+                    } else {
+                        if (pdfPageCount > 0) {
                             NON_MATCHING.push(pdfFile);
-                        }
-                        else {
-                            UNCHECKABLE.push("${pdfFile} should have ${tifCount+INTRO_PAGE_ADJUSTMENT} pages");
+                        } else {
+                            UNCHECKABLE.push("${pdfFile} should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages");
                         }
                         addReport("****PDF Count  (${pdfPageCount}) for ${pdfFile} is not same as ${tifCount}\n");
                     }
                 }
-                catch(Exception e){
+                catch (Exception e) {
                     log.info("Error reading file. will continue" + e)
                 }
             }
         }
+
+
+        addReport("""Stats:
+                    NON_MATCHING_COUNT: ${NON_MATCHING.size()}
+                    MATCHING_COUNT: ${MATCHING.size()}
+                    UNCHECKABLE_COUNT: ${UNCHECKABLE.size()}
+                    NOT_CREATED_COUNT: ${NOT_CREATED.size()}
+                    Total Tiff Folders expected for Conversion: ${tifDirFiles.size()}
+                    Total PDFs in Folder: ${pdfFiles.size()}
+                    Ready For Upload: ${MATCHING}
+                    Manually check ${UNCHECKABLE}
+                    Reconvert [${NOT_CREATED}]
+                    Error Margin: ${tifDirFiles.size()} - ${pdfFiles.size()} = ${tifDirFiles.size() - pdfFiles.size()}
+                """)
     }
 
-    static boolean inIgnoreList(File file){
+    static boolean inIgnoreList(File file) {
         String absPath = file.absolutePath.toString()
         def invalid = ignoreList.findAll { ignorableKeyword ->
             absPath.containsIgnoreCase(ignorableKeyword)
@@ -137,9 +151,16 @@ class Tally {
         return numberOfPages;
     }
 
-    static String addReport(String report){
+    static String addReport(String report) {
         REPORT.push(report)
         log.info(report)
     }
 
+    static void printReport() {
+        REPORT.eachWithIndex { x, i ->
+            {
+                log.info("${i + 1}). ${x}")
+            }
+        }
+    }
 }
