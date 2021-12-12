@@ -74,12 +74,17 @@ class Tally {
                     }
                     int pdfPageCount = getPdfPageCount(pdfFile)
 
-                    log.info("""${index}). Checking Tiff Count in 
+                    addReport("""${index}). Checking Tiff Count in 
                             ${tifSubDirectory} equals 
-                            ${pdfFile} ${pdfPageCount}""");
+                            ${pdfFile} 
+                            ${pdfPageCount}""");
                     if (pdfPageCount === tifCount) {
                         MATCHING.push(pdfFile);
-                        addReport("pdf ${pdfFile}(${pdfPageCount}) Page Count == PNG Count ${(tifCount)}\n");
+                        addReport("pdf (${pdfPageCount}) " +
+                                "${pdfFile} " +
+                                "Page Count == " +
+                                "PNG Count " +
+                                "${(tifCount)}\n");
                     } else {
                         if (pdfPageCount > 0) {
                             NON_MATCHING.push(pdfFile);
