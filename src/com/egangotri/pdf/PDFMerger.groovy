@@ -3,6 +3,7 @@ package com.egangotri.pdf
 import com.itextpdf.text.Document
 import com.itextpdf.text.DocumentException
 import com.itextpdf.text.pdf.PdfContentByte
+import com.itextpdf.text.pdf.PdfCopy
 import com.itextpdf.text.pdf.PdfImportedPage
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.PdfWriter
@@ -15,30 +16,22 @@ import groovy.util.logging.Slf4j
 class PDFMerger {
     // class ItextMerge {
     static void main(String[] args) {
-        List<InputStream> list = new ArrayList<InputStream>()
         try {
-            //-Xmx1024m -Xms256m -XX:+HeapDumpOnOutOfMemoryError
-
-            // Source pdfs
-            // list.add(new FileInputStream(new File("f:/1.pdf")))
-            // list.add(new FileInputStream(new File("f:/2.pdf")))
-            String rootFolder = "E:/ramtek2---/M-37-Brahma Karma Suchay - Kavikulguru Kalidas Sanskrit University Ramtek Collection/pdfs"
-            for (int i = 0; i < 89; i++) {
-
-                String pdfName = "$rootFolder/-${++i}/00000001.pdf"
-                log.info "pdfName $pdfName"
-                list.add(new FileInputStream(new File(pdfName)))
-                list.add(new FileInputStream(new File("$rootFolder/-${i}/00000002.pdf")))
-                list.add(new FileInputStream(new File("$rootFolder/-${i}/00000003.pdf")))
-                list.add(new FileInputStream(new File("$rootFolder/-${i}/00000004.pdf")))
-                list.add(new FileInputStream(new File("$rootFolder/-${i}/00000004.pdf")))
-
-                break;
+            String rootFolder = "E:\\ramtek_4_05-08-2019"
+            File rootDir = new File(rootFolder)
+            File[] foldersWithPdf = rootDir.listFiles({ d, f -> d.isDirectory()} as FilenameFilter);
+            int counter = 0
+            for (File subFolder in foldersWithPdf) {
+                counter++
+                log.info "${counter})subFolder $subFolder"
+                try{
+                    processMerge(subFolder)
+                }
+                catch(Exception e){
+                    log.info("Error in Process Merge",e)
+                }
+                System.gc()
             }
-            // Resulting pdf
-            OutputStream out = new FileOutputStream(new File("C:/tmp/result.pdf"))
-
-            doMerge(list, out)
 
         } catch (FileNotFoundException e) {
             e.printStackTrace()
@@ -49,6 +42,20 @@ class PDFMerger {
         }
     }
 
+    static void processMerge(File subFolder){
+        List list = new ArrayList()
+        def pdfFiles = new File(subFolder, "pdfs").listFiles({ d, f -> f ==~ /(?i).*.pdf/ } as FilenameFilter)
+        for( File pdfFile in pdfFiles){
+            log.info "pdfFile $pdfFile"
+            list.add(pdfFile)
+        }
+        // Resulting pdf
+        if(list){
+            String finalPdf = subFolder.getParentFile().getAbsolutePath() + "//" + subFolder.name + ".pdf"
+            log.info "Finl PdfName ${finalPdf}"
+            doMerge(list, finalPdf)
+        }
+    }
     /**
      * Merge multiple pdf into one pdf
      *
@@ -57,27 +64,21 @@ class PDFMerger {
      * @param outputStream
      *            output file output stream
      */
-    static void doMerge(List<InputStream> list, OutputStream outputStream)
+    static void doMerge(List files, String finalPdf)
             throws DocumentException, IOException {
+        log.info("doMerge for ${finalPdf}")
         Document document = new Document()
-        PdfWriter writer = PdfWriter.getInstance(document, outputStream)
-        document.open()
-        PdfContentByte cb = writer.getDirectContent()
+        PdfCopy copy = new PdfCopy(document, new FileOutputStream(finalPdf));
+        document.open();
 
-        for (InputStream inStr : list) {
-            PdfReader reader = new PdfReader(inStr)
-            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-                document.newPage()
-                //import the page from source pdf
-                PdfImportedPage page = writer.getImportedPage(reader, i)
-                //add the page to the destination pdf
-                cb.addTemplate(page, 0, 0)
-            }
+        for (def file : files){
+            log.info("merging ${file} into ${finalPdf}")
+            PdfReader reader = new PdfReader(new FileInputStream(file));
+            copy.addDocument(reader);
+            copy.freeReader(reader);
+            reader.close();
         }
-
-        outputStream.flush()
-        document.close()
-        outputStream.close()
+        document.close();
     }
     // }
 }

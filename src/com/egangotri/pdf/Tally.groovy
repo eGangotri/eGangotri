@@ -69,7 +69,7 @@ class Tally {
                     File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
                     if (!pdfFile.exists()) {
                         addReport("Error ${pdfFile} was never created");
-                        NOT_CREATED.push(pdfFile);
+                        NOT_CREATED.push("'${tifSubDirectory.name}'");
                         continue;
                     }
                     int pdfPageCount = getPdfPageCount(pdfFile)
@@ -79,7 +79,7 @@ class Tally {
                             ${pdfFile} 
                             ${pdfPageCount}""");
                     if (pdfPageCount === tifCount) {
-                        MATCHING.push(pdfFile);
+                        MATCHING.push("'${pdfFile}");
                         addReport("pdf (${pdfPageCount}) " +
                                 "${pdfFile} " +
                                 "Page Count == " +
@@ -110,7 +110,9 @@ class Tally {
                     Total PDFs in Folder: ${pdfFiles.size()}
                     Ready For Upload: ${MATCHING}
                     Manually check ${UNCHECKABLE}
-                    Reconvert [${NOT_CREATED}]
+                    Pdf Folder: ${pdfFolder}
+                    Tif Folder: ${tifFolder}
+                    Reconvert [${NOT_CREATED.join(",") }]
                     Error Margin: ${tifDirFiles.size()} - ${pdfFiles.size()} = ${tifDirFiles.size() - pdfFiles.size()}
                 """)
     }
