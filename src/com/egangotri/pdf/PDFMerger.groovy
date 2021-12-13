@@ -14,11 +14,14 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class PDFMerger {
+    static String ROOT_FOLDER = "E:\\ramtek_4_05-08-2019"
     // class ItextMerge {
     static void main(String[] args) {
         try {
-            String rootFolder = "E:\\ramtek_4_05-08-2019"
-            File rootDir = new File(rootFolder)
+            if(args){
+                ROOT_FOLDER = args[0]
+            }
+            File rootDir = new File(ROOT_FOLDER)
             File[] foldersWithPdf = rootDir.listFiles({ d, f -> d.isDirectory()} as FilenameFilter);
             int counter = 0
             for (File subFolder in foldersWithPdf) {

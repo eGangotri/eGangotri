@@ -96,6 +96,7 @@ class Tally {
                 }
                 catch (Exception e) {
                     log.info("Error reading file. will continue" + e)
+                    continue;
                 }
             }
         }
