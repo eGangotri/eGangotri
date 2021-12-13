@@ -68,23 +68,22 @@ class Tally {
 
                     File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
                     if (!pdfFile.exists()) {
-                        addReport("Error ${pdfFile} was never created");
+                        log.info("****Error was never created\n ${pdfFile.name}");
                         NOT_CREATED.push("'${tifSubDirectory.name}'");
                         continue;
                     }
                     int pdfPageCount = getPdfPageCount(pdfFile)
 
-                    addReport("""${index}). Checking Tiff Count in 
+                    log.info("""${index}). Checking Tiff Count in 
                             ${tifSubDirectory} equals 
                             ${pdfFile} 
                             ${pdfPageCount}""");
                     if (pdfPageCount === tifCount) {
                         MATCHING.push("'${pdfFile}");
-                        addReport("pdf (${pdfPageCount}) " +
-                                "${pdfFile} " +
-                                "Page Count == " +
-                                "PNG Count " +
-                                "${(tifCount)}\n");
+                        addReport("""pdf (${pdfPageCount}) 
+                                ${pdfFile.name} 
+                                Page Count ==  PNG Count
+                                ${(tifCount)}\n""");
                     } else {
                         if (pdfPageCount > 0) {
                             NON_MATCHING.push(pdfFile);

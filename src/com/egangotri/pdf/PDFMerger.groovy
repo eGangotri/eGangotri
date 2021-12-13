@@ -28,10 +28,12 @@ class PDFMerger {
                 counter++
                 log.info "${counter})subFolder $subFolder"
                 try{
+                    mergeStep1(subFolder)
                     processMerge(subFolder)
                 }
                 catch(Exception e){
                     log.info("Error in Process Merge",e)
+                    continue
                 }
                 System.gc()
             }
@@ -45,18 +47,25 @@ class PDFMerger {
         }
     }
 
-    static void processMerge(File subFolder){
-        List list = new ArrayList()
-        def pdfFiles = new File(subFolder, "pdfs").listFiles({ d, f -> f ==~ /(?i).*.pdf/ } as FilenameFilter)
-        for( File pdfFile in pdfFiles){
-            log.info "pdfFile $pdfFile"
-            list.add(pdfFile)
+    static void mergeStep1(File subFolder){
+        File _pdfs = new File(subFolder, "pdfs")
+        File[] subFoldersInside_pdf = _pdfs.listFiles({ d, f -> d.isDirectory()} as FilenameFilter);
+        int counter = 0
+        log.info("_pdfs ${_pdfs.absolutePath}")
+        for (File pdfFolder in subFoldersInside_pdf) {
+            def pdfFilesWithin = pdfFolder.listFiles({ d, f -> f ==~ /(?i).*.pdf/ } as FilenameFilter)
+            log.info("pdfFolder ${pdfFolder.absolutePath}")
+            doMerge(pdfFilesWithin, pdfFolder.absolutePath + ".pdf")
         }
+    }
+
+    static void processMerge(File subFolder){
+        File[] pdfFiles = new File(subFolder, "pdfs").listFiles({ d, f -> f ==~ /(?i).*.pdf/ } as FilenameFilter)
         // Resulting pdf
-        if(list){
+        if(pdfFiles){
             String finalPdf = subFolder.getParentFile().getAbsolutePath() + "//" + subFolder.name + ".pdf"
-            log.info "Finl PdfName ${finalPdf}"
-            doMerge(list, finalPdf)
+            log.info "Final PdfName ${finalPdf}"
+            doMerge(pdfFiles, finalPdf)
         }
     }
     /**
@@ -67,7 +76,7 @@ class PDFMerger {
      * @param outputStream
      *            output file output stream
      */
-    static void doMerge(List files, String finalPdf)
+    static void doMerge(File[] files, String finalPdf)
             throws DocumentException, IOException {
         log.info("doMerge for ${finalPdf}")
         Document document = new Document()
