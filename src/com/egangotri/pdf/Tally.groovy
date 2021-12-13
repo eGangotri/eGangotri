@@ -1,5 +1,6 @@
 package com.egangotri.pdf
 
+import com.egangotri.util.GenericUtil
 import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
@@ -17,7 +18,6 @@ class Tally {
     static List<String> MATCHING = [];
     static List<String> UNCHECKABLE = [];
     static int INTRO_PAGE_ADJUSTMENT = 1
-    static List<String> REPORT = [];
 
 
     static void main(String[] args) {
@@ -44,7 +44,7 @@ class Tally {
                 //if everything
                 //procAdInfinitum(folder)
             }
-            printReport()
+            GenericUtil.printReport()
 
         }
     }
@@ -80,7 +80,7 @@ class Tally {
                             ${pdfPageCount}""");
                     if (pdfPageCount === tifCount) {
                         MATCHING.push("'${pdfFile}");
-                        addReport("""pdf (${pdfPageCount}) 
+                        GenericUtil.addReport("""pdf (${pdfPageCount}) 
                                 ${pdfFile.name} 
                                 Page Count ==  PNG Count
                                 ${(tifCount)}\n""");
@@ -90,7 +90,7 @@ class Tally {
                         } else {
                             UNCHECKABLE.push("${pdfFile} should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages");
                         }
-                        addReport("****PDF Count  (${pdfPageCount}) for ${pdfFile} is not same as ${tifCount}\n");
+                        GenericUtil.addReport("****PDF Count  (${pdfPageCount}) for ${pdfFile} is not same as ${tifCount}\n");
                     }
                 }
                 catch (Exception e) {
@@ -101,7 +101,7 @@ class Tally {
         }
 
 
-        addReport("""Stats:
+        GenericUtil.addReport("""Stats:
                     NON_MATCHING_COUNT: ${NON_MATCHING.size()}
                     MATCHING_COUNT: ${MATCHING.size()}
                     UNCHECKABLE_COUNT: ${UNCHECKABLE.size()}
@@ -158,16 +158,5 @@ class Tally {
         return numberOfPages;
     }
 
-    static String addReport(String report) {
-        REPORT.push(report)
-        log.info(report)
-    }
 
-    static void printReport() {
-        REPORT.eachWithIndex { x, i ->
-            {
-                log.info("${i + 1}). ${x}")
-            }
-        }
-    }
 }
