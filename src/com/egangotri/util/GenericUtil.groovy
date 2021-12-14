@@ -1,5 +1,6 @@
 package com.egangotri.util
 
+import com.egangotri.pdf.PDFMerger
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -14,6 +15,11 @@ class GenericUtil {
     static String ellipsis(String text){
         return  text.length() > ELLIPSIS_LIMIT ?
                 text.substring(0, ELLIPSIS_LIMIT) + "..." :text
+    }
+
+    static String dualEllipsis(String text){
+        return  text.length() > ELLIPSIS_LIMIT*2 ?
+                ellipsis(text) + reverseEllipsis(text) :ellipsis(text)
     }
 
     static String reverseEllipsis(File file){
@@ -36,8 +42,11 @@ class GenericUtil {
         }
     }
 
-    static File[] getPdfs(File dir){
-        return getFilesOfGivenType(dir, "pdf")
+    static File[] getPdfs(File dir, String filter = PDFMerger.OLD_LABEL){
+        File[] pdfs = getFilesOfGivenType(dir, "pdf")
+        if(filter){
+            pdfs.findAll{!it.name.contains(filter)}
+        }
     }
 
     static File[] getTifs(File dir){

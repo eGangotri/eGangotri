@@ -17,6 +17,7 @@ class Tally {
     static List<String> NON_MATCHING = [];
     static List<String> MATCHING = [];
     static List<String> UNCHECKABLE = [];
+    static List<String> EXCEPTION_ENCOUNTERED = [];
     static int INTRO_PAGE_ADJUSTMENT = 1
 
 
@@ -40,9 +41,6 @@ class Tally {
             //if only the directory specified
             if (onlyRootDirAndNoSubDirs) {
                 processOneFolder(TIF_FOLDER[i], PDF_FOLDERS[i])
-            } else {
-                //if everything
-                //procAdInfinitum(folder)
             }
             GenericUtil.printReport()
 
@@ -60,60 +58,67 @@ class Tally {
 
         for (File tifSubDirectory : tifDirFiles) {
             if (tifSubDirectory.isDirectory() && !inIgnoreList(tifSubDirectory)) {
+                index++
+                log.info("Tif Folder ${tifSubDirectory}")
+                def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
+                int tifCount = tifs.size()
+                File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
+                if (!pdfFile.exists()) {
+                    log.info("****Error was never created\n ${pdfFile.name}");
+                    NOT_CREATED.push("'${tifSubDirectory.name}'");
+                    continue;
+                }
                 try {
-                    index++
-                    log.info("tifSubDirectory ${tifSubDirectory}")
-                    def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
-                    int tifCount = tifs.size()
-
-                    File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
-                    if (!pdfFile.exists()) {
-                        log.info("****Error was never created\n ${pdfFile.name}");
-                        NOT_CREATED.push("'${tifSubDirectory.name}'");
-                        continue;
-                    }
                     int pdfPageCount = getPdfPageCount(pdfFile)
 
-                    log.info("""${index}). Checking Tiff Count in 
-                            ${tifSubDirectory} equals 
-                            ${pdfFile} 
+                    log.info("""${index}). Checking Tiff Count (${tifCount}) in 
+                            ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
+                            ${GenericUtil.dualEllipsis(pdfFile.name)} 
                             ${pdfPageCount}""");
                     if (pdfPageCount === tifCount) {
                         MATCHING.push("'${pdfFile}");
                         GenericUtil.addReport("""pdf (${pdfPageCount}) 
-                                ${pdfFile.name} 
-                                Page Count ==  PNG Count
-                                ${(tifCount)}\n""");
+    ${pdfFile.name} 
+    Page Count ==  PNG Count
+    ${(tifCount)}\n""");
                     } else {
                         if (pdfPageCount > 0) {
-                            NON_MATCHING.push(pdfFile);
+                            NON_MATCHING.push(pdfFile.name);
                         } else {
-                            UNCHECKABLE.push("${pdfFile} should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages");
+                            UNCHECKABLE.push("""${pdfFile.name} 
+                                        should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages""");
                         }
-                        GenericUtil.addReport("****PDF Count  (${pdfPageCount}) for ${pdfFile} is not same as ${tifCount}\n");
+                        GenericUtil.addReport("""**** PDF Count  (${pdfPageCount})
+                        for ${pdfFile} is not same as
+                        ${tifCount}""");
                     }
                 }
                 catch (Exception e) {
-                    log.info("Error reading file. will continue" + e)
-                    continue;
+                    log.info("getPdfPageCount Exception", e)
+                    EXCEPTION_ENCOUNTERED.push(pdfFile)
+                    continue
                 }
+
             }
         }
 
 
         GenericUtil.addReport("""Stats:
+                    Pdf Folder: ${pdfFolder}
+                    Tif Folder: ${tifFolder}                    
                     NON_MATCHING_COUNT: ${NON_MATCHING.size()}
                     MATCHING_COUNT: ${MATCHING.size()}
                     UNCHECKABLE_COUNT: ${UNCHECKABLE.size()}
                     NOT_CREATED_COUNT: ${NOT_CREATED.size()}
+                    EXCEPTION_ENCOUNTERED_COUNT: ${EXCEPTION_ENCOUNTERED.size()}
                     Total Tiff Folders expected for Conversion: ${tifDirFiles.size()}
                     Total PDFs in Folder: ${pdfFiles.size()}
                     Ready For Upload: ${MATCHING}
                     Manually check ${UNCHECKABLE}
-                    Pdf Folder: ${pdfFolder}
-                    Tif Folder: ${tifFolder}
-                    Reconvert [${NOT_CREATED.join(",") }]
-                    Error Margin: ${tifDirFiles.size()} - ${pdfFiles.size()} = ${tifDirFiles.size() - pdfFiles.size()}
+                    Reconvert (Uncreated) [${NOT_CREATED.join(",")}]
+                    Reconvert (Erroneous Page Count) [${NON_MATCHING.join(",")}] 
+                    Reconvert (Exception Encountered) [${EXCEPTION_ENCOUNTERED.join(",")}]
+                    Error Margin: ${tifDirFiles.size()} - ${MATCHING.size()} = ${tifDirFiles.size() - MATCHING.size()}
                 """)
     }
 
