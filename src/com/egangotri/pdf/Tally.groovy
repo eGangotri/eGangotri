@@ -83,7 +83,7 @@ class Tally {
     ${(tifCount)}\n""");
                     } else {
                         if (pdfPageCount > 0) {
-                            NON_MATCHING.push(pdfFile.name);
+                            NON_MATCHING.push("'${pdfFile}");
                         } else {
                             UNCHECKABLE.push("""${pdfFile.name} 
                                         should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages""");
@@ -95,7 +95,7 @@ class Tally {
                 }
                 catch (Exception e) {
                     log.info("getPdfPageCount Exception", e)
-                    EXCEPTION_ENCOUNTERED.push(pdfFile)
+                    EXCEPTION_ENCOUNTERED.push("'${pdfFile}")
                     continue
                 }
 
@@ -115,9 +115,9 @@ class Tally {
                     Total PDFs in Folder: ${pdfFiles.size()}
                     Ready For Upload: ${MATCHING}
                     Manually check ${UNCHECKABLE}
-                    Reconvert (Uncreated) [${NOT_CREATED.join(",")}]
-                    Reconvert (Erroneous Page Count) [${NON_MATCHING.join(",")}] 
-                    Reconvert (Exception Encountered) [${EXCEPTION_ENCOUNTERED.join(",")}]
+                    Reconvert (Uncreated) ${NOT_CREATED}
+                    Reconvert (Erroneous Page Count) ${NON_MATCHING}
+                    Reconvert (Exception Encountered) ${EXCEPTION_ENCOUNTERED}
                     Error Margin: ${tifDirFiles.size()} - ${MATCHING.size()} = ${tifDirFiles.size() - MATCHING.size()}
                 """)
     }

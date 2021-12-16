@@ -22,6 +22,10 @@ class GenericUtil {
                 ellipsis(text) + reverseEllipsis(text) :ellipsis(text)
     }
 
+    static String dualEllipsis(File file){
+        return  dualEllipsis(file.absolutePath)
+    }
+
     static String reverseEllipsis(File file){
         return reverseEllipsis(file.absolutePath)
     }

@@ -73,12 +73,16 @@ class PDFMerger {
     static void mergeFinalPdf(File subFolders){
         File[] pdfFiles = GenericUtil.getPdfs(new File(subFolders, PDFS_MERGE_FOLDER))
          String mergeables = pdfFiles.collect {
-            File sf -> "${GenericUtil.ellipsis(sf)} ${GenericUtil.reverseEllipsis(sf)}"
+            File sf -> "${GenericUtil.dualEllipsis(sf)}}"
         }.join("\n")
         log.info("processFinalMerge: \n ${mergeables}")
         // Resulting pdf
         if(pdfFiles){
-            String finalPdf = subFolders.getParentFile().getAbsolutePath() + "//" + subFolders.name + ".pdf"
+            String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//finalPdfs//"
+            if(!new File(finalPdfDumpFolder).exists()){
+                new File(finalPdfDumpFolder).mkdir()
+            }
+            String finalPdf = finalPdfDumpFolder + subFolders.name + ".pdf"
             GenericUtil.addReport( "Final Merge to ${GenericUtil.reverseEllipsis(finalPdf)}")
             doMerge(pdfFiles, finalPdf)
         }
