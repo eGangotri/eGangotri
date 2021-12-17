@@ -78,7 +78,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "E:\\ramtek4---"]
+    args = [ "E:\\ramtek4Y"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
@@ -86,15 +86,23 @@ task tally(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.Tally"
     //args = [tifFolder, pdfFolder ]
-    //args = [ "D:\\NMM\\August-2019\\02-08-2019", "E:\\ramtek-2"]
-    args = [ "D:\\NMM\\August-2019\\05-08-2019", "E:\\ramtek4---"]
+    //args = [ "D:\\NMM\\August-2019\\09-08-2019", "E:\\ramtek-2"]
+    args = [ "D:\\NMM\\August-2019\\07-08-2019", "E:\\ramtek-6_07-08-2019(41)\\finalPdfs"]
 }
 
 task merge(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.PDFMerger"
     //args = [pdfFolder ]
-    args = [ "E:\\ramtek4---"]
+    //args = [ "E:\\ramtek-7_09-08-2019(46)"]
+    // args = [ "E:\\ramtek-6_07-08-2019(41)"]
+    args =["E:\\ramtek-6_07-08-2019(41)"]
+}
+
+task addFooter(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.itext7.AddFooter"
+   // args =["C:\\tmp\\experiment"]
 }
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -102,7 +110,6 @@ task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
-
 
 task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -128,6 +135,7 @@ dependencies {
     compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2'
     compile group: 'com.opencsv', name: 'opencsv', version: '5.1'
     compile 'com.itextpdf:itextpdf:5.5.13.1'
+    compile 'com.itextpdf:itext7-core:7.2.0'
     compile 'org.apache.poi:poi:4.1.2'
     compile 'commons-io:commons-io:2.6'
 
@@ -152,6 +160,12 @@ dependencies {
     testCompile 'junit:junit:4.13'
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.apache.org"
+    }
+}
 
 
 task fatJarEGangotri(type: Jar) {

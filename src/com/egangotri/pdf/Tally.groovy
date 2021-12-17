@@ -1,5 +1,6 @@
 package com.egangotri.pdf
 
+import com.egangotri.itext7.PdfImageCounter
 import com.egangotri.util.GenericUtil
 import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -69,7 +70,7 @@ class Tally {
                     continue;
                 }
                 try {
-                    int pdfPageCount = getPdfPageCount(pdfFile)
+                    int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
 
                     log.info("""${index}). Checking Tiff Count (${tifCount}) in 
                             ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
