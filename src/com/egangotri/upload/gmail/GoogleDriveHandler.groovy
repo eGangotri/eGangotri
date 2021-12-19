@@ -46,7 +46,7 @@ class GoogleDriveHandler {
 
             WebElement pass = driver.findElement(By.name("password"))
             String kuta = metaDataMap."${loginProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
-            log.info "kuta:${EGangotriUtil.hidePassword(kuta)}}"
+            log.info "kuta:${EGangotriUtil.hidePassword(kuta)}"
             pass.sendKeys(kuta)
             pass.sendKeys(Keys.RETURN)
             EGangotriUtil.sleepTimeInSeconds(1)

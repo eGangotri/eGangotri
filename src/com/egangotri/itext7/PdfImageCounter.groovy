@@ -27,16 +27,16 @@ class PdfImageCounter {
             PdfPage page = (PdfPage) document.getPage(i)
             def resources = page.getResources()
             def resourceNames = resources?.getResourceNames()
-            log.info(" resources: ${i} " + resources)
-            log.info(" resourceNames: ${i} " + resourceNames + " " + resourceNames?.size())
+            //log.info(" resources: ${i} " + resources)
+           // log.info(" resourceNames: ${i} " + resourceNames + " " + resourceNames?.size())
             if (resourceNames) {
                 for (int j = 0; j < resourceNames.size(); j++) {
                     def resourceName = resourceNames[j]
-                    log.info("resourceName: ${j} " + resourceName)
+                    //log.info("resourceName: ${j} " + resourceName)
                     if (resourceName) {
                         try {
                             def image = resources?.getImage(resourceName)
-                            log.info("image: ${j} " + image)
+                            //log.info("image: ${j} " + image)
                             if (image instanceof com.itextpdf.kernel.pdf.xobject.PdfImageXObject) {
                                 imageCount++
                             }

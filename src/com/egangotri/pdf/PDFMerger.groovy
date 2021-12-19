@@ -10,7 +10,7 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class PDFMerger {
-    static String ROOT_FOLDER = "E:\\ramtek_4_05-08-2019"
+    static String ROOT_FOLDER = ""
     static String PDFS_FOLDER = "pdfs"
     static String PDFS_MERGE_FOLDER = "_mergedPdfs"
     static String OLD_LABEL = "_old_disc"
@@ -30,7 +30,7 @@ class PDFMerger {
             int counter = 0
             for (File subFolder in foldersWithPdf) {
                 counter++
-                GenericUtil.addReport( "${counter}) Process folder \n ${GenericUtil.reverseEllipsis(subFolder.name)}")
+                GenericUtil.addReport( "${counter} of ${foldersWithPdf.length}) Process folder \n ${subFolder.name}")
                 try{
                     mergeSmallerPdfs(subFolder)
                     mergeFinalPdf(subFolder)
@@ -61,7 +61,7 @@ class PDFMerger {
         int counter = 0
         for (File pdfFolder in _pdfs) {
             File[] _pdfFilesWithin = GenericUtil.getPdfs(pdfFolder)
-            log.info("prelim Merge of sub-folders in  ${GenericUtil.reverseEllipsis(pdfFolder)}")
+            //log.info("prelim Merge of sub-folders in  ${GenericUtil.reverseEllipsis(pdfFolder)}")
             File folderForDumping = new File(subFolder, PDFS_MERGE_FOLDER)
             if(!folderForDumping.exists()){
                 folderForDumping.mkdir()
@@ -72,10 +72,8 @@ class PDFMerger {
 
     static void mergeFinalPdf(File subFolders){
         File[] pdfFiles = GenericUtil.getPdfs(new File(subFolders, PDFS_MERGE_FOLDER))
-         String mergeables = pdfFiles.collect {
-            File sf -> "${GenericUtil.dualEllipsis(sf)}}"
-        }.join("\n")
-        log.info("processFinalMerge: \n ${mergeables}")
+
+        log.info("processFinalMerge:")
         // Resulting pdf
         if(pdfFiles){
             String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//finalPdfs//"
@@ -83,7 +81,7 @@ class PDFMerger {
                 new File(finalPdfDumpFolder).mkdir()
             }
             String finalPdf = finalPdfDumpFolder + subFolders.name + ".pdf"
-            GenericUtil.addReport( "Final Merge to ${GenericUtil.reverseEllipsis(finalPdf)}")
+            GenericUtil.addReport( "Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(finalPdf)}")
             doMerge(pdfFiles, finalPdf)
         }
     }

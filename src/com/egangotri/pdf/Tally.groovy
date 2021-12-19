@@ -60,7 +60,7 @@ class Tally {
         for (File tifSubDirectory : tifDirFiles) {
             if (tifSubDirectory.isDirectory() && !inIgnoreList(tifSubDirectory)) {
                 index++
-                log.info("Tif Folder ${tifSubDirectory}")
+                log.info("$index of ${tifDirFiles.size()}). Tally for Tif Folder ${tifSubDirectory}")
                 def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
                 int tifCount = tifs.size()
                 File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
