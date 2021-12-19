@@ -50,7 +50,7 @@ class Tally {
 
     static void processOneFolder(String tifFolder, String pdfFolder) {
         File tifDirectory = new File(tifFolder)
-        log.info("\nReading Tif Folder ${tifDirectory}")
+        log.info("\nTally for folders in  ${tifDirectory} started")
 
         int index = 0
         List tifDirFiles = tifDirectory.listFiles()
@@ -60,7 +60,8 @@ class Tally {
         for (File tifSubDirectory : tifDirFiles) {
             if (tifSubDirectory.isDirectory() && !inIgnoreList(tifSubDirectory)) {
                 index++
-                log.info("$index of ${tifDirFiles.size()}). Tally for Tif Folder ${tifSubDirectory}")
+                log.info("$index of ${tifDirFiles.size()})." +
+                        "Tally for Tif Folder ${tifSubDirectory.name}")
                 def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
                 int tifCount = tifs.size()
                 File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
@@ -71,7 +72,7 @@ class Tally {
                 }
                 try {
                     int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
-
+                    GenericUtil.garbageCollectAndPrintMemUsageInfo()
                     log.info("""${index}). Checking Tiff Count (${tifCount}) in 
                             ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
                             ${GenericUtil.dualEllipsis(pdfFile.name)} 

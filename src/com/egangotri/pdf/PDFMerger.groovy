@@ -33,7 +33,9 @@ class PDFMerger {
                 GenericUtil.addReport( "${counter} of ${foldersWithPdf.length}) Process folder \n ${subFolder.name}")
                 try{
                     mergeSmallerPdfs(subFolder)
+                    GenericUtil.garbageCollectAndPrintMemUsageInfo()
                     mergeFinalPdf(subFolder)
+                    GenericUtil.garbageCollectAndPrintMemUsageInfbo()
                 }
                 catch(Exception e){
                     log.info("Error in Process Merge",e)

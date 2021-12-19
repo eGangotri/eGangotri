@@ -3,6 +3,7 @@ package com.egangotri.upload.util
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.GenericUtil
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
@@ -288,15 +289,13 @@ class ArchiveUtil {
         return loginSucess
     }
 
-    static void garbageCollectAndPrintMemUsageInfo() {
+    static void garbageCollectAndPrintMemUsageInfoOnEvery100thUpload() {
         if (EGangotriUtil.GLOBAL_UPLOADING_COUNTER % 100 == 0) {
-            double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-            log.info("Garbage Collecting after every 100th upload.\nMemory being used: ${Math.round(memUse)} mb.")
-            System.gc()
-            memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-            log.info("Memory use after Garbage Collection: ${Math.round(memUse)} mb")
+            GenericUtil.garbageCollectAndPrintMemUsageInfo()
         }
     }
+
+
 
     static String extendIdentifierByPrepending(String originalIdentifier) {
         return extendIdentifier(originalIdentifier)

@@ -65,5 +65,11 @@ class GenericUtil {
     static File[] getFilesOfGivenType(File dir, String ext){
         return dir.listFiles({ File d, String f -> f ==~ /(?i).*.${ext}/ } as FilenameFilter)?.sort{ File f -> f.lastModified()}
     }
-
+    static void garbageCollectAndPrintMemUsageInfo() {
+        double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
+        log.info("Garbage Collecting after every 100th upload.\nMemory being used: ${Math.round(memUse)} mb.")
+        System.gc()
+        memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
+        log.info("Memory use after Garbage Collection: ${Math.round(memUse)} mb")
+    }
 }
