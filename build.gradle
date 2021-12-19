@@ -59,7 +59,15 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["MB" ,"false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
+    args = ["JNGM", "LBS" ,"false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
+}
+
+task fileTransfer(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    println "fileTransfer: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.mover.FileTransfer"
+    jvmArgs = applicationDefaultJvmArgs
+    args = [ "D:\\anaghaPlayGround\\Done"]
 }
 
 task zipMover(dependsOn: 'classes', type: JavaExec) {
@@ -114,7 +122,8 @@ task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
 task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.GetFirstAndLastPages"
-    args = [""]
+    args = [""C:\Treasures44\eg_manu\Pranayam Maha Ganapathi Mantra Maha Gayathri Devi Mantra Vamadev Mantra and Sharika Mantra Sharada Manuscript from Kupwara - eGangotri Digital Preservation Trust.pdf
+    ]
 }
 
 task refreshFocusLogFiles(dependsOn: 'classes', type: JavaExec) {
