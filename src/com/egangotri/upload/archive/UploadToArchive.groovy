@@ -61,6 +61,9 @@ class UploadToArchive {
                 }
             }
         }
+        else{
+            log.info("Preview failed")
+        }
         System.exit(0)
     }
 

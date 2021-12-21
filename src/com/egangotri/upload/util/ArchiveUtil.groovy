@@ -341,7 +341,8 @@ class ArchiveUtil {
     static List<String> getAllUploadables(Collection<String> profiles) {
         List<String> allUploadables = []
         profiles.eachWithIndex { String profile, index ->
-            allUploadables.addAll(FileRetrieverUtil.getUploadablesForProfile(profile))
+            List<String> _files = FileRetrieverUtil.getUploadablesForProfile(profile)
+            allUploadables.addAll(_files)
         }
         return allUploadables
     }

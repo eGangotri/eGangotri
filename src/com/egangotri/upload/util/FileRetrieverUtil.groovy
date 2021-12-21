@@ -14,7 +14,8 @@ class FileRetrieverUtil {
 
     static List<String> getUploadablesForProfile(String archiveProfile) {
         File folder = new File(pickFolderBasedOnArchiveProfile(archiveProfile))
-        return getAllFiles(folder, archiveProfile)
+        List<String> files = getAllFiles(folder, archiveProfile)
+        return files
     }
 
     static int getCountOfUploadableItemsForProfile(String archiveProfile) {

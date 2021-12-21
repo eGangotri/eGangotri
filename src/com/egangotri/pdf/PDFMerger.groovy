@@ -35,7 +35,7 @@ class PDFMerger {
                     mergeSmallerPdfs(subFolder)
                     GenericUtil.garbageCollectAndPrintMemUsageInfo()
                     mergeFinalPdf(subFolder)
-                    GenericUtil.garbageCollectAndPrintMemUsageInfbo()
+                    GenericUtil.garbageCollectAndPrintMemUsageInfo()
                 }
                 catch(Exception e){
                     log.info("Error in Process Merge",e)
