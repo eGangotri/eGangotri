@@ -40,7 +40,7 @@ class GenericUtil {
     }
 
     static void printReport() {
-        REPORT.eachWithIndex { x, i -> {
+        REPORT.reverse().eachWithIndex { x, i -> {
             log.info("${i + 1}). ${x}")
         }
         }
