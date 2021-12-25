@@ -26,6 +26,7 @@ class Codes {
         c2FMap.put("SN", "SANJEEVANI")
         c2FMap.put("VM", "VED_MANDIR")
         c2FMap.put("KS", "PSTK_DVTA")
+        c2FMap.put("OM", "VIJAY")
 
         c2FMap.put("LBS", "LBS")
         c2FMap.put("LB", "BV")

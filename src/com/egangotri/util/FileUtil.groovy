@@ -45,7 +45,7 @@ class FileUtil {
                 " \noverWriteFlag:${overWriteFlag}")
         try {
             def pdfs = new File(srcDir).list({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
-            log.info("Started moving \n\t${pdfs.join(",\n\t")}")
+            log.info("Started moving (${pdfs?.length}) pdf(s) \n\t${pdfs.join(",\n\t")} ")
             List duplicates = duplicateFileNamesInSrcAndDest(srcDir,destDir)
             if(overWriteFlag || !duplicates){
                 ant.with {
@@ -70,8 +70,8 @@ class FileUtil {
     }
 
     static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir){
-        File[] srcPdfs = new File(srcDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
-        File[] destPdfs = new File(destDir).listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+        File[] srcPdfs = new File(srcDir)?.listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+        File[] destPdfs = new File(destDir)?.listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
         return (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())): []
     }
 
