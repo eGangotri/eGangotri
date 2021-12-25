@@ -17,11 +17,27 @@ class PDFMerger {
 
     // class ItextMerge {
     static void main(String[] args) {
-        try {
-            if(args){
-                ROOT_FOLDER = args[0]
+        List<String> _mergeables = []
+        if(args){
+            if(args.length == 2 && args[1] === 'mega'){
+                _mergeables = GenericUtil.getDirectoriesSortedByName(args[0])*.absolutePath
             }
-            File rootDir = new File(ROOT_FOLDER)
+            else _mergeables = args;
+            int counter = 0
+            for(String _mergeable: _mergeables){
+                counter++
+                GenericUtil.addReport("Merge for Folder ${counter} of ${args.size()} ${_mergeable} started")
+                exec(_mergeable)
+            }
+        }
+       else{
+            exec(ROOT_FOLDER)
+        }
+    }
+
+    static void exec(String _mergeable){
+        try {
+            File rootDir = new File(_mergeable)
             File[] foldersWithPdf = GenericUtil.getDirectories(rootDir)
             Date startTime = new Date()
             GenericUtil.addReport("""MegaMerge started @ ${startTime} for  ${rootDir.name} into Folder(s) :

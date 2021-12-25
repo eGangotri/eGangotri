@@ -38,7 +38,8 @@ class ValidateUploadsAndReUploadFailedItems {
         startValidation(args)
     }
 
-    static void startValidation(String[] args = null, boolean dontUseFailedLinksFromStaticList = true){
+    static void startValidation(String[] args = null,
+                                boolean dontUseFailedLinksFromStaticList = true){
         setCSVsForValidation(args)
         processAllUplodableCSV()
         processUsheredCSV()
