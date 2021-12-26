@@ -19,14 +19,14 @@ class PDFMerger {
     static void main(String[] args) {
         List<String> _mergeables = []
         if(args){
-            if(args.length == 2 && args[1] === 'mega'){
+            if(args.length == 2 && args[1] == 'mega'){
                 _mergeables = GenericUtil.getDirectoriesSortedByName(args[0])*.absolutePath
             }
             else _mergeables = args;
             int counter = 0
             for(String _mergeable: _mergeables){
                 counter++
-                GenericUtil.addReport("Merge for Folder ${counter} of ${args.size()} ${_mergeable} started")
+                GenericUtil.addReport("Merge for Folder ${counter} of ${_mergeables.size()} for ${_mergeable} started")
                 exec(_mergeable)
             }
         }
