@@ -21,6 +21,9 @@ class PDFMerger {
         if(args){
             if(args.length == 2 && args[1] == 'mega'){
                 _mergeables = GenericUtil.getDirectoriesSortedByName(args[0])*.absolutePath
+                GenericUtil.addReport("""MegaMerge for Folders 
+${_mergeables.join("\n")}  
+started""")
             }
             else _mergeables = args;
             int counter = 0
@@ -40,7 +43,8 @@ class PDFMerger {
             File rootDir = new File(_mergeable)
             File[] foldersWithPdf = GenericUtil.getDirectories(rootDir)
             Date startTime = new Date()
-            GenericUtil.addReport("""MegaMerge started @ ${startTime} for  ${rootDir.name} into Folder(s) :
+            GenericUtil.addReport("""Merge started @ ${startTime} for 
+${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             ${foldersWithPdf.collect{it.name}.join("\n\t")}
             started""")
             int counter = 0
@@ -60,14 +64,10 @@ class PDFMerger {
                 System.gc()
             }
             Date endTime = new Date()
-            GenericUtil.addReport("Mega Merge finishes ${endTime}. Time Taken: ${TimeUtil.formattedTimeDff(endTime,startTime)}")
+            GenericUtil.addReport("Merge finishes ${endTime}. Time Taken: ${TimeUtil.formattedTimeDff(endTime,startTime)}")
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace()
-        } catch (DocumentException e) {
-            e.printStackTrace()
-        } catch (IOException e) {
-            e.printStackTrace()
+        } catch (Exception e) {
+            log.info("Exception in merge.outer ",e)
         }
         GenericUtil.printReport()
     }
