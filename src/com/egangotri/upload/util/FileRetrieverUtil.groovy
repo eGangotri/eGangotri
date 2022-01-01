@@ -13,7 +13,8 @@ class FileRetrieverUtil {
     }
 
     static List<String> getUploadablesForProfile(String archiveProfile) {
-        File folder = new File(pickFolderBasedOnArchiveProfile(archiveProfile))
+        String _folder = pickFolderBasedOnArchiveProfile(archiveProfile)
+        File folder = new File(_folder)
         List<String> files = getAllFiles(folder, archiveProfile)
         return files
     }
