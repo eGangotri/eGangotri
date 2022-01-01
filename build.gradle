@@ -94,17 +94,17 @@ task tally(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.Tally"
     //args = [tifFolder, pdfFolder ]
-    //args = [ "D:\\NMM\\August-2019\\09-08-2019", "E:\\ramtek-2"]
-    args = [ "D:\\NMM\\August-2019\\07-08-2019", "E:\\ramtek-6_07-08-2019(41)\\finalPdfs"]
+    args = ["D:\\NMM\\August-2019\\30-08-2019",
+            "E:\\ramtek-20_30-08-2019(2)_for_tally",
+            "D:\\NMM\\August-2019\\29-08-2019",
+            "E:\\ramtek-19_29-08-2019(1)_forTally"]
 }
 
 task merge(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.PDFMerger"
     //args = [pdfFolder ]
-    //args = [ "E:\\ramtek-7_09-08-2019(46)"]
-    // args = [ "E:\\ramtek-6_07-08-2019(41)"]
-    args =["E:\\ramtek-6_07-08-2019(41)"]
+    args =[ "E:\\July-2019","mega"]
 }
 
 task addFooter(dependsOn: 'classes', type: JavaExec) {

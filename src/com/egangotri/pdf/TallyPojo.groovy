@@ -26,9 +26,9 @@ class TallyPojo {
                     EXCEPTION_ENCOUNTERED_COUNT: ${EXCEPTION_ENCOUNTERED.size()}
                     Total Tiff Folders expected for Conversion: ${tifDirFiles?.size()}
                     Total PDFs in Folder: ${pdfFiles?.size()}
-                    Ready For Upload: ${MATCHING}
+                    Ready For Upload: ${MATCHING.join("\n")}
                     Manually check ${UNCHECKABLE}
-                    Reconvert (Uncreated) ${NOT_CREATED}
+                    Reconvert (Uncreated) ${NOT_CREATED.join("\n")}
                     Reconvert (Erroneous Page Count) ${NON_MATCHING}
                     Reconvert (Exception Encountered) ${EXCEPTION_ENCOUNTERED}
                     Error Margin: ${tifDirFiles.size()} - ${MATCHING.size()} = ${tifDirFiles.size() - MATCHING.size()}

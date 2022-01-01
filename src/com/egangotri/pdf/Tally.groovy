@@ -25,6 +25,13 @@ class Tally {
 
         Tally.tally(TIF_FOLDER, PDF_FOLDERS)
         GenericUtil.printReport()
+
+        if(args.length >=4){
+            TIF_FOLDER = args[2]
+            PDF_FOLDERS = args[3]
+            Tally.tally(TIF_FOLDER, PDF_FOLDERS)
+            GenericUtil.printReport()
+        }
     }
 
     static String tally(String tifFolder, String pdfFolder) {
