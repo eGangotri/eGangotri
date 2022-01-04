@@ -2,10 +2,6 @@ package com.egangotri.pdf
 
 import com.egangotri.util.GenericUtil
 import com.egangotri.util.TimeUtil
-import com.itextpdf.text.Document
-import com.itextpdf.text.DocumentException
-import com.itextpdf.text.pdf.PdfCopy
-import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -100,38 +96,8 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             }
             String finalPdf = finalPdfDumpFolder + subFolders.name + ".pdf"
             GenericUtil.addReport( "Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(finalPdf)}")
-            doMerge(pdfFiles, finalPdf)
+            PdfMergeCoreLogicIText5.doMerge(pdfFiles, finalPdf)
         }
     }
-    /**
-     * Merge multiple pdf into one pdf
-     *
-     * @param list
-     *            of pdf input stream
-     * @param outputStream
-     *            output file output stream
-     */
-    static void doMerge(File[] files, String finalPdf)
-            throws DocumentException, IOException {
-        //log.info("\t\tdoMerge for ${GenericUtil.reverseEllipsis(finalPdf)}")
-        Document document = new Document()
-        if(new File(finalPdf).exists()){
-            log.info("\t\tdRenaming to ${finalPdf + "${OLD_LABEL}.pdf"}")
-            new File(finalPdf).renameTo(finalPdf + "${OLD_LABEL}.pdf")
-        }
-        PdfCopy copy = new PdfCopy(document, new FileOutputStream(finalPdf));
-        document.open();
 
-        for (File file : files){
-            //log.info("merging ${GenericUtil.reverseEllipsis(file)} into ${GenericUtil.reverseEllipsis(finalPdf)}")
-            PdfReader reader = new PdfReader(new FileInputStream(file));
-            copy.addDocument(reader);
-            copy.freeReader(reader);
-            reader.close();
-        }
-        if(document.isOpen()){
-            document.close()
-        };
-    }
-    // }
 }
