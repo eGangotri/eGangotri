@@ -109,7 +109,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
         String finalPdfsPath = "${pdfFolder}\\${FINAL_PDFS}"
         if(new File(tiffFolderPath).exists() && new File(finalPdfsPath).exists()){
             log.info("Tally ${tiffFolderPath} against ${finalPdfsPath}")
-            //Tally.main(tiffFolderPath, finalPdfsPath)
+            Tally.main(tiffFolderPath, finalPdfsPath)
         }
     }
 }
