@@ -5,13 +5,12 @@ import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class PDFMerger {
-    static String ROOT_FOLDER = ""
+class EGangotriPDFMerger {
+    static String ROOT_FOLDER = "C:\\tmp\\pdfForMergeTest"
     static String PDFS_FOLDER = "pdfs"
     static String PDFS_MERGE_FOLDER = "_mergedPdfs"
     static String OLD_LABEL = "_old_disc"
 
-    // class ItextMerge {
     static void main(String[] args) {
         List<String> _mergeables = []
         if(args){

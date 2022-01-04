@@ -6,7 +6,8 @@ import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
-import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -142,7 +143,8 @@ class FileData {
         this.parentFolder = UploadUtils.stripFileTitle(this.absPath)
         if(EGangotriUtil.PDF.endsWith(fileEnding)){
             PdfReader pdfReader = new PdfReader(this.absPath)
-            this.numberOfPagesInPdf = pdfReader.getNumberOfPages()
+            PdfDocument pdfDoc = new PdfDocument(pdfReader);
+            this.numberOfPagesInPdf = pdfDoc.getNumberOfPages()
         }
         sizeInKB = (new File(this.absPath).size()/ 1024) as BigDecimal
     }

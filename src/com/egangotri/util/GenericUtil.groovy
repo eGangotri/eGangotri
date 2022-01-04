@@ -1,6 +1,6 @@
 package com.egangotri.util
 
-import com.egangotri.pdf.PDFMerger
+import com.egangotri.pdf.EGangotriPDFMerger
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -46,7 +46,7 @@ class GenericUtil {
         }
     }
 
-    static File[] getPdfs(File dir, String filter = PDFMerger.OLD_LABEL){
+    static File[] getPdfs(File dir, String filter = EGangotriPDFMerger.OLD_LABEL){
         File[] pdfs = getFilesOfGivenType(dir, "pdf")
         if(filter){
             pdfs.findAll{!it.name.contains(filter)}

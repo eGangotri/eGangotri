@@ -2,7 +2,6 @@ package com.egangotri.pdf
 
 import com.egangotri.itext7.PdfImageCounter
 import com.egangotri.util.GenericUtil
-import com.itextpdf.text.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 @Slf4j

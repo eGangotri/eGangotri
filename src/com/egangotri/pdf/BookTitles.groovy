@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
-import com.itextpdf.text.pdf.PdfReader
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
@@ -14,7 +15,7 @@ import java.text.SimpleDateFormat
 @Slf4j
 class BookTitles {
 
-    static List<String> FOLDER_NAME = ["E:\\ramtek211Dec\\"]
+    static List<String> FOLDER_NAME = ["C:\\tmp\\pdfForMergeTest\\"]
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
@@ -151,7 +152,8 @@ class BookTitles {
 
         if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
             PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
-            numberOfPages = pdfReader.getNumberOfPages()
+            PdfDocument pdfDoc = new PdfDocument(pdfReader);
+            numberOfPages = pdfDoc.getNumberOfPages()
             incrementTotalPageCount(numberOfPages)
         }
 

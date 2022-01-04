@@ -1,6 +1,6 @@
 package com.egangotri.pdf
 
-
+import com.itextpdf.kernel.utils.PdfMerger
 import com.itextpdf.text.Document
 import com.itextpdf.text.DocumentException
 import com.itextpdf.text.pdf.PdfCopy
@@ -23,8 +23,8 @@ class PdfMergeCoreLogicIText5 {
         //log.info("\t\tdoMerge for ${GenericUtil.reverseEllipsis(finalPdf)}")
         Document document = new Document()
         if(new File(finalPdf).exists()){
-            log.info("\t\tdRenaming to ${finalPdf + "${OLD_LABEL}.pdf"}")
-            new File(finalPdf).renameTo(finalPdf + "${OLD_LABEL}.pdf")
+            log.info("\t\tdRenaming to ${finalPdf + "${EGangotriPDFMerger.OLD_LABEL}.pdf"}")
+            new File(finalPdf).renameTo(finalPdf + "${EGangotriPDFMerger.OLD_LABEL}.pdf")
         }
         PdfCopy copy = new PdfCopy(document, new FileOutputStream(finalPdf));
         document.open();
