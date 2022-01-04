@@ -1,3 +1,4 @@
+
 package com.egangotri.pdf
 
 import com.egangotri.util.GenericUtil
@@ -10,6 +11,7 @@ class EGangotriPDFMerger {
     static String PDFS_FOLDER = "pdfs"
     static String PDFS_MERGE_FOLDER = "_mergedPdfs"
     static String OLD_LABEL = "_old_disc"
+    static String FINAL_PDFS = "finalPdfs"
 
     static void main(String[] args) {
         List<String> _mergeables = []
@@ -52,6 +54,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
                     mergeFinalPdf(subFolder)
                     GenericUtil.garbageCollectAndPrintMemUsageInfo()
                 }
+
                 catch(Exception e){
                     log.info("Error in Process Merge",e)
                     continue
@@ -60,6 +63,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             }
             Date endTime = new Date()
             GenericUtil.addReport("Merge finishes ${endTime}. Time Taken: ${TimeUtil.formattedTimeDff(endTime,startTime)}")
+            experimentalTally(rootDir)
 
         } catch (Exception e) {
             log.info("Exception in merge.outer ",e)
@@ -89,7 +93,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
         log.info("processFinalMerge:")
         // Resulting pdf
         if(pdfFiles){
-            String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//finalPdfs//"
+            String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${FINAL_PDFS}//"
             if(!new File(finalPdfDumpFolder).exists()){
                 new File(finalPdfDumpFolder).mkdir()
             }
@@ -99,4 +103,13 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
         }
     }
 
+    static void experimentalTally(File pdfFolder = new File("E:\\Sep-2019\\ramtek-1_23-09-2019-(10)")){
+        String extractDate =  pdfFolder.name.split("_")[1].substring(0,10)
+        String tiffFolderPath = "D:\\NMM\\${pdfFolder.getParentFile().name}\\${extractDate}"
+        String finalPdfsPath = "${pdfFolder}\\${FINAL_PDFS}"
+        if(new File(tiffFolderPath).exists() && new File(finalPdfsPath).exists()){
+            log.info("Tally ${tiffFolderPath} against ${finalPdfsPath}")
+            //Tally.main(tiffFolderPath, finalPdfsPath)
+        }
+    }
 }

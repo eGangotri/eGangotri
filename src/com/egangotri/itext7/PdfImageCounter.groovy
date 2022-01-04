@@ -6,11 +6,13 @@ import com.itextpdf.kernel.pdf.PdfPage
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
+import com.egangotri.pdf.EGangotriPDFMerger
+
 @Slf4j
 class PdfImageCounter {
 
     static void main(String[] args) {
-        log.info("ImageCount " + PdfImageCounter.getPdfImageCount("C:\\tmp\\expWithSmallFilesDest\\finalPdfs\\Kalidas.pdf"))
+        log.info("ImageCount " + PdfImageCounter.getPdfImageCount("C:\\tmp\\expWithSmallFilesDest\\${EGangotriPDFMerger.FINAL_PDFS}\\Kalidas.pdf"))
     }
 
     static int getPdfImageCount(File pdfPath) {

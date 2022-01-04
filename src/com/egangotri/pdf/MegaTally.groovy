@@ -7,8 +7,8 @@ import groovy.util.logging.Slf4j
 class MegaTally {
     static void main(String[] args) {
         //MegaTally.execute(args[0])
-        String args0 = /*args[0]?:*/"D:\\NMM\\August-2019"
-        String args1 = /*args[1]?: */"E:\\_uploaded"
+        String args0 = /*args[0]?:*/"D:\\NMM\\Oct-2019"
+        String args1 = /*args[1]?: */"E:\\Oct-2019"
         MegaTally.execute(args0,args1)
     }
 
@@ -27,7 +27,7 @@ class MegaTally {
             println "MegaTally ${index+1} of ${tallyMap.size()} Src: $entry.key Dest: $entry.value"
             reports << Tally.tally(entry.key, entry.value)
         }
-        log.info(reports)
+        log.info(reports.join("\n"))
         File megaTallyLogs = new File("MegaTallyLog-${new Date()}")
         megaTallyLogs << "${reports}\n"
 

@@ -11,10 +11,7 @@ class Tally {
     static String PDF_FOLDERS = "E:\\ramtek211Dec\\"
     static List ignoreList = ['otro']
     static String PDF = "pdf"
-
-
     static int INTRO_PAGE_ADJUSTMENT = 1
-
 
     static void main(String[] args) {
         TIF_FOLDER = args[0]
