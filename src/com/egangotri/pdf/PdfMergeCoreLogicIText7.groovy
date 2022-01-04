@@ -4,7 +4,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.utils.PdfMerger;
-import com.itextpdf.layout.Document
 import groovy.util.logging.Slf4j;
 
 @Slf4j

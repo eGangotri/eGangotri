@@ -96,7 +96,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             }
             String finalPdf = finalPdfDumpFolder + subFolders.name + ".pdf"
             GenericUtil.addReport( "Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(finalPdf)}")
-            PdfMergeCoreLogicIText5.doMerge(pdfFiles, finalPdf)
+            PdfMergeCoreLogicIText7.doMerge(pdfFiles, finalPdf)
         }
     }
 
