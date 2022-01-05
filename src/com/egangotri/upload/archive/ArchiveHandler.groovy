@@ -186,7 +186,7 @@ class ArchiveHandler {
             }
         } else {
             log.info("No partitioning")
-            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, uploadVos)
+            List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, uploadVos as Set<QueuedVO>)
             uploadStatsList << uploadStats
         }
         uploadStatsList
