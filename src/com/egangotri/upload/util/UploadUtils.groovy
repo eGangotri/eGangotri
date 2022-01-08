@@ -133,14 +133,23 @@ class UploadUtils {
         fileButtonInitial.click()
         //log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
         pasteFileNameAndCloseUploadPopup(fileNameWithPath)
+        //pasteFileNameUsingSendKeys(driver,fileNameWithPath)
     }
-
+    static void pasteFileNameUsingSendKeys(ChromeDriver driver, String fileNameWithPath)
+        {
+        driver.switchTo()
+                .activeElement()
+                .sendKeys(fileNameWithPath);
+        driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+    }
     static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
         // A short pause is a must and must be atleast a second
         EGangotriUtil.sleepTimeInSeconds(1, true)
         setClipboardData(fileNameWithPath)
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot()
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
         robot.keyPress(KeyEvent.VK_CONTROL)
         robot.keyPress(KeyEvent.VK_V)
         robot.keyRelease(KeyEvent.VK_V)
@@ -432,3 +441,4 @@ import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit

@@ -71,8 +71,8 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
         GenericUtil.printReport()
     }
 
-    static void mergeSmallerPdfs(File subFolder){
-        File[] _pdfs  = GenericUtil.getDirectories(new File(subFolder, PDFS_FOLDER))
+    static void mergeSmallerPdfs(File subFolder) {
+        File[] _pdfs = GenericUtil.getDirectories(new File(subFolder, PDFS_FOLDER))
         //log.info("sorted folders inside $PDFS_FOLDER: \n${_pdfs.join("\n")}" )
 
         int counter = 0
@@ -80,10 +80,10 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             File[] _pdfFilesWithin = GenericUtil.getPdfs(pdfFolder)
             //log.info("prelim Merge of sub-folders in  ${GenericUtil.reverseEllipsis(pdfFolder)}")
             File folderForDumping = new File(subFolder, PDFS_MERGE_FOLDER)
-            if(!folderForDumping.exists()){
+            if (!folderForDumping.exists()) {
                 folderForDumping.mkdir()
             }
-            doMerge(_pdfFilesWithin, folderForDumping.absolutePath + "\\" + pdfFolder.name + ".pdf")
+            PdfMergeCoreLogicIText7.doMerge(_pdfFilesWithin, folderForDumping.absolutePath + "\\" + pdfFolder.name + ".pdf")
         }
     }
 
