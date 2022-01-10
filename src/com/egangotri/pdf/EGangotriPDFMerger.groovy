@@ -9,24 +9,25 @@ import groovy.util.logging.Slf4j
 class EGangotriPDFMerger {
     static String ROOT_FOLDER = "C:\\tmp\\pdfForMergeTest"
     static String PDFS_FOLDER = "pdfs"
-    static String PDFS_MERGE_FOLDER = "_mergedPdfs"
+    static String PDFS_MERGE_FOLDER = "_mergedPdfsTmpLoc"
+    static String FINAL_PDFS = "finalPdfsTmpLoc"
+    static String PRE_FINAL_PDFS = "pre_finalPdfsTmpLoc"
     static String OLD_LABEL = "_old_disc"
-    static String FINAL_PDFS = "finalPdfs"
+    public static final int CHUNKING_THRESHOLD = 50
 
     static void main(String[] args) {
         List<String> _mergeables = []
         if(args){
             if(args.length == 2 && args[1] == 'mega'){
                 _mergeables = GenericUtil.getDirectoriesSortedByName(args[0])*.absolutePath
-                GenericUtil.addReport("""MegaMerge for Folders 
-${_mergeables.join("\n")}  
-started""")
+                GenericUtil.addReport("""MegaMerge for Folders:\n${_mergeables.join("\n")}  
+                started""")
             }
             else _mergeables = args;
             int counter = 0
             for(String _mergeable: _mergeables){
                 counter++
-                GenericUtil.addReport("Merge for Folder ${counter} of ${_mergeables.size()} for ${_mergeable} started")
+                GenericUtil.addReport("Merge for Folder(${_mergeable})\n ${counter} of ${_mergeables.size()} for ${_mergeable} started")
                 exec(_mergeable)
             }
         }
@@ -59,7 +60,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
                     log.info("Error in Process Merge",e)
                     continue
                 }
-                System.gc()
+                GenericUtil.garbageCollectAndPrintMemUsageInfo()
             }
             Date endTime = new Date()
             GenericUtil.addReport("Merge finishes ${endTime}. Time Taken: ${TimeUtil.formattedTimeDff(endTime,startTime)}")
@@ -73,7 +74,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
 
     static void mergeSmallerPdfs(File subFolder) {
         File[] _pdfs = GenericUtil.getDirectories(new File(subFolder, PDFS_FOLDER))
-        //log.info("sorted folders inside $PDFS_FOLDER: \n${_pdfs.join("\n")}" )
+        log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
 
         int counter = 0
         for (File pdfFolder in _pdfs) {
@@ -83,14 +84,33 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             if (!folderForDumping.exists()) {
                 folderForDumping.mkdir()
             }
-            PdfMergeCoreLogicIText7.doMerge(_pdfFilesWithin, folderForDumping.absolutePath + "\\" + pdfFolder.name + ".pdf")
+            PdfMergeCoreLogicIText5.doMerge(_pdfFilesWithin, folderForDumping.absolutePath + "\\" + pdfFolder.name + ".pdf")
         }
     }
 
     static void mergeFinalPdf(File subFolders){
         File[] pdfFiles = GenericUtil.getPdfs(new File(subFolders, PDFS_MERGE_FOLDER))
-
-        log.info("processFinalMerge:")
+        //If more than 50 files than dont merge them in one shot. can get a memry exception
+//        if(pdfFiles?.size()> CHUNKING_THRESHOLD){
+//            String preFinalDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${PRE_FINAL_PDFS}//"
+//            if(!new File(preFinalDumpFolder).exists()){
+//                new File(preFinalDumpFolder).mkdir()
+//            }
+//            log.info("preFinalDumpFolder ${preFinalDumpFolder}")
+//            int counter = 0;
+//            List chunkedPdfs = pdfFiles.collate(CHUNKING_THRESHOLD)
+//            for(def chunkedPdf in chunkedPdfs){
+//                counter++
+//
+//                String preFinalPdf = "${preFinalDumpFolder}-${counter}-.pdf"
+//                log.info("chunkedPdf size ${chunkedPdf.size()} \n preFinalPdf:${preFinalPdf}")
+//
+//                GenericUtil.addReport( "Pre-Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(preFinalPdf)}")
+//                PdfMergeCoreLogicIText5.doMerge(chunkedPdf as File[], preFinalPdf)
+//            }
+//            pdfFiles = GenericUtil.getPdfs(new File(subFolders.getParentFile(), PRE_FINAL_PDFS))
+//        }
+       log.info("processFinalMerge: ${pdfFiles.join("\n\t")}")
         // Resulting pdf
         if(pdfFiles){
             String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${FINAL_PDFS}//"
@@ -99,17 +119,23 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             }
             String finalPdf = finalPdfDumpFolder + subFolders.name + ".pdf"
             GenericUtil.addReport( "Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(finalPdf)}")
-            PdfMergeCoreLogicIText7.doMerge(pdfFiles, finalPdf)
+            PdfMergeCoreLogicIText5.doMerge(pdfFiles, finalPdf)
         }
     }
 
-    static void experimentalTally(File pdfFolder = new File("E:\\Sep-2019\\ramtek-1_23-09-2019-(10)")){
-        String extractDate =  pdfFolder.name.split("_")[1].substring(0,10)
+    static void experimentalTally(File pdfFolder){
+        String[] _splitBy =  pdfFolder.name.split("_")
+        log.info("_splitBy ${_splitBy} ${_splitBy?.size()}  ${_splitBy?.size()> 1}")
+        String extractDate = (_splitBy?.size()> 1 && _splitBy[1].size() > 10) ? _splitBy[1].substring(0,10) : ""
         String tiffFolderPath = "D:\\NMM\\${pdfFolder.getParentFile().name}\\${extractDate}"
         String finalPdfsPath = "${pdfFolder}\\${FINAL_PDFS}"
-        if(new File(tiffFolderPath).exists() && new File(finalPdfsPath).exists()){
+        if(extractDate && new File(tiffFolderPath).exists() && new File(finalPdfsPath).exists()){
             log.info("Tally ${tiffFolderPath} against ${finalPdfsPath}")
             Tally.main(tiffFolderPath, finalPdfsPath)
+        }
+        else{
+            log.info("cant Tally ${tiffFolderPath} against ${finalPdfsPath}")
+
         }
     }
 }

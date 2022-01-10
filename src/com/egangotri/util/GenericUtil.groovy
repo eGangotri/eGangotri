@@ -41,7 +41,7 @@ class GenericUtil {
 
     static void printReport() {
         REPORT.reverse().eachWithIndex { x, i -> {
-            log.info("${i + 1}). ${x}")
+//            log.info("${i + 1}). ${x}")
         }
         }
     }
@@ -53,6 +53,12 @@ class GenericUtil {
         }
     }
 
+    static File[] getPdfsSortedByName(File dir, String filter = EGangotriPDFMerger.OLD_LABEL){
+        File[] pdfs = getFilesOfGivenTypeSortedByName(dir, "pdf")
+        if(filter){
+            pdfs.findAll{!it.name.contains(filter)}
+        }
+    }
     static File[] getTifs(File dir){
         return getFilesOfGivenType(dir, "tif")
     }
@@ -72,6 +78,10 @@ class GenericUtil {
 
     static File[] getFilesOfGivenType(File dir, String ext){
         return dir.listFiles({ File d, String f -> f ==~ /(?i).*.${ext}/ } as FilenameFilter)?.sort{ File f -> f.lastModified()}
+    }
+
+    static File[] getFilesOfGivenTypeSortedByName(File dir, String ext){
+        return dir.listFiles({ File d, String f -> f ==~ /(?i).*.${ext}/ } as FilenameFilter)?.sort{ File f -> f.name}
     }
     static void garbageCollectAndPrintMemUsageInfo() {
         double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)

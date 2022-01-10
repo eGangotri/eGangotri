@@ -8,6 +8,7 @@ import com.itextpdf.kernel.utils.PdfMerger;
 import groovy.util.logging.Slf4j;
 
 @Slf4j
+@Deprecated
 class PdfMergeCoreLogicIText7 {
     static String ROOT_FOLDER = "D:\\Treasures35\\_freeze\\Vicky\\April 2021\\en"
 
@@ -16,9 +17,15 @@ class PdfMergeCoreLogicIText7 {
         File[] mergeablePdfs = GenericUtil.getPdfs(pdfFolder)
         doMerge(mergeablePdfs, "${ROOT_FOLDER}\\finaPdf4.pdf")
     }
+    /***
+     * dont use. messes the page order 1-10-11...2-21..3..
+     * gives OutOfMemoryError
+     * @param mergeablePdfs
+     * @param finalPdf
+     */
     static void doMerge(File[] mergeablePdfs, String finalPdf){
         if(new File(finalPdf).exists()){
-            log.info("\t\tdRenaming to ${finalPdf + "${EGangotriPDFMerger.OLD_LABEL}.pdf"}")
+            log.info("\t\tRenaming to ${finalPdf + "${EGangotriPDFMerger.OLD_LABEL}.pdf"}")
             new File(finalPdf).renameTo(finalPdf + "${EGangotriPDFMerger.OLD_LABEL}.pdf")
         }
 
