@@ -19,7 +19,7 @@ class EGangotriPDFMerger {
         List<String> _mergeables = []
         if(args){
             if(args.length == 2 && args[1] == 'mega'){
-                _mergeables = GenericUtil.getDirectoriesSortedByName(args[0])*.absolutePath
+                _mergeables = GenericUtil.getDirectories(args[0])*.absolutePath
                 GenericUtil.addReport("""MegaMerge for Folders:\n${_mergeables.join("\n")}  
                 started""")
             }
@@ -74,7 +74,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
 
     static void mergeSmallerPdfs(File subFolder) {
         File[] _pdfs = GenericUtil.getDirectories(new File(subFolder, PDFS_FOLDER))
-        log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
+        //log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
 
         int counter = 0
         for (File pdfFolder in _pdfs) {
@@ -110,7 +110,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
 //            }
 //            pdfFiles = GenericUtil.getPdfs(new File(subFolders.getParentFile(), PRE_FINAL_PDFS))
 //        }
-       log.info("processFinalMerge: ${pdfFiles.join("\n\t")}")
+     //  log.info("processFinalMerge: ${pdfFiles.join("\n\t")}")
         // Resulting pdf
         if(pdfFiles){
             String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${FINAL_PDFS}//"

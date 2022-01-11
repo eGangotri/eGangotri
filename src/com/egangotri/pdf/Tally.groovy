@@ -14,19 +14,18 @@ class Tally {
     static int INTRO_PAGE_ADJUSTMENT = 1
 
     static void main(String[] args) {
-        TIF_FOLDER = args[0]
-        PDF_FOLDERS = args[1]
-        log.info("args0:$TIF_FOLDER")
-        log.info("args1:$PDF_FOLDERS")
-
-        Tally.tally(TIF_FOLDER, PDF_FOLDERS)
-        GenericUtil.printReport()
-
-        if(args.length >=4){
-            TIF_FOLDER = args[2]
-            PDF_FOLDERS = args[3]
-            Tally.tally(TIF_FOLDER, PDF_FOLDERS)
-            GenericUtil.printReport()
+        if(args.length % 2 != 0){
+            log.info("Error Expected Pairs. Will Not Proceed")
+        }
+        for(int i =0; i < args.length;i++){
+            if(i % 2 == 0 ){
+                TIF_FOLDER = args[i]
+                PDF_FOLDERS = args[i+1]
+                log.info("args${i}:$TIF_FOLDER")
+                log.info("args${i+1}:$PDF_FOLDERS")
+                Tally.tally(TIF_FOLDER, PDF_FOLDERS)
+                GenericUtil.printReport()
+            }
         }
     }
 

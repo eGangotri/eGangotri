@@ -68,6 +68,9 @@ class GenericUtil {
     static File[] getDirectories(File dir){
         return dir.listFiles({ File d-> d.isDirectory() } as FileFilter)?.sort{ File f -> f.lastModified()}
     }
+    static File[] getDirectories(String dir){
+        return getDirectories(new File(dir))
+    }
     static File[] getDirectoriesSortedByName(File dir){
         return dir.listFiles({ File d-> d.isDirectory() } as FileFilter)?.sort{ File f -> f.name}
     }
