@@ -73,7 +73,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
     }
 
     static void mergeSmallerPdfs(File subFolder) {
-        File[] _pdfs = GenericUtil.getDirectories(new File(subFolder, PDFS_FOLDER))
+        File[] _pdfs = GenericUtil.getDirectoriesSortedByName(new File(subFolder, PDFS_FOLDER))
         //log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
 
         int counter = 0
@@ -89,29 +89,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
     }
 
     static void mergeFinalPdf(File subFolders){
-        File[] pdfFiles = GenericUtil.getPdfs(new File(subFolders, PDFS_MERGE_FOLDER))
-        //If more than 50 files than dont merge them in one shot. can get a memry exception
-//        if(pdfFiles?.size()> CHUNKING_THRESHOLD){
-//            String preFinalDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${PRE_FINAL_PDFS}//"
-//            if(!new File(preFinalDumpFolder).exists()){
-//                new File(preFinalDumpFolder).mkdir()
-//            }
-//            log.info("preFinalDumpFolder ${preFinalDumpFolder}")
-//            int counter = 0;
-//            List chunkedPdfs = pdfFiles.collate(CHUNKING_THRESHOLD)
-//            for(def chunkedPdf in chunkedPdfs){
-//                counter++
-//
-//                String preFinalPdf = "${preFinalDumpFolder}-${counter}-.pdf"
-//                log.info("chunkedPdf size ${chunkedPdf.size()} \n preFinalPdf:${preFinalPdf}")
-//
-//                GenericUtil.addReport( "Pre-Final Merge to ${GenericUtil.ellipsis(subFolders.name)}..${GenericUtil.reverseEllipsis(preFinalPdf)}")
-//                PdfMergeCoreLogicIText5.doMerge(chunkedPdf as File[], preFinalPdf)
-//            }
-//            pdfFiles = GenericUtil.getPdfs(new File(subFolders.getParentFile(), PRE_FINAL_PDFS))
-//        }
-     //  log.info("processFinalMerge: ${pdfFiles.join("\n\t")}")
-        // Resulting pdf
+        File[] pdfFiles = GenericUtil.getPdfsSortedByName(new File(subFolders, PDFS_MERGE_FOLDER))
         if(pdfFiles){
             String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${FINAL_PDFS}//"
             if(!new File(finalPdfDumpFolder).exists()){

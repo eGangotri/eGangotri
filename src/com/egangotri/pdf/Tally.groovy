@@ -21,8 +21,8 @@ class Tally {
             if(i % 2 == 0 ){
                 TIF_FOLDER = args[i]
                 PDF_FOLDERS = args[i+1]
-                log.info("args${i}:$TIF_FOLDER")
-                log.info("args${i+1}:$PDF_FOLDERS")
+                log.info("args${i+1}:$TIF_FOLDER")
+                log.info("args${i+2}:$PDF_FOLDERS")
                 Tally.tally(TIF_FOLDER, PDF_FOLDERS)
                 GenericUtil.printReport()
             }
