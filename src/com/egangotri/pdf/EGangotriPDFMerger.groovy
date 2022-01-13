@@ -14,11 +14,12 @@ class EGangotriPDFMerger {
     static String PRE_FINAL_PDFS = "pre_finalPdfsTmpLoc"
     static String OLD_LABEL = "_old_disc"
     public static final int CHUNKING_THRESHOLD = 50
+    public static final MEGA_TYPE = 'mega'
 
     static void main(String[] args) {
         List<String> _mergeables = []
         if(args){
-            if(args.length == 2 && args[1] == 'mega'){
+            if(args.length == 2 && args[1] == MEGA_TYPE){
                 _mergeables = GenericUtil.getDirectories(args[0])*.absolutePath
                 GenericUtil.addReport("""MegaMerge for Folders:\n${_mergeables.join("\n")}  
                 started""")
@@ -64,7 +65,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
             }
             Date endTime = new Date()
             GenericUtil.addReport("Merge finishes ${endTime}. Time Taken: ${TimeUtil.formattedTimeDff(endTime,startTime)}")
-            experimentalTally(rootDir)
+            tallyPostMerge(rootDir)
 
         } catch (Exception e) {
             log.info("Exception in merge.outer ",e)
@@ -74,12 +75,12 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
 
     static void mergeSmallerPdfs(File subFolder) {
         File[] _pdfs = GenericUtil.getDirectoriesSortedByName(new File(subFolder, PDFS_FOLDER))
-        //log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
+        log.info("mergeSmallerPdfs sorted folders inside $PDFS_FOLDER: \n${_pdfs?.join("\n")}" )
 
         int counter = 0
         for (File pdfFolder in _pdfs) {
-            File[] _pdfFilesWithin = GenericUtil.getPdfs(pdfFolder)
-            //log.info("prelim Merge of sub-folders in  ${GenericUtil.reverseEllipsis(pdfFolder)}")
+            File[] _pdfFilesWithin = GenericUtil.getPdfsSortedByName(pdfFolder)
+            //log.info("prelim Merge of sub-folders in  ${GenericUtil.reverseEllipsis(pdfFolder)} \n  ${_pdfFilesWithin?.join("\n")}")
             File folderForDumping = new File(subFolder, PDFS_MERGE_FOLDER)
             if (!folderForDumping.exists()) {
                 folderForDumping.mkdir()
@@ -90,6 +91,7 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
 
     static void mergeFinalPdf(File subFolders){
         File[] pdfFiles = GenericUtil.getPdfsSortedByName(new File(subFolders, PDFS_MERGE_FOLDER))
+        log.info("pdfFiles ${pdfFiles.join("\n")}")
         if(pdfFiles){
             String finalPdfDumpFolder =  subFolders.getParentFile().getAbsolutePath() + "//${FINAL_PDFS}//"
             if(!new File(finalPdfDumpFolder).exists()){
@@ -101,19 +103,15 @@ ${rootDir.name} for ${foldersWithPdf.size()} Folder(s) :
         }
     }
 
-    static void experimentalTally(File pdfFolder){
-        String[] _splitBy =  pdfFolder.name.split("_")
-        log.info("_splitBy ${_splitBy} ${_splitBy?.size()}  ${_splitBy?.size()> 1}")
-        String extractDate = (_splitBy?.size()> 1 && _splitBy[1].size() > 10) ? _splitBy[1].substring(0,10) : ""
-        String tiffFolderPath = "D:\\NMM\\${pdfFolder.getParentFile().name}\\${extractDate}"
+    static void tallyPostMerge(File pdfFolder){
+        String tiffFolderPath = PdfUtil.extractTiffFolderName(pdfFolder)
         String finalPdfsPath = "${pdfFolder}\\${FINAL_PDFS}"
-        if(extractDate && new File(tiffFolderPath).exists() && new File(finalPdfsPath).exists()){
+        if(tiffFolderPath){
             log.info("Tally ${tiffFolderPath} against ${finalPdfsPath}")
             Tally.main(tiffFolderPath, finalPdfsPath)
         }
         else{
             log.info("cant Tally ${tiffFolderPath} against ${finalPdfsPath}")
-
         }
     }
 }

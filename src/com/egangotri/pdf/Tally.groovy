@@ -12,19 +12,33 @@ class Tally {
     static List ignoreList = ['otro']
     static String PDF = "pdf"
     static int INTRO_PAGE_ADJUSTMENT = 1
+    public static final MEGA_TYPE = 'mega'
 
     static void main(String[] args) {
-        if(args.length % 2 != 0){
+        if(args && args.length > 1 && args.length % 2 != 0){
             log.info("Error Expected Pairs. Will Not Proceed")
+            System.exit(0)
         }
-        for(int i =0; i < args.length;i++){
-            if(i % 2 == 0 ){
-                TIF_FOLDER = args[i]
-                PDF_FOLDERS = args[i+1]
-                log.info("args${i+1}:$TIF_FOLDER")
-                log.info("args${i+2}:$PDF_FOLDERS")
-                Tally.tally(TIF_FOLDER, PDF_FOLDERS)
-                GenericUtil.printReport()
+        if(args[1] == MEGA_TYPE){
+            File dest = new File(args[0]);
+            if(!dest.exists()){
+                log.error("No Such folder ${args[0]}")
+            }
+            String src = "${PdfUtil.NMM_PATH}${dest.name}"
+            log.info("Mega Tally for ${src} ${dest} started")
+            MegaTally.execute(dest.absolutePath)
+            System.exit(0)
+        }
+        else {
+            for(int i =0; i < args.length;i++){
+                if(i % 2 == 0 ){
+                    TIF_FOLDER = args[i]
+                    PDF_FOLDERS = args[i+1]
+                    log.info("args${i+1}:$TIF_FOLDER")
+                    log.info("args${i+2}:$PDF_FOLDERS")
+                    Tally.tally(TIF_FOLDER, PDF_FOLDERS)
+                    GenericUtil.printReport()
+                }
             }
         }
     }
