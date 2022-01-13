@@ -67,29 +67,7 @@ class Tally {
                     continue;
                 }
                 try {
-                    int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
-                    GenericUtil.garbageCollectAndPrintMemUsageInfo()
-                    log.info("""${index}). Checking Tiff Count (${tifCount}) in 
-                            ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
-                            ${GenericUtil.dualEllipsis(pdfFile.name)} 
-                            ${pdfPageCount}""");
-                    if (pdfPageCount === tifCount) {
-                        TallyPojo.MATCHING.push("'${pdfFile}");
-                        GenericUtil.addReport("""pdf (${pdfPageCount}) 
-    ${pdfFile.name} 
-    Page Count ==  PNG Count
-    ${(tifCount)}\n""");
-                    } else {
-                        if (pdfPageCount > 0) {
-                            TallyPojo.NON_MATCHING.push("'${pdfFile}");
-                        } else {
-                            TallyPojo.UNCHECKABLE.push("""${pdfFile.name} 
-                                        should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages""");
-                        }
-                        GenericUtil.addReport("""**** PDF Count  (${pdfPageCount})
-                        for ${pdfFile} is not same as
-                        ${tifCount}""");
-                    }
+                    tallyItem(tifSubDirectory, pdfFile, tifCount, index)
                 }
                 catch (Exception e) {
                     log.info("getPdfPageCount Exception", e)
@@ -105,11 +83,40 @@ class Tally {
                     Tif Folder: ${tifFolder}                    
                     Total Tiff Folders expected for Conversion: ${tifDirFiles?.size()}
                     Total PDFs in Folder: ${pdfFiles?.size()}
+                    Match Count: ${tifDirFiles?.size() == TallyPojo.MATCHING ?
+                "100% Success": "Failure of : ${tifDirFiles?.size() - TallyPojo.MATCHING.size()} Items"}
                 """
 
         GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
         return finalReport
     }
+
+    static String tallyItem(File tifSubDirectory ,File pdfFile, int tifCount, int index){
+        int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
+        GenericUtil.garbageCollectAndPrintMemUsageInfo()
+        log.info("""${index}). Checking Tiff Count (${tifCount}) in 
+                            ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
+                            ${GenericUtil.dualEllipsis(pdfFile.name)} 
+                            ${pdfPageCount}""");
+        if (pdfPageCount === tifCount) {
+            TallyPojo.MATCHING.push("'${pdfFile}");
+            GenericUtil.addReport("""pdf (${pdfPageCount}) 
+    ${pdfFile.name} 
+    Page Count ==  PNG Count
+    ${(tifCount)}\n""");
+        } else {
+            if (pdfPageCount > 0) {
+                TallyPojo.NON_MATCHING.push("'${pdfFile}");
+            } else {
+                TallyPojo.UNCHECKABLE.push("""${pdfFile.name} 
+                                        should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages""");
+            }
+            GenericUtil.addReport("""**** PDF Count  (${pdfPageCount})
+                        for ${pdfFile} is not same as
+                        ${tifCount}""");
+        }
+    }
+
 
     static boolean inIgnoreList(File file) {
         String absPath = file.absolutePath.toString()
