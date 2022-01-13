@@ -13,7 +13,7 @@ class Tally {
     static String PDF = "pdf"
     static int INTRO_PAGE_ADJUSTMENT = 1
     public static final MEGA_TYPE = 'mega'
-
+    static TALLY_RUN_SUCCESS_COUNT = 0
     static void main(String[] args) {
         if(args && args.length > 1 && args.length % 2 != 0){
             log.info("Error Expected Pairs. Will Not Proceed")
@@ -25,9 +25,12 @@ class Tally {
                 log.error("No Such folder ${args[0]}")
             }
             String src = "${PdfUtil.NMM_PATH}${dest.name}"
-            log.info("Mega Tally for ${src} ${dest} started")
+            log.info("Mega Tally for ${src} ${dest} started @ ${new Date()}")
             MegaTally.execute(dest.absolutePath)
-            System.exit(0)
+            int dirCount = GenericUtil.getDirectories(new File(src)).length
+            log.info("Mega Tally for  ${src} ${dest} ended @ ${new Date()} with " +
+                    "" + (TALLY_RUN_SUCCESS_COUNT == dirCount) ? "100% Success" : "" +
+                    "Failures: ${TALLY_RUN_SUCCESS_COUNT - dirCount} of ${dirCount}")
         }
         else {
             for(int i =0; i < args.length;i++){
@@ -77,17 +80,19 @@ class Tally {
 
             }
         }
-
-        String finalReport = """Stats:
+        boolean TALLY_RUN_SUCCESS = tifDirFiles?.size() == TallyPojo.MATCHING.size()
+            String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
                     Tif Folder: ${tifFolder}                    
                     Total Tiff Folders expected for Conversion: ${tifDirFiles?.size()}
                     Total PDFs in Folder: ${pdfFiles?.size()}
-                    Match Count: ${tifDirFiles?.size() == TallyPojo.MATCHING.size() ?
+                    Match Count: ${TALLY_RUN_SUCCESS} ?
                 "100% Success": "Failure of " +
                 ": ${tifDirFiles?.size() - TallyPojo.MATCHING.size()} Items"}
                 """
-
+        if(TALLY_RUN_SUCCESS){
+            TALLY_RUN_SUCCESS_COUNT++
+        }
         GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
         return finalReport
     }
