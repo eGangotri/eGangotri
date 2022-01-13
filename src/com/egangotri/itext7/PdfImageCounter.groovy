@@ -23,8 +23,6 @@ class PdfImageCounter {
         int imageCount = 0
         PdfDocument document = new PdfDocument(new PdfReader(pdfPath))
         int pageCount = document.getNumberOfPages()
-        log.info(" doc: " + document.getNumberOfPdfObjects())
-        log.info(" pageCount: " + pageCount)
         for (int i = 1; i <= pageCount; i++) {
             PdfPage page = (PdfPage) document.getPage(i)
             def resources = page.getResources()

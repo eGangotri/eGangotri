@@ -83,8 +83,9 @@ class Tally {
                     Tif Folder: ${tifFolder}                    
                     Total Tiff Folders expected for Conversion: ${tifDirFiles?.size()}
                     Total PDFs in Folder: ${pdfFiles?.size()}
-                    Match Count: ${tifDirFiles?.size() == TallyPojo.MATCHING ?
-                "100% Success": "Failure of : ${tifDirFiles?.size() - TallyPojo.MATCHING.size()} Items"}
+                    Match Count: ${tifDirFiles?.size() == TallyPojo.MATCHING.size() ?
+                "100% Success": "Failure of " +
+                ": ${tifDirFiles?.size() - TallyPojo.MATCHING.size()} Items"}
                 """
 
         GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
