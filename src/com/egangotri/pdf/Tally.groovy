@@ -80,15 +80,15 @@ class Tally {
 
             }
         }
-        boolean TALLY_RUN_SUCCESS = tifDirFiles?.size() == TallyPojo.MATCHING.size()
+        int tifDirFilesSize = tifDirFiles?.size()?:0
+        boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (TallyPojo.MATCHING?.size() ?:0))
+        String successMsg = TALLY_RUN_SUCCESS?"100% Success": "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Items"
             String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
                     Tif Folder: ${tifFolder}                    
-                    Total Tiff Folders expected for Conversion: ${tifDirFiles?.size()}
+                    Total Tiff Folders expected for Conversion: ${tifDirFilesSize}
                     Total PDFs in Folder: ${pdfFiles?.size()}
-                    Match Count: ${TALLY_RUN_SUCCESS} ?
-                "100% Success": "Failure of " +
-                ": ${tifDirFiles?.size() - TallyPojo.MATCHING.size()} Items"}
+                    Match Count: ${successMsg}
                 """
         if(TALLY_RUN_SUCCESS){
             TALLY_RUN_SUCCESS_COUNT++
