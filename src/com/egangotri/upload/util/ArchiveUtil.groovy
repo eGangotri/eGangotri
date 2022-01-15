@@ -28,38 +28,37 @@ class ArchiveUtil {
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
-        try{
-        if(resultsCountAtStartTime){
-            println("going to $ARCHIVE_HOME")
-            driver.get(ARCHIVE_HOME)
-            println("reached $ARCHIVE_HOME")
-            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
-            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
-            WebElement userMenu = driver.findElement(By.className("col-xs-12"))
-            ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
+        try {
+            if (resultsCountAtStartTime) {
+                println("going to $ARCHIVE_HOME")
+                driver.get(ARCHIVE_HOME)
+                println("reached $ARCHIVE_HOME")
+                new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
+                new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+                WebElement userMenu = driver.findElement(By.className("col-xs-12"))
+                ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
 //            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
 //            println("userMenu.getAttribute(\"src\") ${userMenu.getAttribute("src")}")
 //            ARCHIVE_USER_NAME = userMenu.getAttribute("src").split("/serve/%40")[1].split("/").first().toLowerCase()
-        }
-        String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
-        if (!resultsCountAtStartTime) {
-            UploadUtils.openNewTab(driver)
-            UploadUtils.switchToLastOpenTab(driver)
-            driver.navigate().to(archiveUserAccountUrl)
-        }
-        driver.get(archiveUserAccountUrl)
-        WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
-        WebElement resultsCount = driver.findElementByClassName("results_count")
-        if (resultsCount) {
-            log.info("Results Count at ${resultsCountAtStartTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
+            }
+            String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
             if (!resultsCountAtStartTime) {
-                log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
+                UploadUtils.openNewTab(driver)
+                UploadUtils.switchToLastOpenTab(driver)
+                driver.navigate().to(archiveUserAccountUrl)
+            }
+            driver.get(archiveUserAccountUrl)
+            WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
+            WebElement resultsCount = driver.findElement(By.className("results_count"))
+            if (resultsCount) {
+                log.info("Results Count at ${resultsCountAtStartTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
+                if (!resultsCountAtStartTime) {
+                    log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
+                }
             }
         }
-
-        }
-        catch(Exception e){
+        catch (Exception e) {
             e.printStackTrace()
             log.error(e.message)
         }
@@ -130,7 +129,7 @@ class ArchiveUtil {
         //check if it has entries. if yes make sure there is no duplication
         Set<QueuedVO> alreadyIn = ValidateUtil.csvToQueuedVO(appendableFile)
         String appendable = ""
-        if(alreadyIn){
+        if (alreadyIn) {
             log.info("${alreadyIn.size()} already exist in ($appendableFilePath) queue record. ${vos.size()} will be added minus duplicates")
             int counter = 0
             vos.each { vo ->
@@ -140,8 +139,7 @@ class ArchiveUtil {
                 }
             }
             log.info("${counter} added. Were there duplicates ? ${vos.size() == counter ? 'No' : 'Yes'} diff is " + (vos.size() - counter))
-        }
-        else{
+        } else {
             appendable += vosToCSVString(vos)
             log.info("Added ${vos.size()} ")
         }
@@ -166,7 +164,7 @@ class ArchiveUtil {
 
     static String vosToCSVString(Set<UploadVO> uploadVos) {
         String appendable = ""
-        uploadVos.each{ vo ->
+        uploadVos.each { vo ->
             appendable += voToCSVString(vo)
         }
         return appendable
@@ -294,7 +292,6 @@ class ArchiveUtil {
             GenericUtil.garbageCollectAndPrintMemUsageInfo()
         }
     }
-
 
 
     static String extendIdentifierByPrepending(String originalIdentifier) {

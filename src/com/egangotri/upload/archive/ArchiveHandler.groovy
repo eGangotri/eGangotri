@@ -69,6 +69,7 @@ class ArchiveHandler {
                         } else {
                             log.info("Tab Creation Failed during uppload of ${uploadVo.title}.")
                             uploadFailureCount++
+
                             continue
                         }
 

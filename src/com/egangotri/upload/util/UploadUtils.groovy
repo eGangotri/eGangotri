@@ -96,7 +96,6 @@ class UploadUtils {
     }
 
 
-
     static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
         boolean success = false
         String username = metaDataMap."${archiveProfile}"
@@ -128,23 +127,32 @@ class UploadUtils {
     }
 
     static void clickChooseFilesToUploadButtonAndPasteFilePath(ChromeDriver driver, String fileNameWithPath) {
-        //Note this id is already tested to be clickable
+        //uploadFileUsingRobot(driver,fileNameWithPath)
+        uploadFileUsingSendKeys(driver, fileNameWithPath)
+    }
+
+    static void uploadFileUsingSendKeys(ChromeDriver driver, String fileNameWithPath) {
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver
+            WebElement _hiddenDiv = driver.findElement(By.xpath('//*[@id="file_drop_contents"]/div[2]'))
+            js.executeScript("arguments[0].className='XXXX'", _hiddenDiv);
+            js.executeScript("arguments[0].click()", _hiddenDiv);
+            WebElement uploadElement = driver.findElement(By.id("file_input_initial"))
+            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file_input_initial")))
+            uploadElement.sendKeys(fileNameWithPath);
+        }
+        catch (Exception e) {
+            log.info("uploadFileUsingSendKeys", e)
+        }
+    }
+
+    static void uploadFileUsingRobot(ChromeDriver driver, String fileNameWithPath) {
         WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
         fileButtonInitial.click()
         //log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
-        pasteFileNameAndCloseUploadPopup(fileNameWithPath)
-        //pasteFileNameUsingSendKeys(driver,fileNameWithPath)
-    }
-    static void pasteFileNameUsingSendKeys(ChromeDriver driver, String fileNameWithPath)
-        {
-        driver.switchTo()
-                .activeElement()
-                .sendKeys(fileNameWithPath);
-        driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-    }
-    static void pasteFileNameAndCloseUploadPopup(String fileNameWithPath) {
         // A short pause is a must and must be atleast a second
-        EGangotriUtil.sleepTimeInSeconds(1, true)
+        EGangotriUtil.sleepTimeInSeconds(1)
+
         setClipboardData(fileNameWithPath)
         //native key strokes for CTRL, V and ENTER keys
         Robot robot = new Robot()
@@ -200,9 +208,9 @@ class UploadUtils {
 
     static List<String> randomCreators() {
         List<String> firstNames = readTextFileAndDumpToList(EGangotriUtil.FIRST_NAME_FILE)
-        List<String>  lastNames = readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
+        List<String> lastNames = readTextFileAndDumpToList(EGangotriUtil.LAST_NAME_FILE)
         Random rnd = new Random()
-        List<String>  creators = []
+        List<String> creators = []
         int MAX_CREATORS = RANDOM_CREATOR_MAX_LIMIT
         int max = firstNames.size() > lastNames.size() ? (firstNames.size() > MAX_CREATORS ? MAX_CREATORS : firstNames.size()) : (lastNames.size() > MAX_CREATORS ? MAX_CREATORS : lastNames.size())
         (1..max).each {
@@ -239,16 +247,16 @@ class UploadUtils {
                 supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
-                if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'") )) {
+                if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
                     def doubleQuoteRegex = /".*?"/
                     def singleQuoteRegex = /'.*?'/
-                    def subjectsInsideSingleQuotes =  _subjects.findAll(singleQuoteRegex)
-                    def subjectsInsideDoubleQuotes =  _subjects.findAll(doubleQuoteRegex)
+                    def subjectsInsideSingleQuotes = _subjects.findAll(singleQuoteRegex)
+                    def subjectsInsideDoubleQuotes = _subjects.findAll(doubleQuoteRegex)
                     def both = subjectsInsideSingleQuotes + subjectsInsideDoubleQuotes
-                    both.each{ it ->
-                        _subjects = _subjects.replaceAll(it,"")
+                    both.each { it ->
+                        _subjects = _subjects.replaceAll(it, "")
                     }
-                    def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll{ String item-> !item.isEmpty()}
+                    def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
                     _subjects = allSubjects.join(",")
                 }
                 supplementary_url += AMPERSAND + "subject=" + _subjects
@@ -441,4 +449,5 @@ import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.concurrent.TimeUnit
