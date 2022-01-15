@@ -88,9 +88,9 @@ class GenericUtil {
     }
     static void garbageCollectAndPrintMemUsageInfo() {
         double memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-        log.info("Garbage Collecting.\nMemory being used: ${Math.round(memUse)} mb.")
+        //log.info("Garbage Collecting.\nMemory being used: ${Math.round(memUse)} mb.")
         System.gc()
         memUse = (double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024)
-        log.info("Memory use after Garbage Collection: ${Math.round(memUse)} mb")
+        //log.info("Memory use after Garbage Collection: ${Math.round(memUse)} mb")
     }
 }

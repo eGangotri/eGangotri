@@ -80,9 +80,14 @@ class Tally {
 
             }
         }
+        return tallyReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles)
+    }
+
+    static String tallyReport(String tifFolder,String pdfFolder,List tifDirFiles,List pdfFiles){
         int tifDirFilesSize = tifDirFiles?.size()?:0
-        boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (TallyPojo.MATCHING?.size() ?:0))
-        String successMsg = TALLY_RUN_SUCCESS?"100% Success": "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Items"
+        if(tifDirFilesSize){
+            boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (TallyPojo.MATCHING?.size() ?:0))
+            String successMsg = TALLY_RUN_SUCCESS?"100% Success": "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Items"
             String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
                     Tif Folder: ${tifFolder}                    
@@ -90,13 +95,14 @@ class Tally {
                     Total PDFs in Folder: ${pdfFiles?.size()}
                     Match Count: ${successMsg}
                 """
-        if(TALLY_RUN_SUCCESS){
-            TALLY_RUN_SUCCESS_COUNT++
+            if(TALLY_RUN_SUCCESS){
+                TALLY_RUN_SUCCESS_COUNT++
+            }
+            GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
+            return finalReport
         }
-        GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
-        return finalReport
+        return "Fatal Error. No Files in Tiff FOlder or Tiff Folder Not found ${tifFolder}"
     }
-
     static String tallyItem(File tifSubDirectory ,File pdfFile, int tifCount, int index){
         int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
         GenericUtil.garbageCollectAndPrintMemUsageInfo()
