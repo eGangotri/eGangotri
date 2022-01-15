@@ -25,12 +25,14 @@ class Tally {
                 log.error("No Such folder ${args[0]}")
             }
             String src = "${PdfUtil.NMM_PATH}${dest.name}"
-            log.info("Mega Tally for ${src} ${dest} started @ ${new Date()}")
+            log.info("Mega Tally for ${src} ${dest} started @ ${new Date()}") //
+            log.info("MMake sure yarn run move-merged-pdfs has been used to flatten the files before running mega-tally") // yarn run move-merged-pdfs
             MegaTally.execute(dest.absolutePath)
             int dirCount = GenericUtil.getDirectories(new File(src)).length
-            log.info("Mega Tally for  ${src} ${dest} ended @ ${new Date()} with " +
-                    "" + (TALLY_RUN_SUCCESS_COUNT == dirCount) ? "100% Success" : "" +
-                    "Failures: ${TALLY_RUN_SUCCESS_COUNT - dirCount} of ${dirCount}")
+            String finalSuccessMsg =
+                    (TALLY_RUN_SUCCESS_COUNT == dirCount) ? "100-% Success (${TALLY_RUN_SUCCESS_COUNT} == ${dirCount})" :
+                    "Failures: ${TALLY_RUN_SUCCESS_COUNT - dirCount} of ${dirCount}"
+            log.info("Mega Tally for ${src} ${dest} ended @ ${new Date()} with ${finalSuccessMsg}")
         }
         else {
             for(int i =0; i < args.length;i++){
@@ -60,7 +62,7 @@ class Tally {
             if (tifSubDirectory.isDirectory() && !inIgnoreList(tifSubDirectory)) {
                 index++
                 log.info("$index of ${tifDirFiles.size()})." +
-                        "Tally for Tif Folder ${tifSubDirectory.name}")
+                        "Tally for Tif Folder '${tifSubDirectory.name}'")
                 def tifs = tifSubDirectory.list({ d, f -> f ==~ /(?i).*.tif/ } as FilenameFilter)
                 int tifCount = tifs.size()
                 File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
@@ -87,7 +89,8 @@ class Tally {
         int tifDirFilesSize = tifDirFiles?.size()?:0
         if(tifDirFilesSize){
             boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (TallyPojo.MATCHING?.size() ?:0))
-            String successMsg = TALLY_RUN_SUCCESS?"100% Success": "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Items"
+            String successMsg = TALLY_RUN_SUCCESS?"100% Success (${tifDirFilesSize} === ${TallyPojo.MATCHING.size()})":
+                    "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Item(s)"
             String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
                     Tif Folder: ${tifFolder}                    
