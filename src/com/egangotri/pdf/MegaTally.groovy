@@ -12,14 +12,14 @@ class MegaTally {
         MegaTally.execute(args0,args1)
     }
 
-    static void execute(String args0, String args1){
-        List<File> tiffSrcs = GenericUtil.getDirectoriesSortedByName(args0)
+    static void execute(String pdfSrc){
+        List<File> pdfSrcs = GenericUtil.getDirectories(pdfSrc)
         Map<String,String> tallyMap = [:]
-        tiffSrcs.eachWithIndex(folder,counter) -> {
-            def hobbyMap = [(folder.getAbsolutePath()): "${args1}\\ramtek-${counter+1}"]
-            tallyMap.putAll(hobbyMap)
+        pdfSrcs.eachWithIndex(pdf,counter) -> {
+            LinkedHashMap<String,String> tmpMap =
+                    [ "${PdfUtil.extractTiffFolderName(pdf)}": "${pdf.absolutePath}"]
+            tallyMap.putAll(tmpMap)
         }
-        log.info("tiffSrcs ${tiffSrcs}")
         log.info("tallyMap ${tallyMap}")
         List<String> reports = []
         tallyMap.eachWithIndex { entry, index ->
@@ -28,8 +28,5 @@ class MegaTally {
             reports << Tally.tally(entry.key, entry.value)
         }
         log.info(reports.join("\n"))
-        File megaTallyLogs = new File("MegaTallyLog-${new Date()}")
-        megaTallyLogs << "${reports}\n"
-
     }
 }
