@@ -31,8 +31,7 @@ class TallyPojo {
                     Reconvert (Uncreated) ${NOT_CREATED.join("\n")}
                     Reconvert (Erroneous Page Count) ${NON_MATCHING}
                     Reconvert (Exception Encountered) ${EXCEPTION_ENCOUNTERED}
-                    Error Margin: ${tifDirFiles.size()} - ${MATCHING.size()} = ${tifDirFiles.size() - MATCHING.size()}
-
+                    Error Margin:  ${tifDirFiles.size() - MATCHING.size()} [${tifDirFiles.size()} - ${MATCHING.size()}]
 """
     }
 }
