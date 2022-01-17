@@ -244,7 +244,6 @@ class ArchiveHandler {
         if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
             WebElement collectionSpan = driver.findElement(By.id("collection"))
             new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
-
             collectionSpan.click()
             Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
             collDropDown.selectByValue("data:opensource_media")
