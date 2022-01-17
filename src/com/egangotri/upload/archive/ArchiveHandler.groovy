@@ -15,6 +15,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.UnhandledAlertException
+
+import java.time.Duration
+
 import static com.egangotri.upload.util.ArchiveUtil.*
 
 @Slf4j
@@ -218,10 +221,9 @@ class ArchiveHandler {
         driver.navigate().to(uploadLink)
         driver.get(uploadLink)
 
-        WebDriverWait waitForFileButtonInitial = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-        //log.info("waiting for ${UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON} to be clickable")
+        WebDriverWait waitForChooseFilesToUploadToShowUp = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
         try {
-            waitForFileButtonInitial.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
+            waitForChooseFilesToUploadToShowUp.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
@@ -230,51 +232,28 @@ class ArchiveHandler {
             throw new Exception("Cant click Choose-Files-To-Upload Button")
         }
 
-        try {
-            UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
-            //log.info("waiting for ${UploadUtils.LICENSE_PICKER_DIV} to be clickable")
-            new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-        }
-        catch (WebDriverException webDriverException) {
-            log.error("\tWebDriverException(1). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). while uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').(${webDriverException.message}) ")
-            UploadUtils.hitEscapeKey()
-            UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
-            try {
-                log.info("\tAttempt-2")
-                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("\t'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
-            }
-            catch (WebDriverException webDriverException2) {
-                log.error("\tWebDriverException(2). Couldnt find (${UploadUtils.LICENSE_PICKER_DIV}). \nwhile uploading('${UploadUtils.stripFilePath(fileNameWithPath)}').\n(${webDriverException2.message}) ")
-                log.info("\tAttempt-3")
-                UploadUtils.hitEscapeKey()
-                UploadUtils.clickChooseFilesToUploadButtonAndPasteFilePath(driver, fileNameWithPath)
-                new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
-                log.info("\t'${UploadUtils.stripFilePath(fileNameWithPath)}' must have succeeded if u see this")
-            }
-        }
-        new WebDriverWait(driver, EGangotriUtil.TIMEOUT_IN_TWO_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
+        UploadUtils.uploadFileUsingSendKeys(driver, fileNameWithPath)
+        new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions
+                .elementToBeClickable(By.id(UploadUtils.LICENSE_PICKER_DIV)))
 
         WebElement licPicker = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_DIV))
         licPicker.click()
-
-
         WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()
 
         if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
             WebElement collectionSpan = driver.findElement(By.id("collection"))
-            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
 
             collectionSpan.click()
             Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
             collDropDown.selectByValue("data:opensource_media")
         }
 
-        WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
 
-        WebDriverWait wait2 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
@@ -294,7 +273,7 @@ class ArchiveHandler {
                 pgUrlInputField.click()
                 pgUrlInputField.sendKeys(Keys.ENTER)
             }
-            WebDriverWait wait3 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            WebDriverWait wait3 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
             wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
             String identifierNowInTextBox = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
             ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
@@ -304,7 +283,7 @@ class ArchiveHandler {
         log.info("\tAccess Url: ${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}")
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
-        WebDriverWait wait4 = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+        WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))

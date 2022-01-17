@@ -126,11 +126,6 @@ class UploadUtils {
         robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
-    static void clickChooseFilesToUploadButtonAndPasteFilePath(ChromeDriver driver, String fileNameWithPath) {
-        //uploadFileUsingRobot(driver,fileNameWithPath)
-        uploadFileUsingSendKeys(driver, fileNameWithPath)
-    }
-
     static void uploadFileUsingSendKeys(ChromeDriver driver, String fileNameWithPath) {
         try {
             JavascriptExecutor js = (JavascriptExecutor) driver
@@ -138,34 +133,12 @@ class UploadUtils {
             js.executeScript("arguments[0].className='XXXX'", _hiddenDiv);
             js.executeScript("arguments[0].click()", _hiddenDiv);
             WebElement uploadElement = driver.findElement(By.id("file_input_initial"))
-            new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file_input_initial")))
+            new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file_input_initial")))
             uploadElement.sendKeys(fileNameWithPath);
         }
         catch (Exception e) {
             log.info("uploadFileUsingSendKeys", e)
         }
-    }
-
-    static void uploadFileUsingRobot(ChromeDriver driver, String fileNameWithPath) {
-        WebElement fileButtonInitial = driver.findElement(By.id(CHOOSE_FILES_TO_UPLOAD_BUTTON))
-        fileButtonInitial.click()
-        //log.info("$CHOOSE_FILES_TO_UPLOAD_BUTTON clicked")
-        // A short pause is a must and must be atleast a second
-        EGangotriUtil.sleepTimeInSeconds(1)
-
-        setClipboardData(fileNameWithPath)
-        //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot()
-        robot.keyPress(KeyEvent.VK_ENTER);
-        robot.keyRelease(KeyEvent.VK_ENTER);
-        robot.keyPress(KeyEvent.VK_CONTROL)
-        robot.keyPress(KeyEvent.VK_V)
-        robot.keyRelease(KeyEvent.VK_V)
-        robot.keyRelease(KeyEvent.VK_CONTROL)
-        Thread.sleep(100)
-        robot.keyPress(KeyEvent.VK_ENTER)
-        robot.keyRelease(KeyEvent.VK_ENTER)
-        EGangotriUtil.sleepTimeInSeconds(0.01)
     }
 
     static void setClipboardData(String string) {
@@ -379,24 +352,6 @@ class UploadUtils {
 
     static void closeBrowser(ChromeDriver driver) {
         driver.quit()
-    }
-
-    static void tabPasteFolderNameAndCloseUploadPopup(String fileName) {
-        log.info "$fileName  being pasted"
-        // A short pause, just to be sure that OK is selected
-        EGangotriUtil.sleepTimeInSeconds(1)
-        setClipboardData(fileName)
-        //native key strokes for CTRL, V and ENTER keys
-        Robot robot = new Robot()
-        robot.keyPress(KeyEvent.VK_TAB)
-        robot.keyRelease(KeyEvent.VK_TAB)
-
-        robot.keyPress(KeyEvent.VK_CONTROL)
-        robot.keyPress(KeyEvent.VK_V)
-        robot.keyRelease(KeyEvent.VK_V)
-        robot.keyRelease(KeyEvent.VK_CONTROL)
-        robot.keyPress(KeyEvent.VK_ENTER)
-        robot.keyRelease(KeyEvent.VK_ENTER)
     }
 
     static boolean checkAlert(ChromeDriver driver, Boolean accept = true) {

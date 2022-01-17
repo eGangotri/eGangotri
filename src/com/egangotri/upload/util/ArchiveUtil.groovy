@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.text.DecimalFormat
+import java.time.Duration
 
 @Slf4j
 class ArchiveUtil {
@@ -33,8 +34,8 @@ class ArchiveUtil {
                 println("going to $ARCHIVE_HOME")
                 driver.get(ARCHIVE_HOME)
                 println("reached $ARCHIVE_HOME")
-                new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
-                new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+                new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
+                new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
                 WebElement userMenu = driver.findElement(By.className("col-xs-12"))
                 ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
 //            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
@@ -48,7 +49,7 @@ class ArchiveUtil {
                 driver.navigate().to(archiveUserAccountUrl)
             }
             driver.get(archiveUserAccountUrl)
-            WebDriverWait webDriverWait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            WebDriverWait webDriverWait = new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
             WebElement resultsCount = driver.findElement(By.className("results_count"))
             if (resultsCount) {
@@ -276,8 +277,6 @@ class ArchiveUtil {
             pass.sendKeys(kuta)
             button.submit()
             EGangotriUtil.sleepTimeInSeconds(0.2)
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
-            //wait.until(ExpectedConditions.elementToBeClickable(By.className("user-info")))
             loginSucess = true
         }
         catch (Exception e) {

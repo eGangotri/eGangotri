@@ -41,7 +41,7 @@ class GoogleDriveHandler {
             id.sendKeys(Keys.RETURN)
 
 
-            WebDriverWait wait = new WebDriverWait(driver, EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)
+            WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
             wait.until(ExpectedConditions.elementToBeClickable(By.name("password")))
 
             WebElement pass = driver.findElement(By.name("password"))
@@ -66,7 +66,7 @@ class GoogleDriveHandler {
     static void uploadToDrive(ChromeDriver driver, String folderName) {
         driver.findElement(By.xpath("//div[contains(text(),'My Drive')]")).click()
         driver.findElement(By.xpath("/html/body/div[12]")).click()
-        UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
+        //UploadUtils.tabPasteFolderNameAndCloseUploadPopup(folderName)
     }
 
 }
