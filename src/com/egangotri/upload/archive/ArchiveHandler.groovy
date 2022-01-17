@@ -240,7 +240,6 @@ class ArchiveHandler {
         licPicker.click()
         WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()
-
         if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
             WebElement collectionSpan = driver.findElement(By.id("collection"))
             new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("collection")))

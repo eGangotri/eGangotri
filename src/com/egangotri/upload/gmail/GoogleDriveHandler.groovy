@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.*
 
+import java.time.Duration
+
 @Slf4j
 class GoogleDriveHandler {
     def static boolean login(Hashtable<String, String> metaDataMap, String loginProfile) {
@@ -41,7 +43,7 @@ class GoogleDriveHandler {
             id.sendKeys(Keys.RETURN)
 
 
-            WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
             wait.until(ExpectedConditions.elementToBeClickable(By.name("password")))
 
             WebElement pass = driver.findElement(By.name("password"))
