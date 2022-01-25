@@ -12,8 +12,10 @@ class Tally {
     static List ignoreList = ['otro']
     static String PDF = "pdf"
     static int INTRO_PAGE_ADJUSTMENT = 1
-    public static final MEGA_TYPE = 'mega'
+    static final MEGA_TYPE = 'mega'
     static TALLY_RUN_SUCCESS_COUNT = 0
+    static ArrayList<TallyPojo> MEGA_TALLY_OBJECT = []
+
     static void main(String[] args) {
         if(args && args.length > 1 && args.length % 2 != 0){
             log.info("Error Expected Pairs. Will Not Proceed")
@@ -33,6 +35,7 @@ class Tally {
                     (TALLY_RUN_SUCCESS_COUNT == dirCount) ? "100-% Success (${TALLY_RUN_SUCCESS_COUNT} == ${dirCount})" :
                     "Failures: ${TALLY_RUN_SUCCESS_COUNT - dirCount} of ${dirCount}"
             log.info("Mega Tally for ${src} ${dest} ended @ ${new Date()} with ${finalSuccessMsg}")
+            printMEGA_TALLY_OBJECT()
         }
         else {
             for(int i =0; i < args.length;i++){
@@ -49,7 +52,7 @@ class Tally {
     }
 
     static String tally(String tifFolder, String pdfFolder) {
-        TallyPojo.resetTallyObj()
+        TallyPojo tallyPojo = new TallyPojo()
         File tifDirectory = new File(tifFolder)
         log.info("\nTally for folders in  ${tifDirectory} started")
 
@@ -68,29 +71,29 @@ class Tally {
                 File pdfFile = new File(pdfFolder, tifSubDirectory.name + ".pdf")
                 if (!pdfFile.exists()) {
                     log.info("****Error was never created\n ${pdfFile}");
-                    TallyPojo.NOT_CREATED.push("'${tifSubDirectory.name}'");
+                    tallyPojo.NOT_CREATED.push("'${tifSubDirectory.name}'");
                     continue;
                 }
                 try {
-                    tallyItem(tifSubDirectory, pdfFile, tifCount, index)
+                    tallyItem(tifSubDirectory, pdfFile, tifCount, index, tallyPojo)
                 }
                 catch (Exception e) {
                     log.info("getPdfPageCount Exception", e)
-                    TallyPojo.EXCEPTION_ENCOUNTERED.push("'${pdfFile}")
+                    tallyPojo.EXCEPTION_ENCOUNTERED.push("'${pdfFile}")
                     continue
                 }
 
             }
         }
-        return tallyReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles)
+        return tallyReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles,tallyPojo)
     }
 
-    static String tallyReport(String tifFolder,String pdfFolder,List tifDirFiles,List pdfFiles){
+    static String tallyReport(String tifFolder,String pdfFolder,List tifDirFiles,List pdfFiles, TallyPojo tallyPojo){
         int tifDirFilesSize = tifDirFiles?.size()?:0
         if(tifDirFilesSize){
-            boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (TallyPojo.MATCHING?.size() ?:0))
-            String successMsg = TALLY_RUN_SUCCESS?"100% Success (${tifDirFilesSize} === ${TallyPojo.MATCHING.size()})":
-                    "Failure of: ${tifDirFilesSize - TallyPojo.MATCHING.size()} Item(s)"
+            boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (tallyPojo.MATCHING?.size() ?:0))
+            String successMsg = TALLY_RUN_SUCCESS?"100% Success (${tifDirFilesSize} === ${tallyPojo.MATCHING.size()})":
+                    "Failure of: ${tifDirFilesSize - tallyPojo.MATCHING.size()} Item(s)"
             String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
                     Tif Folder: ${tifFolder}                    
@@ -101,12 +104,13 @@ class Tally {
             if(TALLY_RUN_SUCCESS){
                 TALLY_RUN_SUCCESS_COUNT++
             }
-            GenericUtil.addReport(TallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
+            GenericUtil.addReport(tallyPojo.genFinalReport(tifFolder,pdfFolder,tifDirFiles,pdfFiles))
+            MEGA_TALLY_OBJECT.add(tallyPojo)
             return finalReport
         }
         return "Fatal Error. No Files in Tiff FOlder or Tiff Folder Not found ${tifFolder}"
     }
-    static String tallyItem(File tifSubDirectory ,File pdfFile, int tifCount, int index){
+    static String tallyItem(File tifSubDirectory ,File pdfFile, int tifCount, int index, TallyPojo tallyPojo){
         int pdfPageCount = PdfImageCounter.getPdfImageCount(pdfFile)
         GenericUtil.garbageCollectAndPrintMemUsageInfo()
         log.info("""${index}). Checking Tiff Count (${tifCount}) in 
@@ -114,16 +118,16 @@ class Tally {
                             ${GenericUtil.dualEllipsis(pdfFile.name)} 
                             ${pdfPageCount}""");
         if (pdfPageCount === tifCount) {
-            TallyPojo.MATCHING.push("'${pdfFile}");
+            tallyPojo.MATCHING.push("'${pdfFile}");
             GenericUtil.addReport("""pdf (${pdfPageCount}) 
     ${pdfFile.name} 
     Page Count ==  PNG Count
     ${(tifCount)}\n""");
         } else {
             if (pdfPageCount > 0) {
-                TallyPojo.NON_MATCHING.push("'${pdfFile}");
+                tallyPojo.NON_MATCHING.push("'${pdfFile}");
             } else {
-                TallyPojo.UNCHECKABLE.push("""${pdfFile.name} 
+                tallyPojo.UNCHECKABLE.push("""${pdfFile.name} 
                                         should have ${tifCount + INTRO_PAGE_ADJUSTMENT} pages""");
             }
             GenericUtil.addReport("""**** PDF Count  (${pdfPageCount})
@@ -139,5 +143,16 @@ class Tally {
             absPath.containsIgnoreCase(ignorableKeyword)
         }
         return invalid?.size() > 0
+    }
+
+    static void printMEGA_TALLY_OBJECT(){
+        MEGA_TALLY_OBJECT.each({ TallyPojo tp ->{
+            if(tp.ERROR_MARGIN !=0 ){
+                log.info("Tally Error Detected*** ${tp.TIF_FOLDER} has ErrorMargin ${tp.ERROR_MARGIN}")
+            }
+        }})
+    log.info("""Final Mega Tally Report 
+                   Cumulative Error Margin ${MEGA_TALLY_OBJECT*.ERROR_MARGIN.sum()}
+""")
     }
 }

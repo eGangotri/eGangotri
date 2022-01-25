@@ -35,6 +35,7 @@ class EGangotriPDFMerger {
        else{
             exec(ROOT_FOLDER)
         }
+        Tally.printMEGA_TALLY_OBJECT()
     }
 
     static void exec(String _mergeable){
