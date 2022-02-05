@@ -25,6 +25,7 @@ class LoginToArchive {
             ChromeDriver driver = new ChromeDriver()
             if(ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)){
                 getResultsCount(driver, true)
+                UploadUtils.maximizeBrowser(driver)
             }
         }
         EGangotriUtil.recordProgramEnd()

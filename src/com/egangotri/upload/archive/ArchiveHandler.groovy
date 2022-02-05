@@ -121,7 +121,7 @@ class ArchiveHandler {
                     }
                 }
                 getResultsCount(driver, false)
-                UploadUtils.minimizeBrowser(driver)
+                UploadUtils.maximizeBrowser(driver)
             } else {
                 log.info "No File uploadable for profile $archiveProfile"
             }

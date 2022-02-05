@@ -345,9 +345,10 @@ class UploadUtils {
         return true
     }
 
-    static void minimizeBrowser(ChromeDriver driver) {
+    static void maximizeBrowser(ChromeDriver driver) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.blur()");
+        driver.manage().window().maximize();
     }
 
     static void closeBrowser(ChromeDriver driver) {
