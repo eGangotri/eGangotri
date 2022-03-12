@@ -35,7 +35,7 @@ class ArchiveUtil {
                 driver.get(ARCHIVE_HOME)
                 println("reached $ARCHIVE_HOME")
                 new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
-                new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
+                new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
                 WebElement userMenu = driver.findElement(By.className("col-xs-12"))
                 ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
 //            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
@@ -49,7 +49,7 @@ class ArchiveUtil {
                 driver.navigate().to(archiveUserAccountUrl)
             }
             driver.get(archiveUserAccountUrl)
-            WebDriverWait webDriverWait = new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
+            WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
             webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
             WebElement resultsCount = driver.findElement(By.className("results_count"))
             if (resultsCount) {
@@ -338,7 +338,9 @@ class ArchiveUtil {
         List<String> allUploadables = []
         profiles.eachWithIndex { String profile, index ->
             List<String> _files = FileRetrieverUtil.getUploadablesForProfile(profile)
-            allUploadables.addAll(_files)
+            if(_files){
+                allUploadables.addAll(_files)
+            }
         }
         return allUploadables
     }
