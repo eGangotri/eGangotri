@@ -23,15 +23,16 @@ class BookTitles {
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
 
-    static List ignoreList = ['otro']
+    static List ignoreList = ['xxxx']
     static String PDF = "pdf"
 
     static StringBuilder MEGA_REPORT = new StringBuilder("")
 
     static boolean DONT_MENTION_SUB_FOLDERS = false;
     static boolean INCLUDE_NUMBER_OF_PAGES = true
-    static boolean includeIndex = true
-    static boolean onlyRootDirAndNoSubDirs = false
+    static boolean INCLUDE_INDEX = true
+    static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
+    static boolean ONLY_PDFS = true
 
     static void main(String[] args) {
         execute(args)
@@ -78,7 +79,7 @@ class BookTitles {
         addToReportAndPrint("Reading files: $FOLDER_NAME\n")
         for(String folder: FOLDER_NAME){
             //if only the directory specified
-            if (BookTitles.onlyRootDirAndNoSubDirs) {
+            if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
                 BookTitles.processOneFolder(folder)
             } else {
                 //if everything
@@ -127,7 +128,9 @@ class BookTitles {
             if (!file.isDirectory() && !inIgnoreList(file)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 try{
-                    printFileName(folderAbsolutePath, file, ++START_INDEX)
+                    if(!ONLY_PDFS || ( ONLY_PDFS && file.name.endsWith(PDF))) {
+                        printFileName(folderAbsolutePath, file, ++START_INDEX)
+                    }
                 }
                 catch(Exception e){
                     log.info("Error reading file. will continue" + e)
@@ -175,7 +178,7 @@ class BookTitles {
             numberOfPages = pdfDoc.getNumberOfPages()
             incrementTotalPageCount(numberOfPages)
         }
-        String _report = "${includeIndex ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
+        String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
         addToReportAndPrint(_report)
         incrementFileCount()
     }
