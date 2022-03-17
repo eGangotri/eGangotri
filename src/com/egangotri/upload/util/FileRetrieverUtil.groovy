@@ -20,7 +20,7 @@ class FileRetrieverUtil {
             return files
         }
         else{
-            log.info("archiveProfile: ${archiveProfile} couldnt fetch corresponding folder\n Exiting with exception");
+            log.info("archiveProfile: ${archiveProfile} couldnt fetch corresponding folder${_folder}\n Exiting with exception");
             return []
         }
     }

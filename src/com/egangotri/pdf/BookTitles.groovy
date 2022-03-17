@@ -19,7 +19,7 @@ class BookTitles {
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
-
+    static int START_INDEX = 0
     static List ignoreList = ['otro']
 
     static String PDF = "pdf"
@@ -95,7 +95,6 @@ class BookTitles {
         if(TOTAL_NUM_PAGES>0){
             log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES)} files")
         }
-        int index = 0
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
 
@@ -108,7 +107,7 @@ class BookTitles {
             if (!file.isDirectory() && !inIgnoreList(file)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 try{
-                    printFileName(folderAbsolutePath, file, ++index)
+                    printFileName(folderAbsolutePath, file, ++START_INDEX)
                 }
                 catch(Exception e){
                     log.info("Error reading file. will continue" + e)
