@@ -20,14 +20,18 @@ class BookTitles {
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
     static int START_INDEX = 0
-    static List ignoreList = ['otro']
+    static int TOTAL_FILES = 0
+    static int TOTAL_NUM_PAGES = 0
 
+    static List ignoreList = ['otro']
     static String PDF = "pdf"
+
+    static StringBuilder MEGA_REPORT = new StringBuilder("")
+
+    static boolean DONT_MENTION_SUB_FOLDERS = false;
     static boolean INCLUDE_NUMBER_OF_PAGES = true
     static boolean includeIndex = true
     static boolean onlyRootDirAndNoSubDirs = false
-    static int TOTAL_FILES = 0
-    static int TOTAL_NUM_PAGES = 0
 
     static void main(String[] args) {
         execute(args)
@@ -71,27 +75,43 @@ class BookTitles {
                 afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour*60*60*1000)
             }
         }
-        log.info("args0:$FOLDER_NAME")
-
+        addToReportAndPrint("Reading files: $FOLDER_NAME\n")
         for(String folder: FOLDER_NAME){
             //if only the directory specified
             if (BookTitles.onlyRootDirAndNoSubDirs) {
-                new BookTitles().processOneFolder(folder)
+                BookTitles.processOneFolder(folder)
             } else {
                 //if everything
-                new BookTitles().procAdInfinitum(folder)
+                BookTitles.procAdInfinitum(folder)
             }
         }
-        log.info("Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}")
+        String totalStats = "Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}";
+        addToReportAndPrint(totalStats)
+        writeToFile()
     }
+    static void writeToFile(){
+        String fileName = (FOLDER_NAME.collect {return new File(it)})*.name.join("_")
+        File writeableFile = new File(System.getProperty("user.home"),"${fileName}_${new Date().time}.txt")
+        writeableFile << MEGA_REPORT
+        log.info("written to file: ${writeableFile.name} ")
+    }
+    static void addToReportAndPrint(String _report,onlyLogDontCommitToFile = false){
+        log.info(_report)
+        if(!onlyLogDontCommitToFile){
+            MEGA_REPORT.append("$_report\n")
+        };
+    }
+
     static String formatInteger(Integer _formattable){
         def pattern = "##,##,##,###"
         def moneyform = new DecimalFormat(pattern)
         return moneyform.format(_formattable.toLong())
     }
-    void processOneFolder(String folderAbsolutePath) {
+    static void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        log.info("\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : ''))
+        String readingFolder = "\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : '');
+        addToReportAndPrint(readingFolder,DONT_MENTION_SUB_FOLDERS)
+
         if(TOTAL_NUM_PAGES>0){
             log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES)} files")
         }
@@ -132,7 +152,7 @@ class BookTitles {
      * @param folderAbsolutePath
      */
 
-    void procAdInfinitum(String folderAbsolutePath) {
+    static void procAdInfinitum(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
 
         //Process Root Folder
@@ -146,7 +166,7 @@ class BookTitles {
         }
     }
 
-    void printFileName(String folderAbsolutePath, File file, int index) {
+    static void printFileName(String folderAbsolutePath, File file, int index) {
         int numberOfPages = 0
 
         if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
@@ -155,16 +175,16 @@ class BookTitles {
             numberOfPages = pdfDoc.getNumberOfPages()
             incrementTotalPageCount(numberOfPages)
         }
-
-        log.info("${includeIndex ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}")
+        String _report = "${includeIndex ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
+        addToReportAndPrint(_report)
         incrementFileCount()
     }
 
-    void incrementFileCount() {
+    static void incrementFileCount() {
         TOTAL_FILES++
     }
 
-    void incrementTotalPageCount(int numPagesToIncrement) {
+    static void incrementTotalPageCount(int numPagesToIncrement) {
         TOTAL_NUM_PAGES += numPagesToIncrement
     }
 
