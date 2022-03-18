@@ -1,16 +1,19 @@
 //applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe"]
 applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=resources${File.separator}chromedriver.exe"]
 
-def uploadToArchiveArgs = ["KKSU"]
-    def FOLDER_TO_GENERATE_SNAP2HTML_OF = "E:\\"
-    task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = "com.egangotri.upload.archive.UploadToArchive"
-        jvmArgs = applicationDefaultJvmArgs
-        /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
-       // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
-        args = [*uploadToArchiveArgs]
-    }
+def uploadToArchiveArgs = ["BLK"]
+//,"KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM", "BV", "MB"/* "LBS",  "JNGM_MANU", "VN1", "VN2",
+// "JNGM" , "SARVESH", "SMP_PHD", "JNGM_K"
+//  "VED_MANDIR", "SANJEEVANI" ,"EGB" ,"ANON5" ,"PSTK_DVTA", "SARVESH", "EGM"*/]
+def FOLDER_TO_GENERATE_SNAP2HTML_OF = "C:\\Treasures47"
+task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.UploadToArchive"
+    jvmArgs = applicationDefaultJvmArgs
+    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
+   // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
+    args = [*uploadToArchiveArgs]
+}
 
     task preUploadReview(dependsOn: 'classes', type: JavaExec) {
         classpath = sourceSets.main.runtimeClasspath
