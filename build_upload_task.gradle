@@ -1,3 +1,4 @@
+//Download from https://chromedriver.chromium.org/downloads
 //applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe"]
 applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=resources${File.separator}chromedriver.exe"]
 
