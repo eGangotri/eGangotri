@@ -92,8 +92,8 @@ class BookTitles {
     }
 
     static void writeToFile() {
-        String fileName = (FOLDER_NAME.collect { return new File(it) })*.name.join("_")
-        + "MegaList_" +(ONLY_PDFS? "_pdfs_only" : "_all_")
+        String _folderNames = (FOLDER_NAME.collect { return new File(it) })*.name.join("_")
+        String fileName = _folderNames + "_MegaList_" +(ONLY_PDFS? "pdfs_only" : "all")
         File writeableFile = new File(System.getProperty("user.home"), "${fileName}_${new Date().time}.txt")
         writeableFile << MEGA_REPORT
         log.info("written to file: ${writeableFile.name} ")
