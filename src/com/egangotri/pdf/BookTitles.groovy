@@ -57,12 +57,12 @@ class BookTitles {
         if (afterDate) {
             if (afterDate.toLowerCase().startsWith("today")) {
                 Calendar date = new GregorianCalendar();
-                if(afterDate.contains("-")){
-                    try{
-                        int diff = -1*Integer.parseInt(afterDate.split("-")[1].trim())
-                        date.add(Calendar.DAY_OF_YEAR,diff)
+                if (afterDate.contains("-")) {
+                    try {
+                        int diff = -1 * Integer.parseInt(afterDate.split("-")[1].trim())
+                        date.add(Calendar.DAY_OF_YEAR, diff)
                     }
-                    catch(Exception e){
+                    catch (Exception e) {
                         log.error("parse error", e)
                     }
                 }
@@ -70,56 +70,60 @@ class BookTitles {
                 date.set(Calendar.MINUTE, 0);
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
-                afterDate =  new SimpleDateFormat("dd-MMM-yy").format(date.time)
+                afterDate = new SimpleDateFormat("dd-MMM-yy").format(date.time)
                 afterDateAsLong = date.time.time
             } else {
-                afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour*60*60*1000)
+                afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour * 60 * 60 * 1000)
             }
         }
         addToReportAndPrint("Reading files: $FOLDER_NAME\n")
-        for(String folder: FOLDER_NAME){
+        for (String folder : FOLDER_NAME) {
             //if only the directory specified
             if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
-                BookTitles.processOneFolder(folder)
+                processOneFolder(folder)
             } else {
                 //if everything
-                BookTitles.procAdInfinitum(folder)
+                procAdInfinitum(folder)
             }
         }
         String totalStats = "Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}";
         addToReportAndPrint(totalStats)
         writeToFile()
     }
-    static void writeToFile(){
-        String fileName = (FOLDER_NAME.collect {return new File(it)})*.name.join("_")
-        File writeableFile = new File(System.getProperty("user.home"),"${fileName}_${new Date().time}.txt")
+
+    static void writeToFile() {
+        String fileName = (FOLDER_NAME.collect { return new File(it) })*.name.join("_")
+        + "MegaList_" +(ONLY_PDFS? "_pdfs_only" : "_all_")
+        File writeableFile = new File(System.getProperty("user.home"), "${fileName}_${new Date().time}.txt")
         writeableFile << MEGA_REPORT
         log.info("written to file: ${writeableFile.name} ")
     }
-    static void addToReportAndPrint(String _report,onlyLogDontCommitToFile = false){
+
+    static void addToReportAndPrint(String _report, onlyLogDontCommitToFile = false) {
         log.info(_report)
-        if(!onlyLogDontCommitToFile){
+        if (!onlyLogDontCommitToFile) {
             MEGA_REPORT.append("$_report\n")
         };
     }
 
-    static String formatInteger(Integer _formattable){
+    static String formatInteger(Integer _formattable) {
         def pattern = "##,##,##,###"
         def moneyform = new DecimalFormat(pattern)
         return moneyform.format(_formattable.toLong())
     }
+
     static void processOneFolder(String folderAbsolutePath) {
         File directory = new File(folderAbsolutePath)
-        String readingFolder = "\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour>0 ? " ${afterHour}:00 Hours" : '');
-        addToReportAndPrint(readingFolder,DONT_MENTION_SUB_FOLDERS)
+        String readingFolder = "\nReading Folder ${directory}" + (afterDateAsLong ? " for Files created after ${afterDate}" : '') + (afterHour > 0 ? " ${afterHour}:00 Hours" : '');
+        addToReportAndPrint(readingFolder, DONT_MENTION_SUB_FOLDERS)
 
-        if(TOTAL_NUM_PAGES>0){
+        if (TOTAL_NUM_PAGES > 0) {
             log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES)} files")
         }
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
 
-            if(afterDateAsLong){
+            if (afterDateAsLong) {
                 BasicFileAttributes attr = Files.readAttributes(file.toPath(),
                         BasicFileAttributes.class)
                 createDateAsLong = attr.creationTime().toMillis()
@@ -127,19 +131,19 @@ class BookTitles {
 
             if (!file.isDirectory() && !inIgnoreList(file)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
-                try{
-                    if(!ONLY_PDFS || ( ONLY_PDFS && file.name.endsWith(PDF))) {
+                try {
+                    if (!ONLY_PDFS || (ONLY_PDFS && file.name.endsWith(PDF))) {
                         printFileName(folderAbsolutePath, file, ++START_INDEX)
                     }
                 }
-                catch(Exception e){
+                catch (Exception e) {
                     log.info("Error reading file. will continue" + e)
                 }
             }
         }
     }
 
-    static boolean inIgnoreList(File file){
+    static boolean inIgnoreList(File file) {
         String absPath = file.absolutePath.toString()
         def invalid = ignoreList.findAll { ignorableKeyword ->
             absPath.containsIgnoreCase(ignorableKeyword)
