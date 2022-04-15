@@ -51,15 +51,24 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["EGM" ]
+    args = ["SV_SHASTRI" ]
 }
 
+task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.EditFilesInArchive"
+    jvmArgs = applicationDefaultJvmArgs
+    //if last argument is numeric
+    // then it will be treated as the number of items you want to edit
+    //default is 10
+    args = [  "SV_SHASTRI", 6]
+}
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["JNGM", "LBS" ,"false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
+    args = [ "SV_SHASTRI","false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -86,7 +95,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "E:\\ramtek4Y"]
+    args = [ "C:\\Treasures47"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
