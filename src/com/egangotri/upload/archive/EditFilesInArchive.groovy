@@ -35,8 +35,13 @@ class EditFilesInArchive {
                 def attributeList =
                         driver.findElements(By.xpath("//div[@class='item-ia hov']"))
                                 *.getAttribute("data-id")
-                MAX_ITEMS_RETRIEVABLE = attributeList.size()>MAX_ITEMS_RETRIEVABLE
-                        ?MAX_ITEMS_RETRIEVABLE:attributeList.size();
+                if(MAX_ITEMS_RETRIEVABLE== -1) {
+                    MAX_ITEMS_RETRIEVABLE = attributeList.size()
+                }
+                else{
+                    MAX_ITEMS_RETRIEVABLE = attributeList.size()>MAX_ITEMS_RETRIEVABLE
+                            ?MAX_ITEMS_RETRIEVABLE:attributeList.size()
+                };
 
                 log.info "MAX_ITEMS_RETRIEVABLE ${MAX_ITEMS_RETRIEVABLE}"
                 attributeList?.take(MAX_ITEMS_RETRIEVABLE)?.forEach( dataId -> {
@@ -47,7 +52,8 @@ class EditFilesInArchive {
                         UploadUtils.switchToLastOpenTab(driver)
                         driver.navigate().to(editableUrl)
                         driver.get(editableUrl)
-                    }
+                        doFollowingEditTasks(driver)
+                        }
                     catch(Exception e){
                         log.info("exception handling dataId ${dataId}",e)
                     }
@@ -58,6 +64,20 @@ class EditFilesInArchive {
         System.exit(0)
     }
 
+    /**
+     * provide customized tasks for specific work
+     * @param driver
+     * @return
+     */
+    static def doFollowingEditTasks(ChromeDriver driver){
+        task1(driver)
+    }
+    static def task1(ChromeDriver driver){
+        def element = driver.findElementByName('field_default_subject')
+        element.clear()
+        //element.sendKeys("Colllection")
+        //driver.findElementByClassName("btn-archive").click()
+    }
 
 }
 

@@ -61,7 +61,8 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     //if last argument is numeric
     // then it will be treated as the number of items you want to edit
     //default is 10
-    args = [  "SV_SHASTRI", 6]
+    //if -1 it will open all
+    args = [  "SV_SHASTRI", -1]
 }
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
