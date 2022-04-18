@@ -71,23 +71,21 @@ class GetFirstNPagesFromPdf {
     }
 
     static readAndUsePdf(File pdfFileName, File outputFile){
-        Document document = new Document();
+        Document outputDocument = new Document()
+        PdfWriter writer = PdfWriter.getInstance(outputDocument,
+                new FileOutputStream(outputFile))
+        outputDocument.open()
 
-        PdfWriter writer = PdfWriter.getInstance(document,
-                new FileOutputStream(outputFile));
-        document.open();
-        PdfReader reader = new PdfReader(pdfFileName.getAbsolutePath());
-        int n = reader.getNumberOfPages();
-        PdfImportedPage page;
+        PdfReader reader = new PdfReader(pdfFileName.getAbsolutePath())
+        int numberOfPages = reader.getNumberOfPages()
+        PdfImportedPage page
         // Go through all pages
-        for (int i = 1; i <= n; i++) {
-            if (i <= PAGE_LIMIT) {
-                page = writer.getImportedPage(reader, i);
-                Image instance = Image.getInstance(page);
-                document.add(instance);
-            }
+        for (int i = 1; i <= (PAGE_LIMIT<= numberOfPages ? PAGE_LIMIT: numberOfPages) ; i++) {
+            page = writer.getImportedPage(reader, i)
+            Image instance = Image.getInstance(page)
+            outputDocument.add(instance)
         }
-        document.close();
+        outputDocument.close()
     }
 
     /**
