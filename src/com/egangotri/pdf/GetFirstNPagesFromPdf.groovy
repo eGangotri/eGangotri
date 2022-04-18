@@ -40,11 +40,32 @@ class GetFirstNPagesFromPdf {
         }
         log.info("created outputFolderAsFile ${outputFolderAsFile.getAbsolutePath()}")
         log.info("Reading files: $MAIN_FOLDER\n")
+        processOneFolder(MAIN_FOLDER)
         for (File folder : MAIN_FOLDER.listFiles()) {
             procAdInfinitum(folder)
         }
     }
 
+    /**
+     * if you have one folder and you want it to go one level deep to process multiple foldrs within
+     */
+
+    /**
+     * Recursive Method
+     * @param folderAbsolutePath
+     */
+
+    static void procAdInfinitum(File directory) {
+        //Process Root Folder
+        processOneFolder(directory)
+
+        //Then get in Sub-directories and process them
+        for (File subDirectory : directory.listFiles()) {
+            if (subDirectory.isDirectory()) {
+                procAdInfinitum(subDirectory)
+            }
+        }
+    }
     static void processOneFolder(File directory) {
         log.info("\nReading Folder ${directory}")
         int counter = 0
@@ -88,24 +109,4 @@ class GetFirstNPagesFromPdf {
         outputDocument.close()
     }
 
-    /**
-     * if you have one folder and you want it to go one level deep to process multiple foldrs within
-     */
-
-    /**
-     * Recursive Method
-     * @param folderAbsolutePath
-     */
-
-    static void procAdInfinitum(File directory) {
-        //Process Root Folder
-        processOneFolder(directory)
-
-        //Then get in Sub-directories and process them
-        for (File subDirectory : directory.listFiles()) {
-            if (subDirectory.isDirectory()) {
-                procAdInfinitum(subDirectory)
-            }
-        }
-    }
 }
