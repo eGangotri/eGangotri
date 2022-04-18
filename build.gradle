@@ -104,7 +104,7 @@ task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.GetFirstNPagesFromPdf"
     //args = [folder, numberOfPages]
-    args = [ "D:\\Downloads\\Bengali", 5]
+    args = [ "D:\\Downloads\\Bengali_truncated", 8]
 }
 
 task tally(dependsOn: 'classes', type: JavaExec) {
