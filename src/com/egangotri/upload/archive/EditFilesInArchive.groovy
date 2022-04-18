@@ -78,6 +78,21 @@ class EditFilesInArchive {
         //element.sendKeys("Colllection")
         //driver.findElementByClassName("btn-archive").click()
     }
-
+    static def task2(ChromeDriver driver){
+        def element3 = driver.findElementByName('field_custom_value_3')
+        def element4 = driver.findElementByName('field_custom_value_4')
+        if(element3.text == "Charudev Shastri Writings"){
+            element3.clear()
+            element3.sendKeys("Charu Deva Shastri Writings")
+            log.info("changing")
+        }
+        if(element4.text == "Charudev Shastri-Satya Vrat Shastri Writings"){
+            element4.clear()
+            element4.sendKeys("Charu Deva Shastri-Satya Vrat Shastri Writings")
+            log.info("changing4")
+        }
+        driver.findElementByClassName("btn-archive").click()
+    }
+    //
 }
 
