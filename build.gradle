@@ -62,14 +62,14 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     // then it will be treated as the number of items you want to edit
     //default is 10
     //if -1 it will open all
-    args = [  "SV_SHASTRI", -1]
+    args = [  "SV_SHASTRI", 2]
 }
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "SV_SHASTRI","false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
+    args = [ "EGM" ,"false"] //"VN1", "VN2","JNGM", "JNGM_MANU","PUNEET", "PSTK_DVTA" ,"AA","LBS"
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -98,6 +98,13 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //
     args = [ "C:\\Treasures47"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
+}
+
+task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.pdf.GetFirstNPagesFromPdf"
+    //args = [folder, numberOfPages]
+    args = [ "D:\\Downloads\\Bengali", 5]
 }
 
 task tally(dependsOn: 'classes', type: JavaExec) {
