@@ -12,11 +12,13 @@ import groovy.util.logging.Slf4j
 /**
  * Created by user on 1/18/2016.
  * Make sure
- * The chromedriver binary is in the $HOME_DRECTORY/eGangotri, or
- * use VM Argument -Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe
+ * The chromedriver binary is in the latestJarForUse/chromedriver,
+ * 
+ * or
+ * use VM Argument -Dwebdriver.chrome.driver=latestJarForUse${File.separator}chromedriver${File.separator}chromedriver.exe
  * chromedriver.exe
- C:\ws\eGangotri>java -Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
- java -Dwebdriver.chrome.driver=/Users/user/eGangotri/chromedriver\chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
+ C:\ws\eGangotri>java -Dwebdriver.chrome.driver=latestJarForUse${File.separator}chromedriver${File.separator}chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
+ java -Dwebdriver.chrome.driver=/latestJarForUse/chromedriver\chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
  ** Dont use \ followed by a U
 
  */

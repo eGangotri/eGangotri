@@ -23,7 +23,7 @@ class BookTitles {
     static int TOTAL_FILES = 0
     static int TOTAL_NUM_PAGES = 0
 
-    static List ignoreList = ['xxxx']
+    static List ignoreList = ["C:\\Treasures48\\_freeze\\jngm_kan\\retry_dont"]
     static String PDF = "pdf"
 
     static StringBuilder MEGA_REPORT = new StringBuilder("")
