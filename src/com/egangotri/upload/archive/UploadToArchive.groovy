@@ -12,15 +12,12 @@ import groovy.util.logging.Slf4j
 /**
  * Created by user on 1/18/2016.
  * Make sure
- * The chromedriver binary is in the latestJarForUse/chromedriver,
- * 
- * or
- * use VM Argument -Dwebdriver.chrome.driver=latestJarForUse${File.separator}chromedriver${File.separator}chromedriver.exe
- * chromedriver.exe
- C:\ws\eGangotri>java -Dwebdriver.chrome.driver=latestJarForUse${File.separator}chromedriver${File.separator}chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
+ * The chromedriver binary is in the resources${File.separator}chromedriver.exe,
+ * use VM Argument -Dwebdriver.chrome.driver=resources${File.separator}chromedriver.exe
+
+ C:\ws\eGangotri>java -Dwebdriver.chrome.driver=resources${File.separator}chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
  java -Dwebdriver.chrome.driver=/latestJarForUse/chromedriver\chromedriver.exe -jar ./build/libs/eGangotri.jar "PRFL-1"
  ** Dont use \ followed by a U
-
  */
 @Slf4j
 class UploadToArchive {
