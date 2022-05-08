@@ -70,7 +70,7 @@ class EditFilesInArchive {
      * @return
      */
     static def doFollowingEditTasks(ChromeDriver driver){
-        task1(driver)
+        //task1(driver)
     }
     static def task1(ChromeDriver driver){
         def element = driver.findElementByName('field_default_subject')

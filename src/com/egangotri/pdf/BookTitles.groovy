@@ -96,7 +96,7 @@ class BookTitles {
         String fileName = _folderNames + "_MegaList_" +(ONLY_PDFS? "pdfs_only" : "all")
         File writeableFile = new File(System.getProperty("user.home"), "${fileName}_${new Date().time}.txt")
         writeableFile << MEGA_REPORT
-        log.info("written to file: ${writeableFile.name} ")
+        log.info("written to file: ${writeableFile.getAbsolutePath()} ")
     }
 
     static void addToReportAndPrint(String _report, onlyLogDontCommitToFile = false) {

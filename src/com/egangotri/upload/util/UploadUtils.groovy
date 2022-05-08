@@ -210,7 +210,7 @@ class UploadUtils {
                 _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll("creator=", "") : null
             }
 
-            String _lang = "language=" + (metaDataMap."${archiveProfile}.language" ?: SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE)
+            ///String _lang = "language=" + (metaDataMap."${archiveProfile}.language" ?: SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE)
             String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
 
