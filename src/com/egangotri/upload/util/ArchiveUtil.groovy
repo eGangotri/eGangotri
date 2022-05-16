@@ -7,8 +7,10 @@ import com.egangotri.util.GenericUtil
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.ExpectedCondition
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
@@ -267,7 +269,7 @@ class ArchiveUtil {
             //Login
             WebElement id = driver.findElement(By.name(UploadUtils.USERNAME_TEXTBOX_NAME))
             WebElement pass = driver.findElement(By.name(UploadUtils.PASSWORD_TEXTBOX_NAME))
-            WebElement button = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
+            WebElement loginButton = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
 
             String username = metaDataMap."${archiveProfile}"
             id.sendKeys(username)
@@ -275,8 +277,15 @@ class ArchiveUtil {
                 kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             }
             pass.sendKeys(kuta)
-            button.submit()
+            loginButton.submit()
             EGangotriUtil.sleepTimeInSeconds(0.2)
+            WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+            ExpectedCondition e = new ExpectedCondition<Boolean>() {
+                Boolean apply(WebDriver _driver) {
+                    return (_driver.getCurrentUrl() == 'https://archive.org/');
+                }
+            };
+            webDriverWait.until(e)
             loginSucess = true
         }
         catch (Exception e) {
