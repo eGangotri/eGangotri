@@ -177,10 +177,10 @@ class BookTitles {
         int numberOfPages = 0
 
         if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
-            PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
-            PdfDocument pdfDoc = new PdfDocument(pdfReader);
-            numberOfPages = pdfDoc.getNumberOfPages()
-            incrementTotalPageCount(numberOfPages)
+               PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
+               PdfDocument pdfDoc = new PdfDocument(pdfReader);
+               numberOfPages = pdfDoc.getNumberOfPages()
+               incrementTotalPageCount(numberOfPages)
         }
         String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
         addToReportAndPrint(_report)

@@ -83,13 +83,11 @@ class FileMover {
                 String success = getSuccessString(srcFilesCountBeforeMove, srcFilesCountAfterMove, destFolderDiff)
                 successStatuses.add(success)
                 report += "${profile}:\n${success}\n"
-
             } else {
                 report += "${profile}:\tNo Such Profile"
             }
             uploadSuccessCheckingMatrix.put((index++), report)
         }
-
         uploadSuccessCheckingMatrix.each { k, v ->
             log.info "$k) $v"
         }
