@@ -61,7 +61,7 @@ class FileMover {
                 srcDirArr[1] += "${File.separator}_freeze"
                 String destDir = srcDirArr.join(File.separator)
 
-               saveFreezeFileStatePreMove(destDir, profile)
+                saveFreezeFileStatePreMove(destDir, profile)
 
                 srcFilesCountBeforeMove = noOfFiles(srcDir)
                 preMoveCountSrc.push(srcFilesCountBeforeMove)
@@ -108,22 +108,23 @@ class FileMover {
         }
     }
 
-    static void saveFreezeFileStatePreMove(String destDir, String profile){
+    static void saveFreezeFileStatePreMove(String destDir, String profile) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(EGangotriUtil.DATE_TIME_AM_PATTERN)
         String timeOfMove = dateFormat.format(new Date())
         String fileTitle = "manualDestFreezeFolderSnapshot @ ${timeOfMove}.txt"
 
         File manualFilesRepo = new File(EGangotriUtil.MANUAL_SNAPSHOT_REPO)
-        if(!manualFilesRepo.exists()){
+        if (!manualFilesRepo.exists()) {
             manualFilesRepo.mkdir()
         }
-        File storingContentsOfFreezePreMove = new File(manualFilesRepo,fileTitle)
-        String _freeDirBeforeMove = new File(destDir).list().join("\n")
-        log.info("Stroing state in ${storingContentsOfFreezePreMove.name} _freeDirBeforeMove ${_freeDirBeforeMove}")
+        File storingContentsOfFreezePreMove = new File(manualFilesRepo, fileTitle)
+        String _freezeDirBeforeMove = new File(destDir).list()?.join("\n") ?: "empty\n"
+        log.info("Storing snapshot in ${storingContentsOfFreezePreMove.name} _freezeDirBeforeMove ${_freezeDirBeforeMove}")
         storingContentsOfFreezePreMove << "Contents of ${destDir} for profile ${profile} preMove on ${timeOfMove}\n"
-        storingContentsOfFreezePreMove << _freeDirBeforeMove
+        storingContentsOfFreezePreMove << _freezeDirBeforeMove
         println storingContentsOfFreezePreMove.text
     }
+
     static String statsRow(List moveCountList) {
         return "[${moveCountList.reverse().join("+")}=${moveCountList.sum()}]"
 
@@ -144,8 +145,7 @@ class FileMover {
     static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
         if (!srcFilesCountBeforeMove) {
             return NOTHING_TO_MOVE
-        }
-        else {
+        } else {
             boolean grossMovementDiff = (srcFilesCountBeforeMove - srcFilesCountAfterMove) == destFolderDiff
             log.info("${grossMovementDiff} = (${srcFilesCountBeforeMove} - $srcFilesCountAfterMove) == ${destFolderDiff}\n")
             String success = grossMovementDiff ? SUCCESS_STRING : FAILURE_STRING
