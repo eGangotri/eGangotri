@@ -2,12 +2,9 @@ package com.egangotri.util
 
 import com.egangotri.mover.ZipMover
 import groovy.util.logging.Slf4j
-import org.apache.commons.io.FileDeleteStrategy
 import org.apache.commons.io.FileUtils
 
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import javax.swing.JOptionPane
 import java.util.zip.ZipFile
 
 @Slf4j
@@ -44,10 +41,17 @@ class FileUtil {
                 "\ncustomInclusionFilter:${customInclusionFilter}" +
                 " \noverWriteFlag:${overWriteFlag}")
         try {
-            def pdfs = new File(srcDir).list({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
+            def pdfs = new File(srcDir).list({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
             log.info("Started moving (${pdfs?.length}) pdf(s) \n\t${pdfs.join(",\n\t")} ")
-            List duplicates = duplicateFileNamesInSrcAndDest(srcDir,destDir)
-            if(overWriteFlag || !duplicates){
+            List duplicates = duplicateFileNamesInSrcAndDest(srcDir, destDir)
+            log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
+                    "\n\t${duplicates.join(",\n\t")} \n")
+            if (overWriteFlag || !duplicates) {
+                if (duplicates) {
+                    if(!handleDuplicationUserChoice(duplicates)){
+                        return;
+                    }
+                }
                 ant.with {
                     // notice nested Ant task
                     move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
@@ -57,22 +61,35 @@ class FileUtil {
                     }
                     log.info("done moving")
                 }
-            }
-            else{
-             log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
-                     "\n\t${duplicates.join(",\n\t")} \nWill not move anything")
+            } else {
+                log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
+                        "\n\t${duplicates.join(",\n\t")} \nWill not move anything")
             }
         }
         catch (Exception e) {
             log.error("Error in Moving Folder ${srcDir}", e)
         }
-
     }
 
-    static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir){
-        File[] srcPdfs = new File(srcDir)?.listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
-        File[] destPdfs = new File(destDir)?.listFiles({d, f-> f ==~ /.*.pdf/ } as FilenameFilter)
-        return (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())): []
+    static boolean handleDuplicationUserChoice(List duplicates){
+        String seekPermissionText= "Found overlapping ${duplicates.size()} files in both Source and Dest. Enter 'Y' to continue"
+        Closure<Object> readln = JOptionPane.&showInputDialog
+        String seekPermissionToContinue = readln (seekPermissionText)
+        println "Your response was $seekPermissionToContinue."
+        if (!seekPermissionToContinue.toString().equalsIgnoreCase("Y")) {
+            println "Shall return without moving"
+            return false
+        }
+        else{
+            println "Shall move."
+        }
+        return true
+    }
+
+    static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir) {
+        File[] srcPdfs = new File(srcDir)?.listFiles({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
+        File[] destPdfs = new File(destDir)?.listFiles({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
+        return (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())) : []
     }
 
     static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
@@ -82,7 +99,7 @@ class FileUtil {
     static moveAndUnzip(File srcZipFile, String destDir) {
         try {
             moveZip(srcZipFile.absolutePath, destDir)
-            if(!ZipMover.ONLY_MOVE_DONT_UNZIP){
+            if (!ZipMover.ONLY_MOVE_DONT_UNZIP) {
                 unzipFile(destDir, srcZipFile.name)
             }
         }

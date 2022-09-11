@@ -12,8 +12,7 @@ class SnapToHtml {
     static String SNAP2HTML_INSTALLATION_PATH = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + "Snap2HTML\\Snap2HTML.exe"
     static String SNAP2HTML_REPO = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + "Snap2HTML\\listings"
     static String FOLDER_TO_GENERATE_SNAP2HTML_OF = ""
-    static String DATE_TIME_AM_PATTERN = "dd-MMM-yyyy hh.mm aa"
-    static SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_AM_PATTERN)
+    static SimpleDateFormat dateFormat = new SimpleDateFormat(EGangotriUtil.DATE_TIME_AM_PATTERN)
     //Will be initialized in SettingsUtil because its dependencies on other static variable will make it outdated
     static String SNAP2HTML_EXEC_CMD = ""
 

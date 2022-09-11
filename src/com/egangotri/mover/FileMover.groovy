@@ -1,11 +1,14 @@
 package com.egangotri.mover
 
+import com.egangotri.batch.SnapToHtml
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.BooleanUtils
+
+import java.text.SimpleDateFormat
 
 @Slf4j
 class FileMover {
@@ -58,6 +61,8 @@ class FileMover {
                 srcDirArr[1] += "${File.separator}_freeze"
                 String destDir = srcDirArr.join(File.separator)
 
+               saveFreezeFileStatePreMove(destDir, profile)
+
                 srcFilesCountBeforeMove = noOfFiles(srcDir)
                 preMoveCountSrc.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
@@ -103,6 +108,22 @@ class FileMover {
         }
     }
 
+    static void saveFreezeFileStatePreMove(String destDir, String profile){
+        SimpleDateFormat dateFormat = new SimpleDateFormat(EGangotriUtil.DATE_TIME_AM_PATTERN)
+        String timeOfMove = dateFormat.format(new Date())
+        String fileTitle = "manualDestFreezeFolderSnapshot @ ${timeOfMove}.txt"
+
+        File manualFilesRepo = new File(EGangotriUtil.MANUAL_SNAPSHOT_REPO)
+        if(!manualFilesRepo.exists()){
+            manualFilesRepo.mkdir()
+        }
+        File storingContentsOfFreezePreMove = new File(manualFilesRepo,fileTitle)
+        String _freeDirBeforeMove = new File(destDir).list().join("\n")
+        log.info("Stroing state in ${storingContentsOfFreezePreMove.name} _freeDirBeforeMove ${_freeDirBeforeMove}")
+        storingContentsOfFreezePreMove << "Contents of ${destDir} for profile ${profile} preMove on ${timeOfMove}\n"
+        storingContentsOfFreezePreMove << _freeDirBeforeMove
+        println storingContentsOfFreezePreMove.text
+    }
     static String statsRow(List moveCountList) {
         return "[${moveCountList.reverse().join("+")}=${moveCountList.sum()}]"
 
