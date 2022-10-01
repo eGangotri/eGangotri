@@ -44,8 +44,6 @@ class FileUtil {
             def pdfs = new File(srcDir).list({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
             log.info("Started moving (${pdfs?.length}) pdf(s) \n\t${pdfs.join(",\n\t")} ")
             List duplicates = duplicateFileNamesInSrcAndDest(srcDir, destDir)
-            log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
-                    "\n\t${duplicates.join(",\n\t")} \n")
             if (overWriteFlag || !duplicates) {
                 if (duplicates) {
                     if(!handleDuplicationUserChoice(duplicates)){
@@ -89,7 +87,10 @@ class FileUtil {
     static List duplicateFileNamesInSrcAndDest(String srcDir, String destDir) {
         File[] srcPdfs = new File(srcDir)?.listFiles({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
         File[] destPdfs = new File(destDir)?.listFiles({ d, f -> f ==~ /.*.pdf/ } as FilenameFilter)
-        return (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())) : []
+        List duplicates = (srcPdfs && destPdfs) ? srcPdfs*.getName().intersect((destPdfs*.getName())) : []
+        log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +
+                "\n\t${duplicates.join(",\n\t")} \n")
+        return duplicates
     }
 
     static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
