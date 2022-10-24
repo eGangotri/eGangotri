@@ -44,6 +44,7 @@ class EGangotriUtil {
     static final String CODE_503_SLOW_DOWN_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "_code503_rejectedFiles"
     static String MANUAL_SNAPSHOT_REPO = EGangotriUtil.EGANGOTRI_BASE_DIR + File.separator + "Snap2HTML\\listings"
     static String DATE_TIME_AM_PATTERN = "dd-MMM-yyyy hh.mm aa"
+    static String DATE_TIME_PATTERN = "dd-MMM-yyyy hh:mm:ss"
 
     static final int UPLOAD_FAILURE_THRESHOLD = 5
     static int MAX_UPLODABLES = 1000
