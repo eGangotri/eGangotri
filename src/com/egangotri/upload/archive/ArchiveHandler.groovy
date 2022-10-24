@@ -279,6 +279,7 @@ class ArchiveHandler {
         }
         log.info("\tidentifier: ${identifier}")
         log.info("\tAccess Url: ${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}")
+        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
@@ -291,4 +292,6 @@ class ArchiveHandler {
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return identifier
     }
+
+
 }

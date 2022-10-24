@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["KANGRI","LBS_SP","SV_SHASTRI"]
+    args = ["KANGRI"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -69,7 +69,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["JNGM_TEL", "MB","KANGRI", "false"]
+    args = ["EGM", "false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -98,6 +98,18 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //
     args = [ "D:\\MASTER_BACKUP\\Treasures52"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
+}
+
+task restCalls(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.rest.RestUtil"
+    //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
+    //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
+    //
+    args = [ "D:\\MASTER_BACKUP\\Treasures52"]
+    //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
 task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {

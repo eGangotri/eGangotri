@@ -17,6 +17,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import java.text.DecimalFormat
 import java.time.Duration
 
+import static com.egangotri.upload.util.ArchiveUtil.getALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE
+
 @Slf4j
 class ArchiveUtil {
     static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
@@ -28,6 +30,7 @@ class ArchiveUtil {
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
     private static DecimalFormat df = new DecimalFormat("0.00");
+    static String[] ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
@@ -249,6 +252,9 @@ class ArchiveUtil {
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
+            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.each { accessUrl ->
+                log.info(accessUrl)
+            }
         }
     }
 
