@@ -47,7 +47,7 @@ class ArchiveHandler {
                     countOfUploadedItems++
                 }
                 catch (Exception e) {
-                    log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}")
+                    log.info("Exception while uploading(${uploadables[0]}). ${(uploadables.size() > 1) ? '\nwill proceed to next tab' : ''}:${e.message}",e)
                     uploadFailureCount++
                 }
                 // Upload Remaining Files by generating New Tabs
@@ -101,20 +101,20 @@ class ArchiveHandler {
                                 log.info("****Attempt-2 succeeded if you see this for File '${uploadVo.title}'")
                             }
                             catch (UnhandledAlertException uae2) {
-                                log.info("UnhandledAlertException while uploading(${uploadVo.title}).\n will proceed to next tab: ${uae2.message}")
+                                log.info("UnhandledAlertException while uploading(${uploadVo.title}).\n will proceed to next tab: ${uae2.message}", uae2)
                                 UploadUtils.hitEnterKey()
                                 uploadFailureCount++
                                 log.info("Failed. Attempt-2 for (${uploadVo.title}). following UnhandledAlertException")
                                 continue
                             }
                             catch (Exception e) {
-                                log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
+                                log.info("Exception while uploading:(${uploadVo.title}).\n will proceed to next tab:${e.message}",e)
                                 uploadFailureCount++
                                 continue
                             }
                         }
                         catch (Exception e) {
-                            log.info("Exception while uploading(${uploadVo.title}).\n will proceed to next tab:${e.message}")
+                            log.info("Exception while uploading::(${uploadVo.title}).\n will proceed to next tab:${e.message}")
                             uploadFailureCount++
                             continue
                         }
@@ -293,7 +293,12 @@ class ArchiveHandler {
         garbageCollectAndPrintMemUsageInfoOnEvery100thUpload()
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         if(EGangotriUtil.WRITE_TO_MONGO_DB){
-            UploadRestApiCalls.addToUshered(uploadVO,"","",identifier)
+            try{
+                UploadRestApiCalls.addToQueue(uploadVO,"X","X"/*,identifier*/)
+            }
+            catch(Exception e){
+                log.info("Exception calling addToUshered",e)
+            }
         }
         return identifier
     }

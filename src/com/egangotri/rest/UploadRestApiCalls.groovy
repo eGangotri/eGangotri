@@ -51,20 +51,21 @@ class UploadRestApiCalls {
         return result;
     }
 
-    static<T extends UploadVO> String addToUshered(
+    static<T extends UploadVO> Object addToUshered(
             T usheredVO,
             String uploadCycleId, String csvName, String archiveItemId) {
-        String restApiRoute = '/itemsUshered/add'
-        return addToMongo(restApiRoute,usheredVO.archiveProfile, usheredVO.uploadLink,
+        String restApiRoute = "/${RestUtil.ITEMS_USHERED_PATH}/add"
+        def result = addToMongo(restApiRoute,usheredVO.archiveProfile, usheredVO.uploadLink,
                 usheredVO.path, usheredVO.title,
                 uploadCycleId, csvName, archiveItemId)
+        return result
     }
-    static<T extends UploadVO> String addToQueue(T queuedVO,
+    static<T extends UploadVO> Object addToQueue(T queuedVO,
                              uploadCycleId, csvName) {
-        String restApiRoute = '/itemsQueued/add'
-        return addToMongo(restApiRoute,queuedVO.archiveProfile, queuedVO.uploadLink,
+        String restApiRoute = "/${RestUtil.ITEMS_QUEUED_PATH}/add"
+        def result = addToMongo(restApiRoute,queuedVO.archiveProfile, queuedVO.uploadLink,
                 queuedVO.path, queuedVO.title,
                 uploadCycleId, csvName)
+        return result
     }
-
 }

@@ -40,6 +40,9 @@ class UploadToArchive {
                 log.info("This Upload Run is configured to write to DB but the DB Server is not on\nHence cannot proceed")
                 return
             }
+            else{
+                log.info("Mongo is running")
+            }
         }
         if(SettingsUtil.PREVIEW_FILES){
             previewSuccess = PreUploadReview.preview(purgedProfiles)

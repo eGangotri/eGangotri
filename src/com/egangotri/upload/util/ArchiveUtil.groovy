@@ -30,7 +30,7 @@ class ArchiveUtil {
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
     private static DecimalFormat df = new DecimalFormat("0.00");
-    static String[] ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
+    static List ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
