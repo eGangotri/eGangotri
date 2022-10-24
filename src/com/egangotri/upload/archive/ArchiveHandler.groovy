@@ -1,6 +1,7 @@
 package com.egangotri.upload.archive
 
-
+import com.egangotri.rest.RestUtil
+import com.egangotri.rest.UploadRestApiCalls
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
@@ -277,9 +278,10 @@ class ArchiveHandler {
             ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
             identifier = identifierNowInTextBox
         }
+        String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         log.info("\tidentifier: ${identifier}")
-        log.info("\tAccess Url: ${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}")
-        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
+        log.info("\tAccess Url: ${accessUrl}")
+        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << accessUrl
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
@@ -290,6 +292,9 @@ class ArchiveHandler {
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
         garbageCollectAndPrintMemUsageInfoOnEvery100thUpload()
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
+        if(EGangotriUtil.WRITE_TO_MONGO_DB){
+            UploadRestApiCalls.addToUshered(uploadVO,"","",identifier)
+        }
         return identifier
     }
 

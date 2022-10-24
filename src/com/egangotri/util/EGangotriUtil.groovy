@@ -53,6 +53,8 @@ class EGangotriUtil {
     static int PARTITION_SIZE = 250
     static boolean PARTITIONING_ENABLED = false
     static boolean GENERATE_RANDOM_CREATOR = false
+
+    static boolean WRITE_TO_MONGO_DB = true
     //This not implemented
     static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []
 

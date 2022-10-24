@@ -1,5 +1,6 @@
 package com.egangotri.upload.archive
 
+import com.egangotri.rest.RestUtil
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
@@ -33,6 +34,13 @@ class UploadToArchive {
         Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
         boolean previewSuccess = true
 
+        if(EGangotriUtil.WRITE_TO_MONGO_DB){
+            boolean isOn = RestUtil.checkIfDBServerIsOn()
+            if(!isOn){
+                log.info("This Upload Run is configured to write to DB but the DB Server is not on\nHence cannot proceed")
+                return
+            }
+        }
         if(SettingsUtil.PREVIEW_FILES){
             previewSuccess = PreUploadReview.preview(purgedProfiles)
         }
