@@ -2,7 +2,7 @@
 //applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=${System.getProperty('user.home')}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriver.exe"]
 applicationDefaultJvmArgs = ["-Dwebdriver.chrome.driver=resources${File.separator}chromedriver.exe"]
 
-def uploadToArchiveArgs = ["PAHARI"]
+def uploadToArchiveArgs = ["VN2"]
 //,"KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM", "LBS", "BLK", "LBS_SP", "ANON_SV", "SV_SHASTRI" ,
 // "JNGM_MANU",  "LBS_SP", "ANON" ,"LBSB","MB", "SV_SHASTRI",
 // "JNGMB" ,  "JNGM_TEL", JNGM_K", "JNGM_M", "EGM"*/]
