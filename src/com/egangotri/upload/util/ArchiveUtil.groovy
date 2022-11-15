@@ -252,8 +252,8 @@ class ArchiveUtil {
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
-            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.each { String accessUrl ->
-                log.info(accessUrl)
+            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
+                log.info("(${counter}). ${accessUrl}")
             }
         }
     }

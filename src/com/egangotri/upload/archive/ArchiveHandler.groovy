@@ -281,8 +281,7 @@ class ArchiveHandler {
         String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         log.info("\tidentifier: ${identifier}")
         log.info("\tAccess Url: ${accessUrl}")
-        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << """
-        ${uploadVO.title}
+        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << """${uploadVO.title}
         ${accessUrl}
         """.toString()
         storeArchiveIdentifierInFile(uploadVO, identifier)
