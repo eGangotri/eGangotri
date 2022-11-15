@@ -30,7 +30,7 @@ class ArchiveUtil {
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
     private static DecimalFormat df = new DecimalFormat("0.00");
-    static List ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
+    static List<String> ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
@@ -252,7 +252,7 @@ class ArchiveUtil {
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
-            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.each { accessUrl ->
+            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.each { String accessUrl ->
                 log.info(accessUrl)
             }
         }

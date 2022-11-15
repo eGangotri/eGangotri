@@ -281,7 +281,10 @@ class ArchiveHandler {
         String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         log.info("\tidentifier: ${identifier}")
         log.info("\tAccess Url: ${accessUrl}")
-        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << accessUrl
+        ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE << """
+        ${uploadVO.title}
+        ${accessUrl}
+        """.toString()
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
         WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
@@ -294,7 +297,8 @@ class ArchiveHandler {
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         if(EGangotriUtil.WRITE_TO_MONGO_DB){
             try{
-                UploadRestApiCalls.addToQueue(uploadVO,"X","X"/*,identifier*/)
+                UploadRestApiCalls.addToQueue(uploadVO,EGangotriUtil.UPLOAD_RUN_ID,"X");
+                UploadRestApiCalls.addToUshered(uploadVO,EGangotriUtil.UPLOAD_RUN_ID,"X",identifier);
             }
             catch(Exception e){
                 log.info("Exception calling addToUshered",e)

@@ -9,7 +9,6 @@ import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-
 /**
  * Created by user on 1/18/2016.
  * Make sure
@@ -42,6 +41,8 @@ class UploadToArchive {
             }
             else{
                 log.info("Mongo is running")
+                EGangotriUtil.UPLOAD_RUN_ID = UUID.randomUUID();
+                log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_RUN_ID)
             }
         }
         if(SettingsUtil.PREVIEW_FILES){
