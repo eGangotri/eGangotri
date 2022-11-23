@@ -253,7 +253,7 @@ class ArchiveUtil {
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
             ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
-                log.info("(${counter}). ${accessUrl}")
+                log.info("(${counter+1}). ${accessUrl}")
             }
         }
     }

@@ -34,6 +34,7 @@ class UploadToArchive {
         boolean previewSuccess = true
 
         if(EGangotriUtil.WRITE_TO_MONGO_DB){
+            RestUtil.startDBServerIfOff()
             boolean isOn = RestUtil.checkIfDBServerIsOn()
             if(!isOn){
                 log.info("This Upload Run is configured to write to DB but the DB Server is not on\nHence cannot proceed")

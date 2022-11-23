@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["KANGRI"]
+    args = ["KASHMIRI_ACADEMY"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -69,7 +69,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["VN2", "false"]
+    args = ["PAHARI", "false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -96,7 +96,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "D:\\MASTER_BACKUP\\Treasures52"]
+    args = [ "D:\\Treasures54\\eg_manu"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
@@ -190,6 +190,7 @@ dependencies {
 
     compile "ch.qos.logback:logback-classic:1.1.3"
     compile "org.slf4j:log4j-over-slf4j:1.7.13"
+    runtimeOnly group: 'com.github.f4b6a3', name: 'uuid-creator', version: '5.2.0'
 
     //The Only reason we are keeping this local
     //which has the META-INF\LICENSE Folder deleted is because during fat-jar

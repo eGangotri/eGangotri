@@ -14,6 +14,7 @@ class RestUtil {
     static String REST_CALL_URI = 'http://127.0.0.1:80'
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
+
     static makePostCall(String path,
                         Map body,
                         String urlString = REST_CALL_URI) {
@@ -50,10 +51,46 @@ class RestUtil {
         }
     }
 
+    static boolean startDBServerIfOff() {
+        String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
+        if (!checkIfDBServerIsOn()) {
+            log.info("Starting DB Server")
+            Runtime.getRuntime().exec(mongoServerExecScript)
+            Thread.sleep(10000)
+        }
+    }
+
+    static boolean startDashboardServerIfOff() {
+        String mongoServerExecScript = "./bat_files/startDashboardServer.bat"
+        if (!checkIfDashboardServerIsOn()) {
+            log.info("Starting DB Server")
+            Runtime.getRuntime().exec(mongoServerExecScript)
+            Thread.sleep(10000)
+        }
+    }
+
     static boolean checkIfDBServerIsOn() {
-        LazyMap result = makeGetCall("/") ?: [:] as Map
-        log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
-        return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
+        try {
+            LazyMap result = makeGetCall("/") ?: [:] as Map
+            log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
+            return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
+        }
+        catch (ConnectException e) {
+            log.error(e.message)
+            return false;
+        }
+    }
+
+    static boolean checkIfDashboardServerIsOn() {
+        try {
+            LazyMap result = makeGetCall("/") ?: [:] as Map
+            log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
+            return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
+        }
+        catch (ConnectException e) {
+            log.error(e.message)
+            return false;
+        }
     }
 
     static def listQueues() {
