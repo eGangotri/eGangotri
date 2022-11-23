@@ -65,7 +65,7 @@ class RestUtil {
         if (!checkIfDashboardServerIsOn()) {
             log.info("Starting DB Server")
             Runtime.getRuntime().exec(mongoServerExecScript)
-            Thread.sleep(10000)
+            Thread.sleep(30000)
         }
     }
 
