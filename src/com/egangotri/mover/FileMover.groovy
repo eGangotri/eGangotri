@@ -12,8 +12,13 @@ import java.text.SimpleDateFormat
 
 @Slf4j
 class FileMover {
+    static String SUCCESS_STRING = 'Success'
+    static String POSSIBLE_OVERWRITE_ISSUES_STRING = 'Possible OverWrite Issues'
+    static String FAILURE_STRING = 'Failure!!!!'
+    static String NOTHING_TO_MOVE = 'Nothing To Move'
+
     static Map<String, List<String>> srcDestMap
-    static List profiles = []
+    static List<String> profiles = []
     static List<Integer> totalFilesMoved = []
     static List<Integer> preMoveCountSrc = []
     static List<Integer> preMoveCountDest = []
@@ -21,6 +26,7 @@ class FileMover {
     static List<Integer> postMoveCountDest = []
     static List<String> successStatuses = []
     static Boolean OVERWRITE_FLAG = false
+
 
     static void main(String[] args) {
         if (args) {
@@ -30,48 +36,40 @@ class FileMover {
                 OVERWRITE_FLAG = BooleanUtils.toBoolean(profiles.last().toLowerCase())
                 profiles.remove(profiles.last())
             }
-
         }
         log.info("FileMover started for ${profiles.size()} Profiles on ${UploadUtils.getFormattedDateString()}")
         log.info "profiles $profiles overWriteFlag $OVERWRITE_FLAG"
-        new FileMover().move()
+        move()
     }
 
-    static String SUCCESS_STRING = 'Success'
-    static String POSSIBLE_OVERWRITE_ISSUES_STRING = 'Possible OverWrite Issues'
-    static String FAILURE_STRING = 'Failure!!!!'
-    static String NOTHING_TO_MOVE = 'Nothing To Move'
-
-    void move() {
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
+    static void move() {
+        Map<String, String> srcMetaDataMap = FileUtil.getSrcFoldersCorrespondingToProfile();
+        Map<String, String> destMetaDataMap = FileUtil.getDestFoldersCorrespondingToProfile();
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
         int index = 1
-        profiles.each { profile ->
+        profiles.each { String profile ->
             String report = ""
-            String srcDir = metaDataMap["${profile}"]
-            String[] srcDirArr = srcDir?.split("\\\\")
+            String srcDirAbsPath = srcMetaDataMap[profile]
             Integer srcFilesCountBeforeMove = 0
             Integer destFilesCountBeforeMove = 0
             Integer srcFilesCountAfterMove = 0
             Integer destFlesCountAfterMove = 0
             Integer destFolderDiff = 0
 
-            if (srcDirArr) {
-                srcDirArr[1] += "${File.separator}_freeze"
-                String destDir = srcDirArr.join(File.separator)
-
+            if (srcDirAbsPath) {
+                String destDir = destMetaDataMap[profile]
                 saveFreezeFileStatePreMove(destDir, profile)
 
-                srcFilesCountBeforeMove = noOfFiles(srcDir)
+                srcFilesCountBeforeMove = noOfFiles(srcDirAbsPath)
                 preMoveCountSrc.push(srcFilesCountBeforeMove)
                 destFilesCountBeforeMove = noOfFiles(destDir)
                 preMoveCountDest.push(destFilesCountBeforeMove)
                 if (srcFilesCountBeforeMove) {
-                    log.info("Moving $srcFilesCountBeforeMove files from \n${srcDir} to \n${destDir}")
-                    FileUtil.movePdfsInDir(srcDir, destDir, OVERWRITE_FLAG)
+                    log.info("Moving $srcFilesCountBeforeMove files from \n${srcDirAbsPath} to \n${destDir}")
+                    FileUtil.movePdfsInDir(srcDirAbsPath, destDir, OVERWRITE_FLAG)
                 }
-                srcFilesCountAfterMove = noOfFiles(srcDir)
+                srcFilesCountAfterMove = noOfFiles(srcDirAbsPath)
                 postMoveCountSrc.push(srcFilesCountAfterMove)
 
                 destFlesCountAfterMove = noOfFiles(destDir)
@@ -81,7 +79,7 @@ class FileMover {
                 totalFilesMoved.add(destFolderDiff)
                 if (srcFilesCountBeforeMove) {
                     report += """${profile}: 
-                                     ${dirStats(srcDir, srcFilesCountBeforeMove, srcFilesCountAfterMove)},
+                                     ${dirStats(srcDirAbsPath, srcFilesCountBeforeMove, srcFilesCountAfterMove)},
                                      ${dirStats(destDir, destFilesCountBeforeMove, destFlesCountAfterMove)}
                                      Moved ${destFolderDiff} files.\n"""
                 }

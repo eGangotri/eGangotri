@@ -10,7 +10,10 @@ import java.util.zip.ZipFile
 @Slf4j
 class FileUtil {
 
-    static Map<String, String> getFoldersCorrespondingToProfile() {
+    static String SRC_ROOT = "SRC_ROOT"
+    static String DEST_ROOT = "DEST_ROOT"
+
+    static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
         Properties properties = new Properties()
         File propertiesFile = new File(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
         propertiesFile.withInputStream {
@@ -18,18 +21,28 @@ class FileUtil {
         }
 
         Map<String, String> profileAndFolder = [:]
-
+        String rootPath = properties.getProperty(root)
         for (Enumeration e = properties.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement()
-            String val = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")?.trim()
-            if (!key.contains(".")) {
-                profileAndFolder.put(key, val)
+            String path = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")?.trim()
+            String fullPath = "${rootPath}${File.separator}" + path
+            if (!key.contains(".") && key != SRC_ROOT && key != DEST_ROOT) {
+                profileAndFolder.put(key, fullPath)
             }
         }
         return profileAndFolder
     }
 
-    static final Map<String, String> ALL_FOLDERS = getFoldersCorrespondingToProfile()
+
+    static Map<String, String> getSrcFoldersCorrespondingToProfile() {
+        return getFoldersCorrespondingToProfile(SRC_ROOT)
+    }
+
+    static Map<String, String> getDestFoldersCorrespondingToProfile() {
+        return getFoldersCorrespondingToProfile(DEST_ROOT)
+    }
+
+    static final Map<String, String> ALL_FOLDERS = getSrcFoldersCorrespondingToProfile()
 
     static String ALLOWED_EXTENSIONS_REGEX = /.*/
     static String PDF_ONLY_REGEX = /.*\.pdf/
@@ -46,7 +59,7 @@ class FileUtil {
             List duplicates = duplicateFileNamesInSrcAndDest(srcDir, destDir)
             if (overWriteFlag || !duplicates) {
                 if (duplicates) {
-                    if(!handleDuplicationUserChoice(duplicates)){
+                    if (!handleDuplicationUserChoice(duplicates)) {
                         return;
                     }
                 }
@@ -69,16 +82,15 @@ class FileUtil {
         }
     }
 
-    static boolean handleDuplicationUserChoice(List duplicates){
-        String seekPermissionText= "Found overlapping ${duplicates.size()} files in both Source and Dest. Enter 'Y' to continue"
+    static boolean handleDuplicationUserChoice(List duplicates) {
+        String seekPermissionText = "Found overlapping ${duplicates.size()} files in both Source and Dest. Enter 'Y' to continue"
         Closure<Object> readln = JOptionPane.&showInputDialog
-        String seekPermissionToContinue = readln (seekPermissionText)
+        String seekPermissionToContinue = readln(seekPermissionText)
         println "Your response was $seekPermissionToContinue."
         if (!seekPermissionToContinue.toString().equalsIgnoreCase("Y")) {
             println "Shall return without moving"
             return false
-        }
-        else{
+        } else {
             println "Shall move."
         }
         return true
@@ -200,6 +212,15 @@ class FileUtil {
         def zip = new ZipFile(zipFile)
         return zip.size()
     }
+    static void main(String[] args) {
+        Map<String, String> srcMetaDataMap = getSrcFoldersCorrespondingToProfile();
+        Map<String, String> destMetaDataMap = getDestFoldersCorrespondingToProfile();
+        log.info("" +  srcMetaDataMap)
+        log.info("" + destMetaDataMap)
+    }
 }
+
+
+
 
 

@@ -1,7 +1,7 @@
 package com.egangotri.mover
 
-import com.egangotri.upload.util.UploadUtils
-import com.egangotri.util.EGangotriUtil
+
+import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -96,8 +96,8 @@ class Codes {
         return titles
     }
 
-    static getDestDirByCode(String code){
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
+    static String getDestDirByCode(String code){
+        def metaDataMap = FileUtil.getSrcFoldersCorrespondingToProfile()
         return metaDataMap[getCodeToFolderMap(code)]
     }
 
