@@ -10,11 +10,12 @@ task startMongoServer(type:Exec) {
         // cmd /C start D:/Projects/WorkSpaces/WorldCleaner/devserver/start.bat
     }
 }
-def uploadToArchiveArgs = ["ANON"]
-//,"KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM", "LBS", "BLK", "LBS_SP", "ANON_SV", "SV_SHASTRI" ,
-// "JNGM_MANU",  "LBS_SP", "ANON" ,"LBSB","MB", "SV_SHASTRI",
+//last upload failed so retry first thing,
+def uploadToArchiveArgs = ["KANGRI"]
+//,"KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM", "LBS", "BLK", "LBS_SP", "ANON_SV" ,
+// "JNGM_MANU",  "LBS_SP", "ANON" ,"LBSB","MB", "SV_SHASTRI", "KANGRI
 // "JNGMB" ,  "JNGM_TEL", JNGM_K", "JNGM_M", "EGM"*/]
-def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\Treasures54"
+def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures56"
 task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"

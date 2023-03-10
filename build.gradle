@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["KASHMIRI_ACADEMY"]
+    args = ["INTACH"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -62,14 +62,14 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     // then it will be treated as the number of items you want to edit
     //default is 10
     //if -1 it will open all
-    args = ["EGB", 10]
+    args = ["EGM", 64]
 }
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["PAHARI", "false"]
+    args = ["SPS", "false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -96,7 +96,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "D:\\Treasures54\\eg_manu"]
+    args = [ "D:\\Treasures55"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
@@ -116,7 +116,7 @@ task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.GetFirstNPagesFromPdf"
     //args = [folder, numberOfPages]
-    args = [ "D:\\Downloads\\Bengali_truncated", 8]
+    args = [ "D:\\Treasures55\\_vinay\\Darab", 5]
 }
 
 task tally(dependsOn: 'classes', type: JavaExec) {
@@ -139,6 +139,7 @@ task merge(dependsOn: 'classes', type: JavaExec) {
 task repairPDF(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.RunPdfTk"
+    args =[ ""]
     args =[ ""]
 }
 
