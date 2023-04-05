@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["INTACH"]
+    args = ["V_ANON"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -69,7 +69,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["JNGM", "JNGM_TEL", "JNGM_K", "BVT",  "false"]
+    args = ["MUTHU","false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -96,7 +96,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
-    args = [ "D:\\Treasures55"]
+    args = [ "D:\\MASTER_BACKUP"]
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 

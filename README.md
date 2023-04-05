@@ -91,6 +91,7 @@ https://www.pdflabs.com/tools/pdftk-server/
 4. https://bulkresizephotos.com/en
 5. snap2html
 
+###Groovy Version: 3.0.4
 Image Manipulation
 Rotation Error:
 https://savolai.net/software/jpeg-autorotate/
