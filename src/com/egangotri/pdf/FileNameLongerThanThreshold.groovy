@@ -105,7 +105,7 @@ class FileNameLongerThanThreshold {
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
 
-            if (!file.isDirectory() && !inIgnoreList(file)) {
+            if (!inIgnoreList(file)) {
                 try {
                     if (!ONLY_PDFS || (ONLY_PDFS && file.name.endsWith(PDF))) {
                         printFileName(file)
