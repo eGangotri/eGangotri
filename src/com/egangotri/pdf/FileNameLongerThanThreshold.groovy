@@ -15,27 +15,23 @@ import java.text.SimpleDateFormat
 @Slf4j
 class FileNameLongerThanThreshold {
 
-    static List<String> FOLDER_NAME = ["C:\\tmp\\pdfForMergeTest\\"]
+    static List<String> FOLDER_NAME = ["D:\\"]
     static int THRESHOLD = 240
     static int PATH_THRESHOLD = 2000
 
     static int START_INDEX = 0
-    static int TOTAL_FILES = 0
     static int TOTAL_FILES_WITH_FILE_NAME_LENGTH_THRESHOLD_VIOLATION = 0
     static int TOTAL_FILES_WITH_PATH_NAME_LENGTH_THRESHOLD_VIOLATION = 0
     static int DUAL_VIOLATIONS = 0
 
-
     static List ignoreList = []
     static String PDF = "pdf"
+    static boolean ONLY_PDFS = false
 
     static StringBuilder MEGA_REPORT = new StringBuilder("")
 
-    static boolean DONT_MENTION_SUB_FOLDERS = false;
-    static boolean INCLUDE_NUMBER_OF_PAGES = true
     static boolean INCLUDE_INDEX = true
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
-    static boolean ONLY_PDFS = false
 
     static void main(String[] args) {
         execute(args)
@@ -67,10 +63,11 @@ class FileNameLongerThanThreshold {
         int totalFilesWithViolations =
                 TOTAL_FILES_WITH_FILE_NAME_LENGTH_THRESHOLD_VIOLATION +
                         TOTAL_FILES_WITH_PATH_NAME_LENGTH_THRESHOLD_VIOLATION - DUAL_VIOLATIONS
-        String totalStats = """Total No. of Files with Violations: ${formatInteger(totalFilesWithViolations)}
+        String totalStats = """
+                    Total No. of Files with Violations in Folder: ${FOLDER_NAME}: ${formatInteger(totalFilesWithViolations)}
                     TOTAL_FILES_WITH_FILE_NAME_LENGTH_THRESHOLD_VIOLATION(> ${THRESHOLD} chars): ${TOTAL_FILES_WITH_FILE_NAME_LENGTH_THRESHOLD_VIOLATION}
                     TOTAL_FILES_WITH_PATH_NAME_LENGTH_THRESHOLD_VIOLATION(> ${PATH_THRESHOLD} chars): ${TOTAL_FILES_WITH_PATH_NAME_LENGTH_THRESHOLD_VIOLATION}
-                                DUAL_VIOLATIONS: ${DUAL_VIOLATIONS}
+                    DUAL_VIOLATIONS: ${DUAL_VIOLATIONS}
                                     """;
         addToReportAndPrint(totalStats)
         writeToFile()
