@@ -103,7 +103,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
 task allFilePathsLongerThanThreshold(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.FileNameLongerThanThreshold"
-    args = [ "D:\\", 250,280]
+    args = [ "E:\\", 240,254]
 }
 
 task restCalls(dependsOn: 'classes', type: JavaExec) {
