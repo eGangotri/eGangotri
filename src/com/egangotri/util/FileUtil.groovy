@@ -1,6 +1,7 @@
 package com.egangotri.util
 
 import com.egangotri.mover.ZipMover
+import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 
@@ -46,6 +47,28 @@ class FileUtil {
 
     static String ALLOWED_EXTENSIONS_REGEX = /.*/
     static String PDF_ONLY_REGEX = /.*\.pdf/
+
+   static FileFilter pdfFilter = new FileFilter() {
+        public boolean accept(File file) {
+            return file.name.endsWith(".pdf")
+        }
+    };
+    static File[] allPdfsInDirAsFileList(String srcDir) {
+        File srcDirAsFile = new File(srcDir)
+            def files = []
+        if (srcDirAsFile) {
+            srcDirAsFile.eachFileRecurse (FileType.FILES) { File file ->
+                if(file.name.endsWith(".pdf")){
+                    files << file
+                }
+            }
+        }
+        return files
+    }
+
+    static String[] allPdfsInDirAsFilenameList(String srcDir) {
+        return allPdfsInDirAsFileList(srcDir)
+    }
 
     static moveDir(String srcDir, String destDir, customInclusionFilter = "", boolean overWriteFlag = false) {
         // create an ant-builder
@@ -212,10 +235,11 @@ class FileUtil {
         def zip = new ZipFile(zipFile)
         return zip.size()
     }
+
     static void main(String[] args) {
         Map<String, String> srcMetaDataMap = getSrcFoldersCorrespondingToProfile();
         Map<String, String> destMetaDataMap = getDestFoldersCorrespondingToProfile();
-        log.info("" +  srcMetaDataMap)
+        log.info("" + srcMetaDataMap)
         log.info("" + destMetaDataMap)
     }
 }

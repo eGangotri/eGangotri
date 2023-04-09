@@ -16,6 +16,7 @@ class FileMover {
     static String POSSIBLE_OVERWRITE_ISSUES_STRING = 'Possible OverWrite Issues'
     static String FAILURE_STRING = 'Failure!!!!'
     static String NOTHING_TO_MOVE = 'Nothing To Move'
+    static String FILE_IN_USE = 'File(s) in Use. Cannot Move'
 
     static Map<String, List<String>> srcDestMap
     static List<String> profiles = []
@@ -51,41 +52,53 @@ class FileMover {
         profiles.each { String profile ->
             String report = ""
             String srcDirAbsPath = srcMetaDataMap[profile]
-            Integer srcFilesCountBeforeMove = 0
-            Integer destFilesCountBeforeMove = 0
-            Integer srcFilesCountAfterMove = 0
-            Integer destFlesCountAfterMove = 0
-            Integer destFolderDiff = 0
 
             if (srcDirAbsPath) {
+                int srcFilesCountBeforeMove = 0
+                int destFilesCountBeforeMove = 0
+                int srcFilesCountAfterMove = 0
+                int destFlesCountAfterMove = 0
+                int destFolderDiff = 0
+
                 String destDir = destMetaDataMap[profile]
-                saveFreezeFileStatePreMove(destDir, profile)
-
-                srcFilesCountBeforeMove = noOfFiles(srcDirAbsPath)
-                preMoveCountSrc.push(srcFilesCountBeforeMove)
-                destFilesCountBeforeMove = noOfFiles(destDir)
-                preMoveCountDest.push(destFilesCountBeforeMove)
-                if (srcFilesCountBeforeMove) {
-                    log.info("Moving $srcFilesCountBeforeMove files from \n${srcDirAbsPath} to \n${destDir}")
-                    FileUtil.movePdfsInDir(srcDirAbsPath, destDir, OVERWRITE_FLAG)
-                }
-                srcFilesCountAfterMove = noOfFiles(srcDirAbsPath)
-                postMoveCountSrc.push(srcFilesCountAfterMove)
-
-                destFlesCountAfterMove = noOfFiles(destDir)
-                postMoveCountDest.push(destFlesCountAfterMove)
-
-                destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
-                totalFilesMoved.add(destFolderDiff)
-                if (srcFilesCountBeforeMove) {
+                //check no file is in use before moving
+                String[] filesInUse = checkNoFileInUse(srcDirAbsPath)
+                if(filesInUse.length > 0) {
                     report += """${profile}: 
+                    Following Files in Use.
+                    Cannot move anything
+                    ${filesInUse.join("\n")}\n"""
+                    successStatuses.add(FILE_IN_USE)
+                    report += "${profile}:git \n${FILE_IN_USE}\n"
+                } else {
+                    saveFreezeFileStatePreMove(destDir, profile)
+
+                    srcFilesCountBeforeMove = noOfFiles(srcDirAbsPath)
+                    preMoveCountSrc.push(srcFilesCountBeforeMove)
+                    destFilesCountBeforeMove = noOfFiles(destDir)
+                    preMoveCountDest.push(destFilesCountBeforeMove)
+                    if (srcFilesCountBeforeMove) {
+                        log.info("Moving $srcFilesCountBeforeMove files from \n${srcDirAbsPath} to \n${destDir}")
+                        FileUtil.movePdfsInDir(srcDirAbsPath, destDir, OVERWRITE_FLAG)
+                    }
+                    srcFilesCountAfterMove = noOfFiles(srcDirAbsPath)
+                    postMoveCountSrc.push(srcFilesCountAfterMove)
+
+                    destFlesCountAfterMove = noOfFiles(destDir)
+                    postMoveCountDest.push(destFlesCountAfterMove)
+
+                    destFolderDiff = Math.subtractExact(destFlesCountAfterMove, destFilesCountBeforeMove)
+                    totalFilesMoved.add(destFolderDiff)
+                    if (srcFilesCountBeforeMove) {
+                        report += """${profile}: 
                                      ${dirStats(srcDirAbsPath, srcFilesCountBeforeMove, srcFilesCountAfterMove)},
                                      ${dirStats(destDir, destFilesCountBeforeMove, destFlesCountAfterMove)}
                                      Moved ${destFolderDiff} files.\n"""
+                    }
+                    String success = getSuccessString(srcFilesCountBeforeMove, srcFilesCountAfterMove, destFolderDiff)
+                    successStatuses.add(success)
+                    report += "${profile}:\n${success}\n"
                 }
-                String success = getSuccessString(srcFilesCountBeforeMove, srcFilesCountAfterMove, destFolderDiff)
-                successStatuses.add(success)
-                report += "${profile}:\n${success}\n"
             } else {
                 report += "${profile}:\tNo Such Profile"
             }
@@ -101,8 +114,11 @@ class FileMover {
 
                       Total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
                       [ ${successStatuses.join("+")} ]
-                      [ ${successCount(SUCCESS_STRING)}(S)+${successCount(FAILURE_STRING)}(F)+
-                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)+${successCount(NOTHING_TO_MOVE)}(N2M)]=(${successStatuses.size()}) ]"""
+                      [ ${successCount(SUCCESS_STRING)}(S)+
+                        ${successCount(FAILURE_STRING)}(F)+
+                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)+
+                        ${successCount(FILE_IN_USE)}(FILE_IN_USE)+
+                        ${successCount(NOTHING_TO_MOVE)}(N2M)]=(${successStatuses.size()}) ]"""
         }
     }
 
@@ -128,6 +144,11 @@ class FileMover {
 
     }
 
+    static boolean isFileOpen(File file) {
+        boolean isOpen = file.renameTo(file.absolutePath)
+        return !isOpen
+    }
+
     static String successCount(String statusString) {
         return successStatuses.count { it == statusString }
     }
@@ -140,7 +161,21 @@ class FileMover {
         return FileRetrieverUtil.getAllPdfFilesIncludingInIgnoredExtensions(new File(dirName))?.size()
     }
 
-    static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
+    static String[] checkNoFileInUse(String srcDirAbsPath) {
+        String[] filesInUse = []
+        File[] files = FileUtil.allPdfsInDirAsFileList(srcDirAbsPath)
+        if(files){
+            files.each { File file -> {
+                if(isFileOpen(file)){
+                    filesInUse += file.name
+                }
+            }}
+        }
+        return filesInUse
+
+    }
+
+        static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
         if (!srcFilesCountBeforeMove) {
             return NOTHING_TO_MOVE
         } else {
