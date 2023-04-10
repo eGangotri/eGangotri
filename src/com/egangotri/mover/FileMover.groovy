@@ -69,7 +69,7 @@ class FileMover {
                     Cannot move anything
                     ${filesInUse.join("\n")}\n"""
                     successStatuses.add(FILE_IN_USE)
-                    report += "${profile}:git \n${FILE_IN_USE}\n"
+                    report += "${profile}:\n${FILE_IN_USE}\n"
                 } else {
                     saveFreezeFileStatePreMove(destDir, profile)
 
