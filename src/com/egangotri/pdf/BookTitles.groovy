@@ -200,13 +200,13 @@ class BookTitles {
         }
         catch(com.itextpdf.kernel.exceptions.BadPasswordException bpe) {
             addToErrors(file.absolutePath, true)
-            String _report = "*****${INCLUDE_INDEX ? index + ').' : ''} ${file.name} is password-protected";
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} is password-protected";
             addToReportAndPrint(_report)
             log.error("Error in reading Password Protected File for ${file.absolutePath}",bpe)
         }
         catch(Exception e){
             addToErrors(file.absolutePath)
-            String _report = "*****${INCLUDE_INDEX ? index + ').' : ''} ${file.name} had an error reading page/count/size";
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} had an error reading page/count/size";
             addToReportAndPrint(_report)
             log.error("Error in reading file page-count/size/ for ${file.absolutePath}",e)
         }
