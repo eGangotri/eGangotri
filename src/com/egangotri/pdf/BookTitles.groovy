@@ -246,8 +246,8 @@ Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERROR
 Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ)}
 Total Files with Errors(including password-protected): ${formatInteger(TOTAL_ERRORS)}
 Total Files system didnt pick: ${formatInteger(TOTAL_FILES-(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS))}
-Erroneous File List: \n${ERRORENOUS_FILES.join("\t\t\n")}
-Password Protected Erroneous File List: \n${PASSWORD_PROTECTED_FILES.join("\t\t\n")}
+Erroneous File List: ${ERRORENOUS_FILES?"\n"+ERRORENOUS_FILES.join("\t\t\n"):0}
+Password Protected Erroneous File List: ${PASSWORD_PROTECTED_FILES?"\n"+PASSWORD_PROTECTED_FILES.join("\t\t\n"):0}
 Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
         addToReportAndPrint(totalStats)
     }
