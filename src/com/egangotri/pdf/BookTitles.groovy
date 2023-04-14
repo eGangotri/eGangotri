@@ -1,5 +1,6 @@
 package com.egangotri.pdf
 
+import com.egangotri.util.FileSizeUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -20,7 +21,9 @@ class BookTitles {
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
     static int START_INDEX = 0
-    static int TOTAL_FILES = 0
+    static int TOTAL_FILES_SUCCCESSFULLY_READ = 0
+    static int TOTAL_ERRORS = 0
+    static List<String> ERRORENOUS_FILES = []
     static int TOTAL_NUM_PAGES = 0
 
     static List ignoreList = ["C:\\Treasures48\\_freeze\\jngm_kan\\retry_dont"]
@@ -30,6 +33,7 @@ class BookTitles {
 
     static boolean DONT_MENTION_SUB_FOLDERS = false;
     static boolean INCLUDE_NUMBER_OF_PAGES = true
+    static boolean INCLUDE_FILE_SIZE = true
     static boolean INCLUDE_INDEX = true
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
     static boolean ONLY_PDFS = true
@@ -86,7 +90,11 @@ class BookTitles {
                 procAdInfinitum(folder)
             }
         }
-        String totalStats = "Total Files: ${formatInteger(TOTAL_FILES)}  \t\t Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}";
+        String totalStats = """Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ+TOTAL_ERRORS)}
+Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ)}
+Total Files with Errors: ${formatInteger(TOTAL_ERRORS)}
+Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
+
         addToReportAndPrint(totalStats)
         writeToFile()
     }
@@ -118,7 +126,7 @@ class BookTitles {
         addToReportAndPrint(readingFolder, DONT_MENTION_SUB_FOLDERS)
 
         if (TOTAL_NUM_PAGES > 0) {
-            log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES)} files")
+            log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ)} files")
         }
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
@@ -133,7 +141,7 @@ class BookTitles {
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 try {
                     if (!ONLY_PDFS || (ONLY_PDFS && file.name.endsWith(PDF))) {
-                        printFileName(folderAbsolutePath, file, ++START_INDEX)
+                        printFileNamePageCountFileSize(folderAbsolutePath, file, ++START_INDEX)
                     }
                 }
                 catch (Exception e) {
@@ -173,8 +181,9 @@ class BookTitles {
         }
     }
 
-    static void printFileName(String folderAbsolutePath, File file, int index) {
+    static void printFileNamePageCountFileSize(String folderAbsolutePath, File file, int index) {
         int numberOfPages = 0
+        try{
 
         if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
                PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
@@ -182,15 +191,31 @@ class BookTitles {
                numberOfPages = pdfDoc.getNumberOfPages()
                incrementTotalPageCount(numberOfPages)
         }
-        String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
+
+        String sizeInfo = FileSizeUtil.getFileSizeFormatted(file)
+        String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}"
+        String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWith(PDF) ? ', ' + sizeInfo : ''}"
+        String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
         addToReportAndPrint(_report)
         incrementFileCount()
+        }
+        catch(Exception e){
+            addToErrors(file.absolutePath)
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} had an error reading page/count/size";
+            addToReportAndPrint(_report)
+            log.error("Error in reading file page-count/size/ for ${file.absolutePath}",e)
+        }
     }
 
     static void incrementFileCount() {
-        TOTAL_FILES++
+        TOTAL_FILES_SUCCCESSFULLY_READ++
     }
 
+    static void addToErrors(String filePath) {
+        TOTAL_ERRORS++
+        ERRORENOUS_FILES << filePath
+
+    }
     static void incrementTotalPageCount(int numPagesToIncrement) {
         TOTAL_NUM_PAGES += numPagesToIncrement
     }

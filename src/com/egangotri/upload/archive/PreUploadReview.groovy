@@ -6,6 +6,8 @@ import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.FileSizeUtil
+import com.egangotri.util.FileUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -38,7 +40,7 @@ class PreUploadReview {
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal totalSize = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${sizeInfo(totalSize)}")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${FileUtil.formatFileSize(totalSize)}")
 
         statsForUploadables(profiles)
 
@@ -63,13 +65,13 @@ class PreUploadReview {
                     if(totalPagesInProfile > 0){
                         log.info("\tTotal No. of Pages in Profile[pdf only](${entries.key}): ${totalPagesInProfile}")
                     }
-                    log.info("\tTotal File Size in Profile(${entries.key}): ${sizeInfo(entries.value*.sizeInKB.sum() as BigDecimal)}\n")
+                    log.info("\tTotal File Size in Profile(${entries.key}): ${FileUtil.formatFileSize(entries.value*.sizeInKB.sum() as BigDecimal)}\n")
                 }
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
                 log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
-                log.info(" Total File Size ${sizeInfo(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
+                log.info(" Total File Size ${FileUtil.formatFileSize(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
             }
             return profileAndInvalidNames.size() == 0
         }
@@ -117,15 +119,6 @@ class PreUploadReview {
             }
         }
     }
-    static boolean fileNameHasOverAllowedDigits(String fileName) {
-        return fileName.findAll( /\d+/ ).join("").size() > MAXIMUM_ALLOWED_DIGITS_IN_FILE_NAME
-    }
-
-    static String sizeInfo(BigDecimal sizeInKB){
-        BigDecimal sizeInMB = sizeInKB/1024
-        BigDecimal sizeInGB = sizeInMB/1024
-        return sizeInKB >= 1024 ? (sizeInMB >= 1024 ? "${sizeInGB.round(2)} GB" : "${sizeInMB.round(2)} MB") : "${sizeInKB.round(2)} KB"
-    }
 }
 
 class FileData {
@@ -146,7 +139,7 @@ class FileData {
             PdfDocument pdfDoc = new PdfDocument(pdfReader);
             this.numberOfPagesInPdf = pdfDoc.getNumberOfPages()
         }
-        sizeInKB = (new File(this.absPath).size()/ 1024) as BigDecimal
+        sizeInKB = FileSizeUtil.fileSizeInKBForPath(this.absPath)
     }
 
     FileData(String _title, String _absPath){
@@ -154,7 +147,7 @@ class FileData {
         absPath = _absPath
     }
     String toString(){
-        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${PreUploadReview.sizeInfo(this.sizeInKB)} \n\t\t[${parentFolder}]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${FileUtil.formatFileSize(this.sizeInKB)} \n\t\t[${parentFolder}]"
     }
 }
 

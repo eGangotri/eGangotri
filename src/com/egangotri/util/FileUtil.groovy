@@ -17,6 +17,10 @@ class FileUtil {
     static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
         Properties properties = new Properties()
         File propertiesFile = new File(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
+        if(!propertiesFile.exists()) {
+            log.info("No Local Folder ${EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE} found")
+            return [:]
+        }
         propertiesFile.withInputStream {
             properties.load(it)
         }
