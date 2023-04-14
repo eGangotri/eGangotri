@@ -1,5 +1,7 @@
 package com.egangotri.util
 
+import groovy.io.FileType
+
 class FileSizeUtil {
 
     static String formatFileSize(BigDecimal sizeInKB){
@@ -27,5 +29,24 @@ class FileSizeUtil {
         return formatFileSize(fileSizeInKB(file))
     }
 
+    /*
+Cannot use FileNameFilter or FileFilter as we are dealing with sub-directories
+ */
+    static File[] allPdfsInDirAsFileList(String srcDir) {
+        File srcDirAsFile = new File(srcDir)
+        def files = []
+        if (srcDirAsFile) {
+            srcDirAsFile.eachFileRecurse (FileType.FILES) { File file ->
+                if(file.name.endsWith(".pdf")){
+                    files << file
+                }
+            }
+        }
+        return files
+    }
+
+    static String[] allPdfsInDirAsFilenameList(String srcDir) {
+        return allPdfsInDirAsFileList(srcDir)
+    }
 
 }

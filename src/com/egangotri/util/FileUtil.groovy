@@ -57,22 +57,6 @@ class FileUtil {
             return file.name.endsWith(".pdf")
         }
     };
-    static File[] allPdfsInDirAsFileList(String srcDir) {
-        File srcDirAsFile = new File(srcDir)
-            def files = []
-        if (srcDirAsFile) {
-            srcDirAsFile.eachFileRecurse (FileType.FILES) { File file ->
-                if(file.name.endsWith(".pdf")){
-                    files << file
-                }
-            }
-        }
-        return files
-    }
-
-    static String[] allPdfsInDirAsFilenameList(String srcDir) {
-        return allPdfsInDirAsFileList(srcDir)
-    }
 
     static moveDir(String srcDir, String destDir, customInclusionFilter = "", boolean overWriteFlag = false) {
         // create an ant-builder

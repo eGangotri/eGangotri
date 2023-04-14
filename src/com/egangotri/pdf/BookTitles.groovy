@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.FileSizeUtil
+import com.egangotri.util.FileUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -21,9 +22,11 @@ class BookTitles {
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
     static int START_INDEX = 0
-    static int TOTAL_FILES_SUCCCESSFULLY_READ = 0
+    static int TOTAL_FILES = 0
+    static int TOTAL_FILES_SUCCESSFULLY_READ = 0
     static int TOTAL_ERRORS = 0
     static List<String> ERRORENOUS_FILES = []
+    static List<String> PASSWORD_PROTECTED_FILES = []
     static int TOTAL_NUM_PAGES = 0
 
     static List ignoreList = ["C:\\Treasures48\\_freeze\\jngm_kan\\retry_dont"]
@@ -80,6 +83,7 @@ class BookTitles {
                 afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour * 60 * 60 * 1000)
             }
         }
+        TOTAL_FILES = calculateTotalFileCount()
         addToReportAndPrint("Reading files: $FOLDER_NAME\n")
         for (String folder : FOLDER_NAME) {
             //if only the directory specified
@@ -90,9 +94,14 @@ class BookTitles {
                 procAdInfinitum(folder)
             }
         }
-        String totalStats = """Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ+TOTAL_ERRORS)}
-Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ)}
-Total Files with Errors: ${formatInteger(TOTAL_ERRORS)}
+        String totalStats = """
+Total File Count: ${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
+Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS)}
+Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ)}
+Total Files with Errors(including password-protected): ${formatInteger(TOTAL_ERRORS)}
+Total Files system didnt pick: ${formatInteger(TOTAL_FILES-(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS))}
+Erroneous File List: \n${ERRORENOUS_FILES.join("\t\t\n")}
+Password Protected Erroneous File List: \\n${PASSWORD_PROTECTED_FILES.join("\\t\\t\\n")}
 Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
 
         addToReportAndPrint(totalStats)
@@ -126,7 +135,7 @@ Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
         addToReportAndPrint(readingFolder, DONT_MENTION_SUB_FOLDERS)
 
         if (TOTAL_NUM_PAGES > 0) {
-            log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES_SUCCCESSFULLY_READ)} files")
+            log.info("Already read ${formatInteger(TOTAL_NUM_PAGES)} pages in ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ)} files")
         }
         for (File file : directory.listFiles()) {
             long createDateAsLong = 0
@@ -199,25 +208,46 @@ Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
         addToReportAndPrint(_report)
         incrementFileCount()
         }
+        catch(com.itextpdf.kernel.exceptions.BadPasswordException bpe) {
+            addToErrors(file.absolutePath)
+            String _report = "*****${INCLUDE_INDEX ? index + ').' : ''} ${file.name} is password-protected";
+            addToReportAndPrint(_report)
+            log.error("Error in reading Password Protected File for ${file.absolutePath}",bpe)
+        }
         catch(Exception e){
             addToErrors(file.absolutePath)
-            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} had an error reading page/count/size";
+            String _report = "*****${INCLUDE_INDEX ? index + ').' : ''} ${file.name} had an error reading page/count/size";
             addToReportAndPrint(_report)
             log.error("Error in reading file page-count/size/ for ${file.absolutePath}",e)
         }
     }
 
     static void incrementFileCount() {
-        TOTAL_FILES_SUCCCESSFULLY_READ++
+        TOTAL_FILES_SUCCESSFULLY_READ++
     }
 
-    static void addToErrors(String filePath) {
+    static void addToErrors(String filePath, boolean passwordProtectedError) {
         TOTAL_ERRORS++
-        ERRORENOUS_FILES << filePath
-
+        if(!passwordProtectedError){
+            ERRORENOUS_FILES << filePath
+        }
+        else {
+            PASSWORD_PROTECTED_FILES << filePath
+        }
     }
     static void incrementTotalPageCount(int numPagesToIncrement) {
         TOTAL_NUM_PAGES += numPagesToIncrement
     }
+
+
+    static int calculateTotalFileCount() {
+        int pdfCount = 0
+        for (String folder : FOLDER_NAME) {
+            File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
+            pdfCount += files?.length
+        }
+        return pdfCount
+    }
+
 
 }

@@ -4,6 +4,7 @@ import com.egangotri.batch.SnapToHtml
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.FileSizeUtil
 import com.egangotri.util.FileUtil
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.BooleanUtils
@@ -163,7 +164,7 @@ class FileMover {
 
     static String[] checkNoFileInUse(String srcDirAbsPath) {
         String[] filesInUse = []
-        File[] files = FileUtil.allPdfsInDirAsFileList(srcDirAbsPath)
+        File[] files = FileSizeUtil.allPdfsInDirAsFileList(srcDirAbsPath)
         if(files){
             files.each { File file -> {
                 if(isFileOpen(file)){
