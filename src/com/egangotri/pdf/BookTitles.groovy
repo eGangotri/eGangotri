@@ -94,17 +94,7 @@ class BookTitles {
                 procAdInfinitum(folder)
             }
         }
-        String totalStats = """
-Total File Count: ${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
-Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS)}
-Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ)}
-Total Files with Errors(including password-protected): ${formatInteger(TOTAL_ERRORS)}
-Total Files system didnt pick: ${formatInteger(TOTAL_FILES-(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS))}
-Erroneous File List: \n${ERRORENOUS_FILES.join("\t\t\n")}
-Password Protected Erroneous File List: \\n${PASSWORD_PROTECTED_FILES.join("\\t\\t\\n")}
-Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
-
-        addToReportAndPrint(totalStats)
+        printFinalStats()
         writeToFile()
     }
 
@@ -209,7 +199,7 @@ Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
         incrementFileCount()
         }
         catch(com.itextpdf.kernel.exceptions.BadPasswordException bpe) {
-            addToErrors(file.absolutePath)
+            addToErrors(file.absolutePath, true)
             String _report = "*****${INCLUDE_INDEX ? index + ').' : ''} ${file.name} is password-protected";
             addToReportAndPrint(_report)
             log.error("Error in reading Password Protected File for ${file.absolutePath}",bpe)
@@ -247,6 +237,19 @@ Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
             pdfCount += files?.length
         }
         return pdfCount
+    }
+
+    static void printFinalStats(){
+        String totalStats = """
+Total File Count: ${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
+Total Files Processed: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS)}
+Total Files Read Successfully: ${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ)}
+Total Files with Errors(including password-protected): ${formatInteger(TOTAL_ERRORS)}
+Total Files system didnt pick: ${formatInteger(TOTAL_FILES-(TOTAL_FILES_SUCCESSFULLY_READ+TOTAL_ERRORS))}
+Erroneous File List: \n${ERRORENOUS_FILES.join("\t\t\n")}
+Password Protected Erroneous File List: \n${PASSWORD_PROTECTED_FILES.join("\t\t\n")}
+Total Pages: ${formatInteger(TOTAL_NUM_PAGES)}"""
+        addToReportAndPrint(totalStats)
     }
 
 
