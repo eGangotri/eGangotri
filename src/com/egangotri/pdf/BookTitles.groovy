@@ -61,6 +61,23 @@ class BookTitles {
                 }
             }
         }
+        calculateAfterDate()
+        TOTAL_FILES = calculateTotalFileCount()
+        addToReportAndPrint("Reading files: $FOLDER_NAME\n")
+        for (String folder : FOLDER_NAME) {
+            //if only the directory specified
+            if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
+                processOneFolder(folder)
+            } else {
+                //if everything
+                procAdInfinitum(folder)
+            }
+        }
+        printFinalStats()
+        writeToFile()
+    }
+
+    static void calculateAfterDate(){
         if (afterDate) {
             if (afterDate.toLowerCase().startsWith("today")) {
                 Calendar date = new GregorianCalendar();
@@ -83,21 +100,8 @@ class BookTitles {
                 afterDateAsLong = new SimpleDateFormat("dd-MM-yyyy").parse(afterDate).getTime() + (afterHour * 60 * 60 * 1000)
             }
         }
-        TOTAL_FILES = calculateTotalFileCount()
-        addToReportAndPrint("Reading files: $FOLDER_NAME\n")
-        for (String folder : FOLDER_NAME) {
-            //if only the directory specified
-            if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
-                processOneFolder(folder)
-            } else {
-                //if everything
-                procAdInfinitum(folder)
-            }
-        }
-        printFinalStats()
-        writeToFile()
-    }
 
+    }
     static void writeToFile() {
         String _folderNames = (FOLDER_NAME.collect { return new File(it) })*.name.join("_")
         String fileName = _folderNames + "_MegaList_" +(ONLY_PDFS? "pdfs_only" : "all")
@@ -139,7 +143,7 @@ class BookTitles {
             if (!file.isDirectory() && !inIgnoreList(file)
                     && (!afterDateAsLong || (createDateAsLong > afterDateAsLong))) {
                 try {
-                    if (!ONLY_PDFS || (ONLY_PDFS && file.name.endsWith(PDF))) {
+                    if (!ONLY_PDFS || (ONLY_PDFS && file.name.endsWithIgnoreCase(PDF))) {
                         printFileNamePageCountFileSize(folderAbsolutePath, file, ++START_INDEX)
                     }
                 }
@@ -184,16 +188,18 @@ class BookTitles {
         int numberOfPages = 0
         try{
 
-        if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF)) {
+        if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF)) {
                PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
                PdfDocument pdfDoc = new PdfDocument(pdfReader);
                numberOfPages = pdfDoc.getNumberOfPages()
                incrementTotalPageCount(numberOfPages)
+               pdfDoc.close()
+               pdfReader.close()
         }
 
         String sizeInfo = FileSizeUtil.getFileSizeFormatted(file)
-        String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWith(PDF) ? ', ' + numberOfPages + ' Pages' : ''}"
-        String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWith(PDF) ? ', ' + sizeInfo : ''}"
+        String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}"
+        String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}"
         String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
         addToReportAndPrint(_report)
         incrementFileCount()

@@ -37,7 +37,7 @@ Cannot use FileNameFilter or FileFilter as we are dealing with sub-directories
         def files = []
         if (srcDirAsFile) {
             srcDirAsFile.eachFileRecurse (FileType.FILES) { File file ->
-                if(file.name.endsWith(".pdf")){
+                if(file.name.endsWithIgnoreCase(".pdf")){
                     files << file
                 }
             }
