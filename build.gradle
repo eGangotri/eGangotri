@@ -97,6 +97,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //
     args = [ "C:\\Users\\HP\\Downloads"]
+    //C:\Users\HP\Documents\del
   //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\Treasures28\\bdmm",'today-1', 12]
 }
 
