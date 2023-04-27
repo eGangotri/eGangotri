@@ -23,7 +23,7 @@ class LoginToArchive {
         if (metaDataMap) {
             archiveProfiles.each { String archiveProfile ->
                 {
-                    if (metaDataMap.contains(archiveProfile)) {
+                    if (metaDataMap.containsKey(archiveProfile)) {
                         log.info "Logging for Profile $archiveProfile"
                         ChromeDriver driver = new ChromeDriver()
                         if (ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
