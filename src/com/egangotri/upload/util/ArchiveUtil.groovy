@@ -277,11 +277,19 @@ class ArchiveUtil {
             WebElement loginButton = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
 
             String username = metaDataMap."${archiveProfile}"
+            if(!username){
+                log.error("Username is empty. Cannot proceed")
+                return false
+            }
             id.sendKeys(username)
             if (!kuta) {
                 kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             }
-            pass.sendKeys(kuta)
+            if (!kuta) {
+                log.error("No Password. Cannot proceed")
+                return false
+            }
+                pass.sendKeys(kuta)
             loginButton.submit()
             EGangotriUtil.sleepTimeInSeconds(0.2)
             WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))

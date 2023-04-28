@@ -90,7 +90,8 @@ class EGangotriUtil {
         File propertiesFile = new File(propertyFileName)
 
         if (!propertiesFile.exists()) {
-            log.info("$propertyFileName not found.")
+            propertiesFile.createNewFile()
+            log.info("$propertiesFile.name was not found. empty created")
             return []
         }
 
