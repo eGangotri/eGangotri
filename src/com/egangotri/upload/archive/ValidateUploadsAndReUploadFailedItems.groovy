@@ -14,7 +14,7 @@ import groovy.util.logging.Slf4j
 class ValidateUploadsAndReUploadFailedItems {
     static Set archiveProfiles = []
     static File USHERED_ITEMS_FILE = null
-    static File ALL_UPLODABLE_ITEMS_FILE = null
+    static File ALL_UPLOADABLE_ITEMS_FILE = null
 
     static Set<QueuedVO> ALL_UPLOADABLE_ITEMS_FOR_TESTING = [] as Set
     static Set<UsheredVO> USHERED_LINKS_FOR_TESTING = []
@@ -67,10 +67,10 @@ class ValidateUploadsAndReUploadFailedItems {
         startValidation()
     }
     static void setCSVsForValidation(String[] args) {
-        ALL_UPLODABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
+        ALL_UPLOADABLE_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
         USHERED_ITEMS_FILE = ValidateUtil.getLastModifiedFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
 
-        if (!ALL_UPLODABLE_ITEMS_FILE) {
+        if (!ALL_UPLOADABLE_ITEMS_FILE) {
             log.error("No Files in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
             System.exit(0)
         }
@@ -89,11 +89,11 @@ class ValidateUploadsAndReUploadFailedItems {
             String _file_1 = args.first().endsWith(".csv") ? args.first() : args.first() + ".csv"
             String _file_2 = args.last().endsWith(".csv") ? args.last() : args.last() + ".csv"
 
-            ALL_UPLODABLE_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_1)
+            ALL_UPLOADABLE_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER + File.separator + _file_1)
             USHERED_ITEMS_FILE = new File(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER + File.separator + _file_2)
 
-            if (!ALL_UPLODABLE_ITEMS_FILE) {
-                log.error("No such File ${ALL_UPLODABLE_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
+            if (!ALL_UPLOADABLE_ITEMS_FILE) {
+                log.error("No such File ${ALL_UPLOADABLE_ITEMS_FILE} in ${EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER}.Cannot proceed. Quitting")
                 System.exit(0)
             }
 
@@ -102,7 +102,7 @@ class ValidateUploadsAndReUploadFailedItems {
                 System.exit(0)
             }
         }
-        log.info("ALL_UPLODABLE_ITEMS_FILE for processing: ${ALL_UPLODABLE_ITEMS_FILE.name}")
+        log.info("ALL_UPLOADABLE_ITEMS_FILE for processing: ${ALL_UPLOADABLE_ITEMS_FILE.name}")
         log.info("USHERED_ITEMS_FILE for processing: ${USHERED_ITEMS_FILE.name}")
     }
 
@@ -111,7 +111,7 @@ class ValidateUploadsAndReUploadFailedItems {
             log.info("Queued Items will be ignored for upload")
             return
         }
-        ALL_UPLOADABLE_ITEMS_FOR_TESTING = ValidateUtil.csvToQueuedVO(ALL_UPLODABLE_ITEMS_FILE)
+        ALL_UPLOADABLE_ITEMS_FOR_TESTING = ValidateUtil.csvToQueuedVO(ALL_UPLOADABLE_ITEMS_FILE)
         Set allUploadableProfiles = ALL_UPLOADABLE_ITEMS_FOR_TESTING*.archiveProfile as Set
         log.info("Converted " + ALL_UPLOADABLE_ITEMS_FOR_TESTING.size() + " Queued Item(s) from CSV in Profiles ${allUploadableProfiles.toString()}")
     }
