@@ -69,7 +69,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["JNGM_TEL", "V_ANON","false"]
+    args = ["V_ANON", "SR" ,"false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
