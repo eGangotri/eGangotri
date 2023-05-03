@@ -244,7 +244,7 @@ class SettingsUtil {
     static void resetValues() {
         ValidateUploadsAndReUploadFailedItems.archiveProfiles = []
         ValidateUploadsAndReUploadFailedItems.USHERED_ITEMS_FILE = null
-        ValidateUploadsAndReUploadFailedItems.ALL_UPLODABLE_ITEMS_FILE = null
+        ValidateUploadsAndReUploadFailedItems.ALL_UPLOADABLE_ITEMS_FILE = null
         ValidateUploadsAndReUploadFailedItems.USHERED_LINKS_FOR_TESTING = []
         ValidateUploadsAndReUploadFailedItems.ALL_UPLOADABLE_ITEMS_FOR_TESTING = []
         ValidateUploadsAndReUploadFailedItems.MISSED_OUT_USHERED_ITEMS = []
