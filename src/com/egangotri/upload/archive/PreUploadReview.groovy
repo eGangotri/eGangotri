@@ -7,7 +7,6 @@ import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.FileSizeUtil
-import com.egangotri.util.FileUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -40,7 +39,8 @@ class PreUploadReview {
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
         log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal totalSize = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${FileUtil.formatFileSize(totalSize)}")
+        log.info("test only Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
 
         statsForUploadables(profiles)
 
@@ -65,13 +65,13 @@ class PreUploadReview {
                     if(totalPagesInProfile > 0){
                         log.info("\tTotal No. of Pages in Profile[pdf only](${entries.key}): ${totalPagesInProfile}")
                     }
-                    log.info("\tTotal File Size in Profile(${entries.key}): ${FileUtil.formatFileSize(entries.value*.sizeInKB.sum() as BigDecimal)}\n")
+                    log.info("\tTotal File Size in Profile(${entries.key}): ${FileSizeUtil.formatFileSize(entries.value*.sizeInKB.sum() as BigDecimal)}\n")
                 }
                 if(GRAND_TOTAL_OF_PDF_PAGES > 0){
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
                 log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
-                log.info(" Total File Size ${FileUtil.formatFileSize(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
+                log.info(" Total File Size ${FileSizeUtil.formatFileSize(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
             }
             return profileAndInvalidNames.size() == 0
         }
@@ -147,7 +147,7 @@ class FileData {
         absPath = _absPath
     }
     String toString(){
-        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${FileUtil.formatFileSize(this.sizeInKB)} \n\t\t[${parentFolder}]"
+        return "${title}${this.numberOfPagesInPdf > 0 ? ' [' + this.numberOfPagesInPdf + ' Pages]':''} ${FileSizeUtil.formatFileSize(this.sizeInKB)} \n\t\t[${parentFolder}]"
     }
 }
 
