@@ -4,6 +4,7 @@ import com.egangotri.util.FileSizeUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
+import com.egangotri.pdf.CsvToExcel
 
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat
 class BookTitles {
 
     static boolean generateCSVAlso = true
+    static boolean generateExcelAlso = true
     static List<String> FOLDER_NAME = ["C:\\tmp\\pdfForMergeTest\\"]
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
@@ -43,6 +45,7 @@ class BookTitles {
     static boolean ONLY_PDFS = true
 
     static String CSV_SEPARATOR = ";"
+
     static void main(String[] args) {
         execute(args)
     }
@@ -109,7 +112,7 @@ class BookTitles {
         if (generateCSVAlso) {
             //Separator has to be specified on TOP as SEMI-COLON instead of COMMMA
             // as the data has comas all the time
-            String  separatorSpecification = "sep=;\n"
+            String separatorSpecification = "sep=${CSV_SEPARATOR}\n"
             ///
             String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? "${CSV_SEPARATOR}Number of Pages" : ''}"
             String fileSizeHeader = "${INCLUDE_FILE_SIZE ? "${CSV_SEPARATOR}File Size${CSV_SEPARATOR} Units" : ''}"
@@ -132,6 +135,9 @@ class BookTitles {
             writeableCSVFile << generateCsvHeader()
             writeableCSVFile << CSV_MEGA_REPORT
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
+            if (generateExcelAlso) {
+                CsvToExcel.csvtoXls(writeableCSVFile)
+            }
         }
     }
 
@@ -149,10 +155,9 @@ class BookTitles {
     }
 
     static String formatInteger(Integer _formattable, String delimiter = "") {
-        if(delimiter.contains(",")){
+        if (delimiter.contains(",")) {
             return _formattable
-        }
-       else{
+        } else {
             def pattern = "##,##,##,###"
             def moneyform = new DecimalFormat(pattern)
             return moneyform.format(_formattable.toLong())
@@ -238,7 +243,7 @@ class BookTitles {
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}";
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
             addToReportAndPrint(_report);
-            String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, ", ")
+            String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR} " : ''}${file.name}${CSV_SEPARATOR} ${csvPageCountLogic}${CSV_SEPARATOR} ${csvFileSizeLogic}"
@@ -249,14 +254,14 @@ class BookTitles {
             addToErrors(file.absolutePath, true)
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} is password-protected";
             addToReportAndPrint(_report)
-            addToCSVReport(_report.split(/\s/, 2).join(", "))
+            addToCSVReport(_report.split(/\s/, 2).join(CSV_SEPARATOR))
             log.error("Error in reading Password Protected File for ${file.absolutePath}", bpe)
         }
         catch (Exception e) {
             addToErrors(file.absolutePath)
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} had an error reading page/count/size";
             addToReportAndPrint(_report)
-            addToCSVReport(_report.split(/\s/, 2).join(", "))
+            addToCSVReport(_report.split(/\s/, 2).join(CSV_SEPARATOR))
             log.error("Error in reading file page-count/size/ for ${file.absolutePath}", e)
         }
     }
@@ -291,10 +296,10 @@ class BookTitles {
     static String generateStats(String delimiter = " ") {
         String totalStats = """
 Total File Count:${delimiter}${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
-Total Files Processed:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS,delimiter)}
-Total Files Read Successfully:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ,delimiter)}
-Total Files with Errors(including password-protected):${delimiter}${formatInteger(TOTAL_ERRORS,delimiter)}
-Total Files system didnt pick:${delimiter}${formatInteger((TOTAL_FILES - (TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS)),delimiter)}
+Total Files Processed:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS, delimiter)}
+Total Files Read Successfully:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ, delimiter)}
+Total Files with Errors(including password-protected):${delimiter}${formatInteger(TOTAL_ERRORS, delimiter)}
+Total Files system didnt pick:${delimiter}${formatInteger((TOTAL_FILES - (TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS)), delimiter)}
 Erroneous File List:${delimiter}${ERRORENOUS_FILES ? "\n" + ERRORENOUS_FILES.join("\t\t\n") : 0}
 Password Protected Erroneous File List:${delimiter}${PASSWORD_PROTECTED_FILES ? "\n" + PASSWORD_PROTECTED_FILES.join("\t\t\n") : 0}
 Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""

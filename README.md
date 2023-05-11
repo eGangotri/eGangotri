@@ -91,11 +91,12 @@ https://www.pdflabs.com/tools/pdftk-server/
 4. https://bulkresizephotos.com/en
 5. snap2html
 
-###Groovy Version: 3.0.4
+###Groovy Version: 3.0.X
 Image Manipulation
 Rotation Error:
 https://savolai.net/software/jpeg-autorotate/
 Explanation: https://www.howtogeek.com/254830/why-your-photos-dont-always-appear-correctly-rotated/
 
+###Gradle Version: gradle-4.10.X
 Watermarking:
 https://batchwatermark.com/en

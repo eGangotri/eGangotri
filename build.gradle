@@ -95,7 +95,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["C:\\Users\\HP\\Downloads"]
+    args = ["C:\\Users\\HP\\Downloads\\_receiptsMar23"]
     /*args = [ """D:\\MASTER_BACKUP\\Treasures40\\_freeze\\Mumukshu ,
              D:\\MASTER_BACKUP\\Treasures41\\_freeze\\Mumukshu , 
              D:\\MASTER_BACKUP\\Treasures42\\_freeze\\Mumukshu , 
@@ -201,6 +201,8 @@ dependencies {
     compile 'com.itextpdf:itextpdf:5.5.13.1'
     compile 'com.itextpdf:itext7-core:7.2.0'
     compile 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+
     compile 'commons-io:commons-io:2.6'
 
     compile group: 'org.codehaus.groovy', name: 'groovy-ant', version: '3.0.3'
