@@ -42,6 +42,7 @@ class BookTitles {
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
     static boolean ONLY_PDFS = true
 
+    static String CSV_SEPARATOR = ";"
     static void main(String[] args) {
         execute(args)
     }
@@ -106,9 +107,13 @@ class BookTitles {
 
     static String generateCsvHeader() {
         if (generateCSVAlso) {
-            String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? ',Number of Pages' : ''}"
-            String fileSizeHeader = "${INCLUDE_FILE_SIZE ? ",File Size, Units" : ''}"
-            String csvReport = "${INCLUDE_INDEX ? "Serial No., " : ''}File Name${pageCountHeader}${fileSizeHeader}\n"
+            //Separator has to be specified on TOP as SEMI-COLON instead of COMMMA
+            // as the data has comas all the time
+            String  separatorSpecification = "sep=;\n"
+            ///
+            String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? "${CSV_SEPARATOR}Number of Pages" : ''}"
+            String fileSizeHeader = "${INCLUDE_FILE_SIZE ? "${CSV_SEPARATOR}File Size${CSV_SEPARATOR} Units" : ''}"
+            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR} " : ''}File Name${pageCountHeader}${fileSizeHeader}\n"
             return csvReport
         }
         return ""
@@ -236,7 +241,7 @@ class BookTitles {
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, ", ")
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + ", " : ''}${file.name}, ${csvPageCountLogic}, ${csvFileSizeLogic}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR} " : ''}${file.name}${CSV_SEPARATOR} ${csvPageCountLogic}${CSV_SEPARATOR} ${csvFileSizeLogic}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }
@@ -292,13 +297,13 @@ Total Files with Errors(including password-protected):${delimiter}${formatIntege
 Total Files system didnt pick:${delimiter}${formatInteger((TOTAL_FILES - (TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS)),delimiter)}
 Erroneous File List:${delimiter}${ERRORENOUS_FILES ? "\n" + ERRORENOUS_FILES.join("\t\t\n") : 0}
 Password Protected Erroneous File List:${delimiter}${PASSWORD_PROTECTED_FILES ? "\n" + PASSWORD_PROTECTED_FILES.join("\t\t\n") : 0}
-Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES,delimiter)}"""
+Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         return totalStats
     }
 
     static void printFinalStats() {
         addToReportAndPrint(generateStats())
-        addToCSVReport(generateStats(", "))
+        addToCSVReport(generateStats(CSV_SEPARATOR))
     }
 
 
