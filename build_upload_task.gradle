@@ -11,10 +11,10 @@ task startMongoServer(type: Exec) {
     }
 }
 //last upload failed so retry first thing,
-ArrayList<String> uploadToArchiveArgs = [ "SPS"]//V_ANON, KANGRI
+ArrayList<String> uploadToArchiveArgs = [ "SPS" ]//V_ANON, KANGRI
 //,"KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM", "LBS", "BLK", "LBS_SP", "ANON_SV" ,
 // "JNGM_MANU",  "LBS_SP", "ANON" ,"LBSB","MB", "SV_SHASTRI", "KANGRI"
-// "JNGMB" ,  "JNGM_TEL", JNGM_K", "JNGM_M", "EGM"*/]
+// "JNGMB" ,  "JNGM_TEL", "JNGM_K", "JNGM_M", "EGM"*/]
 def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures56"
 task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath

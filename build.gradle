@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["PAHARI"]
+    args = ["BJP_JAMMU", "EG_URDU"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -62,14 +62,14 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     // then it will be treated as the number of items you want to edit
     //default is 10
     //if -1 it will open all
-    args = ["EGM", 64]
+    args = ["BJP_JAMMU", 16]
 }
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "SPS" ,"false"]
+    args = ["KANGRI" ,"false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -95,7 +95,11 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
+<<<<<<< Updated upstream
     args = ["C:\\Users\\HP\\Downloads\\_receiptsMar23"]
+=======
+    args = ["D:\\MASTER_BACKUP\\Treasures57\\_freeze"]
+>>>>>>> Stashed changes
     /*args = [ """D:\\MASTER_BACKUP\\Treasures40\\_freeze\\Mumukshu ,
              D:\\MASTER_BACKUP\\Treasures41\\_freeze\\Mumukshu , 
              D:\\MASTER_BACKUP\\Treasures42\\_freeze\\Mumukshu , 
