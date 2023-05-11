@@ -17,7 +17,6 @@ class CsvToExcel {
             String[] rows = contents.split("\n")
             rows?.tail()?.eachWithIndex { String rowStr, int rowIndex ->
                 //we dont need sep=; line
-                log.info("rowIndex: ${rowIndex}")
                 Row row = sheet.createRow(rowIndex)
                 String[] columns = rowStr.split(BookTitles.CSV_SEPARATOR)
                 columns.eachWithIndex { colStr, colIndex ->
