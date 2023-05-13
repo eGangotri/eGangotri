@@ -234,6 +234,9 @@ class ArchiveUtil {
 
     static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int attemptedItemsTotal) {
         if (uploadSuccessCheckingMatrix) {
+            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
+                log.info("(${counter+1}). ${accessUrl}")
+            }
             log.info "Final Report:\n"
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
@@ -252,9 +255,6 @@ class ArchiveUtil {
             log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
-            ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
-                log.info("(${counter+1}). ${accessUrl}")
-            }
         }
     }
 
