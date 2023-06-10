@@ -46,7 +46,7 @@ class RestUtil {
             return doGet
         }
         catch (Exception e) {
-            log.info("MakeGetCall Error while calling ${backendServer}/${path}", e)
+            log.info("MakeGetCall Error while calling ${backendServer}/${path}", e.message)
             return null
         }
     }
