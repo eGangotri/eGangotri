@@ -9,6 +9,7 @@ import groovy.util.logging.Slf4j
 class FileRetrieverUtil {
 
     static String pickFolderBasedOnArchiveProfile(String archiveProfile) {
+        log.info("FileUtil.ALL_FOLDERS" + FileUtil.ALL_FOLDERS)
         return FileUtil.ALL_FOLDERS."${archiveProfile.toUpperCase()}"
     }
 

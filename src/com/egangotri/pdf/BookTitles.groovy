@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
  */
 @Slf4j
 class BookTitles {
+    static boolean ONLY_PDFS = false
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
@@ -42,7 +43,6 @@ class BookTitles {
     static boolean INCLUDE_FILE_SIZE = true
     static boolean INCLUDE_INDEX = true
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
-    static boolean ONLY_PDFS = true
 
     static String CSV_SEPARATOR = ";"
 

@@ -73,10 +73,11 @@ class UploadUtils {
             }
 
             metaDataMap.each {
-                k, v ->
+                String k, String v ->
                     //log.info "$k $v"
             }
         }
+        println("metaDataMap ${metaDataMap}")
         return metaDataMap
     }
 

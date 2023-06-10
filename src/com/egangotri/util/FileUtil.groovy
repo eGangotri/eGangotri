@@ -13,6 +13,8 @@ class FileUtil {
 
     static String SRC_ROOT = "SRC_ROOT"
     static String DEST_ROOT = "DEST_ROOT"
+    static String DEST_OTRO_ROOT = "DEST_OTRO_ROOT"
+
 
     static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
         Properties properties = new Properties()
@@ -30,9 +32,16 @@ class FileUtil {
         for (Enumeration e = properties.keys(); e.hasMoreElements();) {
             String key = (String) e.nextElement()
             String path = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")?.trim()
-            String fullPath = "${rootPath}${File.separator}" + path
-            if (!key.contains(".") && key != SRC_ROOT && key != DEST_ROOT) {
-                profileAndFolder.put(key, fullPath)
+            if (!key.contains(".") && key != SRC_ROOT && key != DEST_ROOT && key != DEST_OTRO_ROOT) {
+                //If the path provided is a Full path such as
+                // C:// in Windows or /home/dir then don't make it relative to the SRC_ROOT
+                if(path.contains(":") || path.startsWith(File.separator)){
+                    profileAndFolder.put(key, path)
+                }
+                else {
+                    String fullPath = "${rootPath}${File.separator}" + path
+                    profileAndFolder.put(key, fullPath)
+                }
             }
         }
         return profileAndFolder
