@@ -16,8 +16,6 @@ class SettingsUtil {
     static boolean PREVIEW_FILES = true
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static String ENV_PROD = "prod"
-    static String ENV_DEV = "dev"
 
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
@@ -30,6 +28,9 @@ class SettingsUtil {
     static String EGANGOTRI_BACKEND_SERVER = "http://localhost:80/"
     static String EGANGOTRI_BACKEND_SUPERADMIN_USER = ""
     static String EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD = ""
+    static String ENV_PROD = "prod"
+    static String ENV_DEV = "dev"
+    static String ENV_TYPE = ENV_DEV
 
     static void applySettings(boolean createVOSavingFiles = true) {
         UploadUtils.resetGlobalUploadCounter()
@@ -185,10 +186,10 @@ class SettingsUtil {
             }
 
             if (settingsMetaDataMap.EGANGOTRI_ENV) {
-                String _env = settingsMetaDataMap.EGANGOTRI_ENV;
-                if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_PROD && _env.equalsIgnoreCase(ENV_PROD)) {
+                ENV_TYPE = settingsMetaDataMap.EGANGOTRI_ENV;
+                if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_PROD && ENV_TYPE.equalsIgnoreCase(ENV_PROD)) {
                     EGANGOTRI_BACKEND_SERVER = settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_PROD
-                } else if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_DEV && _env.equalsIgnoreCase(ENV_DEV)) {
+                } else if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_DEV && ENV_TYPE.equalsIgnoreCase(ENV_DEV)) {
                     EGANGOTRI_BACKEND_SERVER = settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_DEV
                 }
                 if(EGANGOTRI_BACKEND_SERVER.trim().endsWith("/")){

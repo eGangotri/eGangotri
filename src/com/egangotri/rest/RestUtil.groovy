@@ -53,7 +53,7 @@ class RestUtil {
 
     static boolean startDBServerIfOff() {
         String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
-        if(SettingsUtil.EGANGOTRI_ENV.equalsIgnoreCase(SettingsUtil.ENV_DEV)){
+        if(SettingsUtil.ENV_TYPE.equalsIgnoreCase(SettingsUtil.ENV_DEV)){
             if (!checkIfDBServerIsOn()) {
                 log.info("Starting DB Server")
                 Runtime.getRuntime().exec(mongoServerExecScript)
