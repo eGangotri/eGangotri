@@ -11,7 +11,6 @@ import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
 
 @Slf4j
 class LoginToArchive {
-
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
         if (args) {

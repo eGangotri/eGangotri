@@ -1,8 +1,6 @@
 package com.egangotri.rest
 
-import groovy.json.JsonBuilder
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
+import com.egangotri.upload.util.SettingsUtil
 import groovy.util.logging.Slf4j
 import org.apache.groovy.json.internal.LazyMap
 
@@ -11,17 +9,18 @@ import static groovy.json.JsonOutput.toJson
 
 @Slf4j
 class RestUtil {
-    static String REST_CALL_URI = 'http://127.0.0.1:80'
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
 
     static makePostCall(String path,
                         Map body,
-                        String urlString = REST_CALL_URI) {
+                        String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
         def posts
+        body.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
+        body.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
         try {
             posts = configure {
-                request.uri = urlString
+                request.uri = backendServer
                 request.uri.path = path
                 request.contentType = 'application/json'
                 request.body = toJson(body)
@@ -29,15 +28,16 @@ class RestUtil {
             log.info("posts ${posts}")
         }
         catch (Exception e) {
-            log.info("MakeRestCall Error while calling ${urlString}${path}", e)
+            log.info("""makePostCall Error while calling ${backendServer}${path}
+                        ${toJson(body)}""", e)
         }
         return posts
     }
 
-    static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String urlString = REST_CALL_URI) {
+    static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
         try {
             def doGet = configure {
-                request.uri = urlString
+                request.uri = backendServer
             }.get {
                 request.uri.path = path
                 request.uri.query = queryMap ?: [:]
@@ -46,17 +46,19 @@ class RestUtil {
             return doGet
         }
         catch (Exception e) {
-            log.info("MakeGetCall Error while calling ${urlString}/${path}", e)
+            log.info("MakeGetCall Error while calling ${backendServer}/${path}", e)
             return null
         }
     }
 
     static boolean startDBServerIfOff() {
         String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
-        if (!checkIfDBServerIsOn()) {
-            log.info("Starting DB Server")
-            Runtime.getRuntime().exec(mongoServerExecScript)
-            Thread.sleep(10000)
+        if(SettingsUtil.EGANGOTRI_ENV.equalsIgnoreCase(SettingsUtil.ENV_DEV)){
+            if (!checkIfDBServerIsOn()) {
+                log.info("Starting DB Server")
+                Runtime.getRuntime().exec(mongoServerExecScript)
+                Thread.sleep(10000)
+            }
         }
     }
 

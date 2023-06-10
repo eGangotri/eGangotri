@@ -9,12 +9,16 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class SettingsUtil {
+    static boolean WRITE_TO_MONGO_DB = true
     static boolean IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = false
     static boolean PREVIEW_FILES = true
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
+    static String ENV_PROD = "prod"
+    static String ENV_DEV = "dev"
+
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
@@ -22,6 +26,10 @@ class SettingsUtil {
     static boolean REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = true
     static int MINIMUM_FILE_NAME_LENGTH = 25
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
+
+    static String EGANGOTRI_BACKEND_SERVER = "http://localhost:80/"
+    static String EGANGOTRI_BACKEND_SUPERADMIN_USER = ""
+    static String EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD = ""
 
     static void applySettings(boolean createVOSavingFiles = true) {
         UploadUtils.resetGlobalUploadCounter()
@@ -175,6 +183,30 @@ class SettingsUtil {
                 REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING.toBoolean()
                 log.info("REUPLOAD_OF_FAILED_ITEMS_ON_SETTING: " + REUPLOAD_OF_FAILED_ITEMS_ON_SETTING)
             }
+
+            if (settingsMetaDataMap.EGANGOTRI_ENV) {
+                String _env = settingsMetaDataMap.EGANGOTRI_ENV;
+                if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_PROD && _env.equalsIgnoreCase(ENV_PROD)) {
+                    EGANGOTRI_BACKEND_SERVER = settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_PROD
+                } else if (settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_DEV && _env.equalsIgnoreCase(ENV_DEV)) {
+                    EGANGOTRI_BACKEND_SERVER = settingsMetaDataMap.EGANGOTRI_BACKEND_SERVER_DEV
+                }
+                if(EGANGOTRI_BACKEND_SERVER.trim().endsWith("/")){
+                    EGANGOTRI_BACKEND_SERVER = EGANGOTRI_BACKEND_SERVER.trim().substring(0,EGANGOTRI_BACKEND_SERVER.length() - 1);
+                }
+                log.info("EGANGOTRI_BACKEND_SERVER: " + EGANGOTRI_BACKEND_SERVER)
+            }
+
+            if (settingsMetaDataMap.EGANGOTRI_BACKEND_SUPERADMIN_USER && settingsMetaDataMap.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD) {
+                EGANGOTRI_BACKEND_SUPERADMIN_USER = settingsMetaDataMap.EGANGOTRI_BACKEND_SUPERADMIN_USER
+                EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD = settingsMetaDataMap.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD
+            }
+
+            if (settingsMetaDataMap.WRITE_TO_MONGO_DB) {
+                WRITE_TO_MONGO_DB = settingsMetaDataMap.WRITE_TO_MONGO_DB;
+                log.info("WRITE_TO_MONGO_DB: ${WRITE_TO_MONGO_DB}");
+            }
+
             applyMailerSettings()
             applySnap2HtmlSettings()
         }

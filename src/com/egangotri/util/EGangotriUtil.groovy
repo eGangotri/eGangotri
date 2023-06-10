@@ -54,7 +54,6 @@ class EGangotriUtil {
     static boolean PARTITIONING_ENABLED = false
     static boolean GENERATE_RANDOM_CREATOR = false
 
-    static boolean WRITE_TO_MONGO_DB = true
     static String UPLOAD_RUN_ID = ""
 
     //This not implemented
