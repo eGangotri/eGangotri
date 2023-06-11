@@ -51,9 +51,8 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["BJP_JAMMU", "EG_URDU"]
+    args = ["VT", "SR"]
 }
-
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.EditFilesInArchive"
@@ -69,7 +68,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["KANGRI" ,"false"]
+    args = [ "KM" ,"false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -95,7 +94,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["D:\\MASTER_BACKUP\\Treasures57\\_freeze"]
+    args = ["D:\\_Treasures59\\_freeze"]
     /*args = [ """D:\\MASTER_BACKUP\\Treasures40\\_freeze\\Mumukshu ,
              D:\\MASTER_BACKUP\\Treasures41\\_freeze\\Mumukshu , 
              D:\\MASTER_BACKUP\\Treasures42\\_freeze\\Mumukshu , 

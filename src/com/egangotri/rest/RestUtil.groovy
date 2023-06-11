@@ -15,9 +15,9 @@ class RestUtil {
     static makePostCall(String path,
                         Map body,
                         String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
-        def posts
         body.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
         body.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
+        def posts
         try {
             posts = configure {
                 request.uri = backendServer

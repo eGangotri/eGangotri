@@ -115,11 +115,8 @@ class FileMover {
 
                       Total Files Moved [${totalFilesMoved.join("+")}=${totalFilesMoved.sum()}] 
                       [ ${successStatuses.join("+")} ]
-                      [ ${successCount(SUCCESS_STRING)}(S)+
-                        ${successCount(FAILURE_STRING)}(F)+
-                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)+
-                        ${successCount(FILE_IN_USE)}(FILE_IN_USE)+
-                        ${successCount(NOTHING_TO_MOVE)}(N2M)]=(${successStatuses.size()}) ]"""
+                      [ ${successCount(SUCCESS_STRING)}(S)+  ${successCount(FAILURE_STRING)}(F)+
+                        ${successCount(POSSIBLE_OVERWRITE_ISSUES_STRING)}(OverWriteError)+ ${successCount(FILE_IN_USE)}(FILE_IN_USE)+${successCount(NOTHING_TO_MOVE)}(N2M)]=(${successStatuses.size()}) ]"""
         }
     }
 
