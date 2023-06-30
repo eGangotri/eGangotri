@@ -26,6 +26,7 @@ class BookTitles {
     static long afterDateAsLong = 0
     static int START_INDEX = 0
     static int TOTAL_FILES = 0
+    static int TOTAL_FILE_SIZE = 0
     static int TOTAL_FILES_SUCCESSFULLY_READ = 0
     static int TOTAL_ERRORS = 0
     static List<String> ERRORENOUS_FILES = []
@@ -41,6 +42,7 @@ class BookTitles {
     static boolean DONT_MENTION_SUB_FOLDERS = false;
     static boolean INCLUDE_NUMBER_OF_PAGES = true
     static boolean INCLUDE_FILE_SIZE = true
+    static boolean INCLUDE_TOTAL_FILE_SIZE = true
     static boolean INCLUDE_INDEX = true
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
 
@@ -116,7 +118,8 @@ class BookTitles {
             ///
             String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? "${CSV_SEPARATOR}Number of Pages" : ''}"
             String fileSizeHeader = "${INCLUDE_FILE_SIZE ? "${CSV_SEPARATOR}File Size${CSV_SEPARATOR} Units" : ''}"
-            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR} " : ''}File Name${pageCountHeader}${fileSizeHeader}\n"
+            String totalFileSizeHeader = "${INCLUDE_TOTAL_FILE_SIZE ? "${CSV_SEPARATOR}Total File Size in KB" : ''}"
+            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR} " : ''}File Name${pageCountHeader}${fileSizeHeader} ${totalFileSizeHeader}\n"
             return csvReport
         }
         return ""
@@ -228,7 +231,6 @@ class BookTitles {
     static void printFileNamePageCountFileSize(String folderAbsolutePath, File file, int index) {
         int numberOfPages = 0
         try {
-
             if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF)) {
                 PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
                 PdfDocument pdfDoc = new PdfDocument(pdfReader);
@@ -237,16 +239,20 @@ class BookTitles {
                 pdfDoc.close()
                 pdfReader.close()
             }
-
+            if(INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF)){
+                incrementTotalFileSize(FileSizeUtil.fileSizeInKB(file))
+            }
             String sizeInfo = FileSizeUtil.getFileSizeFormatted(file);
             String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}";
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
             addToReportAndPrint(_report);
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
+            String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file) + " KB"
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR} " : ''}${file.name}${CSV_SEPARATOR} ${csvPageCountLogic}${CSV_SEPARATOR} ${csvFileSizeLogic}"
+            String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR} " : ''}${file.name}${CSV_SEPARATOR} ${csvPageCountLogic}${CSV_SEPARATOR} ${csvFileSizeLogic}${CSV_SEPARATOR} ${csvTotalFileSizeLogic}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }
@@ -283,6 +289,9 @@ class BookTitles {
         TOTAL_NUM_PAGES += numPagesToIncrement
     }
 
+    static void incrementTotalFileSize(BigDecimal fileSizeinKB) {
+        TOTAL_FILE_SIZE += fileSizeinKB
+    }
 
     static int calculateTotalFileCount() {
         int pdfCount = 0
@@ -302,6 +311,7 @@ Total Files with Errors(including password-protected):${delimiter}${formatIntege
 Total Files system didnt pick:${delimiter}${formatInteger((TOTAL_FILES - (TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS)), delimiter)}
 Erroneous File List:${delimiter}${ERRORENOUS_FILES ? "\n" + ERRORENOUS_FILES.join("\t\t\n") : 0}
 Password Protected Erroneous File List:${delimiter}${PASSWORD_PROTECTED_FILES ? "\n" + PASSWORD_PROTECTED_FILES.join("\t\t\n") : 0}
+Total Size of Files:${delimiter}${FileSizeUtil.formatFileSize(TOTAL_FILE_SIZE)}
 Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         return totalStats
     }
@@ -310,6 +320,4 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         addToReportAndPrint(generateStats())
         addToCSVReport(generateStats(CSV_SEPARATOR))
     }
-
-
 }
