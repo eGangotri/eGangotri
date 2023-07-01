@@ -4,7 +4,6 @@ import com.egangotri.util.FileSizeUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
-import com.egangotri.pdf.CsvToExcel
 
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
@@ -16,7 +15,7 @@ import java.text.SimpleDateFormat
  */
 @Slf4j
 class BookTitles {
-    static boolean ONLY_PDFS = false
+    static boolean ONLY_PDFS = true
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
@@ -239,7 +238,7 @@ class BookTitles {
                 pdfDoc.close()
                 pdfReader.close()
             }
-            if(INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF)){
+            if (INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF)) {
                 incrementTotalFileSize(FileSizeUtil.fileSizeInKB(file))
             }
             String sizeInfo = FileSizeUtil.getFileSizeFormatted(file);
@@ -294,16 +293,20 @@ class BookTitles {
     }
 
     static int calculateTotalFileCount() {
-        int pdfCount = 0
-        for (String folder : FOLDER_NAME) {
-            File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
-            pdfCount += files?.length
+        if (ONLY_PDFS) {
+            int pdfCount = 0
+            for (String folder : FOLDER_NAME) {
+                File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
+                pdfCount += files?.length
+            }
+            return pdfCount
         }
-        return pdfCount
+        return FileSizeUtil.getCumulativeFileCount(FOLDER_NAME)
     }
 
     static String generateStats(String delimiter = " ") {
         String totalStats = """
+${ONLY_PDFS ? "PDF Stats" : "ALL File Stats"}:
 Total File Count:${delimiter}${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
 Total Files Processed:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS, delimiter)}
 Total Files Read Successfully:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ, delimiter)}

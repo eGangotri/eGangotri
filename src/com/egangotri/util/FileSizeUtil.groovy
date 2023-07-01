@@ -2,6 +2,9 @@ package com.egangotri.util
 
 import groovy.io.FileType
 
+import java.nio.file.Files
+import java.nio.file.Paths
+
 class FileSizeUtil {
 
     static String formatFileSize(BigDecimal sizeInKB, String delimiter = " "){
@@ -45,7 +48,25 @@ Cannot use FileNameFilter or FileFilter as we are dealing with sub-directories
         return files
     }
 
-    static String[] allPdfsInDirAsFilenameList(String srcDir) {
+
+    static int getFileCount(String directoryPath) {
+        def directory = Paths.get(directoryPath)
+
+        int fileCount = Files.walk(directory)
+                .filter { Files.isRegularFile(it) }
+                .count()
+        return fileCount
+    }
+
+    static int getCumulativeFileCount(List<String> directoryPaths) {
+        int fileCount = 0;
+        for(String path: directoryPaths){
+            fileCount += getFileCount(path)
+        }
+        return fileCount
+    }
+
+        static String[] allPdfsInDirAsFilenameList(String srcDir) {
         return allPdfsInDirAsFileList(srcDir)
     }
 
