@@ -12,14 +12,16 @@ import com.itextpdf.text.pdf.PdfWriter;
  * All Titles of PDF's in a Folder and SubFolders
  */
 @Slf4j
-class GetFirstNPagesFromPdf {
+class GetFirstAndLastNPagesFromPdf {
 
-    static File MAIN_FOLDER
-    static String OUTPUT_FOLDER_NAME = ""
+    static File MAIN_FOLDER = new File("C:\\Users\\chetan\\Documents\\_testPDF")
+    static String OUTPUT_FOLDER_NAME = "_output"
     static String PDF = "pdf"
-    static final String TRUNCATION_SUFFIX = "_truncated"
+    static final String TRUNCATION_SUFFIX_FOLDER = "_truncated"
 
-    static int PAGE_LIMIT = 5
+    static int PAGE_LIMIT_FIRST_PART = 10
+    static int PAGE_LIMIT_LAST_PART = 10
+
     static boolean ONLY_PDFS = true
 
     static void main(String[] args) {
@@ -27,13 +29,17 @@ class GetFirstNPagesFromPdf {
     }
 
     static void execute(String[] args = []) {
-        if(args.size() > 0 ){
+        if(args.size() >= 1 ){
             MAIN_FOLDER = new File(args[0])
         }
-        if(args.size() == 2){
-            PAGE_LIMIT = args[1].toInteger()
+        if(args.size() >= 2){
+            PAGE_LIMIT_FIRST_PART = args[1].toInteger()
         }
-        OUTPUT_FOLDER_NAME = MAIN_FOLDER.getAbsolutePath() + TRUNCATION_SUFFIX
+        if(args.size() == 3){
+            PAGE_LIMIT_LAST_PART = args[2].toInteger()
+        }
+
+        OUTPUT_FOLDER_NAME = MAIN_FOLDER.getAbsolutePath() + TRUNCATION_SUFFIX_FOLDER
         File outputFolderAsFile = new File(OUTPUT_FOLDER_NAME)
         if(!outputFolderAsFile.exists()){
             outputFolderAsFile.mkdir()
@@ -97,14 +103,23 @@ class GetFirstNPagesFromPdf {
                 new FileOutputStream(outputFile))
         outputDocument.open()
 
+        int pageLimit = PAGE_LIMIT_FIRST_PART + PAGE_LIMIT_LAST_PART
         PdfReader reader = new PdfReader(pdfFileName.getAbsolutePath())
         int numberOfPages = reader.getNumberOfPages()
         PdfImportedPage page
         // Go through all pages
-        for (int i = 1; i <= (PAGE_LIMIT<= numberOfPages ? PAGE_LIMIT: numberOfPages) ; i++) {
+        for (int i = 1; i <= (numberOfPages >= pageLimit ? PAGE_LIMIT_FIRST_PART: numberOfPages) ; i++) {
             page = writer.getImportedPage(reader, i)
             Image instance = Image.getInstance(page)
             outputDocument.add(instance)
+        }
+
+        if(numberOfPages >= pageLimit){
+            for (int i = numberOfPages-PAGE_LIMIT_LAST_PART+1; i <= numberOfPages; i++) {
+                page = writer.getImportedPage(reader, i)
+                Image instance = Image.getInstance(page)
+                outputDocument.add(instance)
+            }
         }
         outputDocument.close()
     }
