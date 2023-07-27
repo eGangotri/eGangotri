@@ -51,7 +51,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["VT", "SR"]
+    args = ["PANINI"]
 }
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -62,13 +62,6 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     //default is 10
     //if -1 it will open all
     args = ["BJP_JAMMU", 16]
-}
-task fileMover(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    println "FileMover: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.mover.FileMover"
-    jvmArgs = applicationDefaultJvmArgs
-    args = [ "KM" ,"false"]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -85,6 +78,14 @@ task zipMover(dependsOn: 'classes', type: JavaExec) {
     main = "com.egangotri.mover.ZipMover"
     jvmArgs = applicationDefaultJvmArgs
     args = [ "20 feb 2021.txt" ]
+}
+
+task fileMover(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    println "FileMover: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.mover.FileMover"
+    jvmArgs = applicationDefaultJvmArgs
+    args = [ "SV_SHASTRI" ,"false"]
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
@@ -108,7 +109,8 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
              D:\\MASTER_BACKUP\\Treasures51\\_freeze\\Mumukshu , 
              D:\\MASTER_BACKUP\\Treasures52\\_freeze\\Mumukshu , 
              D:\\MASTER_BACKUP\\Treasures53\\_freeze\\Mumukshu"""]*/
-  //  args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
+    //args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
+    args = ["D:\\_Treasures60\\_freeze"]
 }
 
 task allFilePathsLongerThanThreshold(dependsOn: 'classes', type: JavaExec) {

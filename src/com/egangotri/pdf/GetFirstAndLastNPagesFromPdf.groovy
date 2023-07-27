@@ -10,6 +10,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  * All Titles of PDF's in a Folder and SubFolders
+ * adds a extra border to the pdf better off using the nodejs version.
  */
 @Slf4j
 class GetFirstAndLastNPagesFromPdf {

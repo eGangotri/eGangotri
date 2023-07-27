@@ -309,11 +309,11 @@ class BookTitles {
 ${ONLY_PDFS ? "PDF Stats" : "ALL File Stats"}:
 Total File Count:${delimiter}${TOTAL_FILES} (** if you are date-filtering then this feature for count of date-filtered not implemented yet)
 Total Files Processed:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS, delimiter)}
-Total Files Read Successfully:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ, delimiter)}
 Total Files with Errors(including password-protected):${delimiter}${formatInteger(TOTAL_ERRORS, delimiter)}
 Total Files system didnt pick:${delimiter}${formatInteger((TOTAL_FILES - (TOTAL_FILES_SUCCESSFULLY_READ + TOTAL_ERRORS)), delimiter)}
 Erroneous File List:${delimiter}${ERRORENOUS_FILES ? "\n" + ERRORENOUS_FILES.join("\t\t\n") : 0}
 Password Protected Erroneous File List:${delimiter}${PASSWORD_PROTECTED_FILES ? "\n" + PASSWORD_PROTECTED_FILES.join("\t\t\n") : 0}
+Total Files Read Successfully:${delimiter}${formatInteger(TOTAL_FILES_SUCCESSFULLY_READ, delimiter)}
 Total Size of Files:${delimiter}${FileSizeUtil.formatFileSize(TOTAL_FILE_SIZE)}
 Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         return totalStats
