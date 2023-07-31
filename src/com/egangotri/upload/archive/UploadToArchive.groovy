@@ -1,6 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.rest.RestUtil
+import com.egangotri.rest.UploadRestApiCalls
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
@@ -8,6 +9,7 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 /**
  * Created by user on 1/18/2016.
@@ -42,8 +44,8 @@ class UploadToArchive {
             }
             else{
                 log.info("Mongo is running")
-                EGangotriUtil.UPLOAD_RUN_ID = UUID.randomUUID();
-                log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_RUN_ID)
+                EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID();
+                log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_CYCLE_ID)
             }
         }
         if(SettingsUtil.PREVIEW_FILES){
@@ -86,6 +88,15 @@ class UploadToArchive {
         int attemptedItemsTotal = 0
         Set<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
+        if(SettingsUtil.WRITE_TO_MONGO_DB){
+            try{
+                UploadRestApiCalls.addToUploadCycle(EGangotriUtil.UPLOAD_CYCLE_ID,profiles);
+            }
+            catch(Exception e){
+                log.info("Exception calling addToUshered",e)
+            }
+        }
+
         profiles.eachWithIndex { archiveProfile, index ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"

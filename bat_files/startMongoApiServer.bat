@@ -1,2 +1,3 @@
 cd C:\ws\eGangotri-node-backend
-yarn run start
+REM yarn run start forUpload
+yarn run upload_db

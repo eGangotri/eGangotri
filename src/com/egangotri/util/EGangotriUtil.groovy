@@ -54,7 +54,7 @@ class EGangotriUtil {
     static boolean PARTITIONING_ENABLED = false
     static boolean GENERATE_RANDOM_CREATOR = false
 
-    static String UPLOAD_RUN_ID = ""
+    static String UPLOAD_CYCLE_ID = ""
 
     //This not implemented
     static List ACCOUNTS_WITH_RANDOMIZABLE_CREATORS = []

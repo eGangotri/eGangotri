@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.rest.RestUtil
+
 import com.egangotri.rest.UploadRestApiCalls
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
@@ -297,8 +297,8 @@ class ArchiveHandler {
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         if(SettingsUtil.WRITE_TO_MONGO_DB){
             try{
-                UploadRestApiCalls.addToQueue(uploadVO,EGangotriUtil.UPLOAD_RUN_ID,"X");
-                UploadRestApiCalls.addToUshered(uploadVO,EGangotriUtil.UPLOAD_RUN_ID,"X",identifier);
+                UploadRestApiCalls.addToQueue(uploadVO,EGangotriUtil.UPLOAD_CYCLE_ID,"X");
+                UploadRestApiCalls.addToUshered(uploadVO,EGangotriUtil.UPLOAD_CYCLE_ID,"X",identifier);
             }
             catch(Exception e){
                 log.info("Exception calling addToUshered",e)

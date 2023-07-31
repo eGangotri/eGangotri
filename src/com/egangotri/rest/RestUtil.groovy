@@ -11,6 +11,7 @@ import static groovy.json.JsonOutput.toJson
 class RestUtil {
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
+    static String UPLOAD_CYCLE_ROUTE = "uploadCycleRoute"
 
     static makePostCall(String path,
                         Map body,

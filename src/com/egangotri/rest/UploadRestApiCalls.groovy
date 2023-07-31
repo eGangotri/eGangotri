@@ -1,10 +1,13 @@
 package com.egangotri.rest
 
+import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import java.text.SimpleDateFormat
@@ -67,5 +70,31 @@ class UploadRestApiCalls {
                 queuedVO.path, queuedVO.title,
                 uploadCycleId, csvName)
         return result
+    }
+
+    static String addToUploadCycle(String uploadCycleId, String[] profiles) {
+        def result = ""
+        String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
+        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION }");
+        log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles) }");
+
+        def profilesAndCount = profiles.collect {
+            Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profiles)
+            def jsonSlurper = new JsonSlurper()
+            log.info("profileName: ${it} countOfUploadableItems ${countOfUploadableItems}")
+            return jsonSlurper.parseText('{"profileName": it,"count": countOfUploadableItems}');
+        }
+
+        try {
+            Map paramsMap = [:] ;
+            paramsMap.put("uploadCycleId", uploadCycleId);
+            paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
+            paramsMap.put("archiveProfiles", profilesAndCount);
+            result = RestUtil.makePostCall(restApiRoute, paramsMap)
+        }
+        catch (Exception e) {
+            log.info("addToQueue Error while calling ${restApiRoute}", e)
+        }
+        return result;
     }
 }
