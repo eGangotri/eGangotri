@@ -53,6 +53,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     jvmArgs = applicationDefaultJvmArgs
     args = ["PANINI"]
 }
+
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.EditFilesInArchive"
