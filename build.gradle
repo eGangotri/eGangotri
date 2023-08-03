@@ -85,7 +85,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "SV_SHASTRI" ,"false"]
+    args = [  "VT", "KANGRI" ,"false"]
 }
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {

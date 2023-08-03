@@ -88,16 +88,19 @@ class UploadToArchive {
         int attemptedItemsTotal = 0
         Set<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(profiles)
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION =
+                ArchiveUtil.getGrandTotalOfAllUploadables(profiles);
         if(SettingsUtil.WRITE_TO_MONGO_DB){
             try{
-                UploadRestApiCalls.addToUploadCycle(EGangotriUtil.UPLOAD_CYCLE_ID,profiles);
+                UploadRestApiCalls.addToUploadCycle(profiles);
             }
             catch(Exception e){
-                log.info("Exception calling addToUshered",e)
+                log.info("Exception calling addToUploadCycle",e)
+                throw e;
             }
         }
 
-        profiles.eachWithIndex { archiveProfile, index ->
+        profiles.eachWithIndex { String archiveProfile, Integer index ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
             log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {

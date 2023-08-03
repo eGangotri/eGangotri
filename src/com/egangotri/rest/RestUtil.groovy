@@ -53,13 +53,18 @@ class RestUtil {
     }
 
     static boolean startDBServerIfOff() {
-        String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
-        if(SettingsUtil.ENV_TYPE.equalsIgnoreCase(SettingsUtil.ENV_DEV)){
-            if (!checkIfDBServerIsOn()) {
-                log.info("Starting DB Server")
-                Runtime.getRuntime().exec(mongoServerExecScript)
-                Thread.sleep(10000)
+        try {
+            String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
+            if (SettingsUtil.ENV_TYPE.equalsIgnoreCase(SettingsUtil.ENV_DEV)) {
+                if (!checkIfDBServerIsOn()) {
+                    log.info("Starting DB Server")
+                    Runtime.getRuntime().exec(mongoServerExecScript)
+                    Thread.sleep(10000)
+                }
             }
+        }
+        catch (Exception ex) {
+            log.error(ex, "Couldnt start Mongo Server");
         }
     }
 

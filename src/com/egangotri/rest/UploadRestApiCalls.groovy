@@ -72,24 +72,26 @@ class UploadRestApiCalls {
         return result
     }
 
-    static String addToUploadCycle(String uploadCycleId, String[] profiles) {
+    static String addToUploadCycle(Collection<String> profiles) {
         def result = ""
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
         log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION }");
         log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles) }");
 
-        def profilesAndCount = profiles.collect {
-            Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profiles)
+        def profilesAndCount = profiles.collect {String profile ->
+            Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profile)
             def jsonSlurper = new JsonSlurper()
-            log.info("profileName: ${it} countOfUploadableItems ${countOfUploadableItems}")
-            return jsonSlurper.parseText('{"profileName": it,"count": countOfUploadableItems}');
+            log.info("profileName: ${profile} countOfUploadableItems ${countOfUploadableItems}")
+            String parseable = '{"profileName": ' + "\"${profile}\"" + ',"count": ' + countOfUploadableItems + '}';
+            return jsonSlurper.parseText(parseable);
         }
 
         try {
             Map paramsMap = [:] ;
-            paramsMap.put("uploadCycleId", uploadCycleId);
+            paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
+            paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap)
         }
         catch (Exception e) {
