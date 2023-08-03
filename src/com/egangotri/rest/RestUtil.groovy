@@ -54,12 +54,12 @@ class RestUtil {
 
     static boolean startDBServerIfOff() {
         try {
-            String mongoServerExecScript = "./bat_files/startMongoApiServer.bat"
+            log.info("startDBServerIfOff for env:${SettingsUtil.ENV_TYPE}")
+            String mongoServerExecScript = ".\\bat_files\\startMongoApiServer.bat"
+
             if (SettingsUtil.ENV_TYPE.equalsIgnoreCase(SettingsUtil.ENV_DEV)) {
                 if (!checkIfDBServerIsOn()) {
-                    log.info("Starting DB Server")
-                    Runtime.getRuntime().exec(mongoServerExecScript)
-                    Thread.sleep(10000)
+                    log.info("startDBServerIfOff:Starting DB Server")
                 }
             }
         }
@@ -78,15 +78,19 @@ class RestUtil {
     }
 
     static boolean checkIfDBServerIsOn() {
+        boolean _result = false
+        String dbServerSuccessMsg = "eGangotri-node-backend (egangotri_upload_db)"
         try {
             LazyMap result = makeGetCall("/") ?: [:] as Map
+            _result = (result && result.containsKey("response")) ? result.response == dbServerSuccessMsg : false
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
-            return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
         }
         catch (ConnectException e) {
-            log.error(e.message)
-            return false;
+            log.error(e.message, "checkIfDBServerIsOn exception thrown")
+            _result = false;
         }
+        log.info("checkIfDBServerIsOn ${_result}");
+        return _result;
     }
 
     static boolean checkIfDashboardServerIsOn() {
