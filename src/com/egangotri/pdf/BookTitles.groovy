@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -15,15 +16,18 @@ import java.text.SimpleDateFormat
  */
 @Slf4j
 class BookTitles {
+   // static String DUMP_DIRECTORY = "${System.getProperty("user.home")}\\_bookTitles"
+    static String DUMP_DIRECTORY = "C:\\_catalogWork\\_collation\\local"
     static boolean ONLY_PDFS = true
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
-    static List<String> FOLDER_NAME = ["C:\\tmp\\pdfForMergeTest\\"]
+    static List<String> FOLDER_NAMES = ["C:\\tmp\\pdfForMergeTest\\"]
     static String afterDate = "" //format DD-MM-YYYY
     static int afterHour = 0 //format DD-MM-YYYY
     static long afterDateAsLong = 0
     static int START_INDEX = 0
+    static int FOLDER_INDEX = 0
     static int TOTAL_FILES = 0
     static int TOTAL_FILE_SIZE = 0
     static int TOTAL_FILES_SUCCESSFULLY_READ = 0
@@ -48,13 +52,14 @@ class BookTitles {
     static String CSV_SEPARATOR = ";"
 
     static void main(String[] args) {
+        log.info("args ${args}")
         execute(args)
     }
 
     static void execute(String[] args = []) {
         if (args?.size() > 0) {
             String args0 = args[0]
-            FOLDER_NAME = args0.split(",")*.trim().toList()
+            FOLDER_NAMES = args0.split(",")*.trim().findAll {it.length()>1}.toList()
             if (args?.size() > 1) {
                 afterDate = args[1]
                 if (args?.size() > 2) {
@@ -69,8 +74,8 @@ class BookTitles {
         }
         calculateAfterDate()
         TOTAL_FILES = calculateTotalFileCount()
-        addToReportAndPrint("Reading files: $FOLDER_NAME\n")
-        for (String folder : FOLDER_NAME) {
+        addToReportAndPrint("Reading files: $FOLDER_NAMES\n")
+        for (String folder : FOLDER_NAMES) {
             //if only the directory specified
             if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
                 processOneFolder(folder)
@@ -127,9 +132,12 @@ class BookTitles {
     static void writeToFile() {
         String _time = new SimpleDateFormat("dd-MMM-yy-HH-MM-ss").format(new Date().time)
 
-        String _folderNames = (FOLDER_NAME.collect { return new File(it) })*.name.join("_")
-        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all")
-        File writeableFile = new File(System.getProperty("user.home"), "${fileName}_${_time}.txt")
+        String _folderNames = (FOLDER_NAMES.collect { return new File(it) })*.name.join("_")
+        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all") + "_${TOTAL_FILES_SUCCESSFULLY_READ}"
+        String directoryName = DUMP_DIRECTORY + "//${_folderNames}"
+        Files.createDirectories(Paths.get(directoryName));
+        File writeableFile = new File(directoryName, "${fileName}_${_time}.txt")
+
         writeableFile << MEGA_REPORT
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
@@ -144,7 +152,8 @@ class BookTitles {
     }
 
     static void addToReportAndPrint(String _report, boolean onlyLogDontCommitToFile = false) {
-        log.info(_report)
+        String includeFolderIndex = INCLUDE_INDEX ? "${FOLDER_INDEX}-" :""
+        log.info( includeFolderIndex + _report)
         if (!onlyLogDontCommitToFile) {
             MEGA_REPORT.append("$_report\n")
         };
@@ -295,13 +304,13 @@ class BookTitles {
     static int calculateTotalFileCount() {
         if (ONLY_PDFS) {
             int pdfCount = 0
-            for (String folder : FOLDER_NAME) {
+            for (String folder : FOLDER_NAMES) {
                 File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
                 pdfCount += files?.length
             }
             return pdfCount
         }
-        return FileSizeUtil.getCumulativeFileCount(FOLDER_NAME)
+        return FileSizeUtil.getCumulativeFileCount(FOLDER_NAMES)
     }
 
     static String generateStats(String delimiter = " ") {
@@ -322,5 +331,34 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
     static void printFinalStats() {
         addToReportAndPrint(generateStats())
         addToCSVReport(generateStats(CSV_SEPARATOR))
+    }
+
+    static void incrementFolderCounter(){
+        FOLDER_INDEX++;
+    }
+    static void resetCounters (){
+        START_INDEX = 0
+        TOTAL_FILES = 0
+        TOTAL_FILE_SIZE = 0
+        TOTAL_FILES_SUCCESSFULLY_READ = 0
+        TOTAL_ERRORS = 0
+        ERRORENOUS_FILES = []
+        PASSWORD_PROTECTED_FILES = []
+        TOTAL_NUM_PAGES = 0
+        MEGA_REPORT = new StringBuilder("")
+        MEGA_REPORT = new StringBuilder("")
+        CSV_MEGA_REPORT = new StringBuilder("")
+    }
+
+    static String counterStats (){
+        log.info("""
+        TOTAL_FILES: ${TOTAL_FILES}
+        TOTAL_FILE_SIZE: ${TOTAL_FILE_SIZE}
+        TOTAL_FILES_SUCCESSFULLY_READ: ${TOTAL_FILES_SUCCESSFULLY_READ}
+        TOTAL_ERRORS: ${TOTAL_ERRORS}
+        ERRORENOUS_FILES: ${ERRORENOUS_FILES}
+        PASSWORD_PROTECTED_FILES:${PASSWORD_PROTECTED_FILES}
+        TOTAL_NUM_PAGES:${TOTAL_NUM_PAGES}
+    """);
     }
 }
