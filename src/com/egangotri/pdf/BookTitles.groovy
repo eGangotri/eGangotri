@@ -74,7 +74,7 @@ class BookTitles {
         }
         calculateAfterDate()
         TOTAL_FILES = calculateTotalFileCount()
-        addToReportAndPrint("Reading files: $FOLDER_NAMES\n")
+        addToReportAndPrint("Reading files: $FOLDER_NAMES\n",false)
         for (String folder : FOLDER_NAMES) {
             //if only the directory specified
             if (BookTitles.ONLY_ROOT_DIR_NO_SUBDIRS) {
@@ -133,15 +133,16 @@ class BookTitles {
         String _time = new SimpleDateFormat("dd-MMM-yy-HH-MM-ss").format(new Date().time)
 
         String _folderNames = (FOLDER_NAMES.collect { return new File(it) })*.name.join("_")
-        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all") + "_${TOTAL_FILES_SUCCESSFULLY_READ}"
+        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all")
         String directoryName = DUMP_DIRECTORY + "//${_folderNames}"
         Files.createDirectories(Paths.get(directoryName));
-        File writeableFile = new File(directoryName, "${fileName}_${_time}.txt")
+        String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}"
+        File writeableFile = new File(directoryName, "${_fileName}.txt")
 
         writeableFile << MEGA_REPORT
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
-            File writeableCSVFile = new File(System.getProperty("user.home"), "${fileName}_${_time}.csv")
+            File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
             writeableCSVFile << generateCsvHeader()
             writeableCSVFile << CSV_MEGA_REPORT
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
@@ -151,9 +152,9 @@ class BookTitles {
         }
     }
 
-    static void addToReportAndPrint(String _report, boolean onlyLogDontCommitToFile = false) {
-        String includeFolderIndex = INCLUDE_INDEX ? "${FOLDER_INDEX}-" :""
-        log.info( includeFolderIndex + _report)
+    static void addToReportAndPrint(String _report, boolean onlyLogDontCommitToFile = false, boolean includeFolderIndex = false) {
+        String _includeFolderIndex = (INCLUDE_INDEX && includeFolderIndex) ? "${FOLDER_INDEX}-" :""
+        log.info( _includeFolderIndex + _report)
         if (!onlyLogDontCommitToFile) {
             MEGA_REPORT.append("$_report\n")
         };
@@ -254,7 +255,7 @@ class BookTitles {
             String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}";
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
-            addToReportAndPrint(_report);
+            addToReportAndPrint(_report,false,true);
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
             String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file) + " KB"
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
@@ -267,14 +268,14 @@ class BookTitles {
         catch (com.itextpdf.kernel.exceptions.BadPasswordException bpe) {
             addToErrors(file.absolutePath, true)
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} is password-protected";
-            addToReportAndPrint(_report)
+            addToReportAndPrint(_report,false)
             addToCSVReport(_report.split(/\s/, 2).join(CSV_SEPARATOR))
             log.error("Error in reading Password Protected File for ${file.absolutePath}", bpe)
         }
         catch (Exception e) {
             addToErrors(file.absolutePath)
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} had an error reading page/count/size";
-            addToReportAndPrint(_report)
+            addToReportAndPrint(_report,false)
             addToCSVReport(_report.split(/\s/, 2).join(CSV_SEPARATOR))
             log.error("Error in reading file page-count/size/ for ${file.absolutePath}", e)
         }
@@ -329,7 +330,7 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
     }
 
     static void printFinalStats() {
-        addToReportAndPrint(generateStats())
+        addToReportAndPrint(generateStats(),false)
         addToCSVReport(generateStats(CSV_SEPARATOR))
     }
 
@@ -345,7 +346,6 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         ERRORENOUS_FILES = []
         PASSWORD_PROTECTED_FILES = []
         TOTAL_NUM_PAGES = 0
-        MEGA_REPORT = new StringBuilder("")
         MEGA_REPORT = new StringBuilder("")
         CSV_MEGA_REPORT = new StringBuilder("")
     }
