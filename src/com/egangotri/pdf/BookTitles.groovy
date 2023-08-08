@@ -133,16 +133,15 @@ class BookTitles {
         String _time = new SimpleDateFormat("dd-MMM-yy-HH-MM-ss").format(new Date().time)
 
         String _folderNames = (FOLDER_NAMES.collect { return new File(it) })*.name.join("_")
-        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all")
+        String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all") + "_${TOTAL_FILES_SUCCESSFULLY_READ}"
         String directoryName = DUMP_DIRECTORY + "//${_folderNames}"
         Files.createDirectories(Paths.get(directoryName));
-        String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}"
-        File writeableFile = new File(directoryName, "${_fileName}.txt")
+        File writeableFile = new File(directoryName, "${fileName}_${_time}.txt")
 
         writeableFile << MEGA_REPORT
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
-            File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
+            File writeableCSVFile = new File(System.getProperty("user.home"), "${fileName}_${_time}.csv")
             writeableCSVFile << generateCsvHeader()
             writeableCSVFile << CSV_MEGA_REPORT
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
