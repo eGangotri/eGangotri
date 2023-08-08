@@ -136,12 +136,13 @@ class BookTitles {
         String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all") + "_${TOTAL_FILES_SUCCESSFULLY_READ}"
         String directoryName = DUMP_DIRECTORY + "//${_folderNames}"
         Files.createDirectories(Paths.get(directoryName));
-        File writeableFile = new File(directoryName, "${fileName}_${_time}.txt")
+        String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}"
+        File writeableFile = new File(directoryName, "${_fileName}.txt")
 
         writeableFile << MEGA_REPORT
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
-            File writeableCSVFile = new File(System.getProperty("user.home"), "${fileName}_${_time}.csv")
+            File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
             writeableCSVFile << generateCsvHeader()
             writeableCSVFile << CSV_MEGA_REPORT
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
