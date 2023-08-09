@@ -145,7 +145,7 @@ class BookTitles {
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
             File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
-            def csvWriter = writeableFile.newWriter('UTF-8')
+            def csvWriter = writeableCSVFile.newWriter('UTF-8')
             csvWriter << generateCsvHeader()
             csvWriter << CSV_MEGA_REPORT
             csvWriter.close()
