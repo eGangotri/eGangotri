@@ -123,7 +123,7 @@ class BookTitles {
             String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? "${CSV_SEPARATOR}Number of Pages" : ''}"
             String fileSizeHeader = "${INCLUDE_FILE_SIZE ? "${CSV_SEPARATOR}File Size${CSV_SEPARATOR} Units" : ''}"
             String totalFileSizeHeader = "${INCLUDE_TOTAL_FILE_SIZE ? "${CSV_SEPARATOR}Total File Size in KB" : ''}"
-            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR} " : ''}File Name${pageCountHeader}${fileSizeHeader} ${totalFileSizeHeader}\n"
+            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR}" : ''}File Name${pageCountHeader}${fileSizeHeader} ${totalFileSizeHeader}\n"
             return csvReport
         }
         return ""
@@ -261,7 +261,7 @@ class BookTitles {
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR} " : ''}${file.name}${CSV_SEPARATOR} ${csvPageCountLogic}${CSV_SEPARATOR} ${csvFileSizeLogic}${CSV_SEPARATOR} ${csvTotalFileSizeLogic}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${CSV_SEPARATOR}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }

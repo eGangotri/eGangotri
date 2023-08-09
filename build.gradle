@@ -86,7 +86,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [  "VT", "KANGRI" ,"false"]
+    args = [  "SPS", "PZ" ,"false"]
 }
 
 task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
@@ -96,7 +96,8 @@ task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["""E:\\eG-tr1-30\\Treasures11,
+    args = ["E:\\eG-tr1-30\\Treasures23"]
+    /* args = ["""E:\\eG-tr1-30\\Treasures11,
 E:\\eG-tr1-30\\Treasures12,
 E:\\eG-tr1-30\\Treasures13,
 E:\\eG-tr1-30\\Treasures14,
@@ -106,8 +107,8 @@ E:\\eG-tr1-30\\Treasures17,
 E:\\eG-tr1-30\\Treasures18,
 E:\\eG-tr1-30\\Treasures19,
 E:\\eG-tr1-30\\Treasures20,
-"""]
-//G:\\eGangotri-Tr-31-39\\Treasures33,
+"""] */
+//G:\\eGangotri-Tr-31-39\\
 //G:\\eGangotri-Tr-31-39\\Treasures34,
 //G:\\eGangotri-Tr-31-39\\Treasures35,
 //G:\\eGangotri-Tr-31-39\\Treasures36,
