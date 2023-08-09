@@ -138,13 +138,17 @@ class BookTitles {
         Files.createDirectories(Paths.get(directoryName));
         String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}"
         File writeableFile = new File(directoryName, "${_fileName}.txt")
+        def textWriter = writeableFile.newWriter('UTF-8')
+        textWriter << MEGA_REPORT
+        textWriter.close()
 
-        writeableFile << MEGA_REPORT
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
         if (generateCSVAlso) {
             File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
-            writeableCSVFile << generateCsvHeader()
-            writeableCSVFile << CSV_MEGA_REPORT
+            def csvWriter = writeableFile.newWriter('UTF-8')
+            csvWriter << generateCsvHeader()
+            csvWriter << CSV_MEGA_REPORT
+            csvWriter.close()
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
             if (generateExcelAlso) {
                 CsvToExcel.csvtoXls(writeableCSVFile)
@@ -239,29 +243,36 @@ class BookTitles {
 
     static void printFileNamePageCountFileSize(String folderAbsolutePath, File file, int index) {
         int numberOfPages = 0
+        String exception = ""
         try {
             if (INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF)) {
-                PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
-                PdfDocument pdfDoc = new PdfDocument(pdfReader);
-                numberOfPages = pdfDoc.getNumberOfPages()
-                incrementTotalPageCount(numberOfPages)
-                pdfDoc.close()
-                pdfReader.close()
-            }
+                try{
+                    PdfReader pdfReader = new PdfReader(folderAbsolutePath + "\\" + file.name)
+                    PdfDocument pdfDoc = new PdfDocument(pdfReader);
+                    numberOfPages = pdfDoc.getNumberOfPages()
+                    incrementTotalPageCount(numberOfPages)
+                    pdfDoc.close()
+                    pdfReader.close()
+                }
+                catch (Exception e) {
+                    addToErrors(file.absolutePath)
+                    exception = "Error in reading file page-count/size/ for ${file.absolutePath}" + e.message;
+                    log.error("Error in reading file page-count/size/ for ${file.absolutePath}", e)
+                }            }
             if (INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF)) {
                 incrementTotalFileSize(FileSizeUtil.fileSizeInKB(file))
             }
             String sizeInfo = FileSizeUtil.getFileSizeFormatted(file);
             String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}";
-            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic}";
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic} ${exception?'*****' + exception:''}";
             addToReportAndPrint(_report,false,true);
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
             String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file) + " KB"
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${CSV_SEPARATOR}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${CSV_SEPARATOR}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception?CSV_SEPARATOR+'*****' + exception:''}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }
