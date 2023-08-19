@@ -269,7 +269,7 @@ class BookTitles {
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic} ${exception?'*****' + exception:''}";
             addToReportAndPrint(_report,false,true);
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
-            String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file) + " KB"
+            String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file)
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
