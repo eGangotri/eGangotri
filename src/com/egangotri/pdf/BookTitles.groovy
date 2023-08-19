@@ -53,6 +53,7 @@ class BookTitles {
 
     static void main(String[] args) {
         log.info("args ${args}")
+        BookTitles.incrementFolderCounter()
         execute(args)
     }
 
