@@ -18,8 +18,9 @@ class BookTitlesInLoop {
             }
             if(args?.size()==2){
                 String args1 = args[1];
-                if(args1.startsWith("folder="))
-                BookTitles.DUMP_DIRECTORY = args1.replace("dumpFolder=","")
+                if(args1.startsWith("dumpFolder=")){
+                    BookTitles.DUMP_DIRECTORY = args1.replace("dumpFolder=","")
+                }
             }
             for(String folder: FOLDER_NAMES){
                 BookTitles.execute(folder)
