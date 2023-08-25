@@ -7,6 +7,7 @@ import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
@@ -81,9 +82,21 @@ class UploadRestApiCalls {
         def profilesAndCount = profiles.collect {String profile ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profile)
             def jsonSlurper = new JsonSlurper()
-            log.info("profileName: ${profile} countOfUploadableItems ${countOfUploadableItems}")
-            String parseable = '{"profileName": ' + "\"${profile}\"" + ',"count": ' + countOfUploadableItems + '}';
-            return jsonSlurper.parseText(parseable);
+            log.info("archiveProfile: ${profile} countOfUploadableItems ${countOfUploadableItems}")
+            List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(profile)
+
+            // Use JsonBuilder to convert the array of strings to a JSON array
+            def jsonBuilder = new JsonBuilder()
+            jsonBuilder {
+                archiveProfile:profile
+                count:countOfUploadableItems
+                title: uploadables
+            }
+
+//            String parseable = '{"archiveProfile": ' + "\"${profile}\"" + ',"count": ' + countOfUploadableItems + jsonBuilder.toString()
+//            + '}';
+
+            return jsonBuilder //jsonSlurper.parseText(parseable);
         }
 
         try {
