@@ -106,7 +106,6 @@ class UploadRestApiCalls {
         catch (Exception e) {
             log.info("addToQueue Error while calling ${restApiRoute}", e)
         }
-        System.exit(0)
         return result;
     }
 }
