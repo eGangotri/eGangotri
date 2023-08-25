@@ -55,19 +55,20 @@ class UploadRestApiCalls {
         return result;
     }
 
-    static<T extends UploadVO> Object addToUshered(
+    static <T extends UploadVO> Object addToUshered(
             T usheredVO,
             String uploadCycleId, String csvName, String archiveItemId) {
         String restApiRoute = "/${RestUtil.ITEMS_USHERED_PATH}/add"
-        def result = addToMongo(restApiRoute,usheredVO.archiveProfile, usheredVO.uploadLink,
+        def result = addToMongo(restApiRoute, usheredVO.archiveProfile, usheredVO.uploadLink,
                 usheredVO.path, usheredVO.title,
                 uploadCycleId, csvName, archiveItemId)
         return result
     }
-    static<T extends UploadVO> Object addToQueue(T queuedVO,
-                             uploadCycleId, csvName) {
+
+    static <T extends UploadVO> Object addToQueue(T queuedVO,
+                                                  uploadCycleId, csvName) {
         String restApiRoute = "/${RestUtil.ITEMS_QUEUED_PATH}/add"
-        def result = addToMongo(restApiRoute,queuedVO.archiveProfile, queuedVO.uploadLink,
+        def result = addToMongo(restApiRoute, queuedVO.archiveProfile, queuedVO.uploadLink,
                 queuedVO.path, queuedVO.title,
                 uploadCycleId, csvName)
         return result
@@ -76,40 +77,37 @@ class UploadRestApiCalls {
     static String addToUploadCycle(Collection<String> profiles) {
         def result = ""
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
-        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION }");
-        log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles) }");
+        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}");
+        log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles)}");
 
-        def profilesAndCount = profiles.collect {String profile ->
+        def profilesAndCount = profiles.collect { String profile ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profile)
-            def jsonSlurper = new JsonSlurper()
             log.info("archiveProfile: ${profile} countOfUploadableItems ${countOfUploadableItems}")
-            List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(profile)
-
-            // Use JsonBuilder to convert the array of strings to a JSON array
-            def jsonBuilder = new JsonBuilder()
-            jsonBuilder {
-                archiveProfile:profile
-                count:countOfUploadableItems
-                title: uploadables
+            List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(profile).collect {
+                (new File(it)).name
             }
-
-//            String parseable = '{"archiveProfile": ' + "\"${profile}\"" + ',"count": ' + countOfUploadableItems + jsonBuilder.toString()
-//            + '}';
-
-            return jsonBuilder //jsonSlurper.parseText(parseable);
+            def json = new JsonBuilder()
+            def root = json {
+                archiveProfile profile
+                count countOfUploadableItems
+                titles uploadables
+            }
+            return new JsonSlurper().parseText(json.toString())
         }
-
+        log.info("profilesAndCount: ${profilesAndCount.toString()} ")
         try {
-            Map paramsMap = [:] ;
+            Map paramsMap = [:];
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
             paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap)
+
         }
         catch (Exception e) {
             log.info("addToQueue Error while calling ${restApiRoute}", e)
         }
+        System.exit(0)
         return result;
     }
 }

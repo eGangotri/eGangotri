@@ -60,7 +60,7 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     // then it will be treated as the number of items you want to edit
     //default is 10
     //if -1 it will open all
-    args = ["BJP_JAMMU", 16]
+    args = ["MMYVV", 16]
 }
 
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
@@ -84,7 +84,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["SPS", "PZ", "false"]
+    args = ["VT" ,"false"]
 }
 
 task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
@@ -117,7 +117,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["H:\\eG-tr1-30\\Treasures23\\Otro"]
+    args = ["D:\\_Treasures61\\_freeze"]
 
     //args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["E:\\eG-tr1-30\\Treasures30"]
