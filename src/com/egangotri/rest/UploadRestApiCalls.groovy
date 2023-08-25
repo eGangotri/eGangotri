@@ -102,7 +102,6 @@ class UploadRestApiCalls {
             paramsMap.put("archiveProfiles", profilesAndCount);
             paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap)
-
         }
         catch (Exception e) {
             log.info("addToQueue Error while calling ${restApiRoute}", e)
