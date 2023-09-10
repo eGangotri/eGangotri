@@ -28,6 +28,7 @@ class FileMover {
     static List<Integer> postMoveCountDest = []
     static List<String> successStatuses = []
     static Boolean OVERWRITE_FLAG = false
+    static List<String> excludeList = []
 
 
     static void main(String[] args) {
@@ -37,6 +38,29 @@ class FileMover {
             if (profiles.last().equalsIgnoreCase("false") || profiles.last().equalsIgnoreCase("true")) {
                 OVERWRITE_FLAG = BooleanUtils.toBoolean(profiles.last().toLowerCase())
                 profiles.remove(profiles.last())
+            }
+            List removables = []
+            profiles.each { String profile ->
+                {
+                    if (profile.startsWith("exclude=")) {
+                        excludeList = profile.replace("exclude=", "").split(/.pdf\s*,\s*/) as List
+                        excludeList = excludeList.collect {String excludable -> {
+                            if(!excludable.endsWith(".pdf")) {
+                                return  excludable + '.pdf'
+                            }
+                            else return excludable
+                        } }
+                        log.info("excludeList ${excludeList}")
+                        removables.add(profile)
+                    }
+                }
+            }
+
+            removables.each { String removable ->
+                {
+                    profiles.remove(removable)
+                    log.info("removed profile ${profiles}")
+                }
             }
         }
         log.info("FileMover started for ${profiles.size()} Profiles on ${UploadUtils.getFormattedDateString()}")
@@ -64,7 +88,7 @@ class FileMover {
                 String destDir = destMetaDataMap[profile]
                 //check no file is in use before moving
                 String[] filesInUse = checkNoFileInUse(srcDirAbsPath)
-                if(filesInUse.length > 0) {
+                if (filesInUse.length > 0) {
                     report += """${profile}: 
                     Following Files in Use.
                     Cannot move anything
@@ -80,7 +104,7 @@ class FileMover {
                     preMoveCountDest.push(destFilesCountBeforeMove)
                     if (srcFilesCountBeforeMove) {
                         log.info("Moving $srcFilesCountBeforeMove files from \n${srcDirAbsPath} to \n${destDir}")
-                        FileUtil.movePdfsInDir(srcDirAbsPath, destDir, OVERWRITE_FLAG)
+                        FileUtil.movePdfsInDir(srcDirAbsPath, destDir, excludeList, OVERWRITE_FLAG)
                     }
                     srcFilesCountAfterMove = noOfFiles(srcDirAbsPath)
                     postMoveCountSrc.push(srcFilesCountAfterMove)
@@ -162,18 +186,20 @@ class FileMover {
     static String[] checkNoFileInUse(String srcDirAbsPath) {
         String[] filesInUse = []
         File[] files = FileSizeUtil.allPdfsInDirAsFileList(srcDirAbsPath)
-        if(files){
-            files.each { File file -> {
-                if(isFileOpen(file)){
-                    filesInUse += file.name
+        if (files) {
+            files.each { File file ->
+                {
+                    if (isFileOpen(file)) {
+                        filesInUse += file.name
+                    }
                 }
-            }}
+            }
         }
         return filesInUse
 
     }
 
-        static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
+    static String getSuccessString(int srcFilesCountBeforeMove, int srcFilesCountAfterMove, int destFolderDiff) {
         if (!srcFilesCountBeforeMove) {
             return NOTHING_TO_MOVE
         } else {

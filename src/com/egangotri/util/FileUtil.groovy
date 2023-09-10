@@ -67,7 +67,7 @@ class FileUtil {
         }
     };
 
-    static moveDir(String srcDir, String destDir, customInclusionFilter = "", boolean overWriteFlag = false) {
+    static moveDir(String srcDir, String destDir, customInclusionFilter = "", List excludeList = [], boolean overWriteFlag = false) {
         // create an ant-builder
         def ant = new groovy.ant.AntBuilder()
         log.info("Src $srcDir dst: \n$destDir " +
@@ -88,6 +88,11 @@ class FileUtil {
                     move(todir: destDir, verbose: 'true', overwrite: overWriteFlag, preservelastmodified: 'true') {
                         fileset(dir: srcDir) {
                             include(name: customInclusionFilter ? customInclusionFilter : "**/*.*")
+                            excludeList.each { excludeName ->
+                                println("excludeName ${excludeName}")
+                                exclude(name: "**/${excludeName}")
+                            }
+
                         }
                     }
                     log.info("done moving")
@@ -125,8 +130,8 @@ class FileUtil {
         return duplicates
     }
 
-    static movePdfsInDir(String srcDir, String destDir, boolean overWriteFlag = false) {
-        moveDir(srcDir, destDir, "**/*.pdf", overWriteFlag)
+    static movePdfsInDir(String srcDir, String destDir, List excludeList = [], boolean overWriteFlag = false) {
+        moveDir(srcDir, destDir, "**/*.pdf", excludeList, overWriteFlag)
     }
 
     static moveAndUnzip(File srcZipFile, String destDir) {
