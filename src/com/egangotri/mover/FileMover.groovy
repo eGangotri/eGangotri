@@ -204,7 +204,7 @@ class FileMover {
             return NOTHING_TO_MOVE
         } else {
             boolean grossMovementDiff = (srcFilesCountBeforeMove - srcFilesCountAfterMove) == destFolderDiff
-            log.info("${grossMovementDiff} = (${srcFilesCountBeforeMove} - $srcFilesCountAfterMove) == ${destFolderDiff}\n")
+            log.info("Gross Movement Diff ${grossMovementDiff} = (${srcFilesCountBeforeMove} - $srcFilesCountAfterMove) == ${destFolderDiff}\n")
             String success = grossMovementDiff ? SUCCESS_STRING : FAILURE_STRING
             if (success === SUCCESS_STRING && srcFilesCountAfterMove != 0) {
                 success = POSSIBLE_OVERWRITE_ISSUES_STRING
