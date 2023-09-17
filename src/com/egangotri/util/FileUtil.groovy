@@ -95,7 +95,7 @@ class FileUtil {
 
                         }
                     }
-                    log.info("done moving")
+                    log.info("Done moving")
                 }
             } else {
                 log.info("Found overlapping ${duplicates.size()} files in both Source and Dest." +

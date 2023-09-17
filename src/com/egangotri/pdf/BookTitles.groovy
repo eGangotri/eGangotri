@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 class BookTitles {
    // static String DUMP_DIRECTORY = "${System.getProperty("user.home")}\\_bookTitles"
     static String DUMP_DIRECTORY = "C:\\_catalogWork\\_collation\\local"
-    static boolean ONLY_PDFS = true
+    static boolean ONLY_PDFS = false
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
