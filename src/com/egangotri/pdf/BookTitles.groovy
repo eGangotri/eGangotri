@@ -42,12 +42,13 @@ class BookTitles {
     static StringBuilder MEGA_REPORT = new StringBuilder("")
     static StringBuilder CSV_MEGA_REPORT = new StringBuilder("")
 
-    static boolean DONT_MENTION_SUB_FOLDERS = false;
+    static boolean DONT_MENTION_SUB_FOLDERS = true;
     static boolean INCLUDE_NUMBER_OF_PAGES = true
     static boolean INCLUDE_FILE_SIZE = true
     static boolean INCLUDE_TOTAL_FILE_SIZE = true
     static boolean INCLUDE_INDEX = true
     static boolean ONLY_ROOT_DIR_NO_SUBDIRS = false
+    static boolean INCLUDE_FOLDER_NAME = true
 
     static String CSV_SEPARATOR = ";"
 
@@ -121,10 +122,11 @@ class BookTitles {
             // as the data has comas all the time
             String separatorSpecification = "sep=${CSV_SEPARATOR}\n"
             ///
+            String includeFolderName = "${INCLUDE_FOLDER_NAME ? "${CSV_SEPARATOR}Folder Name" : ''}"
             String pageCountHeader = "${INCLUDE_NUMBER_OF_PAGES ? "${CSV_SEPARATOR}Number of Pages" : ''}"
             String fileSizeHeader = "${INCLUDE_FILE_SIZE ? "${CSV_SEPARATOR}File Size${CSV_SEPARATOR} Units" : ''}"
             String totalFileSizeHeader = "${INCLUDE_TOTAL_FILE_SIZE ? "${CSV_SEPARATOR}Total File Size in KB" : ''}"
-            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR}" : ''}File Name${pageCountHeader}${fileSizeHeader} ${totalFileSizeHeader}\n"
+            String csvReport = "${separatorSpecification}${INCLUDE_INDEX ? "Serial No.${CSV_SEPARATOR}" : ''}File Name${includeFolderName}${pageCountHeader}${fileSizeHeader} ${totalFileSizeHeader}\n"
             return csvReport
         }
         return ""
@@ -264,16 +266,18 @@ class BookTitles {
                 incrementTotalFileSize(FileSizeUtil.fileSizeInKB(file))
             }
             String sizeInfo = FileSizeUtil.getFileSizeFormatted(file);
+            String folderName = "${INCLUDE_FOLDER_NAME ? ', ' + folderNameToCenterName(file.parent) : ''}";
             String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}";
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}";
-            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${pageCountLogic} ${fileSizeLogic} ${exception?'*****' + exception:''}";
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${folderName} ${pageCountLogic} ${fileSizeLogic} ${exception?'*****' + exception:''}";
             addToReportAndPrint(_report,false,true);
+            String csvFolderName = "${INCLUDE_FOLDER_NAME ? CSV_SEPARATOR + folderNameToCenterName(file.parent) : ''}";
+            String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? CSV_SEPARATOR + numberOfPages : ''}"
             String csvSizeInfo = FileSizeUtil.getFileSizeFormatted(file, CSV_SEPARATOR)
             String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file)
-            String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? numberOfPages : ''}"
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${CSV_SEPARATOR}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception?CSV_SEPARATOR+'*****' + exception:''}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${csvFolderName}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception?CSV_SEPARATOR+'*****' + exception:''}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }
@@ -349,6 +353,26 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
     static void incrementFolderCounter(){
         FOLDER_INDEX++;
     }
+
+    static String folderNameToCenterName(String folderName){
+        if(folderName.containsIgnoreCase("${File.separator}sv_shastri")){
+            return "SV-Shastri (DAV-Lahore Coll.)"
+        }
+        if(folderName.containsIgnoreCase("${File.separator}kangri")){
+            return "Gurukul Kangri Collection"
+        }
+        if(folderName.containsIgnoreCase("${File.separator}panini")){
+            return "Panini Kanya Maha Vidyalaya Collection"
+        }
+        if(folderName.containsIgnoreCase("${File.separator}test")){
+            return "Test"
+        }
+        if(folderName.containsIgnoreCase("${File.separator}tmp")){
+            return "Temp"
+        }
+        return folderName
+    }
+
     static void resetCounters (){
         START_INDEX = 0
         TOTAL_FILES = 0
