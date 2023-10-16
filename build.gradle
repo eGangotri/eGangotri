@@ -49,7 +49,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["PANINI"]
+    args = ["MMYVV"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -79,13 +79,7 @@ task zipMover(dependsOn: 'classes', type: JavaExec) {
     args = ["20 feb 2021.txt"]
 }
 
-task fileMover(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    println "FileMover: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.mover.FileMover"
-    jvmArgs = applicationDefaultJvmArgs
-    args = ["VT" ,"false"]
-}
+
 
 task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -95,7 +89,7 @@ task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //args = ["C:\\_catalogWork\\_reducedPdfs\\_ALL_", "dumpFolder=C:\\_catalogWork\\_collation\\local" ]
-    args = ["H:\\eG-tr1-30\\Treasures23", "dumpFolder=C:\\_catalogWork\\_collation\\local" ]
+    args = ["D:\\Treasures62\\_freeze\\kangri , D:\\Treasures62\\_freeze\\panini" ]
 
 }
 
@@ -110,6 +104,16 @@ task bookTitlesInLoopForReduced(dependsOn: 'classes', type: JavaExec) {
 
 """, "dumpFolder=C:\\_catalogWork\\_collation\\_catReducedLocalPdfExcels" ]
 }
+
+task fileMover(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    println "FileMover: ${sourceSets.main.runtimeClasspath}"
+    main = "com.egangotri.mover.FileMover"
+    jvmArgs = applicationDefaultJvmArgs
+    args = ["PZ", "exclude=Nirnaya Press.pdf", "false"]
+   // args = ["PANINI", "KANGRI", "false"]
+}
+
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.pdf.BookTitles"
@@ -117,7 +121,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["D:\\_Treasures61\\_freeze"]
+    args = ["D:\\Treasures62\\_freeze\\kangri , D:\\Treasures62\\_freeze\\panini ,D:\\Treasures62\\_freeze\\sv_shastri"]
 
     //args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["E:\\eG-tr1-30\\Treasures30"]
@@ -230,10 +234,8 @@ dependencies {
     //For all other purposes best to use, maven repo standalone;commented below
     //compile files('lib/sss.jar')
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
-    //compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.0.0-alpha-6'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.9.0'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.9.0'
-    //compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.0.0-alpha-6'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
 
     testCompile 'org.spockframework:spock-core:2.0-M2-groovy-3.0'
     testCompile 'junit:junit:4.13'
