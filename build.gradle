@@ -110,7 +110,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["PZ", "exclude=Nirnaya Press.pdf", "false"]
+    args = [ "SPS", "exclude=Nirnaya Press.pdf", "false"]
    // args = ["PANINI", "KANGRI", "false"]
 }
 
@@ -209,7 +209,7 @@ dependencies {
     compile 'org.codehaus.gpars:gpars:1.2.1'
 
     compile 'io.github.http-builder-ng:http-builder-ng-core:1.0.4'
-
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2'
     compile group: 'com.opencsv', name: 'opencsv', version: '5.1'
     compile 'com.itextpdf:itextpdf:5.5.13.1'

@@ -6,48 +6,55 @@ import org.apache.groovy.json.internal.LazyMap
 
 import static groovyx.net.http.HttpBuilder.configure
 import static groovy.json.JsonOutput.toJson
+import groovyx.net.http.RESTClient
 
 @Slf4j
 class RestUtil {
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
     static String UPLOAD_CYCLE_ROUTE = "uploadCycleRoute"
+    static String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER
+    static RESTClient restClient = new RESTClient(backendServer)
 
     static makePostCall(String path,
-                        Map body,
-                        String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
-        body.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
-        body.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
-        def posts
+                        Map requestData) {
+
+        requestData.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
+        requestData.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
+
+        def jsonRequestBody = new groovy.json.JsonBuilder(requestData).toPrettyString()
+
+        // Set the 'Content-Type' header to specify JSON
+        def headers = ['Content-Type': 'application/json']
+        def response;
         try {
-            posts = configure {
-                request.uri = backendServer
-                request.uri.path = path
-                request.contentType = 'application/json'
-                request.body = toJson(body)
-            }.post()
-            log.info("posts ${posts}")
+            // Make a POST request with JSON data
+            response = restClient.post(path: path,
+                    body: jsonRequestBody,
+                    requestContentType: groovyx.net.http.ContentType.JSON,
+                    headers: headers)
+
+            println "Response Code: ${response.status}"
+            println "Response Data: ${response.data}"
         }
         catch (Exception e) {
             log.info("""makePostCall Error while calling ${backendServer}${path}
-                        ${toJson(body)}""", e)
+                        ${toJson(requestData)}""", e)
         }
-        return posts
+        return response.data
     }
 
     static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
+        log.info("backendServer ${backendServer} path ${path}")
         try {
-            def doGet = configure {
-                request.uri = backendServer
-            }.get {
-                request.uri.path = path
-                request.uri.query = queryMap ?: [:]
-            }
-            log.info("doGet ${doGet}")
-            return doGet
+            def response = restClient.get(path: path)
+            println "Response Code: ${response.status}"
+            println "Response Data: ${response.data}"
+            def dataMap = ['response': response.data['response']]
+            return dataMap
         }
         catch (Exception e) {
-            log.info("MakeGetCall Error while calling ${backendServer}/${path} ${e.message}")
+            log.info("MakeGetCall Error while calling ${backendServer}${path} ${e.message}", e)
             return null
         }
     }

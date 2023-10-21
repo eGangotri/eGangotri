@@ -25,7 +25,7 @@ class SettingsUtil {
     static int MINIMUM_FILE_NAME_LENGTH = 25
     static Hashtable<String, String> settingsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.SETTINGS_PROPERTIES_FILE)
 
-    static String EGANGOTRI_BACKEND_SERVER = "http://localhost:80/"
+    static String EGANGOTRI_BACKEND_SERVER = "http://localhost:8000/"
     static String EGANGOTRI_BACKEND_SUPERADMIN_USER = ""
     static String EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD = ""
     static String ENV_PROD = "prod"
