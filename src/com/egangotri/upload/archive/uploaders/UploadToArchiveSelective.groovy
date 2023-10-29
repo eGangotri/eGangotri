@@ -15,7 +15,7 @@ class UploadToArchiveSelective {
     static void main(String[] args) {
         String archiveProfile = ""
         String fileName = ""
-        if (args && args.length == 2) {
+        if (args && args.length >= 2/* && args.length % 2*/) {
             log.info "args $args"
             archiveProfile = args[0]
             fileName = args[1].endsWith(EGangotriUtil.PDF) ? args[1] : args[1] + EGangotriUtil.PDF;
@@ -26,9 +26,15 @@ class UploadToArchiveSelective {
         UploadToArchive.prelims(args)
         String localPath = getLocalPath(archiveProfile, fileName)
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(args[0], [localPath])
-        log.info("localPath ${localPath}")
-        log.info("vos ${vos}")
-        List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
+        if(localPath){
+            log.info("localPath ${localPath}")
+            log.info("vos ${vos}")
+            List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
+        }
+        else {
+            log.info("File ${fileName} not found")
+        }
+        System.exit(0)
     }
 
     static String getLocalPath(String archiveProfile, String fileName) {
