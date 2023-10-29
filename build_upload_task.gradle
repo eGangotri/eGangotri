@@ -11,7 +11,7 @@ task startMongoServer(type: Exec) {
     }
 }
 //last upload failed so retry first thing,
-ArrayList<String> uploadToArchiveArgs = ["PANINI"]//V_ANON, KANGRI, "KM"
+ArrayList<String> uploadToArchiveArgs = ["BJP_JAMMU", "EGB_ASI"]//V_ANON, KANGRI, "KM"
 
 //,"KRI_UR_DHARMA", "KRI_UR"  "SR_VIMAL", "EGB_ASI" ,"EG_URDU
 // "JNGM_MANU","SALIM","MB", "SV_SHASTRI", "KANGRI", "MUTHU"
@@ -24,6 +24,15 @@ task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles']
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
     args = [*uploadToArchiveArgs]
+}
+
+task uploadToArchiveSelective(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.egangotri.upload.archive.UploadToArchiveSelective"
+    jvmArgs = applicationDefaultJvmArgs
+    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
+    // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
+    args = ["PANINI", ""]
 }
 
 task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {

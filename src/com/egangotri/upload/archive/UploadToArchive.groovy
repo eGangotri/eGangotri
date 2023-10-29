@@ -23,18 +23,28 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class UploadToArchive {
-
-    static void main(String[] args) {
-        List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
+    static boolean previewSuccess = true
+    static Set<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES as Set
+    static Hashtable<String, String> metaDataMap;
+    static void prelims(String[] args){
         if (args) {
             log.info "args $args"
             archiveProfiles = args.toList()
         }
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        Set<String> purgedProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
-        boolean previewSuccess = true
+        archiveProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
+        addUploadIntentToMongo()
+        if(SettingsUtil.PREVIEW_FILES){
+            previewSuccess = PreUploadReview.preview(archiveProfiles)
+        }
+        if(!previewSuccess){
+            log.info("Preview failed");
+            System.exit(0);
+        }
+    }
 
+    static addUploadIntentToMongo() {
         if(SettingsUtil.WRITE_TO_MONGO_DB){
             RestUtil.startDBServerIfOff()
             boolean isOn = RestUtil.checkIfDBServerIsOn()
@@ -48,37 +58,36 @@ class UploadToArchive {
                 log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_CYCLE_ID)
             }
         }
-        if(SettingsUtil.PREVIEW_FILES){
-            previewSuccess = PreUploadReview.preview(purgedProfiles)
-        }
-
-        if(previewSuccess){
-            execute(purgedProfiles, metaDataMap)
-            if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0 && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING){
-                log.info("Going to sleep for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES} minutes ...@${UploadUtils.getFormattedDateString()}\n")
-                //Wait for 1 Hour and check Links also
-                Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
-                log.info("Will now reupload any missed item...\n")
-                ValidateUploadsAndReUploadFailedItems.execute(new String[0])
-                if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0) {
-                    log.info("Second Sleep Session started for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES}.....@${UploadUtils.getFormattedDateString()}\n")
-                    //Wait for some time and check Links also
-                    Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
-                    log.info("Second check/reupload started...\n")
-                    CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
-                    if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0){
-                        log.info("All missed files were uploaded succesfully. `Aum Shanti`\n")
-                    }
-                    else {
-                        log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status manually\n")
-                    }
-                }
-            }
-        }
-        else{
-            log.info("Preview failed")
+    }
+    static void main(String[] args) {
+        prelims(args)
+        execute(archiveProfiles, metaDataMap)
+        if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0
+                && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING){
+            reuploadPostValidationFailureCode();
         }
         System.exit(0)
+    }
+
+    static void reuploadPostValidationFailureCode() {
+        log.info("Going to sleep for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES} minutes ...@${UploadUtils.getFormattedDateString()}\n")
+        //Wait for 1 Hour and check Links also
+        Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
+        log.info("Will now reupload any missed item...\n")
+        ValidateUploadsAndReUploadFailedItems.execute(new String[0])
+        if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION> 0) {
+            log.info("Second Sleep Session started for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES}.....@${UploadUtils.getFormattedDateString()}\n")
+            //Wait for some time and check Links also
+            Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES*1000*60)
+            log.info("Second check/reupload started...\n")
+            CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
+            if( ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0){
+                log.info("All missed files were uploaded succesfully. `Aum Shanti`\n")
+            }
+            else {
+                log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status manually\n")
+            }
+        }
     }
 
     static void execute(Set<String> profiles, Map metaDataMap) {
