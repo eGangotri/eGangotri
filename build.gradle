@@ -110,7 +110,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "SV_SHASTRI", "exclude=Nirnaya Press.pdf", "false"]
+    args = [ "BJP_JAMMU", "EGB_ASI", "exclude=Nirnaya Press.pdf", "false"]
    // args = ["PANINI", "KANGRI", "false"]
 }
 
