@@ -34,7 +34,7 @@ class UploadRestApiCalls {
         paramsMap.put("csvName", csvName)
 
         paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
-        log.info("paramsMap ${paramsMap}")
+        //log.info("paramsMap ${paramsMap}")
         return paramsMap
     }
 

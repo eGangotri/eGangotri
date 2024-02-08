@@ -225,7 +225,8 @@ class ArchiveHandler {
 
         WebDriverWait waitForChooseFilesToUploadToShowUp = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
         try {
-            waitForChooseFilesToUploadToShowUp.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON)))
+            waitForChooseFilesToUploadToShowUp.until(
+                    ExpectedConditions.elementToBeClickable(By.className(UploadUtils.CHOOSE_FILES_TO_UPLOAD_BUTTON_AS_CLASS)))
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()

@@ -41,7 +41,7 @@ class RestUtil {
             log.info("""makePostCall Error while calling ${backendServer}${path}
                         ${toJson(requestData)}""", e)
         }
-        return response.data
+        return response?.data
     }
 
     static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {

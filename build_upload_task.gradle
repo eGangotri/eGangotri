@@ -11,12 +11,12 @@ task startMongoServer(type: Exec) {
     }
 }
 //last upload failed so retry first thing,
-ArrayList<String> uploadToArchiveArgs = ["BJP_JAMMU", "EGB_ASI"]//V_ANON, KANGRI, "KM"
+ArrayList<String> uploadToArchiveArgs = ["SV_SHASTRI"]//V_ANON, KANGRI, "KM"
 
 //,"KRI_UR_DHARMA", "KRI_UR"  "SR_VIMAL", "EGB_ASI" ,"EG_URDU
 // "JNGM_MANU","SALIM","MB", "SV_SHASTRI", "KANGRI", "MUTHU"
 // "JNGM" ,  "JNGM_TEL", "JNGM_K", "JNGM_M", "JNGM_BEN", "EGM"*/]
-def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures63"
+def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures67"
 task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.UploadToArchive"

@@ -105,7 +105,7 @@ class UploadToArchive {
             }
             catch(Exception e){
                 log.info("Exception calling addToUploadCycle",e)
-                throw e;
+                System.exit(0)
             }
         }
 

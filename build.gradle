@@ -49,7 +49,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["MMYVV"]
+    args = ["NAITHANI"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -89,7 +89,7 @@ task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //args = ["C:\\_catalogWork\\_reducedPdfs\\_ALL_", "dumpFolder=C:\\_catalogWork\\_collation\\local" ]
-    args = ["D:\\_Treasures63\\_freeze\\kangri , D:\\_Treasures63\\_freeze\\panini" ]
+    args = ["D:\\_Treasures66\\_freeze\\kangri , D:\\_Treasures66\\_freeze\\panini" ]
 
 }
 
@@ -110,7 +110,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
     main = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
-    args = [ "BJP_JAMMU", "EGB_ASI", "exclude=Nirnaya Press.pdf", "false"]
+    args = [  "PANINI", "exclude=Unadi Kosha Hindi Vyakhya - Sw. Dayanand Saraswati.pdf", "false"]
    // args = ["PANINI", "KANGRI", "false"]
 }
 
@@ -121,8 +121,9 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
-    args = ["D:\\_Treasures63\\_freeze\\kangri , D:\\_Treasures63\\_freeze\\panini ,D:\\_Treasures63\\_freeze\\sv_shastri"]
-
+     args = ["D:\\MASTER_BACKUP\\Treasures66" ]
+   // args = ["D:\\_Treasures66\\_freeze\\kangri , D:\\_Treasures66\\_freeze\\panini" ]
+  // args = ["D:\\Treasures63"]
     //args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["E:\\eG-tr1-30\\Treasures30"]
 }

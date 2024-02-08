@@ -361,6 +361,9 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         if(folderName.containsIgnoreCase("${File.separator}kangri")){
             return "Gurukul Kangri Collection"
         }
+        if(folderName.containsIgnoreCase("${File.separator}jngm")){
+            return "Jangamwadi Varanasi"
+        }
         if(folderName.containsIgnoreCase("${File.separator}panini")){
             return "Panini Kanya Maha Vidyalaya Collection"
         }
