@@ -10,7 +10,9 @@ import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type
 /**
  * All Titles of PDF's in a Folder and SubFolders
  */
@@ -18,7 +20,7 @@ import java.text.SimpleDateFormat
 class BookTitles {
    // static String DUMP_DIRECTORY = "${System.getProperty("user.home")}\\_bookTitles"
     static String DUMP_DIRECTORY = "C:\\_catalogWork\\_collation\\local"
-    static boolean ONLY_PDFS = false
+    static boolean ONLY_PDFS = true
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
@@ -53,27 +55,36 @@ class BookTitles {
     static String CSV_SEPARATOR = ";"
 
     static void main(String[] args) {
-        log.info("args ${args}")
-        BookTitles.incrementFolderCounter()
+        log.info("args ${args[0]}")
+        incrementFolderCounter()
         execute(args)
     }
 
     static void execute(String[] args = []) {
         if (args?.size() > 0) {
-            String args0 = args[0]
-            FOLDER_NAMES = args0.split(",")*.trim().findAll {it.length()>1}.toList()
-            if (args?.size() > 1) {
-                afterDate = args[1]
-                if (args?.size() > 2) {
-                    if (args[2].isInteger()) {
-                        afterHour = Integer.parseInt(args[2])
+            Map argsOneAsMap = [:];
+            args.each {
+                String it -> {
+                    Object[] kv = it.split("=")*.trim()
+                    log.info("kv ${kv} ${kv.length}");
+                    argsOneAsMap.put(kv[0]?.toString(), kv[1])
+                }
+            }
+            String _folderNames = argsOneAsMap.paths.replace("'", "").replace("\"", "")
+            FOLDER_NAMES = _folderNames.split(",")*.trim().findAll {it.length()>1}.toList()
+            afterDate = argsOneAsMap.afterDate == "''" ? "" : argsOneAsMap.afterDate
+            afterHour = (argsOneAsMap.afterHour as int) ?: 0
+            if (afterHour) {
                         if (afterHour >= 24 || afterHour < 1) {
                             afterHour = 0
                         }
-                    }
-                }
             }
+
+            ONLY_PDFS = argsOneAsMap?.onlyPdfs == "false" ? false : true
+            log.info("kv ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}");
+
         }
+
         calculateAfterDate()
         TOTAL_FILES = calculateTotalFileCount()
         addToReportAndPrint("Reading files: $FOLDER_NAMES\n",false)
