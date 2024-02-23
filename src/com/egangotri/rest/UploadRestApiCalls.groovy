@@ -97,6 +97,9 @@ class UploadRestApiCalls {
         log.info("profilesAndCount: ${profilesAndCount.toString()} ")
         try {
             Map paramsMap = [:];
+            if(!EGangotriUtil.UPLOAD_CYCLE_ID ) {
+                EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
+            }
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
