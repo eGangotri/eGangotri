@@ -55,7 +55,7 @@ class BookTitles {
     static String CSV_SEPARATOR = ";"
 
     static void main(String[] args) {
-        log.info("args ${args[0]}")
+        log.info("args ${args}")
         incrementFolderCounter()
         execute(args)
     }
@@ -72,19 +72,25 @@ class BookTitles {
             }
             String _folderNames = argsOneAsMap.paths.replace("'", "").replace("\"", "")
             FOLDER_NAMES = _folderNames.split(",")*.trim().findAll {it.length()>1}.toList()
-            afterDate = argsOneAsMap.afterDate == "''" ? "" : argsOneAsMap.afterDate
-            afterHour = (argsOneAsMap.afterHour as int) ?: 0
-            if (afterHour) {
-                        if (afterHour >= 24 || afterHour < 1) {
-                            afterHour = 0
-                        }
+            if(argsOneAsMap.containsKey("afterDate")){
+                afterDate = argsOneAsMap.afterDate == "''" ? "" : argsOneAsMap.afterDate
             }
+            if(argsOneAsMap.containsKey("afterHour")) {
+                afterHour = (argsOneAsMap.afterHour as int) ?: 0
+                if (afterHour) {
+                    if (afterHour >= 24 || afterHour < 1) {
+                        afterHour = 0
+                    }
+                }
+            }
+            log.info("entryset ${argsOneAsMap.entrySet()}");
 
-            ONLY_PDFS = argsOneAsMap?.onlyPdfs == "false" ? false : true
-            log.info("kv ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}");
-
+            if(argsOneAsMap.containsKey("pdfsOnly")) {
+                log.info("pdfsOnly ${argsOneAsMap?.pdfsOnly}");
+                ONLY_PDFS = argsOneAsMap?.pdfsOnly != "false"
+            }
+            log.info("all ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}");
         }
-
         calculateAfterDate()
         TOTAL_FILES = calculateTotalFileCount()
         addToReportAndPrint("Reading files: $FOLDER_NAMES\n",false)

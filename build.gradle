@@ -125,7 +125,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
             "paths='C:\\Users\\chetan\\Documents\\eGangotriReceipts'",
             "afterDate=''",
             "afterHour=0",
-            "onlyPdfs=true"
+            "pdfsOnly=true"
     ]
 
     //args = [ "D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
