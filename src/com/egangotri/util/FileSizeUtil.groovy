@@ -1,10 +1,12 @@
 package com.egangotri.util
 
 import groovy.io.FileType
+import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
 import java.nio.file.Paths
 
+@Slf4j
 class FileSizeUtil {
 
     static String formatFileSize(BigDecimal sizeInKB, String delimiter = " "){
@@ -38,12 +40,15 @@ Cannot use FileNameFilter or FileFilter as we are dealing with sub-directories
     static File[] allPdfsInDirAsFileList(String srcDir) {
         File srcDirAsFile = new File(srcDir)
         def files = []
-        if (srcDirAsFile) {
+        if (srcDirAsFile && srcDirAsFile.exists()) {
             srcDirAsFile.eachFileRecurse (FileType.FILES) { File file ->
                 if(file.name.endsWithIgnoreCase(".pdf")){
                     files << file
                 }
             }
+        }
+        else {
+            log.info("Folder not found $srcDirAsFile")
         }
         return files
     }

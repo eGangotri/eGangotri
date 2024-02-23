@@ -24,6 +24,8 @@ class UploadUtils {
     static final String LOGIN_BUTTON_NAME = "submit-to-login"
     static final String USER_MENU_ID = "user-menu" // only created when User is Signed In
     static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = "file_button_initial"
+    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON_AS_CLASS = "js-uploader-file-input-initial"
+
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
     static final String PAGE_URL_ITEM_ID = "item_id"
     static final String PAGE_URL = "page_url"
