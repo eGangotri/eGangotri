@@ -11,7 +11,7 @@ task startMongoServer(type: Exec) {
     }
 }
 //last upload failed so retry first thing,
-ArrayList<String> uploadToArchiveArgs = ["SV_SHASTRI"]//V_ANON, KANGRI, "KM"
+ArrayList<String> uploadToArchiveArgs = ["EG_URDU"]//V_ANON, KANGRI, "KM"
 
 //,"KRI_UR_DHARMA", "KRI_UR"  "SR_VIMAL", "EGB_ASI" ,"EG_URDU
 // "JNGM_MANU","SALIM","MB", "SV_SHASTRI", "KANGRI", "MUTHU"
