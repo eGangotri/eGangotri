@@ -41,7 +41,6 @@ class FileTransfer {
         }
     }
 
-
     static FileFilter validFiles() {
         FileFilter fileFilter = { File file ->
             log.info("file name ${file.name}")

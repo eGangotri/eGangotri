@@ -89,7 +89,7 @@ class RestUtil {
         String dbServerSuccessMsg = "eGangotri-node-backend (egangotri_upload_db)"
         try {
             LazyMap result = makeGetCall("/") ?: [:] as Map
-            _result = (result && result.containsKey("response")) ? result.response == dbServerSuccessMsg : false
+            _result = (result && result.containsKey("response")) ? result?.response?.toString()?.length() > 20 : false
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
         }
         catch (ConnectException e) {
