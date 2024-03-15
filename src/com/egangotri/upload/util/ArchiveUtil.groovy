@@ -55,8 +55,8 @@ class ArchiveUtil {
             }
             driver.get(archiveUserAccountUrl)
             WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.className("results_count")))
-            WebElement resultsCount = driver.findElement(By.className("results_count"))
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.Id("big-results-count")))
+            WebElement resultsCount = driver.findElement(By.Id("big-results-count"))
             if (resultsCount) {
                 log.info("Results Count at ${resultsCountAtStartTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
                 if (!resultsCountAtStartTime) {
