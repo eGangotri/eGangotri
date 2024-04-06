@@ -66,6 +66,10 @@ class BookTitles {
             args.each {
                 String it -> {
                     Object[] kv = it.split("=")*.trim()
+                    if(kv.length % 2 !== 0){
+                        log.error("Invalid argument Must have 2 set of values separated by = ${it}. expamle path='C:\\tmp, D:\\test'");
+                        return
+                    }
                     log.info("kv ${kv} ${kv.length}");
                     argsOneAsMap.put(kv[0]?.toString(), kv[1])
                 }
