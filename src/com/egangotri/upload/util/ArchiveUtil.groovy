@@ -1,5 +1,6 @@
 package com.egangotri.upload.util
 
+import com.egangotri.upload.archive.uploaders.UploadItemFromExcel
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -71,6 +72,7 @@ class ArchiveUtil {
     }
 
     static boolean navigateLoginLogic(ChromeDriver driver, Map metaDataMap, String archiveProfile) throws Exception {
+        log.info("metaDataMap ${metaDataMap}")
         List<String> kuta = [metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"] as List<String>
         if (metaDataMap."${EGangotriUtil.KUTA_SECOND}") {
             kuta << metaDataMap."${EGangotriUtil.KUTA_SECOND}"
@@ -92,7 +94,7 @@ class ArchiveUtil {
         }
         if (!loginSuccess) {
             log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
-            throw new Exception("Not Continuing because of Login Failure twice")
+            //throw new Exception("Not Continuing because of Login Failure twice")
         }
         return loginSuccess
     }
@@ -107,6 +109,15 @@ class ArchiveUtil {
         return vos
     }
 
+    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel) {
+        Set<QueuedVO> vos = [] as Set
+        uploadItemFromExcel.each { UploadItemFromExcel uploadable ->
+            vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
+                    uploadable.subject, uploadable.description,
+                    uploadable.creator )
+        }
+        return vos
+    }
     static Set<QueuedVO> generateUploadVoForAllUploadableItems(Collection<String> profiles) {
         Set<QueuedVO> vos = []
         profiles.eachWithIndex { String profile, index ->

@@ -49,7 +49,8 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    //args = ["OTRO_ANON"]
+    args = ["email=indiclibrary;range=1-15"]
+    //args = ["ANON"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
@@ -245,6 +246,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
+
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
 
     testCompile 'org.spockframework:spock-core:2.0-M2-groovy-3.0'
     testCompile 'junit:junit:4.13'

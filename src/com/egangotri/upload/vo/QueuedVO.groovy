@@ -11,6 +11,14 @@ class QueuedVO extends UploadVO {
         super(_archiveProfile,_fullFilePath)
     }
 
+    QueuedVO(String _archiveProfile,
+             String _fullFilePath,
+             String _subjects,
+             String _desc,
+             String creator = ""){
+        super(_archiveProfile,_fullFilePath,_subjects, _desc, creator)
+    }
+
     QueuedVO(List<String> fields){
         super(fields)
     }

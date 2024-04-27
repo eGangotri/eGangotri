@@ -120,7 +120,7 @@ class PreUploadReview {
         }
     }
 }
-
+@Slf4j
 class FileData {
     String title
     String absPath
@@ -135,7 +135,8 @@ class FileData {
         this.title = UploadUtils.stripFilePath(this.absPath)
         this.parentFolder = UploadUtils.stripFileTitle(this.absPath)
         if(EGangotriUtil.PDF.endsWith(fileEnding)){
-            PdfReader pdfReader = new PdfReader(this.absPath)
+            PdfReader pdfReader = new PdfReader(this.absPath);
+            log.info("Reading ${this.absPath}")
             PdfDocument pdfDoc = new PdfDocument(pdfReader);
             this.numberOfPagesInPdf = pdfDoc.getNumberOfPages()
         }

@@ -10,6 +10,7 @@ import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
+//Works
 @Slf4j
 class UploadToArchiveSelective {
     static void main(String[] args) {
@@ -50,7 +51,7 @@ class UploadToArchiveSelective {
                 filePath = file.getCanonicalPath()
                 println "Absolute path of $fileName: $filePath"
             } else {
-                println "File $fileName does not exist in the folder."
+                println "File $fileName ${file.absolutePath} does not exist in the folder."
             }
         } else {
             println "Folder $folder does not exist."

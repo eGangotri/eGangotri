@@ -20,6 +20,16 @@ class UploadVO {
         title = stripFilePath(removeFileEnding(path))
     }
 
+    UploadVO(String _archiveProfile,
+             String _path,
+             String _subjects,
+             String _desc,
+             String creator = "") {
+        archiveProfile = _archiveProfile
+        uploadLink = generateUploadUrl(_path, _subjects, _desc, creator)
+        path = _path
+        title = stripFilePath(removeFileEnding(path))
+    }
     UploadVO(List<String> fields) {
         archiveProfile = fields[0]
         uploadLink = fields[1]?.replaceAll("\"", "'")

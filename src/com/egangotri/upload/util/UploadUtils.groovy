@@ -1,9 +1,7 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.vo.QueuedVO
+
 import com.egangotri.util.EGangotriUtil
-import com.egangotri.util.FileUtil
-import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By
@@ -218,9 +216,9 @@ class UploadUtils {
             String _desc = metaDataMap."${archiveProfile}.description"
 
             String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
-            String supplementary_url = desc_and_file_name //+ AMPERSAND + _lang
+            String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
-                supplementary_url += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
+                enhancedUrl += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
                 if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
@@ -235,12 +233,12 @@ class UploadUtils {
                     def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
                     _subjects = allSubjects.join(",")
                 }
-                supplementary_url += AMPERSAND + "subject=" + _subjects
+                enhancedUrl += AMPERSAND + "subject=" + _subjects
             }
             if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
-                supplementary_url += AMPERSAND + _creator
+                enhancedUrl += AMPERSAND + _creator
             }
-            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = supplementary_url
+            SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"] = enhancedUrl
         }
         String url = SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]
         if ((EGangotriUtil.GENERATE_RANDOM_CREATOR)) {
@@ -255,15 +253,55 @@ class UploadUtils {
         return url
     }
 
+
+    static String getOrGenerateSupplementaryURLV2(String _subjects,
+                                                 String _desc,
+                                                 String creator = "") {
+        String _creator = "creator=${creator}"
+        String _fileNameAsDesc = "{0}"
+
+        String desc_and_file_name = "description=${_desc ? "${_desc}, ${_fileNameAsDesc}" : _fileNameAsDesc}"
+        String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
+        if (_subjects) {
+            if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
+                def doubleQuoteRegex = /".*?"/
+                def singleQuoteRegex = /'.*?'/
+                def subjectsInsideSingleQuotes = _subjects.findAll(singleQuoteRegex)
+                def subjectsInsideDoubleQuotes = _subjects.findAll(doubleQuoteRegex)
+                def both = subjectsInsideSingleQuotes + subjectsInsideDoubleQuotes
+                both.each { it ->
+                    _subjects = _subjects.replaceAll(it, "")
+                }
+                def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
+                _subjects = allSubjects.join(",")
+            }
+            enhancedUrl += AMPERSAND + "subject=" + _subjects
+        }
+        if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
+            enhancedUrl += AMPERSAND + _creator
+        }
+        return enhancedUrl
+    }
+
     static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
-        String supplementary_url = getOrGenerateSupplementaryURL(archiveProfile)
-        String insertDescription = insertDescriptionInUploadUrl(supplementary_url, fileNameToBeUsedAsUniqueDescription)
+        String enhancedUrl = getOrGenerateSupplementaryURL(archiveProfile)
+        String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
         String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
         return uploadUrl.replaceAll("\"", "'")
     }
 
-    static insertDescriptionInUploadUrl(String supplementary_url, String fileNameToBeUsedAsUniqueDescription) {
-        return supplementary_url.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
+    static String generateUploadUrl(String fileNameToBeUsedAsUniqueDescription,
+                                      String _subjects,
+                                      String _desc,
+                                      String creator = "") {
+        String enhancedUrl = getOrGenerateSupplementaryURLV2(_subjects, _desc, creator)
+        String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
+        String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
+        return uploadUrl.replaceAll("\"", "'")
+    }
+
+    static insertDescriptionInUploadUrl(String enhancedUrl, String fileNameToBeUsedAsUniqueDescription) {
+        return enhancedUrl.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
     }
 
     static String _removeAmpersandAndFetchTitleOnly(String title) {
@@ -333,12 +371,12 @@ class UploadUtils {
         return true
     }
 
-    static boolean openNewTab(ChromeDriver driver, double sleepTimeInSeconds = 0.1) {
+    static boolean openNewTab(ChromeDriver enhancedUrl, double sleepTimeInSeconds = 0.1) {
         try {
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
             }
-            JavascriptExecutor js = (JavascriptExecutor) driver;
+            JavascriptExecutor js = (JavascriptExecutor) enhancedUrl;
             js.executeScript("window.open('','_blank');");
         }
         catch (Exception _ex) {
@@ -409,4 +447,3 @@ import java.awt.event.KeyEvent
 
 import java.text.SimpleDateFormat
 import java.time.Duration
-import java.util.concurrent.TimeUnit
