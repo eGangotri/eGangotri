@@ -101,10 +101,14 @@ class UploadToArchive {
                 ArchiveUtil.getGrandTotalOfAllUploadables(profiles);
         if(SettingsUtil.WRITE_TO_MONGO_DB){
             try{
-                UploadRestApiCalls.addToUploadCycle(profiles);
+                Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles);
+                if(!result?.success){
+                    log.info("${result}. mongo call to addToUploadCycle failed. quitting")
+                    System.exit(0)
+                }
             }
             catch(Exception e){
-                log.info("Exception calling addToUploadCycle",e)
+                log.info("Exception calling addToUploadCycle",e.message)
                 System.exit(0)
             }
         }

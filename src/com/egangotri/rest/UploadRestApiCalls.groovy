@@ -38,10 +38,10 @@ class UploadRestApiCalls {
         return paramsMap
     }
 
-    static String addToMongo(String restApiRoute,
+    static Map<String,Object> addToMongo(String restApiRoute,
                              String archiveProfile, String uploadLink, String localPath, String title,
                              String uploadCycleId, String csvName, String archiveItemId = null) {
-        def result = ""
+        Map<String,Object> result = [:]
 
         try {
             Map body = createPostParamsAsMap(archiveProfile, uploadLink, localPath,
@@ -74,8 +74,8 @@ class UploadRestApiCalls {
         return result
     }
 
-    static String addToUploadCycle(Collection<String> profiles) {
-        def result = ""
+    static Map<String, Object> addToUploadCycle(Collection<String> profiles) {
+        Map<String,Object>  result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
         log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}");
         log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles)}");
@@ -105,6 +105,7 @@ class UploadRestApiCalls {
             paramsMap.put("archiveProfiles", profilesAndCount);
             paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap)
+
         }
         catch (Exception e) {
             log.info("addToQueue Error while calling ${restApiRoute}", e)

@@ -27,6 +27,7 @@ class RestUtil {
         // Set the 'Content-Type' header to specify JSON
         def headers = ['Content-Type': 'application/json']
         def response;
+        log.info("making postcall: ${path} ")
         try {
             // Make a POST request with JSON data
             response = restClient.post(path: path,
@@ -34,14 +35,20 @@ class RestUtil {
                     requestContentType: groovyx.net.http.ContentType.JSON,
                     headers: headers)
 
-            println "Response Code: ${response.status}"
-            println "Response Data: ${response.data}"
+            log.info "Response Code: ${response.status}"
         }
         catch (Exception e) {
-            log.info("""makePostCall Error while calling ${backendServer}${path}
-                        ${toJson(requestData)}""", e)
+            String _exception = """makePostCall Exception while calling ${backendServer}${path}
+                        ${toJson(requestData)}. 
+                        ${e.message}"""
+            return [success:false, result: _exception]
         }
-        return response?.data
+        if(response?.responseData?.error){
+            String _err = "Mongo Call returned error. ${backendServer}${path}\n" +  response?.responseData?.error
+            return [success:false, result: _err]
+        }
+        log.info("response: ${response?.data}")
+        return [success:true, result: "makePostCall: ${path} resp: " + response?.responseData]
     }
 
     static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
@@ -54,7 +61,7 @@ class RestUtil {
             return dataMap
         }
         catch (Exception e) {
-            log.info("MakeGetCall Error while calling ${backendServer}${path} ${e.message}", e)
+            log.info("MakeGetCall Error while calling ${backendServer}${path} ${e.message}", e.message)
             return null
         }
     }
