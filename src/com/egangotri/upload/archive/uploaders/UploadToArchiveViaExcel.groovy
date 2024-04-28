@@ -10,6 +10,14 @@ import groovy.util.logging.Slf4j
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
+/**
+ * works.
+ *
+ * expects path to a excel file with no header  with 4 columns:
+ * C:\tmp\_data\tmp\Veda Mata Gayatri.pdf	Sub-1	Desc-1	Creator-1
+ C:\tmp\_data\tmp\testFolder\Veda Mata Gayatri.pdf	Sub-2	Desc-2	Creator-2
+ C:\tmp\_data\tmp\Veda Mata Gayatri - Copy.pdf	Sub-3	Desc-3	Creator-3
+ */
 @Slf4j
 class UploadToArchiveViaExcel {
     static void main(String[] args) {
@@ -25,12 +33,12 @@ class UploadToArchiveViaExcel {
         }
         UploadToArchive.prelims(args)
         List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName)
-        log.info("x ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
+        log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems)
         log.info("vos ${vos}")
         if (uploadItems) {
-            log.info("localPath ${uploadItems}")
+            log.info("uploadItems ${uploadItems}")
             log.info("vos ${vos}")
            List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
           //  log.info("uploadStats ${uploadStats}")

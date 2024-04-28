@@ -34,6 +34,7 @@ class ArchiveUtil {
     static List<String> ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
+        return;
         EGangotriUtil.sleepTimeInSeconds(2, true)
         try {
             if (resultsCountAtStartTime) {
