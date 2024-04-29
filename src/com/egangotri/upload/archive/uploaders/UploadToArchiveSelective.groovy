@@ -15,25 +15,24 @@ import groovy.util.logging.Slf4j
 class UploadToArchiveSelective {
     static void main(String[] args) {
         String archiveProfile = ""
-        String fileName = ""
-        if (args && args.length >= 2/* && args.length % 2*/) {
+        List<String> fileNames = []
+        if (args && args.length >= 2) {
             log.info "args $args"
             archiveProfile = args[0]
-            fileName = args[1].endsWith(EGangotriUtil.PDF) ? args[1] : args[1] + EGangotriUtil.PDF;
+            fileNames.addAll(args[1].split(","))
         } else {
             log.info "Must have 2 arg.s Profile name and fileName of pdf"
             System.exit(0)
         }
         UploadToArchive.prelims(args)
-        String localPath = getLocalPath(archiveProfile, fileName)
-        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(args[0], [localPath])
-        if(localPath){
-            log.info("localPath ${localPath}")
+        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile, fileNames)
+        if(vos){
+            log.info("localPath ${fileNames}")
             log.info("vos ${vos}")
             List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
         }
         else {
-            log.info("File ${fileName} not found")
+            log.info("No uploadables found. Exiting.")
         }
         System.exit(0)
     }
