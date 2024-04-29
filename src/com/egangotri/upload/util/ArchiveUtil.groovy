@@ -34,13 +34,13 @@ class ArchiveUtil {
     static List<String> ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
     static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
-        return;
         EGangotriUtil.sleepTimeInSeconds(2, true)
         try {
             if (resultsCountAtStartTime) {
                 println("going to $ARCHIVE_HOME")
                 driver.get(ARCHIVE_HOME)
                 println("reached $ARCHIVE_HOME")
+                return;
                 new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
                 new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
                 WebElement userMenu = driver.findElement(By.className("col-xs-12"))
