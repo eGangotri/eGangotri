@@ -16,13 +16,24 @@ class UploadToArchiveSelective {
     static void main(String[] args) {
         String archiveProfile = ""
         List<String> fileNames = []
-        if (args && args.length >= 2) {
+        List<String> validation = []
+        if (args && args.length == 2) {
             log.info "args $args"
             archiveProfile = args[0]
-            fileNames.addAll(args[1].split(","))
+            fileNames = args[1].split(",")*.trim();
+            fileNames.forEach { fileName -> {
+                if (!(fileName ==~ /.*\.\w+$/)) {
+                    validation << fileName
+                }
+            }}
+
+            if(validation.size()>0){
+                log.info("Some Filenames dont have an extension ${validation}")
+                return
+            }
         } else {
-            log.info "Must have 2 arg.s Profile name and fileName of pdf"
-            System.exit(0)
+            log.info "Must have 2 arg.s Profile name and fileName(s) of pdf as CSV"
+            return
         }
 
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
@@ -30,7 +41,7 @@ class UploadToArchiveSelective {
         UploadToArchive.prelims(args)
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile, fileNames)
         if(vos){
-            log.info("localPath ${fileNames}")
+            log.info("fileNames in args ${fileNames}")
             log.info("vos ${vos}")
             List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
             uploadSuccessCheckingMatrix.put(1, uploadStats)
