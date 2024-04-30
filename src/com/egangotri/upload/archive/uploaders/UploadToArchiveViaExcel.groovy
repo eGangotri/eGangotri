@@ -29,7 +29,7 @@ class UploadToArchiveViaExcel {
             archiveProfile = args[0]
             excelFileName = args[1]
             if(args.length == 3){
-                range = args[3].split("-")*.trim()
+                range = args[2].split("-")*.trim()
             }
 
         } else {
