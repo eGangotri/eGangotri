@@ -110,8 +110,13 @@ class ArchiveUtil {
         return vos
     }
 
-    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel) {
+    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel, String[] range) {
         Set<QueuedVO> vos = [] as Set
+        if(range?.size() == 2){
+            int start = range[0].toInteger()
+            int end = range[1].toInteger()
+            uploadItemFromExcel = uploadItemFromExcel.subList(start-1, end-1)
+        }
         uploadItemFromExcel.each { UploadItemFromExcel uploadable ->
             vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
                     uploadable.subject, uploadable.description,

@@ -23,19 +23,24 @@ class UploadToArchiveViaExcel {
     static void main(String[] args) {
         String archiveProfile = ""
         String excelFileName = ""
-        if (args && args.length >= 2/* && args.length % 2*/) {
+        String[] range = []
+        if (args && args.length >= 2) {
             log.info "args $args"
             archiveProfile = args[0]
             excelFileName = args[1]
+            if(args.length == 3){
+                range = args[3].split("-")*.trim()
+            }
+
         } else {
-            log.info "Must have 2 arg.s Profile name and fileName of pdf"
+            log.info "Must have 2-3 arg.s Profile-Name/fileName of pdf/range"
             System.exit(0)
         }
         UploadToArchive.prelims(args)
         List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
 
-        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems)
+        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems, range)
         log.info("vos ${vos}")
         if (uploadItems) {
             log.info("uploadItems ${uploadItems}")
