@@ -41,13 +41,6 @@ class ArchiveUtil {
                 driver.get(ARCHIVE_HOME)
                 println("reached $ARCHIVE_HOME")
                 return;
-                new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file-dropper-img")))
-                new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.className("col-xs-12")))
-                WebElement userMenu = driver.findElement(By.className("col-xs-12"))
-                ARCHIVE_USER_NAME = userMenu.text.split("\\r\\n|\\r|\\n").first().toLowerCase()
-//            WebElement userMenu = driver.findElement(By.id("file-dropper-img"))
-//            println("userMenu.getAttribute(\"src\") ${userMenu.getAttribute("src")}")
-//            ARCHIVE_USER_NAME = userMenu.getAttribute("src").split("/serve/%40")[1].split("/").first().toLowerCase()
             }
             String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
             if (!resultsCountAtStartTime) {
@@ -56,15 +49,6 @@ class ArchiveUtil {
                 driver.navigate().to(archiveUserAccountUrl)
             }
             driver.get(archiveUserAccountUrl)
-            WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
-            webDriverWait.until(ExpectedConditions.elementToBeClickable(By.id("big-results-count")))
-            WebElement resultsCount = driver.findElement(By.id("big-results-count"))
-            if (resultsCount) {
-                log.info("Results Count at ${resultsCountAtStartTime ? "LoginTime" : 'UploadCompletionTime'}: " + resultsCount.text)
-                if (!resultsCountAtStartTime) {
-                    log.info("**Figure captured will update in a while. So not exctly accurate as upload are still happening")
-                }
-            }
         }
         catch (Exception e) {
             e.printStackTrace()

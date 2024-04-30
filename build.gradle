@@ -244,8 +244,13 @@ dependencies {
     //For all other purposes best to use, maven repo standalone;commented below
     //compile files('lib/sss.jar')
     // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
-    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
+//    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
+    //  compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
+
+    implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.20.0'
+
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v124:4.20.0'
 
     implementation 'org.apache.poi:poi:5.2.5'
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
