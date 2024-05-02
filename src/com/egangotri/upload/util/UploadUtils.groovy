@@ -77,7 +77,6 @@ class UploadUtils {
                     //log.info "$k $v"
             }
         }
-        println("metaDataMap ${metaDataMap}")
         return metaDataMap
     }
 

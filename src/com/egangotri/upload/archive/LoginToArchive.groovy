@@ -30,7 +30,6 @@ class LoginToArchive {
                 }
                 log.info("emails $emails")
                 log.info("genProfiles $genProfiles")
-                log.info("metaDataMap ${metaDataMap*.toString()}")
                 archiveProfiles = genProfiles
                 log.info("archiveProfiles $genProfiles")
 
