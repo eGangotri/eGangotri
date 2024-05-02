@@ -39,19 +39,17 @@ class UploadToArchiveViaExcel {
             System.exit(0)
         }
         UploadToArchive.prelims(args)
-        List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName)
+        List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName, range)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
-        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems, range)
-        log.info("vos ${vos}")
+        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems)
         if (uploadItems) {
-            log.info("uploadItems ${uploadItems}")
-            log.info("vos ${vos}")
+            log.info("uploadItems ${uploadItems.size()}")
+            log.info("vos ${vos.size()}")
             List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos)
 
-         //  List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
-          //  log.info("uploadStats ${uploadStats}")
+            log.info("uploadStats ${uploadStats}")
             String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
             uploadSuccessCheckingMatrix.put(1, report)
         } else {
@@ -62,32 +60,52 @@ class UploadToArchiveViaExcel {
         System.exit(0)
     }
 
-    static def readExcelFile(filePath) {
+    static def readExcelFile(filePath, String[] range = []) {
         // Opening the Excel file
         FileInputStream file = new FileInputStream(new File(filePath))
         Workbook workbook = new XSSFWorkbook(file)
         log.info("readExcelFile ${filePath}")
         // Get the first sheet
         Sheet sheet = workbook.getSheetAt(0)
-
-        // Iterate through each row of the first sheet
+        int counter = 0
+        int start = 1
+        int end = sheet.size()
         List<UploadItemFromExcel> uploadItems = []
-        sheet.each { row ->
-            UploadItemFromExcel uploadItem = new UploadItemFromExcel(row.getCell(0).getStringCellValue() ,
-                    row.getCell(1).getStringCellValue() ,
-                    row.getCell(2).getStringCellValue() ,
-                    row.getCell(3).getStringCellValue())
-            Boolean uploadedFlag = row.getCell(4)?.getBooleanCellValue()
-            log.info("uplFlg: ${uploadedFlag}")
-            log.info("row.getCell(4)?.getBooleanCellValue(): ${row.getCell(4)?.getBooleanCellValue()}")
-            if(!uploadedFlag){
-                //uploadItems.add(uploadItem)
-                log.info("adding ..")
+        if(range?.size() == 2 && sheet.size()>1){
+            start = range[0].toInteger()
+            if(start<1 || start>sheet.size()){
+                start = 1
             }
+            end = range[1].toInteger()
+            if(end<1 || end>sheet.size()){
+                end = sheet.size()
+            }
+        }
+
+        for(int i = start; i <= end;i++) {
+            Row row = sheet.getRow(i)
+                String absPath = row.getCell(0).getStringCellValue();
+                String subject = row.getCell(1).getStringCellValue()
+                String description = row.getCell(2).getStringCellValue()
+                String creator = row.getCell(3).getStringCellValue()
+                Boolean uploadedFlag = false
+                if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
+                    uploadedFlag = row.getCell(4).getBooleanCellValue();
+                    log.info("readExcelFile uploadedFlag:${uploadedFlag}")
+                } else if (row.getCell(4).getCellType() == CellType.STRING) {
+                    uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
+                }
+
+                UploadItemFromExcel uploadItem = new UploadItemFromExcel(absPath, subject, description, creator, uploadedFlag)
+                if (!uploadedFlag && absPath.contains(File.separator)) {
+                    uploadItems.add(uploadItem)
+                    counter++
+                }
         }
         // Close resources
         workbook.close()
         file.close()
+        log.info("readExcelFile items added:${counter} size:${uploadItems.size()}")
         return uploadItems
     }
 

@@ -93,24 +93,16 @@ class ArchiveUtil {
         return vos
     }
 
-    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel, String[] range) {
+    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel) {
         Set<QueuedVO> vos = [] as Set
-        if(range?.size() == 2 && uploadItemFromExcel.size()>1){
-            int start = range[0].toInteger()
-            if(start<1 || start>uploadItemFromExcel.size()){
-                start = 1
-            }
-            int end = range[1].toInteger()
-            if(end<1 || end>uploadItemFromExcel.size()){
-                end = uploadItemFromExcel.size()
-            }
-            //because first row is a header . so it gets ignored.
-            uploadItemFromExcel = uploadItemFromExcel.subList(start, end+1)
-        }
         uploadItemFromExcel.each { UploadItemFromExcel uploadable ->
+            {
+            if( !uploadable.uploadFlag){
             vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
                     uploadable.subject, uploadable.description,
-                    uploadable.creator )
+                    uploadable.creator)
+            }
+        }
         }
         return vos
     }

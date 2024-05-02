@@ -425,11 +425,11 @@ class UploadUtils {
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles) {
         Integer uplddSum = uploadStats.collect { List<Integer> elem -> elem.first() }.sum() as Integer
         String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
-        String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats.first().first()
+        String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats?.first()?.first()
 
         Integer excSum = uploadStats.collect { elem -> elem.last() }.sum() as int
         String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
-        String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats.first().last()
+        String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats?.first()?.last()
         log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
         String statusMsg = countOfUplodableFiles == uplddSum ? 'Success. All items were put for upload.' : "${(uplddSum == 0) ? 'All' : 'Some'} Failed!"
