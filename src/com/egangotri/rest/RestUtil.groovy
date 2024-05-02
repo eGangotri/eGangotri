@@ -2,38 +2,41 @@ package com.egangotri.rest
 
 import com.egangotri.upload.util.SettingsUtil
 import groovy.util.logging.Slf4j
-import org.apache.groovy.json.internal.LazyMap
-
-import static groovyx.net.http.HttpBuilder.configure
-import static groovy.json.JsonOutput.toJson
-import groovyx.net.http.RESTClient
-
+import groovyx.net.http.HttpBuilder
 @Slf4j
 class RestUtil {
+
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
     static String UPLOAD_CYCLE_ROUTE = "uploadCycleRoute"
     static String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER
-    static RESTClient restClient = new RESTClient(backendServer)
 
+    static HttpBuilder getHttpBin(){
+        HttpBuilder httpBin = HttpBuilder.configure {
+            request.uri = backendServer
+        }
+        return httpBin
+    }
     static makePostCall(String path,
                         Map requestData) {
 
         requestData.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
         requestData.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
 
-        def jsonRequestBody = new groovy.json.JsonBuilder(requestData).toPrettyString()
+      //  def jsonRequestBody = new groovy.json.JsonBuilder(requestData).toPrettyString()
 
         // Set the 'Content-Type' header to specify JSON
         def headers = ['Content-Type': 'application/json']
         def response;
         log.info("making postcall: ${path} ")
         try {
-            // Make a POST request with JSON data
-            response = restClient.post(path: path,
-                    body: jsonRequestBody,
-                    requestContentType: groovyx.net.http.ContentType.JSON,
-                    headers: headers)
+        log.info("httpBin:")
+            response = getHttpBin().post {
+                request.uri.path = path
+                request.body = ["superadmin_user":SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER,
+                                "superadmin_password": SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD]
+                request.contentType = 'application/json'
+            }
 
             log.info "Response Code: ${response.status}"
         }
@@ -51,10 +54,12 @@ class RestUtil {
         return [success:true, result: "makePostCall: ${path} resp: " + response?.responseData]
     }
 
-    static def makeGetCall(String path, Map queryMap = [name: 'Bob'], String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER) {
+    static def makeGetCall(String path) {
         log.info("backendServer ${backendServer} path ${path}")
         try {
-            def response = restClient.get(path: path)
+            def response = getHttpBin().get {
+                request.uri.path = '/path'
+            }
             println "Response Code: ${response.status}"
             println "Response Data: ${response.data}"
             def dataMap = ['response': response.data['response']]
@@ -95,7 +100,7 @@ class RestUtil {
         boolean _result = false
         String dbServerSuccessMsg = "eGangotri-node-backend (egangotri_upload_db)"
         try {
-            LazyMap result = makeGetCall("/") ?: [:] as Map
+            org.apache.commons.collections4.map.LazyMap result = makeGetCall("/") ?: [:] as Map
             _result = (result && result.containsKey("response")) ? result?.response?.toString()?.length() > 20 : false
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
         }
@@ -109,7 +114,7 @@ class RestUtil {
 
     static boolean checkIfDashboardServerIsOn() {
         try {
-            LazyMap result = makeGetCall("/") ?: [:] as Map
+            org.apache.commons.collections4.map.LazyMap result = makeGetCall("/") ?: [:] as Map
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
             return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
         }
@@ -120,7 +125,7 @@ class RestUtil {
     }
 
     static def listQueues() {
-        LazyMap result = makeGetCall("/${ITEMS_QUEUED_PATH}/list") ?: [:]
+        org.apache.commons.collections4.map.LazyMap result = makeGetCall("/${ITEMS_QUEUED_PATH}/list") ?: [:]
         log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
         return (result && result.containsKey("response")) ? result.response : []
     }

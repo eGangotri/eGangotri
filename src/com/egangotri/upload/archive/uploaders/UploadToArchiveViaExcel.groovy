@@ -4,7 +4,9 @@ import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
+import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
+import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
 import org.apache.poi.ss.usermodel.*
@@ -39,39 +41,25 @@ class UploadToArchiveViaExcel {
         UploadToArchive.prelims(args)
         List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
+        Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems, range)
         log.info("vos ${vos}")
         if (uploadItems) {
             log.info("uploadItems ${uploadItems}")
             log.info("vos ${vos}")
-           List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
-          //  log.info("uploadStats ${uploadStats}")
-        } else {
-            log.info("File ${excelFileName} not found")
-        }
-        System.exit(0)
-    }
+            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos)
 
-    static String getLocalPath(String archiveProfile, String fileName) {
-        String _folder = FileRetrieverUtil.pickFolderBasedOnArchiveProfile(archiveProfile)
-        String filePath = ""
-        File folder = new File(_folder)
-        if (folder.exists() && folder.isDirectory()) {
-            // Create a File object for the file inside the folder
-            def file = new File(folder, fileName)
-            // Check if the file exists
-            if (file.exists() && file.isFile()) {
-                // Get the absolute path of the file
-                filePath = file.getCanonicalPath()
-                println "Absolute path of $fileName: $filePath"
-            } else {
-                println "File $fileName ${file.absolutePath} does not exist in the folder."
-            }
+         //  List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
+          //  log.info("uploadStats ${uploadStats}")
+            String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
+            uploadSuccessCheckingMatrix.put(1, report)
         } else {
-            println "Folder $folder does not exist."
+            log.info("No Items for upload.")
         }
-        return filePath;
+        EGangotriUtil.recordProgramEnd()
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size())
+        System.exit(0)
     }
 
     static def readExcelFile(filePath) {
@@ -89,14 +77,14 @@ class UploadToArchiveViaExcel {
                     row.getCell(1).getStringCellValue() ,
                     row.getCell(2).getStringCellValue() ,
                     row.getCell(3).getStringCellValue())
-            uploadItems.add(uploadItem)
-            row.each { cell ->
-                // Print out the cell's contents
-                //print(cell.getStringCellValue() + "XX\t")
-              //  printCellValue(cell)
+            Boolean uploadedFlag = row.getCell(4)?.getBooleanCellValue()
+            log.info("uplFlg: ${uploadedFlag}")
+            log.info("row.getCell(4)?.getBooleanCellValue(): ${row.getCell(4)?.getBooleanCellValue()}")
+            if(!uploadedFlag){
+                //uploadItems.add(uploadItem)
+                log.info("adding ..")
             }
         }
-
         // Close resources
         workbook.close()
         file.close()

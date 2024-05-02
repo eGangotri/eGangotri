@@ -42,7 +42,7 @@ task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFi
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
-    args = ["TMP2", "C:\\Users\\chetan\\Downloads\\_IFP\\test2.xlsx"]
+    args = ["TMP2", "\"D:\\FIP\\_IFP\\_IFP\\fip-uploadables-02-May-2024-11-22-(4)(8475).xlsx\""]
 }
 
 task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
