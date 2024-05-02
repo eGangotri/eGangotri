@@ -7,6 +7,7 @@ import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
+import com.google.gson.GsonBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -101,11 +102,12 @@ class UploadRestApiCalls {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
             //some issue with json parsing if you dont explicitly do this
-            String _formattedData = dateFormat.format(new Date())
+            String _formattedData = dateFormat.format(new Date()).toString()
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
-            paramsMap.put("datetimeUploadStarted", _formattedData)
+//            paramsMap.put("datetimeUploadStarted", new Date().toString())
+            log.info("paramsMap ${paramsMap}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap) as Map<String, Object>
 
         }
