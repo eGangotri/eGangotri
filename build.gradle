@@ -216,11 +216,14 @@ configurations {
 // OR click the GREEN ARROW ICON to the left of dependencies below in IntelliJ
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.21'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    // Check for the latest version
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'io.github.http-builder-ng:http-builder-ng-core:1.0.4'
     implementation 'org.apache.groovy:groovy-ant:4.0.21'
     implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0' // Check for the latest version
 
     implementation group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2'
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.1'

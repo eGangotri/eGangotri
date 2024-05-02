@@ -100,11 +100,13 @@ class UploadRestApiCalls {
             if(!EGangotriUtil.UPLOAD_CYCLE_ID ) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
+            //some issue with json parsing if you dont explicitly do this
+            String _formattedData = dateFormat.format(new Date())
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
-            paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
-            result = RestUtil.makePostCall(restApiRoute, paramsMap)
+            paramsMap.put("datetimeUploadStarted", _formattedData)
+            result = RestUtil.makePostCall(restApiRoute, paramsMap) as Map<String, Object>
 
         }
         catch (Exception e) {

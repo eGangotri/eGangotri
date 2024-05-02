@@ -1,8 +1,15 @@
 package com.egangotri.rest
 
 import com.egangotri.upload.util.SettingsUtil
+import com.google.gson.Gson
 import groovy.util.logging.Slf4j
-import groovyx.net.http.HttpBuilder
+
+import okhttp3.OkHttpClient
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import okhttp3.Request
+import okhttp3.Response
+
 @Slf4j
 class RestUtil {
 
@@ -11,63 +18,81 @@ class RestUtil {
     static String UPLOAD_CYCLE_ROUTE = "uploadCycleRoute"
     static String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER
 
-    static HttpBuilder getHttpBin(){
-        HttpBuilder httpBin = HttpBuilder.configure {
-            request.uri = backendServer
-        }
-        return httpBin
-    }
+
     static makePostCall(String path,
                         Map requestData) {
-
+        OkHttpClient client = new OkHttpClient()
+        Gson gson = new Gson()
         requestData.put("superadmin_user", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER)
         requestData.put("superadmin_password", SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD)
 
-      //  def jsonRequestBody = new groovy.json.JsonBuilder(requestData).toPrettyString()
+        String json = gson.toJson(requestData)
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"))
+        Request request = new Request.Builder()
+                .url(backendServer + path)
+                .post(body)
+                .build()
 
-        // Set the 'Content-Type' header to specify JSON
-        def headers = ['Content-Type': 'application/json']
-        def response;
-        log.info("making postcall: ${path} ")
+        Response response;
         try {
-        log.info("httpBin:")
-            response = getHttpBin().post {
-                request.uri.path = path
-                request.body = ["superadmin_user":SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_USER,
-                                "superadmin_password": SettingsUtil.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD]
-                request.contentType = 'application/json'
-            }
+            log.info("making postcall: ${path} ")
+            response = client.newCall(request).execute()
+            if (!response.isSuccessful()) {
+                String code = response.code().toString()
+                String _err = """Mongo Call returned error. ${backendServer}${path}
+                        Request failed with status code: ${code}
+                        json: ${json}    
+                        """
+                log.info _err
 
-            log.info "Response Code: ${response.status}"
-        }
-        catch (Exception e) {
+                return [success: false, result: _err]
+            } else {
+                String responseString = response.body().string()
+                log.info "Response: ${responseString}"
+                return [success: true, result: responseString]
+            }
+        } catch (Exception e) {
+            println "An error occurred: ${e.message}"
             String _exception = """makePostCall Exception while calling ${backendServer}${path}
-                        ${toJson(requestData)}. 
+                        json:${json} 
                         ${e.message}"""
-            return [success:false, result: _exception]
+            return [success: false, result: _exception]
+        } finally {
+            if (response) {
+                response?.close()
+            }
         }
-        if(response?.responseData?.error){
-            String _err = "Mongo Call returned error. ${backendServer}${path}\n" +  response?.responseData?.error
-            return [success:false, result: _err]
-        }
-        log.info("response: ${response?.data}")
-        return [success:true, result: "makePostCall: ${path} resp: " + response?.responseData]
     }
 
     static def makeGetCall(String path) {
+        OkHttpClient client = new OkHttpClient()
+
+        Request request = new Request.Builder()
+                .url("${backendServer}${path}")
+                .build()
+
         log.info("backendServer ${backendServer} path ${path}")
+        Response response;
         try {
-            def response = getHttpBin().get {
-                request.uri.path = '/path'
+            response = client.newCall(request).execute()
+            if (response.isSuccessful()) {
+                println "Response Code: ${response?.message()}"
+                def data = response.body().string()
+                println "Response: ${data}"
+                def dataMap = ['response': data, 'code': response.code()]
+                return dataMap
+            } else {
+                println "Request failed with status code: ${response.code()}"
+                return null
             }
-            println "Response Code: ${response.status}"
-            println "Response Data: ${response.data}"
-            def dataMap = ['response': response.data['response']]
-            return dataMap
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+            println "An error occurred: ${e.message}"
             log.info("MakeGetCall Error while calling ${backendServer}${path} ${e.message}", e.message)
             return null
+        } finally {
+            if (response) {
+                response.close()
+            }
         }
     }
 
@@ -83,7 +108,7 @@ class RestUtil {
             }
         }
         catch (Exception ex) {
-            log.error(ex, "Couldnt start Mongo Server");
+            log.error("Couldnt start Mongo Server", ex.message);
         }
     }
 
@@ -100,7 +125,7 @@ class RestUtil {
         boolean _result = false
         String dbServerSuccessMsg = "eGangotri-node-backend (egangotri_upload_db)"
         try {
-            org.apache.commons.collections4.map.LazyMap result = makeGetCall("/") ?: [:] as Map
+            LinkedHashMap result = makeGetCall("/") ?: [:] as Map
             _result = (result && result.containsKey("response")) ? result?.response?.toString()?.length() > 20 : false
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
         }
@@ -114,7 +139,7 @@ class RestUtil {
 
     static boolean checkIfDashboardServerIsOn() {
         try {
-            org.apache.commons.collections4.map.LazyMap result = makeGetCall("/") ?: [:] as Map
+            LinkedHashMap result = makeGetCall("/") ?: [:] as Map
             log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
             return (result && result.containsKey("response")) ? result.response == "eGangotri-node-backend" : false
         }
@@ -125,7 +150,7 @@ class RestUtil {
     }
 
     static def listQueues() {
-        org.apache.commons.collections4.map.LazyMap result = makeGetCall("/${ITEMS_QUEUED_PATH}/list") ?: [:]
+        LinkedHashMap result = makeGetCall("/${ITEMS_QUEUED_PATH}/list") ?: [:]
         log.info("toJson.response ${result && result.containsKey("response") ? result.response : '--'}")
         return (result && result.containsKey("response")) ? result.response : []
     }
