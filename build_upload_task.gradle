@@ -18,7 +18,7 @@ ArrayList<String> uploadToArchiveArgs = ["PANINI"]//V_ANON, KANGRI, "KM"
 def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures69"
 task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.UploadToArchive"
+    mainClass = "com.egangotri.upload.archive.UploadToArchive"
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
@@ -28,7 +28,7 @@ task uploadToArchive(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles']
 //works
 task uploadToArchiveSelective(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.uploaders.UploadToArchiveSelective"
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveSelective"
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
@@ -38,7 +38,7 @@ task uploadToArchiveSelective(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusL
 
 task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcel"
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcel"
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
@@ -47,7 +47,7 @@ task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFi
 
 task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems"
+    mainClass = "com.egangotri.upload.archive.ValidateUploadsAndReUploadFailedItems"
     jvmArgs = applicationDefaultJvmArgs
     //by default last upload is picked. if you want to pick something previous, then specify
     // files below queued and usered order
@@ -57,21 +57,21 @@ task validateLinksAndReUploadBroken(dependsOn: 'classes', type: JavaExec) {
 
 task copyPostValidationFoldersToQueueAndUsheredFoldersAndStartReuploadProcess(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.CopyPostValidationFoldersToQueuedAndUsheredFolders"
+    mainClass = "com.egangotri.upload.archive.CopyPostValidationFoldersToQueuedAndUsheredFolders"
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
 
 task preUploadReview(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.PreUploadReview"
+    mainClass = "com.egangotri.upload.archive.PreUploadReview"
     jvmArgs = applicationDefaultJvmArgs
     args = ["PRFL1", "PRFL2", "PRFL3", "PRFL4", "PRFL5"]
 }
 
 task reuploadUsingLinks(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.ReuploadUsingLinks"
+    mainClass = "com.egangotri.upload.archive.ReuploadUsingLinks"
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
@@ -82,14 +82,14 @@ task reuploadUsingLinks(dependsOn: 'classes', type: JavaExec) {
 */
 task cronJob(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.scheduler.RemoteJobScheduler"
+    mainClass = "com.egangotri.scheduler.RemoteJobScheduler"
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
 
 task snap2htmlCronJob(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.batch.SnapToHtml"
+    mainClass = "com.egangotri.batch.SnapToHtml"
     jvmArgs = applicationDefaultJvmArgs
     args = [FOLDER_TO_GENERATE_SNAP2HTML_OF]
 }

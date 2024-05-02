@@ -56,7 +56,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.EditFilesInArchive"
+    mainClass = "com.egangotri.upload.archive.EditFilesInArchive"
     jvmArgs = applicationDefaultJvmArgs
     //if last argument is numeric
     // then it will be treated as the number of items you want to edit
@@ -68,7 +68,7 @@ task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
 task fileTransfer(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "fileTransfer: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.mover.FileTransfer"
+    mainClass = "com.egangotri.mover.FileTransfer"
     jvmArgs = applicationDefaultJvmArgs
     args = ["D:\\anaghaPlayGround\\Done"]
 }
@@ -76,7 +76,7 @@ task fileTransfer(dependsOn: 'classes', type: JavaExec) {
 task zipMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "zipMover: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.mover.ZipMover"
+    mainClass = "com.egangotri.mover.ZipMover"
     jvmArgs = applicationDefaultJvmArgs
     args = ["20 feb 2021.txt"]
 }
@@ -85,7 +85,7 @@ task zipMover(dependsOn: 'classes', type: JavaExec) {
 
 task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.BookTitlesInLoop"
+    mainClass = "com.egangotri.pdf.BookTitlesInLoop"
     //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
@@ -97,7 +97,7 @@ task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
 
 task bookTitlesInLoopForReduced(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.BookTitlesInLoop"
+    mainClass = "com.egangotri.pdf.BookTitlesInLoop"
     //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
@@ -110,7 +110,7 @@ task bookTitlesInLoopForReduced(dependsOn: 'classes', type: JavaExec) {
 task fileMover(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     println "FileMover: ${sourceSets.main.runtimeClasspath}"
-    main = "com.egangotri.mover.FileMover"
+    mainClass = "com.egangotri.mover.FileMover"
     jvmArgs = applicationDefaultJvmArgs
     args = [ "BVT", "exclude=Nirnaya Press.pdf", "false"]
    // args = ["PANINI", "KANGRI", "false"]
@@ -118,7 +118,7 @@ task fileMover(dependsOn: 'classes', type: JavaExec) {
 
 task bookTitles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.BookTitles"
+    mainClass = "com.egangotri.pdf.BookTitles"
     //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
@@ -137,13 +137,13 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
 
 task allFilePathsLongerThanThreshold(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.FileNameLongerThanThreshold"
+    mainClass = "com.egangotri.pdf.FileNameLongerThanThreshold"
     args = ["C:\\Users\\HP\\eGangotri", 250, 254]
 }
 
 task restCalls(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.rest.RestUtil"
+    mainClass = "com.egangotri.rest.RestUtil"
     //args = [folder, date in DD-MM-YYYY FORMAT OR today , hour only]
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", '25-08-2020', '5']
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today', '5']
@@ -155,14 +155,14 @@ task restCalls(dependsOn: 'classes', type: JavaExec) {
 
 task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.GetFirstNPagesFromPdf"
+    mainClass = "com.egangotri.pdf.GetFirstNPagesFromPdf"
     //args = [folder, numberOfPages]
     args = ["D:\\Treasures55\\_vinay\\Darab", 5]
 }
 
 task tally(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.Tally"
+    mainClass = "com.egangotri.pdf.Tally"
     args = ["D:\\NMM\\Oct-2019\\07-10-2019",
             "E:\\Oct-2019\\ramtek-9_tally",
             "D:\\NMM\\Oct-2019\\11-10-2019",
@@ -171,7 +171,7 @@ task tally(dependsOn: 'classes', type: JavaExec) {
 
 task merge(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.PDFMerger"
+    mainClass = "com.egangotri.pdf.PDFMerger"
 //    //args = [tifFolder, pdfFolder ]
     //args = [pdfRootFolder, 'mega' ]
     args = ["E:\\July-2019\\ramtek-2-"]
@@ -179,32 +179,32 @@ task merge(dependsOn: 'classes', type: JavaExec) {
 
 task repairPDF(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.RunPdfTk"
+    mainClass = "com.egangotri.upload.archive.RunPdfTk"
     args = [""]
     args = [""]
 }
 
 task addFooter(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.itext7.AddFooter"
+    mainClass = "com.egangotri.itext7.AddFooter"
     // args =["C:\\tmp\\experiment"]
 }
 task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.CheckForMissingTextsInArchive"
+    mainClass = "com.egangotri.upload.archive.CheckForMissingTextsInArchive"
     jvmArgs = applicationDefaultJvmArgs
     args = []
 }
 
 task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.pdf.GetFirstAndLastPages"
+    mainClass = "com.egangotri.pdf.GetFirstAndLastPages"
     args = [""]
 }
 
 task refreshFocusLogFiles(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = "com.egangotri.upload.archive.StartFreshLogFile"
+    mainClass = "com.egangotri.upload.archive.StartFreshLogFile"
     args = [""]
 }
 
