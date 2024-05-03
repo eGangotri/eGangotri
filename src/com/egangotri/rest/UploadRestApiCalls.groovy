@@ -33,8 +33,8 @@ class UploadRestApiCalls {
             paramsMap.put("archiveItemId", archiveItemId)
         }
         paramsMap.put("csvName", csvName)
-
-        paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
+        // issue with google json lib. but not adding is fine
+      //  paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
         //log.info("paramsMap ${paramsMap}")
         return paramsMap
     }
@@ -101,11 +101,10 @@ class UploadRestApiCalls {
             if(!EGangotriUtil.UPLOAD_CYCLE_ID ) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
-            //some issue with json parsing if you dont explicitly do this
-            String _formattedData = dateFormat.format(new Date()).toString()
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
+            //date parsing in google json lib causing an issue so still works when mnot explicitly set
 //            paramsMap.put("datetimeUploadStarted", new Date().toString())
             log.info("paramsMap ${paramsMap}")
             result = RestUtil.makePostCall(restApiRoute, paramsMap) as Map<String, Object>

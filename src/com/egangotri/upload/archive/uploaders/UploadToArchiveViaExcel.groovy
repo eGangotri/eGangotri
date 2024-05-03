@@ -46,7 +46,11 @@ class UploadToArchiveViaExcel {
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems)
         if (uploadItems) {
             log.info("uploadItems ${uploadItems.size()}")
+            log.info("uploadItems ${uploadItems[0].absolutePath}")
+            log.info("uploadItems ${uploadItems[-1].absolutePath}")
             log.info("vos ${vos.size()}")
+            log.info("vos ${vos[0]}")
+            log.info("vos ${vos[-1] }")
             List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos)
 
             log.info("uploadStats ${uploadStats}")
