@@ -30,7 +30,7 @@ class UploadToArchiveViaExcel {
             log.info "args $args"
             archiveProfile = args[0]
             excelFileName = args[1]
-            if(args.length == 3){
+            if (args.length == 3) {
                 range = args[2].split("-")*.trim()
             }
 
@@ -43,14 +43,14 @@ class UploadToArchiveViaExcel {
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
 
-        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile,uploadItems)
+        Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
             log.info("uploadItems ${uploadItems.size()}")
             log.info("uploadItems ${uploadItems[0].absolutePath}")
             log.info("uploadItems ${uploadItems[-1].absolutePath}")
             log.info("vos ${vos.size()}")
             log.info("vos ${vos[0]}")
-            log.info("vos ${vos[-1] }")
+            log.info("vos ${vos[-1]}")
             List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos)
 
             log.info("uploadStats ${uploadStats}")
@@ -75,19 +75,20 @@ class UploadToArchiveViaExcel {
         int start = 1
         int end = sheet.size()
         List<UploadItemFromExcel> uploadItems = []
-        if(range?.size() == 2 && sheet.size()>1){
+        if (range?.size() == 2 && sheet.size() > 1) {
             start = range[0].toInteger()
-            if(start<1 || start>sheet.size()){
+            if (start < 1 || start > sheet.size()) {
                 start = 1
             }
             end = range[1].toInteger()
-            if(end<1 || end>sheet.size()){
+            if (end < 1 || end > sheet.size()) {
                 end = sheet.size()
             }
         }
 
-        for(int i = start; i <= end;i++) {
+        for (int i = start; i <= end; i++) {
             Row row = sheet.getRow(i)
+            if (row) {
                 String absPath = row.getCell(0).getStringCellValue();
                 String subject = row.getCell(1).getStringCellValue()
                 String description = row.getCell(2).getStringCellValue()
@@ -105,6 +106,7 @@ class UploadToArchiveViaExcel {
                     uploadItems.add(uploadItem)
                     counter++
                 }
+            }
         }
         // Close resources
         workbook.close()

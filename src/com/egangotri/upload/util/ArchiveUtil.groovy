@@ -5,20 +5,16 @@ import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
 import com.egangotri.util.GenericUtil
-import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.support.ui.ExpectedCondition
-import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 
 import java.text.DecimalFormat
 import java.time.Duration
-
-import static com.egangotri.upload.util.ArchiveUtil.getALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE
 
 @Slf4j
 class ArchiveUtil {
@@ -97,15 +93,16 @@ class ArchiveUtil {
         Set<QueuedVO> vos = [] as Set
         uploadItemFromExcel.each { UploadItemFromExcel uploadable ->
             {
-            if( !uploadable.uploadFlag){
-            vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
-                    uploadable.subject, uploadable.description,
-                    uploadable.creator)
+                if( !uploadable.uploadFlag){
+                    vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
+                            uploadable.subject, uploadable.description,
+                            uploadable.creator)
+                }
             }
-        }
         }
         return vos
     }
+
     static Set<QueuedVO> generateUploadVoForAllUploadableItems(Collection<String> profiles) {
         Set<QueuedVO> vos = []
         profiles.eachWithIndex { String profile, index ->
@@ -231,7 +228,7 @@ class ArchiveUtil {
         }
     }
 
-    static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int attemptedItemsTotal) {
+    static void printFinalReport(Map<Integer, String> uploadSuccessCheckingMatrix, int attemptedItemsTotal, boolean reupload = false) {
         if (uploadSuccessCheckingMatrix) {
             ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
                 log.info("(${counter+1}). ${accessUrl}")
@@ -240,10 +237,12 @@ class ArchiveUtil {
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
             }
-            if (VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS) {
-                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
-            } else {
-                compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE, EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE)
+            if(!reupload){
+                if (VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS) {
+                    compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
+                } else {
+                    compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE, EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE)
+                }
             }
             long totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS - EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS
             log.info("Start Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)))

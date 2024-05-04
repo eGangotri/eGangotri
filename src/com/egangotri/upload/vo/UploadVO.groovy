@@ -20,6 +20,12 @@ class UploadVO {
         title = stripFilePath(removeFileEnding(path))
     }
 
+    UploadVO( String _path, String _uploadLink, String _archiveProfile ) {
+        path = _path
+        uploadLink = _uploadLink
+        archiveProfile = _archiveProfile
+    }
+
     UploadVO(String _archiveProfile,
              String _path,
              String _subjects,
