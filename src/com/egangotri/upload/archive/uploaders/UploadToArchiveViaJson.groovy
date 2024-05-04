@@ -22,9 +22,10 @@ import groovy.json.JsonSlurper
  */
 
 /**
- * Sample Excel :
- * localPath	uploadLink	archiveItemId	archiveProfile
- C:\tmp\_data\tmp2\Veda Mata Gayatri- Sri Aurobindo.pdf	https://archive.org/upload?description=Maha%20Pandit%20Rahul%20Sanskrityayan%20Books, 'Veda Mata Gayatri- Sri Aurobindo'&subject=Books of Maha Pandit Rahul Sanskrityayan&creator=Rahul SankrityayanMAX_	JhYQ_veda-mata-gayatri-sri-aurobindo	TMP2
+Go TO MongoDB ItemsUshered.
+ enter uploadCycleId
+ retireve results as JSON
+ put JSON in the args and run this task.
 
  */
 @Slf4j
@@ -44,7 +45,6 @@ class UploadToArchiveViaJson {
             System.exit(0)
         }
         UploadToArchive.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-
         List<ReuploadVO> uploadablesFromJson = readJsonFile(excelFileName, range)
         log.info("uploadItems(${uploadablesFromJson.size()}) " +
                 "${uploadablesFromJson[0].path}")
@@ -54,18 +54,18 @@ class UploadToArchiveViaJson {
         vosGrouped.eachWithIndex { entry, index ->
             String archiveProfile = entry.key
             Set<ReuploadVO> vos = entry.value as Set
-            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+            log.info "${index + 1}). " +
+                    "Starting upload in archive.org for Profile $archiveProfile. " +
+                    "Total Uplodables: ${vos.size()}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
             if (vos) {
                 log.info("uploadItems ${vos[0].path}")
                 log.info("uploadItems ${vos[-1].path}")
                 log.info("vos ${vos.size()}")
                 List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
-
                 log.info("uploadStats ${uploadStats}")
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
                 uploadSuccessCheckingMatrix.put((index + 1), report)
-
-                attemptedItemsTotal += countOfUploadableItems
+                attemptedItemsTotal += vos.size()
             } else {
                 log.info "No uploadable files for Profile $archiveProfile"
             }
@@ -98,22 +98,22 @@ class UploadToArchiveViaJson {
             }
         }
 
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i < end; i++) {
             def row = jsonList.get(i) as Map
             if (row) {
                 String path = row.localPath
                 String uploadLink = row.uploadLink
                 String archiveItemId = row.archiveItemId
                 String archiveProfile = row.archiveProfile
-                Boolean uploadedFlag = false
-                if (row?.uploadedFlag) {
-                    uploadedFlag = true
-                    log.info("readExcelFile uploadedFlag:${uploadedFlag}")
+                Boolean uploadFlag = false
+                if (row?.uploadFlag) {
+                    uploadFlag = true
+                    log.info("readExcelFile uploadFlag:${uploadFlag}")
                 }
 
-                if (!uploadedFlag && path.contains(File.separator)) {
+                if (!uploadFlag && path.contains(File.separator)) {
                     ReuploadVO uploadItem = new ReuploadVO(path,
-                            uploadLink, archiveItemId, archiveProfile, uploadedFlag)
+                            uploadLink, archiveItemId, archiveProfile, uploadFlag)
                     uploadItems.add(uploadItem)
                     counter++
                 }
