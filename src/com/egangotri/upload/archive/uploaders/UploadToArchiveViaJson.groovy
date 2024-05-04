@@ -3,7 +3,9 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.apache.poi.ss.usermodel.CellType
@@ -43,27 +45,36 @@ class UploadToArchiveViaJson {
         }
         UploadToArchive.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
 
-        List<ReuploadVO> uploadablesFromExcel = readJsonFile(excelFileName, range)
-        log.info("uploadItems(${uploadablesFromExcel.size()}) " +
-                "${uploadablesFromExcel[0].path}")
+        List<ReuploadVO> uploadablesFromJson = readJsonFile(excelFileName, range)
+        log.info("uploadItems(${uploadablesFromJson.size()}) " +
+                "${uploadablesFromJson[0].path}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromExcel.groupBy { ReuploadVO item -> item.archiveProfile }
-        String archiveProfile = vosGrouped.entrySet().getAt(0).key;
-        Set<ReuploadVO> vos = vosGrouped.entrySet().getAt(0).value as Set
-        if (vos) {
-            log.info("uploadItems ${vos[0].path}")
-            log.info("uploadItems ${vos[-1].path}")
-            log.info("vos ${vos.size()}")
-            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
+        Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
+        int attemptedItemsTotal = 0
+        vosGrouped.eachWithIndex { entry, index ->
+            String archiveProfile = entry.key
+            Set<ReuploadVO> vos = entry.value as Set
+            log.info "${index + 1}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+            if (vos) {
+                log.info("uploadItems ${vos[0].path}")
+                log.info("uploadItems ${vos[-1].path}")
+                log.info("vos ${vos.size()}")
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
 
-            log.info("uploadStats ${uploadStats}")
-            String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
-            uploadSuccessCheckingMatrix.put(1, report)
-        } else {
-            log.info("No Items for upload.")
+                log.info("uploadStats ${uploadStats}")
+                String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
+                uploadSuccessCheckingMatrix.put((index + 1), report)
+
+                attemptedItemsTotal += countOfUploadableItems
+            } else {
+                log.info "No uploadable files for Profile $archiveProfile"
+            }
+            EGangotriUtil.sleepTimeInSeconds(5, true)
         }
+
+
         EGangotriUtil.recordProgramEnd()
-        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size(), true)
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal, true)
         System.exit(0)
     }
 
@@ -88,17 +99,16 @@ class UploadToArchiveViaJson {
         }
 
         for (int i = start; i <= end; i++) {
+            def row = jsonList.get(i) as Map
             if (row) {
-                String path = row.getCell(0).getStringCellValue();
-                String uploadLink = row.getCell(1).getStringCellValue()
-                String archiveItemId = row.getCell(2).getStringCellValue()
-                String archiveProfile = row.getCell(3).getStringCellValue()
+                String path = row.localPath
+                String uploadLink = row.uploadLink
+                String archiveItemId = row.archiveItemId
+                String archiveProfile = row.archiveProfile
                 Boolean uploadedFlag = false
-                if (row?.getCell(4)?.getCellType() == CellType.BOOLEAN) {
-                    uploadedFlag = row.getCell(4).getBooleanCellValue();
+                if (row?.uploadedFlag) {
+                    uploadedFlag = true
                     log.info("readExcelFile uploadedFlag:${uploadedFlag}")
-                } else if (row?.getCell(4)?.getCellType() == CellType.STRING) {
-                    uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
                 }
 
                 if (!uploadedFlag && path.contains(File.separator)) {
@@ -109,10 +119,7 @@ class UploadToArchiveViaJson {
                 }
             }
         }
-        // Close resources
-        workbook.close()
-        file.close()
-        log.info("readExcelFile items added:${counter} size:${uploadItems.size()}")
+        log.info("readJsonFile items added:${counter} size:${uploadItems.size()}")
         return uploadItems;
     }
 
