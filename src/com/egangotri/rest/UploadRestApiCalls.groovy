@@ -51,7 +51,7 @@ class UploadRestApiCalls {
             result = RestUtil.makePostCall(restApiRoute, body)
         }
         catch (Exception e) {
-            log.info("addToQueue Error while calling ${restApiRoute}", e)
+            log.info("addToMongo Error while calling ${restApiRoute}", e)
         }
         return result;
     }
@@ -111,7 +111,7 @@ class UploadRestApiCalls {
 
         }
         catch (Exception e) {
-            log.info("addToQueue Error while calling ${restApiRoute}", e)
+            log.error("addToUploadCycle Error while calling ${restApiRoute}", e)
         }
         return result;
     }
