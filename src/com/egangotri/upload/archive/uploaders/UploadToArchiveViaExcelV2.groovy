@@ -3,6 +3,7 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -41,28 +42,35 @@ class UploadToArchiveViaExcelV2 {
             System.exit(0)
         }
         UploadToArchive.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        SettingsUtil.applySettings()
 
         List<ReuploadVO> uploadablesFromExcel = readExcelFile(excelFileName, range)
         log.info("uploadItems(${uploadablesFromExcel.size()}) " +
                 "${uploadablesFromExcel[0].path}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromExcel.groupBy { ReuploadVO item -> item.archiveProfile }
-        String archiveProfile = vosGrouped.entrySet().getAt(0).key;
-        Set<ReuploadVO> vos = vosGrouped.entrySet().getAt(0).value as Set
-        if (vos) {
-            log.info("uploadItems ${vos[0].path}")
-            log.info("uploadItems ${vos[-1].path}")
-            log.info("vos ${vos.size()}")
-            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
 
-            log.info("uploadStats ${uploadStats}")
-            String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
-            uploadSuccessCheckingMatrix.put(1, report)
-        } else {
-            log.info("No Items for upload.")
+        Util.preUpload(vosGrouped.entrySet()*.key);
+
+        for(voGroup in vosGrouped.entrySet()){
+            String archiveProfile = voGroup.key;
+            Set<ReuploadVO> vos = voGroup.value as Set
+            if (vos) {
+                log.info("uploadItems ${vos[0].path}")
+                log.info("uploadItems ${vos[-1].path}")
+                log.info("vos ${vos.size()}")
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
+
+                log.info("uploadStats ${uploadStats}")
+                String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
+                uploadSuccessCheckingMatrix.put(1, report)
+            } else {
+                log.info("No Items for upload.")
+            }
         }
+
         EGangotriUtil.recordProgramEnd()
-        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size(), true)
+        ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vosGrouped.size(), true)
         System.exit(0)
     }
 

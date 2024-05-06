@@ -4,6 +4,7 @@ import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
+import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
@@ -50,7 +51,10 @@ class UploadToArchiveViaJson {
                 "${uploadablesFromJson[0].path}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
-        int attemptedItemsTotal = 0
+        int attemptedItemsTotal = 0;
+        SettingsUtil.applySettings();
+        Util.preUpload(vosGrouped.entrySet()*.key);
+
         vosGrouped.eachWithIndex { entry, index ->
             String archiveProfile = entry.key
             Set<ReuploadVO> vos = entry.value as Set
