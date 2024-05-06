@@ -42,7 +42,7 @@ class UploadToArchiveViaExcel {
         List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName, range)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Util.preUpload([archiveProfile]);
+        Util.preUpload([archiveProfile], "Excel-(${range})");
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {

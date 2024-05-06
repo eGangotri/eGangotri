@@ -6,10 +6,10 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class Util {
-    static void preUpload(Collection profiles) {
+    static void preUpload(Collection profiles, String mode ="") {
         if(SettingsUtil.WRITE_TO_MONGO_DB){
             try{
-                Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles);
+                Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles,mode);
                 if(!result?.success){
                     log.info("${result}. mongo call to addToUploadCycle failed. quitting")
                     System.exit(0)

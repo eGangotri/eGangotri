@@ -53,7 +53,7 @@ class UploadToArchiveViaJson {
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
         int attemptedItemsTotal = 0;
         SettingsUtil.applySettings();
-        Util.preUpload(vosGrouped.entrySet()*.key);
+        Util.preUpload(vosGrouped.entrySet()*.key, "Json-(${range})");
 
         vosGrouped.eachWithIndex { entry, index ->
             String archiveProfile = entry.key

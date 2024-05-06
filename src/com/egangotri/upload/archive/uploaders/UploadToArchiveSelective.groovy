@@ -40,7 +40,7 @@ class UploadToArchiveSelective {
         EGangotriUtil.recordProgramStart("eGangotri Archiver-Thru-AbsPaths")
         UploadToArchive.prelims(args)
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile, fileNames)
-        Util.preUpload([archiveProfile]);
+        Util.preUpload([archiveProfile],"Selected-(${fileNames.size()})";
         if(vos){
             log.info("fileNames in args ${fileNames}")
             log.info("vos ${vos}")

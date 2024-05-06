@@ -75,7 +75,7 @@ class UploadRestApiCalls {
         return result
     }
 
-    static Map<String, Object> addToUploadCycle(Collection<String> profiles) {
+    static Map<String, Object> addToUploadCycle(Collection<String> profiles, String mode = "") {
         Map<String,Object>  result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
         log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}");
@@ -104,6 +104,9 @@ class UploadRestApiCalls {
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
+            if(mode.length() > 0){
+                paramsMap.put("mode", mode);
+            }
             //date parsing in google json lib causing an issue so still works when mnot explicitly set
 //            paramsMap.put("datetimeUploadStarted", new Date().toString())
             log.info("paramsMap ${paramsMap}")
