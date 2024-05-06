@@ -3,14 +3,10 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
-import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
-import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.Row
 import groovy.json.JsonSlurper
 
 /**
@@ -53,7 +49,7 @@ class UploadToArchiveViaJson {
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
         int attemptedItemsTotal = 0;
         SettingsUtil.applySettings();
-        Util.preUpload(vosGrouped.entrySet()*.key, "Json-(${range})");
+        Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Json-(${range})");
 
         vosGrouped.eachWithIndex { entry, index ->
             String archiveProfile = entry.key

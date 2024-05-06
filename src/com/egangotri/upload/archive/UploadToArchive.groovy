@@ -1,7 +1,6 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.rest.RestUtil
-import com.egangotri.rest.UploadRestApiCalls
 import com.egangotri.upload.archive.uploaders.Util
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
@@ -10,7 +9,6 @@ import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.util.ValidateUtil
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
-import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 /**
@@ -101,7 +99,7 @@ class UploadToArchive {
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION =
                 ArchiveUtil.getGrandTotalOfAllUploadables(profiles);
-        Util.preUpload(profiles);
+        Util.addToUploadCycleWithMode(profiles,"Regular");
 
         profiles.eachWithIndex { String archiveProfile, Integer index ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)

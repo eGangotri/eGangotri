@@ -50,7 +50,7 @@ class UploadToArchiveViaExcelV2 {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromExcel.groupBy { ReuploadVO item -> item.archiveProfile }
 
-        Util.preUpload(vosGrouped.entrySet()*.key, "Excel-V2-(${range})");
+        Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Excel-V2-(${range})");
 
         for(voGroup in vosGrouped.entrySet()){
             String archiveProfile = voGroup.key;

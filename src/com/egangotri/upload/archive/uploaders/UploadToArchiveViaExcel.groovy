@@ -3,7 +3,6 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
-import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
@@ -42,7 +41,7 @@ class UploadToArchiveViaExcel {
         List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName, range)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Util.preUpload([archiveProfile], "Excel-(${range})");
+        Util.addToUploadCycleWithMode([archiveProfile], "Excel-(${range})");
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
