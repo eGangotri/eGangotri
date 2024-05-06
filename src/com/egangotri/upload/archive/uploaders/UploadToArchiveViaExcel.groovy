@@ -90,9 +90,9 @@ class UploadToArchiveViaExcel {
             Row row = sheet.getRow(i)
             if (row) {
                 String absPath = row.getCell(0).getStringCellValue();
-                String subject = row.getCell(1).getStringCellValue()
-                String description = row.getCell(2).getStringCellValue()
-                String creator = row.getCell(3).getStringCellValue()
+                String subject = row.getCell(1).getStringCellValue()?.replaceAll(/[#!&]/,"")
+                String description = row.getCell(2).getStringCellValue()?.replaceAll(/[#!&]/,"")
+                String creator = row.getCell(3).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 Boolean uploadedFlag = false
                 if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
                     uploadedFlag = row.getCell(4).getBooleanCellValue();
