@@ -112,6 +112,7 @@ class UploadRestApiCalls {
         }
         catch (Exception e) {
             log.error("addToUploadCycle Error while calling ${restApiRoute}", e)
+            return null
         }
         return result;
     }

@@ -223,10 +223,13 @@ class ArchiveHandler {
             String fileNameOnly = UploadUtils.stripFilePathAndFileEnding(fileNameWithPath)
             String strAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly).trim()
             if (fileNameOnly.contains("-")) {
-                uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + strAfterDash : uploadLink
+                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/,"")
+                uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + _strAfterDash  : uploadLink
             }
             if (uploadLink.contains("subject=null")) {
-                uploadLink = uploadLink.replaceAll("subject=null", "subject=${strAfterDash ?: fileNameOnly}")
+                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/,"")
+                String _fileNameOnly = fileNameOnly?.replaceAll(/[#!&]/,'')
+                uploadLink = uploadLink.replaceAll("subject=null", "subject=${_strAfterDash ?: _fileNameOnly}")
             }
         }
 

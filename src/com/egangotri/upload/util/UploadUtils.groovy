@@ -204,8 +204,9 @@ class UploadUtils {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
             }
             String _creator = "creator=" + metaDataMap."${archiveProfile}.creator"
-
+            _creator = _creator?.replaceAll(/[#!&]/, "")?.replaceAll("null", " ")
             String _subjects = metaDataMap."${archiveProfile}.subjects"
+            _subjects = _subjects?.replaceAll(/[#!&]/, "")?.replaceAll("null", " ")
             if (!_subjects) {
                 _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll("creator=", "") : null
             }
@@ -285,6 +286,7 @@ class UploadUtils {
     static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
         String enhancedUrl = getOrGenerateSupplementaryURL(archiveProfile)
         String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
+
         String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
         return uploadUrl.replaceAll("\"", "'")
     }
