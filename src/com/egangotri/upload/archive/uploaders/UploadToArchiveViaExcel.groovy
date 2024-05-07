@@ -38,10 +38,10 @@ class UploadToArchiveViaExcel {
             System.exit(0)
         }
         UploadToArchive.prelims(args)
-        List<UploadItemFromExcel> uploadItems = readExcelFile(excelFileName, range)
+        List<UploadItemFromExcelVO> uploadItems = readExcelFile(excelFileName, range)
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Util.addToUploadCycleWithMode([archiveProfile], "Excel-(${range})");
+        Util.addToUploadCycleWithModeV2(archiveProfile, uploadItems,"Excel-(${range})");
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
@@ -74,7 +74,7 @@ class UploadToArchiveViaExcel {
         int counter = 0
         int start = 1
         int end = sheet.size()
-        List<UploadItemFromExcel> uploadItems = []
+        List<UploadItemFromExcelVO> uploadItems = []
         if (range?.size() == 2 && sheet.size() > 1) {
             start = range[0].toInteger()
             if (start < 1 || start > sheet.size()) {
@@ -101,7 +101,7 @@ class UploadToArchiveViaExcel {
                     uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
                 }
 
-                UploadItemFromExcel uploadItem = new UploadItemFromExcel(absPath, subject, description, creator, uploadedFlag)
+                UploadItemFromExcelVO uploadItem = new UploadItemFromExcelVO(absPath, subject, description, creator, uploadedFlag)
                 if (!uploadedFlag && absPath.contains(File.separator)) {
                     uploadItems.add(uploadItem)
                     counter++

@@ -48,8 +48,8 @@ class UploadToArchiveViaJson {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
         int attemptedItemsTotal = 0;
-        SettingsUtil.applySettings();
-        Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Json-(${range})");
+       /// SettingsUtil.applySettings();
+       // Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Json-(${range})");
 
         vosGrouped.eachWithIndex { entry, index ->
             String archiveProfile = entry.key

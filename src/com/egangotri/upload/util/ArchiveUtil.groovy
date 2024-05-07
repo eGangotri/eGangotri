@@ -1,6 +1,6 @@
 package com.egangotri.upload.util
 
-import com.egangotri.upload.archive.uploaders.UploadItemFromExcel
+import com.egangotri.upload.archive.uploaders.UploadItemFromExcelVO
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
@@ -89,9 +89,9 @@ class ArchiveUtil {
         return vos
     }
 
-    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcel> uploadItemFromExcel) {
+    static Set<QueuedVO> generateVOsFromSuppliedData(String archiveProfile, List<UploadItemFromExcelVO> uploadItemFromExcel) {
         Set<QueuedVO> vos = [] as Set
-        uploadItemFromExcel.each { UploadItemFromExcel uploadable ->
+        uploadItemFromExcel.each { UploadItemFromExcelVO uploadable ->
             {
                 if( !uploadable.uploadFlag){
                     vos << new QueuedVO(archiveProfile, uploadable.absolutePath,

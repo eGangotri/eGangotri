@@ -1,13 +1,11 @@
 package com.egangotri.rest
 
+import com.egangotri.upload.archive.uploaders.UploadItemFromExcelVO
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
-import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.upload.vo.UploadVO
-import com.egangotri.upload.vo.UsheredVO
 import com.egangotri.util.EGangotriUtil
-import com.google.gson.GsonBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -34,15 +32,15 @@ class UploadRestApiCalls {
         }
         paramsMap.put("csvName", csvName)
         // issue with google json lib. but not adding is fine
-      //  paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
+        //  paramsMap.put("datetimeUploadStarted", "${dateFormat.format(new Date())}")
         //log.info("paramsMap ${paramsMap}")
         return paramsMap
     }
 
-    static Map<String,Object> addToMongo(String restApiRoute,
-                             String archiveProfile, String uploadLink, String localPath, String title,
-                             String uploadCycleId, String csvName, String archiveItemId = null) {
-        Map<String,Object> result = [:]
+    static Map<String, Object> addToMongo(String restApiRoute,
+                                          String archiveProfile, String uploadLink, String localPath, String title,
+                                          String uploadCycleId, String csvName, String archiveItemId = null) {
+        Map<String, Object> result = [:]
 
         try {
             Map body = createPostParamsAsMap(archiveProfile, uploadLink, localPath,
@@ -75,8 +73,10 @@ class UploadRestApiCalls {
         return result
     }
 
-    static Map<String, Object> addToUploadCycle(Collection<String> profiles, String mode = "") {
-        Map<String,Object>  result = [:]
+    static Map<String, Object> addToUploadCycle(Collection<String> profiles,
+
+                                                String mode = "") {
+        Map<String, Object> result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
         log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}");
         log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles)}");
@@ -98,13 +98,13 @@ class UploadRestApiCalls {
         log.info("profilesAndCount: ${profilesAndCount.toString()} ")
         try {
             Map paramsMap = [:];
-            if(!EGangotriUtil.UPLOAD_CYCLE_ID ) {
+            if (!EGangotriUtil.UPLOAD_CYCLE_ID) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
-            if(mode.length() > 0){
+            if (mode.length() > 0) {
                 paramsMap.put("mode", mode);
             }
             //date parsing in google json lib causing an issue so still works when mnot explicitly set
@@ -119,4 +119,44 @@ class UploadRestApiCalls {
         }
         return result;
     }
+
+    static Map<String, Object> addToUploadCycleV2(String profile,
+                                                  List<UploadItemFromExcelVO> uploadables,
+                                                  String mode = "") {
+        Map<String, Object> result = [:]
+        String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
+        int countOfUploadableItems = uploadables.size();
+        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${countOfUploadableItems}");
+        def json = new JsonBuilder()
+        def root = json {
+            archiveProfile profile
+            count countOfUploadableItems
+            titles uploadables*.absolutePath.collect { new File(it).name }
+            absolutePaths uploadables*.absolutePath
+        }
+        def profilesAndCount = new JsonSlurper().parseText(json.toString())
+        try {
+            Map paramsMap = [:];
+            if (!EGangotriUtil.UPLOAD_CYCLE_ID) {
+                EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
+            }
+            paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
+            paramsMap.put("uploadCount", countOfUploadableItems);
+            paramsMap.put("archiveProfiles", profilesAndCount);
+            if (mode.length() > 0) {
+                paramsMap.put("mode", mode);
+            }
+            //date parsing in google json lib causing an issue so still works when mnot explicitly set
+//            paramsMap.put("datetimeUploadStarted", new Date().toString())
+            log.info("paramsMap ${paramsMap}")
+            result = RestUtil.makePostCall(restApiRoute, paramsMap) as Map<String, Object>
+
+        }
+        catch (Exception e) {
+            log.error("addToUploadCycle Error while calling ${restApiRoute}", e)
+            return null
+        }
+        return result;
+    }
+
 }
