@@ -10,14 +10,32 @@ import groovy.util.logging.Slf4j
 import groovy.json.JsonSlurper
 
 /**
- * works.
- *
- * expects path to a excel file with no header  with 4 columns:
- * C:\tmp\_data\tmp\Veda Mata Gayatri.pdf	Sub-1	Desc-1	Creator-1
- C:\tmp\_data\tmp\testFolder\Veda Mata Gayatri.pdf	Sub-2	Desc-2	Creator-2
- C:\tmp\_data\tmp\Veda Mata Gayatri - Copy.pdf	Sub-3	Desc-3	Creator-3
+ * json FILE MUST BE AN Array
+ * [{
+ "_id": {
+ "$oid": "66371f0258a9236e29542a92"
+ },
+ "archiveProfile": "FIP",
+ "uploadLink": "https://archive.org/upload?description=Nityanushthanavidhih by aghorashiva with vyakhya RE30575  Nityanushthanavidhih by aghorashiva with vyakhya -  FIP EFEO Pondicherry.pdf Manuscript hand list – 1 61, Palm-leaf, Grantha Agama-kriya, FIP-EFEO, 'RE30575  Nityanushthanavidhih by aghorashiva with vyakhya -  FIP EFEO Pondicherry'&subject=Manuscript hand list – 1 61, Palm-leaf, Grantha Agama-kriya, FIP-EFEO-Pondicherry&creator=FIP-EFEO-Pondicherry",
+ "localPath": "D:\\FIP\\_IFP Palmleaf Manuscripts PDF All\\RE30575  Nityanushthanavidhih by aghorashiva with vyakhya -  FIP EFEO Pondicherry.pdf",
+ "title": "RE30575  Nityanushthanavidhih by aghorashiva with vyakhya -  FIP EFEO Pondicherry",
+ "uploadCycleId": "35628b0c-8b2a-4359-ab61-6af6210a8272",
+ "archiveItemId": "sdMg_re-30575-nityanushthanavidhih-by-aghorashiva-with-vyakhya-fip-efeo-pondicherry",
+ "csvName": "X",
+ "uploadFlag": false,
+ "datetimeUploadStarted": {
+ "$date": "2024-05-05T05:54:10.780Z"
+ },
+ "createdAt": {
+ "$date": "2024-05-05T05:54:10.780Z"
+ },
+ "updatedAt": {
+ "$date": "2024-05-05T16:08:49.180Z"
+ },
+ "__v": 0
+ },
+ ...
  */
-
 /**
 Go TO MongoDB ItemsUshered.
  enter uploadCycleId
