@@ -82,16 +82,15 @@ class UploadRestApiCalls {
         log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles)}");
 
         def profilesAndCount = profiles.collect { String profile ->
-            Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(profile)
-            log.info("archiveProfile: ${profile} countOfUploadableItems ${countOfUploadableItems}")
-            List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(profile).collect {
-                (new File(it)).name
+            List<File> uploadables = FileRetrieverUtil.getUploadablesForProfile(profile).collect {
+                (new File(it))
             }
             def json = new JsonBuilder()
             def root = json {
                 archiveProfile profile
-                count countOfUploadableItems
-                titles uploadables
+                count uploadables?.size()
+                titles uploadables*.name
+                absolutePaths uploadables*.absolutePath
             }
             return new JsonSlurper().parseText(json.toString())
         }
