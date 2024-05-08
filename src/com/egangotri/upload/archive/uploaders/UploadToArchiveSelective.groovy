@@ -16,7 +16,8 @@ class UploadToArchiveSelective {
         String archiveProfile = ""
         List<String> fileNames = []
         List<String> validation = []
-        if (args && args.length == 2) {
+        String uploadCycleId = ""
+        if (args && args.length >= 2) {
             log.info "args $args"
             archiveProfile = args[0]
             fileNames = args[1].split(PERCENT_SIGN_AS_FILE_SEPARATOR)*.trim();
@@ -25,13 +26,15 @@ class UploadToArchiveSelective {
                     validation << fileName
                 }
             }}
-
+            if(args.length == 3){
+                EGangotriUtil.UPLOAD_CYCLE_ID = args[2]
+            }
             if(validation.size()>0){
                 log.info("Some Filenames dont have an extension ${validation}")
                 return
             }
         } else {
-            log.info "Must have 2 arg.s Profile name and fileName(s) of pdf as CSV"
+            log.info "Must have 2/3 arg.s Profile name and fileName(s) of pdf as CSV"
             return
         }
 
