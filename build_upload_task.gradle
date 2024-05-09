@@ -32,8 +32,8 @@ task uploadToArchiveSelective(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusL
     jvmArgs = applicationDefaultJvmArgs
     // Format:
     //args = ["PROFILE_NAME", "COMMA Separated Abs Paths", "Optional UPLOAD_CYCLE_ID"]
-    args = ["FIP", "D:\\FIP\\IFP Quote Index (set of cards)\\Quote_Index - FIP EFEO Pondicherry2.pdf , D:\\FIP\\IFP Quote Index (set of cards)\\Quote_Index - FIP EFEO Pondicherry.pdf"]
-
+   // args = ["FIP", "D:\\FIP\\IFP Quote Index (set of cards)\\Quote_Index - FIP EFEO Pondicherry2.pdf , D:\\FIP\\IFP Quote Index (set of cards)\\Quote_Index - FIP EFEO Pondicherry.pdf"]
+    args = ['FIP', 'C:\\Users\\drnar\\Downloads\\reupload-missed-in-upload-cycle-id-7a3b5b09-f633-4121-b361-8e42bc7799b4-1-of-501-09-May-2024-05-51.xlsx', '7a3b5b09-f633-4121-b361-8e42bc7799b4']
 }
 
 task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {

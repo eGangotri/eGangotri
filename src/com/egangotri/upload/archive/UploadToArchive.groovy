@@ -54,7 +54,9 @@ class UploadToArchive {
                 return
             } else {
                 log.info("Mongo is running")
-                EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID();
+                if(!EGangotriUtil.UPLOAD_CYCLE_ID){
+                    EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID()
+                };
                 log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_CYCLE_ID)
             }
         }
