@@ -52,7 +52,7 @@ class RestUtil {
                 return [success: true, result: responseString]
             }
         } catch (Exception e) {
-            println "An error occurred: ${e.message}"
+            log.info "An error occurred: ${e.message}"
             String _exception = """makePostCall Exception while calling ${backendServer}${path}
                         json:${json} 
                         ${e.message}"""

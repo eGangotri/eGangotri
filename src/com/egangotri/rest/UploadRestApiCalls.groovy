@@ -89,15 +89,14 @@ class UploadRestApiCalls {
             def root = json {
                 archiveProfile profile
                 count uploadables?.size()
-                titles uploadables*.name
-                absolutePaths uploadables*.absolutePath
+               absolutePaths uploadables*.absolutePath
             }
             return new JsonSlurper().parseText(json.toString())
         }
         log.info("profilesAndCount: ${profilesAndCount.toString()} ")
         try {
             Map paramsMap = [:];
-            if (!EGangotriUtil.UPLOAD_CYCLE_ID) {
+            if (EGangotriUtil.UPLOAD_CYCLE_ID?.trim()?.size() == 0) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
@@ -130,13 +129,12 @@ class UploadRestApiCalls {
         def root = json {
             archiveProfile profile
             count countOfUploadableItems
-            titles uploadables*.absolutePath.collect { new File(it).name }
             absolutePaths uploadables*.absolutePath
         }
         def profilesAndCount = new JsonSlurper().parseText(json.toString())
         try {
             Map paramsMap = [:];
-            if (!EGangotriUtil.UPLOAD_CYCLE_ID) {
+            if (EGangotriUtil.UPLOAD_CYCLE_ID?.trim()?.size() == 0) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID().toString()
             }
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
