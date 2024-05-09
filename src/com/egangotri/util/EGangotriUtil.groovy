@@ -65,7 +65,7 @@ class EGangotriUtil {
     static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = true
 
     //using ("A".."z" ) will introduce non-alpha chars
-    static final List ASCII_ALPHA_CHARS = ("A".."Z").toList() + ("a".."z").toList()
+    static final List ASCII_ALPHA_CHARS = ("a".."z").toList()
     static final def ASCII_CHARS_SIZE = ASCII_ALPHA_CHARS.size()
 
 
