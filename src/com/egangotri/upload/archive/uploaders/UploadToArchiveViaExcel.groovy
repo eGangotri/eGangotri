@@ -34,11 +34,16 @@ class UploadToArchiveViaExcel {
             }
 
         } else {
-            log.info "Must have 2-3 arg.s Profile-Name/fileName of pdf/range"
+            log.info "Must have 2-3 arg.s Profile-Name/fileName of excel/range"
             System.exit(0)
         }
         UploadToArchive.prelims(args)
-        List<UploadItemFromExcelVO> uploadItems = readExcelFile(excelFileName, range)
+        Map excelData = readExcelFile(excelFileName, range)
+        if(excelData.success == false){
+            log.info("Errors in reading excel file ${excelData.errors}")
+            System.exit(0)
+        }
+        List<UploadItemFromExcelVO> uploadItems = excelData.uploadItems
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Util.addToUploadCycleWithModeV2(archiveProfile, uploadItems,"Excel-;${excelFileName}-;${range}");
@@ -75,16 +80,20 @@ class UploadToArchiveViaExcel {
         int start = 1
         int end = sheet.size()
         List<UploadItemFromExcelVO> uploadItems = []
+        List errors = []
         if (range?.size() == 2 && sheet.size() > 1) {
             start = range[0].toInteger()
             if (start < 1 || start > sheet.size()) {
-                start = 1
+                errors << "Invalid start range:${start} against Sheet Size(${sheet.size()})"
             }
             end = range[1].toInteger()
             if (end < 1 || end > sheet.size()) {
-                end = sheet.size()
+                errors << "Invalid end range:${end} against Sheet Size(${sheet.size()})"
             }
         }
+        if(errors?.size()>0) {
+            return [success:false,errors:errors]
+        };
 
         for (int i = start; i <= end; i++) {
             Row row = sheet.getRow(i)
@@ -112,31 +121,7 @@ class UploadToArchiveViaExcel {
         workbook.close()
         file.close()
         log.info("readExcelFile items added:${counter} size:${uploadItems.size()}")
-        return uploadItems
+        return [success:true, uploadItems:uploadItems]
     }
-
-    static def printCellValue(Cell cell) {
-        switch (cell.getCellType()) {
-            case CellType.STRING:
-                print(cell.getRichStringCellValue().getString() + "\t")
-                break
-            case CellType.NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    print(cell.getDateCellValue() + "\t")
-                } else {
-                    print(cell.getNumericCellValue() + "\t")
-                }
-                break
-            case CellType.BOOLEAN:
-                print(cell.getBooleanCellValue() + "\t")
-                break
-            case CellType.FORMULA:
-                print(cell.getCellFormula() + "\t")
-                break
-            default:
-                print(" ")
-        }
-    }
-
 }
 
