@@ -42,7 +42,7 @@ task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFi
     jvmArgs = applicationDefaultJvmArgs
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
-    args = ["FIP", "D:\\FIP\\_IFP\\_IFP\\fip-uploadables-02-May-2024-15-46-(228)(8475).xlsx", "501-1000"]
+    args = ["FIP", "C:\\Users\\drnar\\Downloads\\reupload-missed-in-upload-cycle-id-3261dfd6-fa26-4c76-8bef-2a9d7d68fee7-501-of-700-09-May-2024-22-02.xlsx", "501-1000"]
 }
 
 task uploadToArchiveJson(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
