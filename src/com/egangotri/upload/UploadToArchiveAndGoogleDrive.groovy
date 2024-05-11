@@ -2,6 +2,7 @@ package com.egangotri.upload
 
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
+import com.egangotri.upload.archive.uploaders.UploadersUtil
 import com.egangotri.upload.gmail.UploadToGoogleDrive
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
@@ -39,7 +40,7 @@ class UploadToArchiveAndGoogleDrive {
 
        log.info "UploadToArchiveAndGmail"
         Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        UploadToArchive.execute(archiveProfiles, metaDataMap)
-        UploadToGoogleDrive.execute(uploadProfiles, metaDataMap)
+        UploadToArchive.execute(archiveProfiles, UploadersUtil.metaDataMap)
+        UploadToGoogleDrive.execute(uploadProfiles, UploadersUtil.metaDataMap)
     }
 }

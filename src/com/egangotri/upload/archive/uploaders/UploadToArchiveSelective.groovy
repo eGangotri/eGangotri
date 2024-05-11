@@ -40,13 +40,13 @@ class UploadToArchiveSelective {
 
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         EGangotriUtil.recordProgramStart("eGangotri Archiver-Thru-AbsPaths")
-        UploadToArchive.prelims(args)
+        UploadersUtil.prelims(args)
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile, fileNames)
-        Util.addToUploadCycleWithMode([archiveProfile],"Selected-(${fileNames.size()}");
+        UploadersUtil.addToUploadCycleWithMode([archiveProfile],"Selected-(${fileNames.size()}");
         if(vos){
             log.info("fileNames in args ${fileNames}")
             log.info("vos ${vos}")
-            List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadToArchive.metaDataMap, vos as Set<QueuedVO>)
+            List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadersUtil.metaDataMap, vos as Set<QueuedVO>)
             uploadSuccessCheckingMatrix.put(1, uploadStats)
             EGangotriUtil.recordProgramEnd()
             ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size())

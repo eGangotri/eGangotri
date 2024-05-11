@@ -6,6 +6,8 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
+import com.google.gson.Gson
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import org.apache.poi.ss.usermodel.*
@@ -21,23 +23,45 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 @Slf4j
 class UploadToArchiveViaExcel {
+    /*
+    ["profile": "value1", "excelPath": "value2", "range"="", "uploadCycleId"=""]
+     */
     static void main(String[] args) {
         String archiveProfile = ""
         String excelFileName = ""
         String[] range = []
-        if (args && args.length >= 2) {
-            log.info "args $args"
-            archiveProfile = args[0]
-            excelFileName = args[1]
-            if (args.length == 3) {
-                range = args[2].split("-")*.trim()
+        String uploadCycleId = ""
+        log.info "args $args"
+
+        if (args && args.length == 1) {
+            String jsonString = args[0]
+//            def jsonSlurper = new JsonSlurper()
+//            def map = jsonSlurper.parseText(jsonString)
+//            log.info(map)
+//            log.info(map.profile)
+            // Create a Gson instance
+            Gson gson = new Gson()
+            // Parse the JSON string to a Map
+            Map<String, Object> map = gson.fromJson(jsonString, Map)
+            archiveProfile = map.profile
+            excelFileName = System.getProperty("user.home") + "//Downloads//" + map.excelPath
+            if (map?.range?.toString()?.contains("-")) {
+                range = map??.range?.split("-")*.trim()
+            }
+            if (map?.uploadCycleId) {
+                uploadCycleId = map.uploadCycleId
             }
 
+            log.info("archiveProfile:${archiveProfile}" +
+                    " excelFileName:${excelFileName} " +
+                    "range:${range} uploadCycleId:${uploadCycleId}");
         } else {
-            log.info "Must have 2-3 arg.s Profile-Name/fileName of excel/range"
+            log.info """Must have exactly One JSON string as an Argument. Exiting.
+             args = ['{"profile":"value1", "excelPath":"value2" , "range":"value2" , "uploadCycleId":"value2"}']"""
             System.exit(0)
         }
-        UploadToArchive.prelims(args)
+
+        UploadersUtil.prelims(new String[] {archiveProfile}, uploadCycleId)
         Map excelData = readExcelFile(excelFileName, range)
         if(excelData.success == false){
             log.info("Errors in reading excel file ${excelData.errors}")
@@ -46,7 +70,7 @@ class UploadToArchiveViaExcel {
         List<UploadItemFromExcelVO> uploadItems = excelData.uploadItems
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0].subject} ${uploadItems[0].description} ${uploadItems[0].creator} ${uploadItems[0].absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        Util.addToUploadCycleWithModeV2(archiveProfile, uploadItems,"Excel-;${excelFileName}-;${range}");
+        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems,"Excel-;${excelFileName}-;${range}")
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
@@ -56,7 +80,7 @@ class UploadToArchiveViaExcel {
             log.info("vos ${vos.size()}")
             log.info("vos ${vos[0]}")
             log.info("vos ${vos[-1]}")
-            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos)
+            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos)
 
             log.info("uploadStats ${uploadStats}")
             String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
@@ -98,13 +122,13 @@ class UploadToArchiveViaExcel {
         for (int i = start; i <= end; i++) {
             Row row = sheet.getRow(i)
             if (row) {
-                String absPath = row.getCell(0).getStringCellValue();
+                String absPath = row.getCell(0).getStringCellValue()
                 String subject = row.getCell(1).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 String description = row.getCell(2).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 String creator = row.getCell(3).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 Boolean uploadedFlag = false
                 if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
-                    uploadedFlag = row.getCell(4).getBooleanCellValue();
+                    uploadedFlag = row.getCell(4).getBooleanCellValue()
                     log.info("readExcelFile uploadedFlag:${uploadedFlag}")
                 } else if (row.getCell(4).getCellType() == CellType.STRING) {
                     uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")

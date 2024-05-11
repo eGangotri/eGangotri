@@ -41,7 +41,7 @@ class UploadToArchiveViaExcelV2 {
             log.info "Must have 1-2 arg.s Excel Path/range"
             System.exit(0)
         }
-        UploadToArchive.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         SettingsUtil.applySettings()
 
         List<ReuploadVO> uploadablesFromExcel = readExcelFile(excelFileName, range)
@@ -50,7 +50,7 @@ class UploadToArchiveViaExcelV2 {
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromExcel.groupBy { ReuploadVO item -> item.archiveProfile }
 
-        Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Excel-V2-(${range})");
+        UploadersUtil.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Excel-V2-(${range})");
 
         for(voGroup in vosGrouped.entrySet()){
             String archiveProfile = voGroup.key;
@@ -59,7 +59,7 @@ class UploadToArchiveViaExcelV2 {
                 log.info("uploadItems ${vos[0].path}")
                 log.info("uploadItems ${vos[-1].path}")
                 log.info("vos ${vos.size()}")
-                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos, true)
 
                 log.info("uploadStats ${uploadStats}")
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())

@@ -59,7 +59,7 @@ class UploadToArchiveViaJson {
             log.info "Must have 1-2 arg.s Excel Path/range"
             System.exit(0)
         }
-        UploadToArchive.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
         List<ReuploadVO> uploadablesFromJson = readJsonFile(excelFileName, range)
         log.info("uploadItems(${uploadablesFromJson.size()}) " +
                 "${uploadablesFromJson[0].path}")
@@ -79,7 +79,7 @@ class UploadToArchiveViaJson {
                 log.info("uploadItems ${vos[0].path}")
                 log.info("uploadItems ${vos[-1].path}")
                 log.info("vos ${vos.size()}")
-                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadToArchive.metaDataMap, vos, true)
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos, true)
                 log.info("uploadStats ${uploadStats}")
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
                 uploadSuccessCheckingMatrix.put((index + 1), report)

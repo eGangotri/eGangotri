@@ -1,7 +1,7 @@
 package com.egangotri.upload.archive
 
 import com.egangotri.rest.RestUtil
-import com.egangotri.upload.archive.uploaders.Util
+import com.egangotri.upload.archive.uploaders.UploadersUtil
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.SettingsUtil
@@ -23,48 +23,11 @@ import groovy.util.logging.Slf4j
  */
 @Slf4j
 class UploadToArchive {
-    static boolean previewSuccess = true
-    static Set<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES as Set
-    static Hashtable<String, String> metaDataMap;
 
-    static void prelims(String[] args) {
-        if (args) {
-            log.info "args $args"
-            archiveProfiles = args.toList()
-        }
-        metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
-        SettingsUtil.applySettings()
-        archiveProfiles = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
-        addUploadIntentToMongo()
-        if (SettingsUtil.PREVIEW_FILES) {
-            previewSuccess = PreUploadReview.preview(archiveProfiles)
-        }
-        if (!previewSuccess) {
-            log.info("Preview failed");
-            System.exit(0);
-        }
-    }
-
-    static addUploadIntentToMongo() {
-        if (SettingsUtil.WRITE_TO_MONGO_DB) {
-            RestUtil.startDBServerIfOff()
-            boolean isOn = RestUtil.checkIfDBServerIsOn()
-            if (!isOn) {
-                log.info("This Upload Run is configured to write to DB but the DB Server is not on.\nHence cannot proceed")
-                return
-            } else {
-                log.info("Mongo is running")
-                if (EGangotriUtil.UPLOAD_CYCLE_ID?.trim()?.size() == 0) {
-                    EGangotriUtil.UPLOAD_CYCLE_ID = UUID.randomUUID()
-                };
-                log.info("EGangotriUtil.UPLOAD_RUN_ID" + EGangotriUtil.UPLOAD_CYCLE_ID)
-            }
-        }
-    }
 
     static void main(String[] args) {
-        prelims(args)
-        execute(archiveProfiles, metaDataMap)
+        UploadersUtil.prelims(args)
+        execute(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap)
         if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
                 && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
             reuploadPostValidationFailureCode();
@@ -101,7 +64,7 @@ class UploadToArchive {
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
         ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION =
                 ArchiveUtil.getGrandTotalOfAllUploadables(profiles);
-        Util.addToUploadCycleWithMode(profiles,"Regular");
+        UploadersUtil.addToUploadCycleWithMode(profiles,"Regular");
 
         profiles.eachWithIndex { String archiveProfile, Integer index ->
             Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
