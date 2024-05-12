@@ -27,11 +27,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class UploadToArchiveViaExcelV3 {
     static void main(String[] args) {
         log.info("UploadToArchiveViaExcelV3.main(${args})")
-        if (args.length >= 3) {
+        if (args.length >= 2) {
             String archiveProfile = args[0]
             String excelFileName = args[1]
-            String uploadCycleId = args[2]
-            String range = args.length == 4 ? args[3] : ""
+            String uploadCycleId = args.length >=3 ? args[2] : "";
+            String range = args.length == 4 ? args[3] : "";
             List<String> absPaths = readExcelFile(excelFileName)
             if(range.contains("-")) {
                 String[] rangeArr = range.split("-")
@@ -50,7 +50,7 @@ class UploadToArchiveViaExcelV3 {
             String listOfAbsPathWithPercentSignAsFileSeparator = absPaths.join(UploadersUtil.PERCENT_SIGN_AS_FILE_SEPARATOR)
             UploadToArchiveSelective.main(new String[]{archiveProfile, listOfAbsPathWithPercentSignAsFileSeparator, uploadCycleId})
         } else {
-            log.info "Must have 2/3 arg.s Profile name and fileName(s) of pdf as PERCENT Sign Separated. Optional Range"
+            log.info "Must have 2-4 arg.s Profile name and fileName(s) of pdf as PERCENT Sign Separated. Optional Range"
             return
         }
     }

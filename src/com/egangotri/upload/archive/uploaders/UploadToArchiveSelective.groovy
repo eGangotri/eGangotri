@@ -3,6 +3,8 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
+import com.egangotri.upload.util.FileRetrieverUtil
+import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -45,8 +47,9 @@ class UploadToArchiveSelective {
         if(vos){
             log.info("fileNames in args ${fileNames}")
             log.info("vos ${vos}")
-            List<Integer> uploadStats = ArchiveHandler.uploadAllItemsToArchiveByProfile(UploadersUtil.metaDataMap, vos as Set<QueuedVO>)
-            uploadSuccessCheckingMatrix.put(1, uploadStats)
+            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos)
+            String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
+            uploadSuccessCheckingMatrix.put(1, report)
             EGangotriUtil.recordProgramEnd()
             ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size())
         }
