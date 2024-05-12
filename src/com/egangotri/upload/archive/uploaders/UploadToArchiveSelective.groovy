@@ -11,7 +11,6 @@ import groovy.util.logging.Slf4j
 @Slf4j
 // filename separator is '%'
 class UploadToArchiveSelective {
-    static String PERCENT_SIGN_AS_FILE_SEPARATOR = "%"
     static void main(String[] args) {
         String archiveProfile = ""
         List<String> fileNames = []
@@ -20,7 +19,7 @@ class UploadToArchiveSelective {
         if (args && args.length >= 2) {
             log.info "args $args"
             archiveProfile = args[0]
-            fileNames = args[1].split(PERCENT_SIGN_AS_FILE_SEPARATOR)*.trim();
+            fileNames = args[1].split(UploadersUtil.PERCENT_SIGN_AS_FILE_SEPARATOR)*.trim();
             fileNames.forEach { fileName -> {
                 if (!(fileName ==~ /.*\.\w+$/)) {
                     validation << fileName

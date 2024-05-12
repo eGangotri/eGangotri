@@ -14,6 +14,7 @@ class UploadersUtil {
     static boolean previewSuccess = true
     static Set<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES as Set
     static Hashtable<String, String> metaDataMap;
+    static String PERCENT_SIGN_AS_FILE_SEPARATOR = "%"
 
     static checkIfMongoOn(String uploadCycleId = "") {
         if (SettingsUtil.WRITE_TO_MONGO_DB) {

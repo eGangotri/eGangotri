@@ -19,12 +19,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  C:\tmp\_data\tmp\Veda Mata Gayatri - Copy.pdf	Sub-3	Desc-3	Creator-3
  */
 
-/**
- * Sample Excel :
- * localPath	uploadLink	archiveItemId	archiveProfile
- C:\tmp\_data\tmp2\Veda Mata Gayatri- Sri Aurobindo.pdf	https://archive.org/upload?description=Maha%20Pandit%20Rahul%20Sanskrityayan%20Books, 'Veda Mata Gayatri- Sri Aurobindo'&subject=Books of Maha Pandit Rahul Sanskrityayan&creator=Rahul SankrityayanMAX_	JhYQ_veda-mata-gayatri-sri-aurobindo	TMP2
-
- */
 @Slf4j
 class UploadToArchiveViaExcelV2 {
     static void main(String[] args) {
