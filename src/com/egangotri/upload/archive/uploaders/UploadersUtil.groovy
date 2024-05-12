@@ -35,7 +35,7 @@ class UploadersUtil {
         }
     }
 
-    static void prelims(String[] args, String uploadCycleId) {
+    static void prelims(String[] args, String uploadCycleId = "") {
         if (args) {
             log.info "args $args"
             UploadersUtil.archiveProfiles = args.toList()

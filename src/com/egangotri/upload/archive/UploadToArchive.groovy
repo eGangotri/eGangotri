@@ -26,6 +26,7 @@ class UploadToArchive {
 
 
     static void main(String[] args) {
+        log.info("Starting UploadToArchive", args);
         UploadersUtil.prelims(args)
         execute(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap)
         if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
