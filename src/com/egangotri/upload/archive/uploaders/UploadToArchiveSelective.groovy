@@ -49,8 +49,8 @@ class UploadToArchiveSelective {
         EGangotriUtil.recordProgramStart("eGangotri Archiver-Thru-AbsPaths")
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromFileNames(archiveProfile, fileNames)
         UploadersUtil.prelimsWithVOs(archiveProfile,vos)
-        UploadersUtil.addToUploadCycleWithMode([archiveProfile], "${UPLOAD_TYPE}-(${fileNames.size()}");
         if (vos) {
+        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, vos*.path,"${UPLOAD_TYPE}-(${fileNames.size()})");
             log.info("fileNames in args ${fileNames}")
             log.info("vos ${vos}")
             List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos)

@@ -49,8 +49,13 @@ class UploadToArchiveViaExcelV3 {
                 absPaths = absPaths.subList(start-1,end)
                 log.info("Trimmed ${absPathsSizeBeforeSubListing} items in excel to (${absPaths.size()}) using Range:(${start}-${end}) ")
             }
+            else{
+                log.info("No Range provided. Will upload all items in excel")
+                range = "1-${absPaths.size()}"
+            }
+
             String listOfAbsPathWithPercentSignAsFileSeparator = absPaths.join(UploadersUtil.PERCENT_SIGN_AS_FILE_SEPARATOR)
-            UploadToArchiveSelective.main(new String[]{archiveProfile, listOfAbsPathWithPercentSignAsFileSeparator, uploadCycleId, "Excel-V3"})
+            UploadToArchiveSelective.main(new String[]{archiveProfile, listOfAbsPathWithPercentSignAsFileSeparator, uploadCycleId, "Excel-V3-${range}"})
         } else {
             log.info "Must have 2-4 arg.s Profile name and fileName(s) of pdf as PERCENT Sign Separated. Optional Range"
             return

@@ -119,7 +119,7 @@ class UploadRestApiCalls {
     }
 
     static Map<String, Object> addToUploadCycleV2(String profile,
-                                                  List<UploadItemFromExcelVO> uploadables,
+                                                  List<String> uploadables,
                                                   String mode = "") {
         Map<String, Object> result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
@@ -129,7 +129,7 @@ class UploadRestApiCalls {
         def root = json {
             archiveProfile profile
             count countOfUploadableItems
-            absolutePaths uploadables*.absolutePath
+            absolutePaths uploadables
         }
         def profilesAndCount = new JsonSlurper().parseText(json.toString())
         try {

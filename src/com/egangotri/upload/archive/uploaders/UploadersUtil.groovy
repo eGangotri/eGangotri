@@ -86,10 +86,10 @@ class UploadersUtil {
         }
     }
 
-    static void addToUploadCycleWithModeV2(String profiles, List<UploadItemFromExcelVO> uplodables, String mode = "") {
+    static void addToUploadCycleWithModeV2(String profile, List<String> uplodables, String mode = "") {
         if (SettingsUtil.WRITE_TO_MONGO_DB) {
             try {
-                Map<String, Object> result = UploadRestApiCalls.addToUploadCycleV2(profiles, uplodables, mode);
+                Map<String, Object> result = UploadRestApiCalls.addToUploadCycleV2(profile, uplodables, mode);
                 if (!result?.success) {
                     log.info("${result}. mongo call to addToUploadCycle failed. quitting")
                     System.exit(0)
