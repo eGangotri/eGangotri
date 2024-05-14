@@ -354,6 +354,19 @@ class ArchiveUtil {
         return totalSize / 1024
     }
 
+    /**
+     *
+     * @param profiles
+     * @return Size in KB
+     */
+    static BigDecimal getGrandTotalOfFileSizeOfAllUploadableVOs(Collection<QueuedVO> vos) {
+        Long totalSize = 0
+        vos.each { QueuedVO vo ->
+            totalSize += new File(vo.path).size() as long
+        }
+        return totalSize / 1024
+    }
+
     static List<String> getAllUploadables(Collection<String> profiles) {
         List<String> allUploadables = []
         profiles.eachWithIndex { String profile, index ->

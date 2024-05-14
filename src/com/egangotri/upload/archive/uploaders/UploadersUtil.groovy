@@ -6,6 +6,7 @@ import com.egangotri.upload.archive.PreUploadReview
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 
@@ -25,7 +26,7 @@ class UploadersUtil {
                 return
             } else {
                 log.info("Mongo is running")
-                if(uploadCycleId != ""){
+                if (uploadCycleId != "") {
                     EGangotriUtil.UPLOAD_CYCLE_ID = uploadCycleId
                 }
                 if (EGangotriUtil.UPLOAD_CYCLE_ID?.trim()?.size() == 0) {
@@ -54,34 +55,48 @@ class UploadersUtil {
         }
     }
 
+    static void prelimsWithVOs(String profile, Set<QueuedVO> vos, String uploadCycleId = "") {
+        UploadersUtil.archiveProfiles = Collections.singleton(profile);
+        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        SettingsUtil.applySettings()
+        UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap) as Set
+        checkIfMongoOn(uploadCycleId)
+        if (SettingsUtil.PREVIEW_FILES) {
+            UploadersUtil.previewSuccess = PreUploadReview.previewUsingVos(profile, vos)
+        }
+        if (!UploadersUtil.previewSuccess) {
+            log.info("Preview failed");
+            System.exit(0);
+        }
+    }
 
-    static void addToUploadCycleWithMode(Collection profiles, String mode ="") {
-        if(SettingsUtil.WRITE_TO_MONGO_DB){
-            try{
-                Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles,mode);
-                if(!result?.success){
+    static void addToUploadCycleWithMode(Collection profiles, String mode = "") {
+        if (SettingsUtil.WRITE_TO_MONGO_DB) {
+            try {
+                Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles, mode);
+                if (!result?.success) {
                     log.info("${result}. mongo call to addToUploadCycle failed. quitting")
                     System.exit(0)
                 }
             }
-            catch(Exception e){
-                log.info("Exception calling addToUploadCycle",e.message)
+            catch (Exception e) {
+                log.info("Exception calling addToUploadCycle", e.message)
                 System.exit(0)
             }
         }
     }
 
-    static void addToUploadCycleWithModeV2(String profiles, List<UploadItemFromExcelVO> uplodables, String mode ="") {
-        if(SettingsUtil.WRITE_TO_MONGO_DB){
-            try{
-                Map<String, Object> result = UploadRestApiCalls.addToUploadCycleV2(profiles,uplodables,mode);
-                if(!result?.success){
+    static void addToUploadCycleWithModeV2(String profiles, List<UploadItemFromExcelVO> uplodables, String mode = "") {
+        if (SettingsUtil.WRITE_TO_MONGO_DB) {
+            try {
+                Map<String, Object> result = UploadRestApiCalls.addToUploadCycleV2(profiles, uplodables, mode);
+                if (!result?.success) {
                     log.info("${result}. mongo call to addToUploadCycle failed. quitting")
                     System.exit(0)
                 }
             }
-            catch(Exception e){
-                log.info("Exception calling addToUploadCycle",e.message)
+            catch (Exception e) {
+                log.info("Exception calling addToUploadCycle", e.message)
                 System.exit(0)
             }
         }
