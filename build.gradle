@@ -208,7 +208,8 @@ configurations {
     tests
 }
 // after updating any dependency run
-// gradle dependencies --refresh-dependencies
+// gradle dependencies --
+// refresh-dependencies
 // OR click the GREEN ARROW ICON to the left of dependencies below in IntelliJ
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.21'
