@@ -207,10 +207,22 @@ class FileData {
         this.title = UploadUtils.stripFilePath(this.absPath)
         this.parentFolder = UploadUtils.stripFileTitle(this.absPath)
         if (EGangotriUtil.PDF.endsWith(fileEnding)) {
-            PdfReader pdfReader = new PdfReader(this.absPath);
+            PdfReader pdfReader
+            try {
+             pdfReader = new PdfReader(this.absPath);
             log.info("Reading ${this.absPath}")
-            PdfDocument pdfDoc = new PdfDocument(pdfReader);
-            this.numberOfPagesInPdf = pdfDoc.getNumberOfPages()
+                PdfDocument pdfDoc = new PdfDocument(pdfReader);
+                this.numberOfPagesInPdf = pdfDoc.getNumberOfPages()
+            }
+            catch(Exception e){
+                log.error("Error reading ${this.absPath} ${e}");
+                this.numberOfPagesInPdf = 0
+            }
+            finally {
+                if (pdfReader) {
+                    pdfReader.close()
+                }
+            }
         }
         sizeInKB = FileSizeUtil.fileSizeInKBForPath(this.absPath)
     }
