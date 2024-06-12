@@ -127,13 +127,14 @@ class UploadToArchiveViaExcel {
                 String description = row.getCell(2).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 String creator = row.getCell(3).getStringCellValue()?.replaceAll(/[#!&]/,"")
                 Boolean uploadedFlag = false
-                if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
-                    uploadedFlag = row.getCell(4).getBooleanCellValue()
-                    log.info("readExcelFile uploadedFlag:${uploadedFlag}")
-                } else if (row.getCell(4).getCellType() == CellType.STRING) {
-                    uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
+                if(row.size() > 4){
+                    if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
+                        uploadedFlag = row.getCell(4).getBooleanCellValue()
+                        log.info("readExcelFile uploadedFlag:${uploadedFlag}")
+                    } else if (row.getCell(4).getCellType() == CellType.STRING) {
+                        uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
+                    }
                 }
-
                 UploadItemFromExcelVO uploadItem = new UploadItemFromExcelVO(absPath, subject, description, creator, uploadedFlag)
                 if (!uploadedFlag && absPath.contains(File.separator)) {
                     uploadItems.add(uploadItem)

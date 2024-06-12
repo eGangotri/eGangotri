@@ -6,6 +6,7 @@ import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.UploadVO
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.FileUtil
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -86,8 +87,10 @@ class UploadRestApiCalls {
                 (new File(it))
             }
             def json = new JsonBuilder()
+            String profilePath = FileUtil.ALL_FOLDERS.get(profile)
             def root = json {
                 archiveProfile profile
+                archiveProfilePath profilePath
                 count uploadables?.size()
                absolutePaths uploadables*.absolutePath
             }
@@ -102,6 +105,7 @@ class UploadRestApiCalls {
             paramsMap.put("uploadCycleId", EGangotriUtil.UPLOAD_CYCLE_ID);
             paramsMap.put("uploadCount", ArchiveUtil.getGrandTotalOfAllUploadables(profiles));
             paramsMap.put("archiveProfiles", profilesAndCount);
+
             if (mode.length() > 0) {
                 paramsMap.put("mode", mode);
             }
@@ -126,8 +130,10 @@ class UploadRestApiCalls {
         int countOfUploadableItems = uploadables.size();
         log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${countOfUploadableItems}");
         def json = new JsonBuilder()
+        String profilePath = FileUtil.ALL_FOLDERS.get(profile)
         def root = json {
             archiveProfile profile
+            archiveProfilePath profilePath
             count countOfUploadableItems
             absolutePaths uploadables
         }

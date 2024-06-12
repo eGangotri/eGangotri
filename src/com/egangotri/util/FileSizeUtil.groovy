@@ -23,7 +23,8 @@ class FileSizeUtil {
         if(file && file.exists()){
             return ((file?.size()/ 1024) as BigDecimal)
         }
-        return "Empty or Non-Existent File"
+        log.info("Empty or Non-Existent File")
+        return 0
     }
 
     static String getFileSizeFormatted(String absPath, String delimiter = " "){
