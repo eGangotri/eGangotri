@@ -27,6 +27,17 @@ class UploadToArchive {
 
     static void main(String[] args) {
         log.info("Starting UploadToArchive", args);
+        String subjectDesc = ""
+        if(args.each { params -> {
+            if(params.startsWithIgnoreCase("subjectDesc=")){
+                subjectDesc = params.split("=")[1]
+            }
+            args.remove(params) //remove the subjectDesc from the args
+        }})
+
+        {
+            log.info("Reuploading failed items")
+        }
         UploadersUtil.prelims(args)
         execute(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap)
         if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
