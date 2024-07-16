@@ -97,8 +97,8 @@ class Codes {
     }
 
     static String getDestDirByCode(String code){
-        def metaDataMap = FileUtil.getSrcFoldersCorrespondingToProfile()
-        return metaDataMap[getCodeToFolderMap(code)]
+        def srcFoldersMetadataMap = FileUtil.getSrcFoldersCorrespondingToProfile()
+        return srcFoldersMetadataMap[getCodeToFolderMap(code)]
     }
 
     static getDestDirByFileName(File file){

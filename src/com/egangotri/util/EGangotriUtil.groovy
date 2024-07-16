@@ -19,7 +19,7 @@ class EGangotriUtil {
 
     static final String EGANGOTRI_BASE_DIR = USER_HOME + File.separator + "eGangotri"
 
-    static final String ARCHIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
+    static final String ARCHIVE_LOGINS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
 
     static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
@@ -110,7 +110,7 @@ class EGangotriUtil {
     }
 
     static List getAllArchiveProfiles() {
-        return getAllProfiles(ARCHIVE_PROPERTIES_FILE)
+        return getAllProfiles(ARCHIVE_LOGINS_PROPERTIES_FILE)
     }
 
     static String hidePassword(String pwd) {

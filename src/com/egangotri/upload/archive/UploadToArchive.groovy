@@ -1,6 +1,6 @@
 package com.egangotri.upload.archive
 
-import com.egangotri.rest.RestUtil
+
 import com.egangotri.upload.archive.uploaders.UploadersUtil
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
@@ -27,19 +27,24 @@ class UploadToArchive {
 
     static void main(String[] args) {
         log.info("Starting UploadToArchive", args);
-        String subjectDesc = ""
-        if(args.each { params -> {
-            if(params.startsWithIgnoreCase("subjectDesc=")){
-                subjectDesc = params.split("=")[1]
-            }
-            args.remove(params) //remove the subjectDesc from the args
-        }})
+        List<String> argsList = args.toList() // Convert array to list
 
-        {
-            log.info("Reuploading failed items")
+        argsList.find { param ->
+            if(param.toLowerCase().startsWith("subjectdesc=")) {
+                UploadUtils.DEFAULT_SUBJECT_DESC = param.split("=")[1]
+                return true // Stop iterating once the first match is found
+            }
+            return false // Continue iterating
         }
+            if(UploadUtils.DEFAULT_SUBJECT_DESC != null && UploadUtils.DEFAULT_SUBJECT_DESC != ""){
+                argsList.removeIf { param -> param.startsWithIgnoreCase("subjectDesc=") } // Remove the element
+                args = argsList.toArray(new String[0]) // Convert list back to array if needed
+            }
+
+        log.info("subjectDesc: ${UploadUtils.DEFAULT_SUBJECT_DESC} ${args}")
+
         UploadersUtil.prelims(args)
-        execute(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap)
+        execute(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap)
         if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
                 && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
             reuploadPostValidationFailureCode();

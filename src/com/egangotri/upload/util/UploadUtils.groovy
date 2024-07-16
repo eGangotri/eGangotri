@@ -40,6 +40,30 @@ class UploadUtils {
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
 
+    static String DEFAULT_SUBJECT_DESC = ""
+
+    static Hashtable<String, String> updateMapByAppendingAdditionalSubjectDescription(Hashtable<String, String> map) {
+        map.each { key, value ->
+            {
+                if (key.endsWith('.subjects') && DEFAULT_SUBJECT_DESC != "") {
+                    map[key] = value + "${value}, ${DEFAULT_SUBJECT_DESC}"
+                }
+                if (key.endsWith('.description')  && DEFAULT_SUBJECT_DESC != "") {
+                    map[key] = value + "${value}, ${DEFAULT_SUBJECT_DESC}"
+                }
+            }
+        }
+        return map
+    }
+
+    static Hashtable<String, String> getArchiveMetadataKeyValues() {
+        def metaDataMap = loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
+        if(DEFAULT_SUBJECT_DESC){
+            return updateMapByAppendingAdditionalSubjectDescription(metaDataMap)
+        }
+        return metaDataMap;
+    }
+
     static readTextFileAndDumpToList(String fileName) {
         List<String> list = []
         File file = new File(fileName)
@@ -100,7 +124,7 @@ class UploadUtils {
         boolean success = false
         String username = metaDataMap."${archiveProfile}"
         String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)} file for $archiveProfile"
+        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)} file for $archiveProfile"
         if (username?.trim()) {
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
             if (!success) {
@@ -194,12 +218,12 @@ class UploadUtils {
         return creators
     }
 
-    static String getOrGenerateSupplementaryURL(String archiveProfile) {
+        static String getOrGenerateSupplementaryURL(String archiveProfile) {
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
         }
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP["${archiveProfile}"]) {
-            def metaDataMap = loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
+            def metaDataMap = getArchiveMetadataKeyValues()
             if (!metaDataMap."${archiveProfile}.creator") {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
             }

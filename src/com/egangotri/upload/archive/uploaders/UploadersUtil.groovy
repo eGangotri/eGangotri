@@ -14,7 +14,7 @@ import groovy.util.logging.Slf4j
 class UploadersUtil {
     static boolean previewSuccess = true
     static Set<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES as Set
-    static Hashtable<String, String> metaDataMap;
+    static Hashtable<String, String> archiveLoginsMetaDataMap;
     static String PERCENT_SIGN_AS_FILE_SEPARATOR = "%"
 
     static checkIfMongoOn(String uploadCycleId = "") {
@@ -42,9 +42,9 @@ class UploadersUtil {
             log.info "args $args"
             UploadersUtil.archiveProfiles = args.toList()
         }
-        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap) as Set
+        UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap) as Set
         checkIfMongoOn(uploadCycleId)
         if (SettingsUtil.PREVIEW_FILES) {
             UploadersUtil.previewSuccess = PreUploadReview.preview(UploadersUtil.archiveProfiles)
@@ -57,9 +57,9 @@ class UploadersUtil {
 
     static void prelimsWithVOs(String profile, Set<QueuedVO> vos, String uploadCycleId = "") {
         UploadersUtil.archiveProfiles = Collections.singleton(profile);
-        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
         SettingsUtil.applySettings()
-        UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.metaDataMap) as Set
+        UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap) as Set
         checkIfMongoOn(uploadCycleId)
         if (SettingsUtil.PREVIEW_FILES) {
             UploadersUtil.previewSuccess = PreUploadReview.previewUsingVos(profile, vos)
@@ -75,7 +75,7 @@ class UploadersUtil {
             try {
                 Map<String, Object> result = UploadRestApiCalls.addToUploadCycle(profiles, mode);
                 if (!result?.success) {
-                    log.info("${result}. mongo call to addToUploadCycle failed. quitting")
+                    log.info("${result}. mongo call to UploadRestApiCalls.addToUploadCycle failed. quitting")
                     System.exit(0)
                 }
             }
@@ -91,7 +91,7 @@ class UploadersUtil {
             try {
                 Map<String, Object> result = UploadRestApiCalls.addToUploadCycleV2(profile, uplodables, mode);
                 if (!result?.success) {
-                    log.info("${result}. mongo call to addToUploadCycle failed. quitting")
+                    log.info("${result}. mongo call to addToUploadCycleV2 failed. quitting")
                     System.exit(0)
                 }
             }

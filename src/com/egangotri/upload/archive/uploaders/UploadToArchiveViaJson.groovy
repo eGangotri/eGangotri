@@ -1,9 +1,7 @@
 package com.egangotri.upload.archive.uploaders
 
 import com.egangotri.upload.archive.ArchiveHandler
-import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
-import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -59,7 +57,7 @@ class UploadToArchiveViaJson {
             log.info "Must have 1-2 arg.s Excel Path/range"
             System.exit(0)
         }
-        UploadersUtil.metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
         List<ReuploadVO> uploadablesFromJson = readJsonFile(excelFileName, range)
         log.info("uploadItems(${uploadablesFromJson.size()}) " +
                 "${uploadablesFromJson[0].path}")
@@ -79,7 +77,7 @@ class UploadToArchiveViaJson {
                 log.info("uploadItems ${vos[0].path}")
                 log.info("uploadItems ${vos[-1].path}")
                 log.info("vos ${vos.size()}")
-                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos, true)
+                List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.archiveLoginsMetaDataMap, vos, true)
                 log.info("uploadStats ${uploadStats}")
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
                 uploadSuccessCheckingMatrix.put((index + 1), report)

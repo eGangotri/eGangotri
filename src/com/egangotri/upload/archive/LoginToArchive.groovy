@@ -4,7 +4,6 @@ import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 
 import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
@@ -13,7 +12,7 @@ import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
 class LoginToArchive {
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
-        def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        def archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
         if (args) {
             log.info "args $args"
             //    args = ["email=indicjournals;range=1-30"]
@@ -26,7 +25,7 @@ class LoginToArchive {
                 List emails = _range.collect({ emailTemplate[1] + (it === 1 ?"":it) + "@gmail.com" })
                 List genProfiles = _range.collect({ "GENPRFL" + it })
                 for(int i = 0; i < emails.size(); i++) {
-                    metaDataMap.put(genProfiles[i], emails[i])
+                    archiveLoginsMetaDataMap.put(genProfiles[i], emails[i])
                 }
                 log.info("emails $emails")
                 log.info("genProfiles $genProfiles")
@@ -38,23 +37,23 @@ class LoginToArchive {
             }
         }
         EGangotriUtil.recordProgramStart("eGangotri Archive Logger")
-        if (metaDataMap) {
+        if (archiveLoginsMetaDataMap) {
             archiveProfiles.each { String archiveProfile ->
                 {
-                    if (metaDataMap.containsKey(archiveProfile)) {
+                    if (archiveLoginsMetaDataMap.containsKey(archiveProfile)) {
                         log.info "Logging for Profile $archiveProfile"
                         ChromeDriver driver = new ChromeDriver()
-                        if (ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
+                        if (ArchiveUtil.navigateLoginLogic(driver, archiveLoginsMetaDataMap, archiveProfile)) {
                             getResultsCount(driver, true)
                             UploadUtils.maximizeBrowser(driver)
                         }
                     } else {
-                        log.info "$archiveProfile profile doesnt exist in file ${EGangotriUtil.ARCHIVE_PROPERTIES_FILE}. Cannot proceed."
+                        log.info "$archiveProfile profile doesnt exist in file ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE}. Cannot proceed."
                     }
                 }
             }
         } else {
-            log.info "No MetaData Cannot proceed. ${EGangotriUtil.ARCHIVE_PROPERTIES_FILE} is either empty or doesnt exist."
+            log.info "No MetaData Cannot proceed. ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE} is either empty or doesnt exist."
         }
         EGangotriUtil.recordProgramEnd()
         System.exit(0)

@@ -1,13 +1,11 @@
 package com.egangotri.upload.archive.uploaders
 
 import com.egangotri.upload.archive.ArchiveHandler
-import com.egangotri.upload.archive.UploadToArchive
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
 import com.egangotri.util.EGangotriUtil
 import com.google.gson.Gson
-import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import org.apache.poi.ss.usermodel.*
@@ -80,7 +78,7 @@ class UploadToArchiveViaExcel {
             log.info("vos ${vos.size()}")
             log.info("vos ${vos[0]}")
             log.info("vos ${vos[-1]}")
-            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.metaDataMap, vos)
+            List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(UploadersUtil.archiveLoginsMetaDataMap, vos)
 
             log.info("uploadStats ${uploadStats}")
             String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())

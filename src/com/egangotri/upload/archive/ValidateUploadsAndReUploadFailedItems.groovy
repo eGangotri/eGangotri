@@ -234,7 +234,7 @@ class ValidateUploadsAndReUploadFailedItems {
             return
         }
         Set<String> profilesWithFailedLinks = ALL_FAILED_ITEMS*.archiveProfile as Set
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_PROPERTIES_FILE)
+        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
         Set<String> validProfiles = ArchiveUtil.filterInvalidProfiles(profilesWithFailedLinks, metaDataMap)
         executeReupload(validProfiles, metaDataMap)
     }
