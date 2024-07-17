@@ -40,6 +40,9 @@ class UploadToArchive {
                 argsList.removeIf { param -> param.startsWithIgnoreCase("subjectDesc=") } // Remove the element
                 args = argsList.toArray(new String[0]) // Convert list back to array if needed
             }
+        else {
+                UploadUtils.DEFAULT_SUBJECT_DESC = ""
+            }
 
         log.info("subjectDesc: ${UploadUtils.DEFAULT_SUBJECT_DESC} ${args}")
 
