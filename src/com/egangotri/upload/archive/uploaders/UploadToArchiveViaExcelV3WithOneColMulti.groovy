@@ -2,10 +2,6 @@ package com.egangotri.upload.archive.uploaders
 
 
 import groovy.util.logging.Slf4j
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 /**
  * works.
@@ -19,9 +15,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 
 @Slf4j
-class UploadToArchiveViaExcelV3Multi {
+class UploadToArchiveViaExcelV3WithOneColMulti {
     static void main(String[] args) {
-        log.info("UploadToArchiveViaExcelV3.main(${args})")
+        log.info("UploadToArchiveViaExcelV3WithOneCol.main(${args})")
         if (args.length >= 2) {
             String archiveProfile = args[0]
             String excelFileName = args[1]
@@ -31,10 +27,10 @@ class UploadToArchiveViaExcelV3Multi {
                 String[] profiles = archiveProfile.split(",");
                 String[] excelFiles = excelFileName.split(",");
                 for (int i = 0; i < profiles.size(); i++) {
-                    UploadToArchiveViaExcelV3.main(new String[]{profiles[i], excelFiles[i], uploadCycleId, range})
+                    UploadToArchiveViaExcelV3WithOneCol.main(new String[]{profiles[i], excelFiles[i], uploadCycleId, range})
                 }
             } else {
-                UploadToArchiveViaExcelV3.main(new String[]{archiveProfile, excelFileName, uploadCycleId, range})
+                UploadToArchiveViaExcelV3WithOneCol.main(new String[]{archiveProfile, excelFileName, uploadCycleId, range})
                 log.info("Profiles and Excel Files are not equal. Exiting")
             }
         } else {

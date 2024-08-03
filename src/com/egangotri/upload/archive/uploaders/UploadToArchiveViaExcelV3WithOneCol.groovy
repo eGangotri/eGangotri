@@ -1,12 +1,7 @@
 package com.egangotri.upload.archive.uploaders
 
-import com.egangotri.upload.archive.ArchiveHandler
-import com.egangotri.upload.util.ArchiveUtil
-import com.egangotri.upload.util.SettingsUtil
-import com.egangotri.upload.util.UploadUtils
-import com.egangotri.util.EGangotriUtil
+
 import groovy.util.logging.Slf4j
-import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
@@ -24,9 +19,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 
 @Slf4j
-class UploadToArchiveViaExcelV3 {
+class UploadToArchiveViaExcelV3WithOneCol {
     static void main(String[] args) {
-        log.info("UploadToArchiveViaExcelV3.main(${args})")
+        log.info("UploadToArchiveViaExcelV3WithOneCol.main(${args})")
         if (args.length >= 2) {
             String archiveProfile = args[0]
             String excelFileName = args[1]

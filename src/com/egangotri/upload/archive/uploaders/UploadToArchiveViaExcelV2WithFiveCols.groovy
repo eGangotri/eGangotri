@@ -17,7 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  */
 
 @Slf4j
-class UploadToArchiveViaExcelV2 {
+class UploadToArchiveViaExcelV2WithFiveCols {
     static void main(String[] args) {
         String excelFileName = ""
         String[] range = []

@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
  C:\tmp\_data\tmp\Veda Mata Gayatri - Copy.pdf	Sub-3	Desc-3	Creator-3
  */
 @Slf4j
-class UploadToArchiveViaExcel {
+class UploadToArchiveViaExcelV1WithFourCols {
     /*
     ["profile": "value1", "excelPath": "value2", "range"="", "uploadCycleId"=""]
      */
@@ -36,7 +36,7 @@ class UploadToArchiveViaExcel {
 //            def jsonSlurper = new JsonSlurper()
 //            def map = jsonSlurper.parseText(jsonString)
 //            log.info(map)
-//            log.info(map.profile)
+            log.info("jsonString : ${jsonString}")
             // Create a Gson instance
             Gson gson = new Gson()
             // Parse the JSON string to a Map
