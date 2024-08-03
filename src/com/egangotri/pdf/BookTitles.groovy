@@ -160,7 +160,9 @@ class BookTitles {
         String fileName = _folderNames + "_MegaList_" + (ONLY_PDFS ? "pdfs_only" : "all")
         String directoryName = DUMP_DIRECTORY + "//${_folderNames}"
         Files.createDirectories(Paths.get(directoryName));
-        String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}"
+        String pageCountInFileName = "${INCLUDE_NUMBER_OF_PAGES && ONLY_PDFS ? "_(${formatInteger(TOTAL_NUM_PAGES)}pgs)" : ''}";
+
+        String _fileName = "${fileName}_${_time}_${TOTAL_FILES_SUCCESSFULLY_READ}${pageCountInFileName}"
         File writeableFile = new File(directoryName, "${_fileName}.txt")
         def textWriter = writeableFile.newWriter('UTF-8')
         textWriter << MEGA_REPORT
