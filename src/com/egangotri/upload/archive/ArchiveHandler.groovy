@@ -17,8 +17,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.UnhandledAlertException
+import java.net.URLEncoder
 
 import java.time.Duration
+
 
 import static com.egangotri.upload.util.ArchiveUtil.*
 
@@ -237,9 +239,14 @@ class ArchiveHandler {
         //uploadLink += "&uploader=info@archive.org" 
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
+
+        def encodedUploadLink = uploadLink.replaceAll("\n", "%0A%0A")
+        println "encodedUploadLink: ${encodedUploadLink}"
+        println "uploadLink: ${uploadLink}"
+
         //Go to URL
-        driver.navigate().to(uploadLink)
-        driver.get(uploadLink)
+        driver.navigate().to(encodedUploadLink)
+        driver.get(encodedUploadLink)
 
         WebDriverWait waitForChooseFilesToUploadToShowUp = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS))
         try {

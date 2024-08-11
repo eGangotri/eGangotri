@@ -12,9 +12,9 @@ task startMongoServer(type: Exec) {
         // cmd /C start D:/Projects/WorkSpaces/WorldCleaner/devserver/start.bat
     }
 }
-//ArrayList<String> uploadToArchiveArgs = [ "MUTHU"]
+ArrayList<String> uploadToArchiveArgs = [ "CHAMBAL"]
 //ArrayList<String> uploadToArchiveArgs = [ "TMP", "subjectDesc=Panini, Patanjali, Skt Vyakarana"]
-ArrayList<String> uploadToArchiveArgs = [ "MUTHU", "subjectDesc=Pondicherry-MUTHU-2024, Pondicherry-MUTHU"]
+//ArrayList<String> uploadToArchiveArgs = [ "MUTHU", "subjectDesc=Pondicherry-MUTHU-2024, Pondicherry-MUTHU"]
 //V_ANON, KANGRI, "KM"
 //,"KRI_UR_DHARMA", "KRI_UR"  "SR_VIMAL", "EGB_ASI" ,"EG_URDU
 // "JNGM_MANU","SALIM","MB", "SV_SHASTRI", "KANGRI", "MUTHU"
@@ -40,44 +40,58 @@ task uploadToArchiveSelective(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusL
     args = ['FIP', 'C:\\Users\\drnar\\Downloads\\reupload-missed-in-upload-cycle-id-7a3b5b09-f633-4121-b361-8e42bc7799b4-1-of-501-09-May-2024-05-51.xlsx', '7a3b5b09-f633-4121-b361-8e42bc7799b4']
 }
 
-task uploadToArchiveExcelV3(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+
+
+task uploadToArchiveExcelV1(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV3"
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV1WithFourCols"
     jvmArgs = applicationDefaultJvmArgs
     //range 4th arg is optional
     // Check if command-line arguments are passed and use them; otherwise, use default values
-        // Default arguments
-        args = ['SRI_VATSA2', 'C:\\Users\\drnar\\Downloads\\-uplodable-v3--absPaths-as-excel-SRI_VATSA2-305-08-Jun-2024-22-49.xlsx', '7a3b5b09-f633-4121-b361-8e42bc7799b4']
+    // Default arguments
+    args = ['SR', 'D:\\excelV1Metadata-Aug.xlsx']
+
+   // args = ['SRI_VATSA2', 'C:\\Users\\drnar\\Downloads\\-uplodable-v3--absPaths-as-excel-SRI_VATSA2-305-08-Jun-2024-22-49.xlsx', '7a3b5b09-f633-4121-b361-8e42bc7799b4']
 }
 
-task uploadToArchiveExcelV3Multi(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+task uploadToArchiveViaExcelV1WithFourCols(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV3Multi"
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV1WithFourCols"
+    jvmArgs = applicationDefaultJvmArgs
+    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
+    // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
+  //  args=['{"profile":"FIP","excelPath":"reupload-missed-in-upload-cycle-id-fc1326f0-94c6-4470-b826-cad170525672-184-of-475-11-May-2024-13-12.xlsx","uploadCycleId":"fc1326f0-94c6-4470-b826-cad170525672"}']
+  //gradle uploadToArchiveExcel -PjsonArgs="{'profile': '','excelPath':'','uploadCycleId': '2-4'}"
+    args = [project.hasProperty('jsonArgs') ? project.getProperty('jsonArgs') : '{"profile":"SR-BH","excelPath":"excelV1Metadata-Aug.xlsx"}']
+}
+
+task uploadToArchiveViaExcelV2WithFiveCols(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV2WithFiveCols"
+    jvmArgs = applicationDefaultJvmArgs
+    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
+    // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
+    args = ["C:\\Users\\chetan\\Downloads\\egangotri_upload_db.Items_Ushered.xlsx"]
+}
+
+task uploadToArchiveViaExcelV3WithOneCol(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV3WithOneCol"
+    jvmArgs = applicationDefaultJvmArgs
+    //range 4th arg is optional
+    // Check if command-line arguments are passed and use them; otherwise, use default values
+    // Default arguments
+    args = ['SRI_VATSA2', 'C:\\Users\\drnar\\Downloads\\-uplodable-v3--absPaths-as-excel-SRI_VATSA2-305-08-Jun-2024-22-49.xlsx', '7a3b5b09-f633-4121-b361-8e42bc7799b4']
+}
+
+task uploadToArchiveViaExcelV3WithOneColMulti(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV3WithOneColMulti"
     jvmArgs = applicationDefaultJvmArgs
     //range 4th arg is optional
     // Check if command-line arguments are passed and use them; otherwise, use default values
     // Default arguments
     args = ['SRI_VATSA2, SRI_VATSA3', 'C:\\x.xlsx, C:\\y.xlsx']
-}
-
-task uploadToArchiveExcel(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcel"
-    jvmArgs = applicationDefaultJvmArgs
-    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
-    // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
-  //  args=['{"profile":"FIP","excelPath":"reupload-missed-in-upload-cycle-id-fc1326f0-94c6-4470-b826-cad170525672-184-of-475-11-May-2024-13-12.xlsx","uploadCycleId":"fc1326f0-94c6-4470-b826-cad170525672"}']
-    args = [project.hasProperty('jsonArgs') ? project.getProperty('jsonArgs') : '{"profile":"FIP","excelPath":"C:/Users/drnar/Downloads/reupload-missed-in-upload-cycle-id-fc1326f0-94c6-4470-b826-cad170525672-184-of-475-11-May-2024-13-12.xlsx","uploadCycleId":"fc1326f0-94c6-4470-b826-cad170525672"}']
-
-}
-
-task uploadToArchiveExcelV2(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.upload.archive.uploaders.UploadToArchiveViaExcelV2"
-    jvmArgs = applicationDefaultJvmArgs
-    /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
-    // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
-    args = ["C:\\Users\\chetan\\Downloads\\egangotri_upload_db.Items_Ushered.xlsx"]
 }
 
 task uploadToArchiveJson(dependsOn: [/*'snap2htmlCronJob',*/ 'refreshFocusLogFiles'], type: JavaExec) {
