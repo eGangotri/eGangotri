@@ -114,6 +114,7 @@ class SettingsUtil {
             if (settingsMetaDataMap.ALLOWED_EXTENSIONS) {
                 ALLOWED_EXTENSIONS = EGangotriUtil.csvToList(settingsMetaDataMap.ALLOWED_EXTENSIONS)
                 if (ALLOWED_EXTENSIONS) {
+                    ALLOWED_EXTENSIONS += ALLOWED_EXTENSIONS.collect {it.toUpperCase()};
                     FileUtil.ALLOWED_EXTENSIONS_REGEX = /.*\./ + ALLOWED_EXTENSIONS.join(/|.*\./)
                     log.info("ALLOWED_EXTENSIONS: " + ALLOWED_EXTENSIONS)
                     log.info("ALLOWED_EXTENSIONS_REGEX: " + FileUtil.ALLOWED_EXTENSIONS_REGEX)
@@ -123,6 +124,7 @@ class SettingsUtil {
             if (settingsMetaDataMap.IGNORE_EXTENSIONS) {
                 if (!ALLOWED_EXTENSIONS) {
                     IGNORE_EXTENSIONS = EGangotriUtil.csvToList(settingsMetaDataMap.IGNORE_EXTENSIONS)
+                    IGNORE_EXTENSIONS += IGNORE_EXTENSIONS.collect {it.toUpperCase()};
                     log.info("IGNORE_EXTENSIONS: " + IGNORE_EXTENSIONS)
                 } else {
                     log.info("IGNORE_EXTENSIONS ignored because ALLOWED_EXTENSIONS has values")
