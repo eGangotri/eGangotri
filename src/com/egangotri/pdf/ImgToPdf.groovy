@@ -1,5 +1,6 @@
 package com.egangotri.pdf
 
+import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
 
 @Slf4j
@@ -20,7 +21,10 @@ class ImgToPdf {
 
         log.info("""Processing: folderName: ${folderName}
                 outputPdfPath: ${outputPdfPath}""")
+        long startTime = System.currentTimeMillis()
         ImgToPdfUtil.convertImagesToPdf(imageFolder, outputPdfPath,imgType)
+        long endTime = System.currentTimeMillis()
+        log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
     }
 
     static String createOutputPdfName(String imageFolder) {

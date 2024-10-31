@@ -1,5 +1,6 @@
 package com.egangotri.pdf
 
+import com.egangotri.util.EGangotriUtil
 import com.itextpdf.io.image.ImageData
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
@@ -11,6 +12,10 @@ import com.itextpdf.layout.element.Image
 import groovy.util.logging.Slf4j
 
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
+import java.text.SimpleDateFormat
 
 @Slf4j
 class ImgToPdfUtil {
@@ -21,19 +26,9 @@ class ImgToPdfUtil {
         try {
             // Create a new Document for adding content
             doc = new Document(pdfDoc)
-            // Iterate through all files in the directory
-            File imgFolderDir = new File(imgFolder);
-            File[] imageFiles = imgFolderDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File file, String name) {
-                    return getExtraCondition(new File(file, name),imgType)
-                }
-            });
-            if(imageFiles.length === 0) {
-                log.info "No image files found in the directory: ${imgFolder}. Quitting."
-                return
-            }
-            for(int i = 0; i <  imageFiles.length; i++) {
+            File[] imageFiles = getImageFiles(imgFolder, imgType)
+            log.info "Processing: ${imgFolder.length()} images into pdf."
+            for (int i = 0; i < imageFiles.length; i++) {
                 File file = imageFiles[i];
                 if (file.isFile()) {
                     try {
@@ -53,8 +48,10 @@ class ImgToPdfUtil {
                         doc.add(image);
 
                         // Start a new page for the next image
-                        if(i < imageFiles.length - 1){
+                        if (i < imageFiles.length - 1) {
                             doc.add(new AreaBreak())
+                        } else {
+                            log.info "All ${imageFiles.length} images added to PDF(${outputPdf})."
                         }
                     } catch (Exception e) {
                         println "Error converting image '${file.name}' to PDF: ${e.message}"
@@ -74,9 +71,10 @@ class ImgToPdfUtil {
             pdfDoc?.close()
         }
     }
-    static getExtraCondition(File file,String imgType) {
+
+    static getExtraCondition(File file, String imgType) {
         Boolean extraCondition = false;
-        switch(imgType){
+        switch (imgType) {
             case "PNG":
                 extraCondition = file.name.toLowerCase().endsWith("png");
                 break;
@@ -93,8 +91,23 @@ class ImgToPdfUtil {
 
                 break;
         }
-        log.info("extraCondition: ${extraCondition}, file: ${file.absolutePath} imgType: ${imgType}")
         return extraCondition
+    }
+    static File[] getImageFiles(String imgFolder, String imgType) {
+
+        List<Map<String, Object>> filesWithCreationDate = []
+        File folder = new File(imgFolder)
+        if (!folder.exists()) {
+            log.error("Image folder does not exist: ${imgFolder}")
+            return []
+        }
+        File[] imageFiles = folder.listFiles(
+                { file -> getExtraCondition(file, imgType) } as FileFilter)
+        if (imageFiles.length == 0) {
+            log.error("No image files found in folder: ${imgFolder}")
+            return []
+        }
+        return imageFiles
     }
 }
 
