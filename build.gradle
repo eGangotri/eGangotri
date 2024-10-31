@@ -81,8 +81,6 @@ task zipMover(dependsOn: 'classes', type: JavaExec) {
     args = ["20 feb 2021.txt"]
 }
 
-
-
 task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.BookTitlesInLoop"
@@ -92,7 +90,6 @@ task bookTitlesInLoop(dependsOn: 'classes', type: JavaExec) {
     //args = [ "D:\\Treasures28\\bala, D:\\Treasures28\\raja", 'today-5', '5']
     //args = ["C:\\_catalogWork\\_reducedPdfs\\_ALL_", "dumpFolder=C:\\_catalogWork\\_collation\\local" ]
     args = ["E:\\MASTER_BACKUP\\Treasures60\\_freeze\\kangri, E:\\MASTER_BACKUP\\Treasures60\\_freeze\\panini, D:\\MASTER_BACKUP\\Treasures68\\_freeze\\kangri, D:\\MASTER_BACKUP\\Treasures68\\_freeze\\panini" ]
-
 }
 
 task bookTitlesInLoopForReduced(dependsOn: 'classes', type: JavaExec) {
@@ -156,7 +153,7 @@ task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
     args = ["D:\\Treasures55\\_vinay\\Darab", 5]
 }
 
-task tally(dependsOn: 'classes', type: JavaExec) {
+task tallyPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.Tally"
     args = ["D:\\NMM\\Oct-2019\\07-10-2019",
@@ -165,12 +162,21 @@ task tally(dependsOn: 'classes', type: JavaExec) {
             "E:\\Oct-2019\\ramtek-2_tally"]
 }
 
-task merge(dependsOn: 'classes', type: JavaExec) {
+//merges small pdfs to large pdf
+task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.pdf.PDFMerger"
+    mainClass = "com.egangotri.pdf.ImgToPdf"
+//    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
+    args = ["C:\\Users\\egangotri\\Documents\\test"]
+}
+
+//merges small pdfs to large pdf
+task mergePdf(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.pdf.EGangotriPDFMerger"
 //    //args = [tifFolder, pdfFolder ]
     //args = [pdfRootFolder, 'mega' ]
-    args = ["E:\\July-2019\\ramtek-2-"]
+    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
 }
 
 task repairPDF(dependsOn: 'classes', type: JavaExec) {
