@@ -9,10 +9,6 @@ mainClassName = "com.egangotri.upload.archive.UploadToArchive"
 version = ""
 repositories {
     mavenCentral()
-    maven {
-        url "http://repo.jenkins-ci.org/releases"
-        allowInsecureProtocol = true
-    }
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -218,35 +214,42 @@ configurations {
 // refresh-dependencies
 // OR click the GREEN ARROW ICON to the left of dependencies below in IntelliJ
 dependencies {
-    implementation 'org.apache.groovy:groovy:4.0.21'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.apache.groovy:groovy:5.0.0-alpha-9'
+    implementation 'com.google.code.gson:gson:2.10'
     // Check for the latest version
 
     implementation 'org.codehaus.gpars:gpars:1.2.1'
     implementation 'io.github.http-builder-ng:http-builder-ng-core:1.0.4'
-    implementation 'org.apache.groovy:groovy-ant:4.0.21'
-    implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0' // Check for the latest version
+    implementation 'org.apache.groovy:groovy-ant:5.0.0-alpha-9'
+    implementation 'org.apache.commons:commons-collections4:4.5.0-M1'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14' // Check for the latest version
 
-    implementation group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2'
-    implementation group: 'com.opencsv', name: 'opencsv', version: '5.1'
-    implementation 'com.itextpdf:itextpdf:5.5.13.1'
-    implementation 'com.itextpdf:itext7-core:7.2.0'
-    implementation 'org.apache.poi:poi:4.1.2'
-    implementation 'org.apache.poi:poi-ooxml:4.1.2'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.quartz-scheduler:quartz:2.5.0-rc1'
+    implementation 'com.opencsv:opencsv:5.1'
+  //  implementation 'com.itextpdf:itextpdf:5.5.13'
+    //implementation 'com.itextpdf:itextpdf:7.2.3' // Replace with the latest version
+
+    //implementation 'com.itextpdf:itext-core:8.1.2'
+    //implementation 'com.itextpdf:itext7-core:8.0.5'
+    implementation 'com.itextpdf:itext-core:8.0.5'
+    implementation 'com.itextpdf:layout:8.0.5'
+
+
+    implementation 'org.apache.poi:poi:5.3.0'
+    implementation 'org.apache.poi:poi-ooxml:5.3.0'
+    implementation 'com.google.code.gson:gson:2.10'
 
     implementation 'commons-io:commons-io:2.16.1'
-    implementation 'org.apache.groovy:groovy-json:4.0.21'
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.apache.groovy:groovy-json:5.0.0-alpha-9'
+    implementation 'org.apache.logging.log4j:log4j-core:3.0.0-beta1'
 
     implementation 'javax.mail:mail:1.5.0-b01'
-    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '1.6.5'
+    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
 
     implementation 'ch.qos.logback:logback-classic:1.5.6'
 
-    implementation "org.slf4j:log4j-over-slf4j:1.7.13"
-    runtimeOnly group: 'com.github.f4b6a3', name: 'uuid-creator', version: '5.2.0'
+    implementation 'org.slf4j:log4j-over-slf4j:2.0.13'
+    runtimeOnly group: 'com.github.f4b6a3', name: 'uuid-creator', version: '6.0.0'
 
     //The Only reason we are keeping this local
     //which has the META-INF\LICENSE Folder deleted is because during fat-jarFF
@@ -257,23 +260,20 @@ dependencies {
 //    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
     //  compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
 
-    implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
-    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.20.0'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.22.0'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.22.0'
 
-    implementation 'org.seleniumhq.selenium:selenium-devtools-v124:4.20.0'
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v124:4.22.0'
 
-    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi:5.3.0'
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
 
     testImplementation 'org.spockframework:spock-core:2.0-M2-groovy-3.0'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
 }
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://maven.apache.org"
-    }
 }
 
 
