@@ -27,7 +27,11 @@ class EGangotriPDFMerger {
             int counter = 0
             for (String _mergeable : _mergeables) {
                 counter++
-                GenericUtil.addReport("Merge for Folder(${_mergeable})\n ${counter} of ${_mergeables.size()} for ${_mergeable} started")
+                GenericUtil.addReport("""Merge for 
+                    Folder:
+${_mergeable}
+                         ${counter} of ${_mergeables.size()} 
+for ${_mergeable} started""")
                 exec(_mergeable)
             }
         } else {
@@ -41,9 +45,10 @@ class EGangotriPDFMerger {
             File rootDir = new File(_mergeable)
             File[] foldersWithPdf = GenericUtil.getDirectories(rootDir)
             Date startTime = new Date()
-            GenericUtil.addReport("""Merge started @ ${startTime} for 
-${rootDir.name} for ${foldersWithPdf?.size()} Folder(s) :
-            ${foldersWithPdf.collect { it.name }.join("\n\t")}
+            GenericUtil.addReport("""*Merge started @ ${startTime} for 
+${rootDir.name}
+ for ${foldersWithPdf?.size()} Folder(s) :
+ ${foldersWithPdf.collect { it.name }.join("\n\t")}
             started""")
             int counter = 0
             for (File subFolder in foldersWithPdf) {
