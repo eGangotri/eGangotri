@@ -8,70 +8,59 @@ import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Image
+import groovy.util.logging.Slf4j
+
 import java.nio.file.Files
 
+@Slf4j
 class ImgToPdfUtil {
-    static void convertImagesToPdf(String imgFolder, String outputPdf, imgType = "ANY") {
+    static void convertImagesToPdf(String imgFolder, String outputPdf, String imgType = "ANY") {
         // Create a new PDF document
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPdf))
         Document doc = null
         try {
             // Create a new Document for adding content
             doc = new Document(pdfDoc)
-
             // Iterate through all files in the directory
             File imgFolderDir = new File(imgFolder)
-            imgFolderDir.eachFile { file ->
-                if (file.isFile()) {
+            File[] imageFiles = imgFolderDir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File file, String name) {
                     String mimeType = Files.probeContentType(file.toPath())
-                    boolean extraCondition = true;
-                    if(imgType != "ANY" ){
-                        switch(imgType){
-                            case "PNG":
-                                extraCondition = file.name.toLowerCase().endsWith("png");
-                                break;
-                            case "JPG":
-                                extraCondition = file.name.toLowerCase().endsWith("jpg") || file.name.toLowerCase().endsWith("jpeg");
-                                break;
-                            case "TIF":
-                                extraCondition = file.name.toLowerCase().endsWith("tiff") || file.name.toLowerCase().endsWith("tif");
-                                break;
-                            default:
-                                extraCondition = true;
-                                break;
-                        }
+                    log.info("mimeType: ${mimeType}")
+                    return (mimeType?.startsWith("image/") && getExtraCondition(file,imgType))
+                }
+            });
+            for(int i = 0; i <  imageFiles.length; i++) {
+                File file = imageFiles[i];
+                if (file.isFile()) {
+                    try {
+                        // Load image data from file
+                        ImageData imageData = ImageDataFactory.create(file.absolutePath)
+                        // Get image dimensions directly from ImageData
+                        float imageWidth = imageData.getWidth();
+                        float imageHeight = imageData.getHeight();
 
-                    }
-                    if (mimeType.startsWith("image/") && extraCondition) {
-                        try {
-                            // Load image data from file
-                            ImageData imageData = ImageDataFactory.create(file.absolutePath)
-                            // Get image dimensions directly from ImageData
-                            float imageWidth = imageData.getWidth();
-                            float imageHeight = imageData.getHeight();
+                        // Set the page size on the PdfDocument object
+                        pdfDoc.setDefaultPageSize(new PageSize(imageWidth, imageHeight))
 
-                            // Set the page size on the PdfDocument object
-                            pdfDoc.setDefaultPageSize(new PageSize(imageWidth, imageHeight))
+                        // Create an image object
+                        Image image = new Image(imageData);
 
-                            // Create an image object
-                            Image image = new Image(imageData);
+                        // Add image to the PDF document
+                        doc.add(image);
 
-                            // Add image to the PDF document
-                            doc.add(image);
-
-                            // Start a new page for the next image
+                        // Start a new page for the next image
+                        if(i < imageFiles.length - 1){
                             doc.add(new AreaBreak())
-                        } catch (Exception e) {
-                            println "Error converting image '${file.name}' to PDF: ${e.message}"
-                            e.printStackTrace()
-                            return
                         }
-                    } else {
-                        println "Skipping file '${file.name}' as it's not an image."
+                    } catch (Exception e) {
+                        println "Error converting image '${file.name}' to PDF: ${e.message}"
+                        e.printStackTrace()
+                        return
                     }
                 }
             }
-
         } catch (Exception e) {
             println "Error converting images to PDF: ${e.message}"
             e.printStackTrace()
@@ -83,4 +72,23 @@ class ImgToPdfUtil {
             pdfDoc?.close()
         }
     }
+    static getExtraCondition(File file,String imgType) {
+        Boolean extraCondition = true;
+        switch(imgType){
+            case "PNG":
+                extraCondition = file.name.toLowerCase().endsWith("png");
+                break;
+            case "JPG":
+                extraCondition = file.name.toLowerCase().endsWith("jpg") || file.name.toLowerCase().endsWith("jpeg");
+                break;
+            case "TIF":
+                extraCondition = file.name.toLowerCase().endsWith("tiff") || file.name.toLowerCase().endsWith("tif");
+                break;
+            default:
+                extraCondition = true;
+                break;
+        }
+        return extraCondition
+    }
 }
+

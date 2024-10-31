@@ -8,7 +8,7 @@ class ImgToPdf {
         String imageFolder = args[0]
         String imgType = "ANY"
         if(args.length > 1) {
-            imgType = args[1]
+            imgType = args[1].trim();
         }
         String folderName = new File(imageFolder).getName()
         String outputPdfPath = createOutputPdfName(imageFolder)
