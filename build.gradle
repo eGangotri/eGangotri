@@ -47,7 +47,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     mainClass = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
   //  args = ["email=indiclibrary;range=1-15"]
-    args = ["FIP"]
+    args = ["SR-BH"]
 }
 
 task editFilesInArchive(dependsOn: 'classes', type: JavaExec) {
