@@ -144,9 +144,9 @@ task restCalls(dependsOn: 'classes', type: JavaExec) {
 
 task getFirstNPagesFromPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.pdf.GetFirstNPagesFromPdf"
+    mainClass = "com.egangotri.pdf.GetFirstAndLastNPagesFromPdf"
     //args = [folder, numberOfPages]
-    args = ["D:\\Treasures55\\_vinay\\Darab", 5]
+    args = ["C:\\Users\\egangotri\\Documents\\test", 5, 5]
 }
 
 task tallyPdf(dependsOn: 'classes', type: JavaExec) {
@@ -192,12 +192,6 @@ task chkMissingInArchive(dependsOn: 'classes', type: JavaExec) {
     mainClass = "com.egangotri.upload.archive.CheckForMissingTextsInArchive"
     jvmArgs = applicationDefaultJvmArgs
     args = []
-}
-
-task get1stAndLastPages(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.pdf.GetFirstAndLastPages"
-    args = [""]
 }
 
 task refreshFocusLogFiles(dependsOn: 'classes', type: JavaExec) {
