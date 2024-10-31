@@ -127,9 +127,9 @@ task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.ImgToPdf"
 //    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
-  //  args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "JPG"]
+    args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "JPG"]
     args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"] //last optional
-//    args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
+  //  args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "PNG"]
 }

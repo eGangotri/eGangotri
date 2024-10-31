@@ -8,6 +8,7 @@ import java.nio.file.Path
 
 @Slf4j
 class ImgToPdf {
+    static List<Map<String,Object>> IMG_TO_PDF_RESULTS = []
     static void main(String[] args) {
         String folderName = args[0]
         String imgType = "ANY"
@@ -17,7 +18,14 @@ class ImgToPdf {
         long startTime = System.currentTimeMillis()
         log.info("Recieved folderName: ${folderName}")
         List<Path> allFolders = FolderUtil.listAllSubfolders(folderName)
-        List<Map> allResults = []
+        log.info("""Img2Pdf for : ${allFolders.size()} in ${allFolders}
+                with ImgType: ${imgType} shall start now.""")
+        Map<String, Object> firstRow = [:]
+        firstRow.put("Img2PdfRoot", "${folderName}")
+        firstRow.put("SubFolderCount", allFolders.size())
+        firstRow.put("imgType", imgType)
+        IMG_TO_PDF_RESULTS << firstRow;
+
         // Print the results
         for (Path folder : allFolders) {
             File _file = folder.toFile()
@@ -30,17 +38,13 @@ class ImgToPdf {
             log.info("""Processing: _file: ${_file.absolutePath}
                 outputPdfPath: ${outputPdfPath}""")
 
-            def results = [:];
-            ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
-            results.forEach {
-                log.info("${it.key}: ${it.value}")
-            }
-            allResults << results
+            Map<String,Object> resultMap = ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
+            ImgToPdf.IMG_TO_PDF_RESULTS << resultMap
         }
         long endTime = System.currentTimeMillis()
-        allResults.each { Map result ->
-            result.forEach {
-                log.info("${it.key}: ${it.value}")
+        IMG_TO_PDF_RESULTS.each { Map<String, Object> result ->
+            result.each { key, value ->
+                println "${key}: ${value}"
             }
         }
         log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")

@@ -20,17 +20,17 @@ import java.text.SimpleDateFormat
 
 @Slf4j
 class ImgToPdfUtil {
-    static def convertImagesToPdf(File imgFolder, String outputPdf, String imgType = "ANY") {
-        log.info(":")
-//        Map<String,Object> returnType = [:]
-//        returnType.put("imgFolder", imgFolder)
-//        returnType.put("outputPdf", outputPdf)
+    static Map<String,Object> convertImagesToPdf(File imgFolder, String outputPdf, String imgType = "ANY") {
+        Map<String,Object> resultsMap = [:]
+        resultsMap.put("imgFolder", imgFolder.absolutePath)
+        resultsMap.put("outputPdf", outputPdf)
         File[] imageFiles = getImageFiles(imgFolder.absolutePath, imgType)
-       // returnType.put("imgCount", imageFiles.length)
+        resultsMap.put("imgCount", imageFiles.length as Integer)
         log.info "Processing: ${imageFiles.length} images into pdf."
         if (imageFiles.length == 0) {
             log.error "No images found in folder: ${imgFolder.absolutePath}"
-        //    return returnType
+            resultsMap.put("success", false);
+            return resultsMap
         }
         // Create a new PDF document
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPdf))
@@ -67,16 +67,18 @@ class ImgToPdfUtil {
                     } catch (Exception e) {
                         println "Error converting image '${file.name}' to PDF: ${e.message}"
                         e.printStackTrace()
-                     //   returnType.put("error", e.message)
-//                        return returnType
+                        resultsMap.put("error", e.message)
+                        resultsMap.put("success", false);
+                        return resultsMap
                     }
                 }
             }
         } catch (Exception e) {
             println "Error converting images to PDF: ${e.message}"
             e.printStackTrace()
-          //  returnType.put("error", e.message)
-  //          return returnType
+            resultsMap.put("error", e.message)
+            resultsMap.put("success", false);
+            return
         }
         finally {
             // Close the Document (important for iText 8)
@@ -85,9 +87,9 @@ class ImgToPdfUtil {
             pdfDoc?.close()
         }
         int pageCount = PdfUtil.countPages(outputPdf)
-      //  returnType.put("pdfPageCount", pageCount)
-        //returnType.put("success", pageCount === imageFiles.length)
-    //    return returnType
+        resultsMap.put("pdfPageCount", pageCount as Integer)
+        resultsMap.put("success", (pageCount == imageFiles.length) as Boolean)
+        return resultsMap
     }
 
     static getExtraCondition(File file, String imgType) {
