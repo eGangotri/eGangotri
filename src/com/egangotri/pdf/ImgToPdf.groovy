@@ -6,6 +6,10 @@ import groovy.util.logging.Slf4j
 class ImgToPdf {
     static void main(String[] args) {
         String imageFolder = args[0]
+        String imgType = "ANY"
+        if(args.length > 1) {
+            imgType = args[1]
+        }
         String folderName = new File(imageFolder).getName()
         String outputPdfPath = createOutputPdfName(imageFolder)
 
@@ -16,7 +20,7 @@ class ImgToPdf {
 
         log.info("""Processing: folderName: ${folderName}
                 outputPdfPath: ${outputPdfPath}""")
-        ImgToPdfUtil.convertImagesToPdf(imageFolder, outputPdfPath)
+        ImgToPdfUtil.convertImagesToPdf(imageFolder, outputPdfPath,imgType)
     }
 
     static String createOutputPdfName(String imageFolder) {

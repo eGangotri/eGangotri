@@ -127,7 +127,7 @@ task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.ImgToPdf"
 //    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
-    args = ["C:\\Users\\egangotri\\Documents\\test"]
+    args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"]
 }
 
 task allFilePathsLongerThanThreshold(dependsOn: 'classes', type: JavaExec) {
@@ -162,13 +162,6 @@ task tallyPdf(dependsOn: 'classes', type: JavaExec) {
             "E:\\Oct-2019\\ramtek-9_tally",
             "D:\\NMM\\Oct-2019\\11-10-2019",
             "E:\\Oct-2019\\ramtek-2_tally"]
-}
-
-task imgToPdf(dependsOn: 'classes', type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = "com.egangotri.pdf.ImgToPdf"
-//    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
-    args = ["C:\\Users\\egangotri\\Documents\\test"]
 }
 
 //merges small pdfs to large pdf

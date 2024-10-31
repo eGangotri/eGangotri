@@ -11,7 +11,7 @@ import com.itextpdf.layout.element.Image
 import java.nio.file.Files
 
 class ImgToPdfUtil {
-    static void convertImagesToPdf(String imgFolder, String outputPdf) {
+    static void convertImagesToPdf(String imgFolder, String outputPdf, imgType = "ANY") {
         // Create a new PDF document
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPdf))
         Document doc = null
@@ -24,7 +24,25 @@ class ImgToPdfUtil {
             imgFolderDir.eachFile { file ->
                 if (file.isFile()) {
                     String mimeType = Files.probeContentType(file.toPath())
-                    if (mimeType.startsWith("image/")) {
+                    boolean extraCondition = true;
+                    if(imgType != "ANY" ){
+                        switch(imgType){
+                            case "PNG":
+                                extraCondition = file.name.toLowerCase().endsWith("png");
+                                break;
+                            case "JPG":
+                                extraCondition = file.name.toLowerCase().endsWith("jpg") || file.name.toLowerCase().endsWith("jpeg");
+                                break;
+                            case "TIF":
+                                extraCondition = file.name.toLowerCase().endsWith("tiff") || file.name.toLowerCase().endsWith("tif");
+                                break;
+                            default:
+                                extraCondition = true;
+                                break;
+                        }
+
+                    }
+                    if (mimeType.startsWith("image/") && extraCondition) {
                         try {
                             // Load image data from file
                             ImageData imageData = ImageDataFactory.create(file.absolutePath)
