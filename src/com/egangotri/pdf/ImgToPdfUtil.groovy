@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.GenericUtil
 import com.egangotri.util.PdfUtil
 import com.itextpdf.io.image.ImageData
 import com.itextpdf.io.image.ImageDataFactory
@@ -33,7 +34,7 @@ class ImgToPdfUtil {
             return resultsMap
         }
         // Create a new PDF document
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPdf))
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new BufferedOutputStream(new FileOutputStream(outputPdf))))
         Document doc = null
 
         try {
@@ -57,7 +58,11 @@ class ImgToPdfUtil {
 
                         // Add image to the PDF document
                         doc.add(image);
-
+                        imageData = null
+                        image = null
+                        if((i+1)%100==0){
+                            GenericUtil.garbageCollectAndPrintMemUsageInfo()
+                        }
                         // Start a new page for the next image
                         if (i < imageFiles.length - 1) {
                             doc.add(new AreaBreak())

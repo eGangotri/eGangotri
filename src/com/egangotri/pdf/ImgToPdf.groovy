@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.FolderUtil
+import com.egangotri.util.GenericUtil
 import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
 
@@ -39,6 +40,7 @@ class ImgToPdf {
                 outputPdfPath: ${outputPdfPath}""")
 
             Map<String,Object> resultMap = ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
+            GenericUtil.garbageCollectAndPrintMemUsageInfo()
             ImgToPdf.IMG_TO_PDF_RESULTS << resultMap
         }
         long endTime = System.currentTimeMillis()
