@@ -7,7 +7,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.io.image.ImageData
-
+import com.egangotri.pdf.ImgToPdfUtil
 @Slf4j
 class ImgToPdf {
     static void main(String[] args) {

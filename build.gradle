@@ -118,10 +118,16 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
 //            "afterHour=0",
 //            "pdfsOnly=true"
 //    ]
-    args = ["paths=C:\\_catalogWork\\_reducedPdfs\\1-10\\Treasures9 (627)\\amit\\RareBooksMiscTopics" ]
-
+    args = ["paths='C:\\Users\\egangotri\\Documents\\test'", 'pdfsOnly=false' ]
     //args = [ "paths=D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["paths=E:\\eG-tr1-30\\Treasures30"]
+}
+
+task imgToPdf(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.pdf.ImgToPdf"
+//    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
+    args = ["C:\\Users\\egangotri\\Documents\\test"]
 }
 
 task allFilePathsLongerThanThreshold(dependsOn: 'classes', type: JavaExec) {
@@ -158,7 +164,6 @@ task tallyPdf(dependsOn: 'classes', type: JavaExec) {
             "E:\\Oct-2019\\ramtek-2_tally"]
 }
 
-//merges small pdfs to large pdf
 task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.ImgToPdf"
@@ -220,11 +225,6 @@ dependencies {
 
     implementation 'org.quartz-scheduler:quartz:2.5.0-rc1'
     implementation 'com.opencsv:opencsv:5.1'
-  //  implementation 'com.itextpdf:itextpdf:5.5.13'
-    //implementation 'com.itextpdf:itextpdf:7.2.3' // Replace with the latest version
-
-    //implementation 'com.itextpdf:itext-core:8.1.2'
-    //implementation 'com.itextpdf:itext7-core:8.0.5'
     implementation 'com.itextpdf:itext-core:8.0.5'
     implementation 'com.itextpdf:layout:8.0.5'
 
@@ -235,15 +235,15 @@ dependencies {
 
     implementation 'commons-io:commons-io:2.16.1'
     implementation 'org.apache.groovy:groovy-json:5.0.0-alpha-9'
-    implementation 'org.apache.logging.log4j:log4j-core:3.0.0-beta1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
 
     implementation 'javax.mail:mail:1.5.0-b01'
-    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.1'
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
     implementation 'ch.qos.logback:logback-classic:1.5.6'
 
     implementation 'org.slf4j:log4j-over-slf4j:2.0.13'
-    runtimeOnly group: 'com.github.f4b6a3', name: 'uuid-creator', version: '6.0.0'
+    runtimeOnly 'com.github.f4b6a3:uuid-creator:6.0.0'
 
     //The Only reason we are keeping this local
     //which has the META-INF\LICENSE Folder deleted is because during fat-jarFF

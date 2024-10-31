@@ -67,14 +67,14 @@ class BookTitles {
                 String it -> {
                     Object[] kv = it.split("=")*.trim()
                     if(kv.length % 2 !== 0){
-                        log.error("Invalid argument Must have 2 set of values separated by = ${it}. expamle path='C:\\tmp, D:\\test'");
+                        log.error("Invalid argument Must have 2 set of values separated by = ${it}. example path='C:\\tmp, D:\\test'");
                         return
                     }
                     log.info("kv ${kv} ${kv.length}");
                     argsOneAsMap.put(kv[0]?.toString(), kv[1])
                 }
             }
-            String _folderNames = argsOneAsMap.paths.replace("'", "").replace("\"", "")
+            String _folderNames = argsOneAsMap?.paths?.replace("'", "")?.replace("\"", "")
             FOLDER_NAMES = _folderNames.split(",")*.trim().findAll {it.length()>1}.toList()
             if(argsOneAsMap.containsKey("afterDate")){
                 afterDate = argsOneAsMap.afterDate == "''" ? "" : argsOneAsMap.afterDate
