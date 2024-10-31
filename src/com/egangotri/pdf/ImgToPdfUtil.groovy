@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.EGangotriUtil
+import com.egangotri.util.PdfUtil
 import com.itextpdf.io.image.ImageData
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
@@ -19,15 +20,25 @@ import java.text.SimpleDateFormat
 
 @Slf4j
 class ImgToPdfUtil {
-    static void convertImagesToPdf(String imgFolder, String outputPdf, String imgType = "ANY") {
+    static def convertImagesToPdf(File imgFolder, String outputPdf, String imgType = "ANY") {
+        log.info(":")
+//        Map<String,Object> returnType = [:]
+//        returnType.put("imgFolder", imgFolder)
+//        returnType.put("outputPdf", outputPdf)
+        File[] imageFiles = getImageFiles(imgFolder.absolutePath, imgType)
+       // returnType.put("imgCount", imageFiles.length)
+        log.info "Processing: ${imageFiles.length} images into pdf."
+        if (imageFiles.length == 0) {
+            log.error "No images found in folder: ${imgFolder.absolutePath}"
+        //    return returnType
+        }
         // Create a new PDF document
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPdf))
         Document doc = null
+
         try {
             // Create a new Document for adding content
             doc = new Document(pdfDoc)
-            File[] imageFiles = getImageFiles(imgFolder, imgType)
-            log.info "Processing: ${imgFolder.length()} images into pdf."
             for (int i = 0; i < imageFiles.length; i++) {
                 File file = imageFiles[i];
                 if (file.isFile()) {
@@ -56,13 +67,16 @@ class ImgToPdfUtil {
                     } catch (Exception e) {
                         println "Error converting image '${file.name}' to PDF: ${e.message}"
                         e.printStackTrace()
-                        return
+                     //   returnType.put("error", e.message)
+//                        return returnType
                     }
                 }
             }
         } catch (Exception e) {
             println "Error converting images to PDF: ${e.message}"
             e.printStackTrace()
+          //  returnType.put("error", e.message)
+  //          return returnType
         }
         finally {
             // Close the Document (important for iText 8)
@@ -70,6 +84,10 @@ class ImgToPdfUtil {
             // Close the PDF document (important for iText 8)
             pdfDoc?.close()
         }
+        int pageCount = PdfUtil.countPages(outputPdf)
+      //  returnType.put("pdfPageCount", pageCount)
+        //returnType.put("success", pageCount === imageFiles.length)
+    //    return returnType
     }
 
     static getExtraCondition(File file, String imgType) {
@@ -93,18 +111,17 @@ class ImgToPdfUtil {
         }
         return extraCondition
     }
-    static File[] getImageFiles(String imgFolder, String imgType) {
+    static File[] getImageFiles(String _imgFolder, String imgType) {
 
-        List<Map<String, Object>> filesWithCreationDate = []
-        File folder = new File(imgFolder)
+        File folder = new File(_imgFolder)
         if (!folder.exists()) {
-            log.error("Image folder does not exist: ${imgFolder}")
+            log.error("Image folder does not exist: ${_imgFolder}")
             return []
         }
         File[] imageFiles = folder.listFiles(
                 { file -> getExtraCondition(file, imgType) } as FileFilter)
         if (imageFiles.length == 0) {
-            log.error("No image files found in folder: ${imgFolder}")
+            log.error("No image files found in folder: ${_imgFolder}")
             return []
         }
         return imageFiles

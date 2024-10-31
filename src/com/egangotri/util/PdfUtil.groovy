@@ -1,8 +1,8 @@
-package com.egangotri.pdf
+package com.egangotri.util
 
-import groovy.util.logging.Log4j
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
 
-@Log4j
 class PdfUtil {
     static String NMM_PATH = "D:\\NMM\\"
     static String extractTiffFolderName(File pdfFolder){
@@ -20,5 +20,18 @@ class PdfUtil {
             return tiffFolderPath;
         }
         return null
+    }
+    static int countPages(String pdfPath) {
+        PdfDocument pdfDoc = null
+        try {
+            pdfDoc = new PdfDocument(new PdfReader(pdfPath))
+            return pdfDoc.getNumberOfPages()
+        } catch (Exception e) {
+            println "Error counting pages in PDF: ${e.message}"
+            e.printStackTrace()
+            return -1
+        } finally {
+            pdfDoc?.close()
+        }
     }
 }

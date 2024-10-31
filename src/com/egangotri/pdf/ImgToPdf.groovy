@@ -1,29 +1,48 @@
 package com.egangotri.pdf
 
+import com.egangotri.util.FolderUtil
 import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
+
+import java.nio.file.Path
 
 @Slf4j
 class ImgToPdf {
     static void main(String[] args) {
-        String imageFolder = args[0]
+        String folderName = args[0]
         String imgType = "ANY"
-        if(args.length > 1) {
+        if (args.length > 1) {
             imgType = args[1].trim();
         }
-        String folderName = new File(imageFolder).getName()
-        String outputPdfPath = createOutputPdfName(imageFolder)
-
-        if (!outputPdfPath) {
-            log.error("Unable to create a unique PDF file name.")
-            return
-        }
-
-        log.info("""Processing: folderName: ${folderName}
-                outputPdfPath: ${outputPdfPath}""")
         long startTime = System.currentTimeMillis()
-        ImgToPdfUtil.convertImagesToPdf(imageFolder, outputPdfPath,imgType)
+        log.info("Recieved folderName: ${folderName}")
+        List<Path> allFolders = FolderUtil.listAllSubfolders(folderName)
+        List<Map> allResults = []
+        // Print the results
+        for (Path folder : allFolders) {
+            File _file = folder.toFile()
+            String outputPdfPath = createOutputPdfName(_file.absolutePath)
+            if (!outputPdfPath) {
+                log.error("Unable to create a unique PDF file name while processing Folder ${_file.absolutePath}")
+                continue;
+            }
+
+            log.info("""Processing: _file: ${_file.absolutePath}
+                outputPdfPath: ${outputPdfPath}""")
+
+            def results = [:];
+            ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
+            results.forEach {
+                log.info("${it.key}: ${it.value}")
+            }
+            allResults << results
+        }
         long endTime = System.currentTimeMillis()
+        allResults.each { Map result ->
+            result.forEach {
+                log.info("${it.key}: ${it.value}")
+            }
+        }
         log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
     }
 
@@ -47,8 +66,6 @@ class ImgToPdf {
         }
         return outputPdfFile.getAbsolutePath()
     }
-
-
 }
 
 

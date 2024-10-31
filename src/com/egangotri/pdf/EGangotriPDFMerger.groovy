@@ -2,6 +2,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.GenericUtil
+import com.egangotri.util.PdfUtil
 import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
 
