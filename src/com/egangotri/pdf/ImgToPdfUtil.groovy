@@ -22,15 +22,17 @@ class ImgToPdfUtil {
             // Create a new Document for adding content
             doc = new Document(pdfDoc)
             // Iterate through all files in the directory
-            File imgFolderDir = new File(imgFolder)
+            File imgFolderDir = new File(imgFolder);
             File[] imageFiles = imgFolderDir.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File file, String name) {
-                    String mimeType = Files.probeContentType(file.toPath())
-                    log.info("mimeType: ${mimeType}")
-                    return (mimeType?.startsWith("image/") && getExtraCondition(file,imgType))
+                    return getExtraCondition(new File(file, name),imgType)
                 }
             });
+            if(imageFiles.length === 0) {
+                log.info "No image files found in the directory: ${imgFolder}. Quitting."
+                return
+            }
             for(int i = 0; i <  imageFiles.length; i++) {
                 File file = imageFiles[i];
                 if (file.isFile()) {
@@ -73,7 +75,7 @@ class ImgToPdfUtil {
         }
     }
     static getExtraCondition(File file,String imgType) {
-        Boolean extraCondition = true;
+        Boolean extraCondition = false;
         switch(imgType){
             case "PNG":
                 extraCondition = file.name.toLowerCase().endsWith("png");
@@ -85,9 +87,13 @@ class ImgToPdfUtil {
                 extraCondition = file.name.toLowerCase().endsWith("tiff") || file.name.toLowerCase().endsWith("tif");
                 break;
             default:
-                extraCondition = true;
+                extraCondition = List.of("jpg", "jpeg", "png", "tif", "tiff")
+                        .stream()
+                        .anyMatch(ext -> file.getName().toLowerCase().endsWith("." + ext));
+
                 break;
         }
+        log.info("extraCondition: ${extraCondition}, file: ${file.absolutePath} imgType: ${imgType}")
         return extraCondition
     }
 }
