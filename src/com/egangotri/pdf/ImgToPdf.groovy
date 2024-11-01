@@ -17,12 +17,29 @@ class ImgToPdf {
             imgType = args[1].trim();
         }
         long startTime = System.currentTimeMillis()
-        log.info("Recieved folderName: ${folderName}")
-        List<Path> allFolders = FolderUtil.listAllSubfolders(folderName)
+        try{
+            exec(folderName, imgType)
+        }
+        catch (Exception e){
+            log.error("ImgToPdfError while working with ${folderName} causing err:\n" +
+                    " ${e.getStackTrace()}")
+        }
+        long endTime = System.currentTimeMillis()
+        IMG_TO_PDF_RESULTS.each { Map<String, Object> result ->
+            result.each { key, value ->
+                println "${key}: ${value}"
+            }
+        }
+        log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
+    }
+
+    static void exec (String _folderName, String imgType = "ANY") {
+        log.info("Recieved folderName: ${_folderName}")
+        List<Path> allFolders = FolderUtil.listAllSubfolders(_folderName)
         log.info("""Img2Pdf for : ${allFolders.size()} in ${allFolders}
                 with ImgType: ${imgType} shall start now.""")
         Map<String, Object> firstRow = [:]
-        firstRow.put("Img2PdfRoot", "${folderName}")
+        firstRow.put("Img2PdfRoot", "${_folderName}")
         firstRow.put("SubFolderCount", allFolders.size())
         firstRow.put("imgType", imgType)
         IMG_TO_PDF_RESULTS << firstRow;
@@ -43,15 +60,8 @@ class ImgToPdf {
             GenericUtil.garbageCollectAndPrintMemUsageInfo()
             ImgToPdf.IMG_TO_PDF_RESULTS << resultMap
         }
-        long endTime = System.currentTimeMillis()
-        IMG_TO_PDF_RESULTS.each { Map<String, Object> result ->
-            result.each { key, value ->
-                println "${key}: ${value}"
-            }
-        }
-        log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
-    }
 
+    }
     static String createOutputPdfName(String imageFolder) {
         String folderName = new File(imageFolder).getName()
         String outputPdfPath = "${imageFolder}/${folderName}.pdf"
