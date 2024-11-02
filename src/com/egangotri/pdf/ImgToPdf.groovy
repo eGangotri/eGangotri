@@ -4,7 +4,6 @@ import com.egangotri.util.FolderUtil
 import com.egangotri.util.GenericUtil
 import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
-
 import java.nio.file.Path
 
 @Slf4j
@@ -17,45 +16,53 @@ class ImgToPdf {
             imgType = args[1].trim();
         }
         long startTime = System.currentTimeMillis()
-        try{
-            exec(folderName, imgType)
+        log.info("Recieved folderName: ${folderName}")
+        List<Path> allFolders = FolderUtil.listAllSubfolders(folderName)
+        try {
+            exec(allFolders, imgType)
         }
         catch (Exception e){
             log.error("ImgToPdfError while working with ${folderName} causing err:\n" +
-                    " ${e.getStackTrace()}")
+                    " ${e.getStackTrace()}");
         }
         long endTime = System.currentTimeMillis()
-        IMG_TO_PDF_RESULTS.each { Map<String, Object> result ->
-            result.each { key, value ->
-                println "${key}: ${value}"
-            }
-        }
+        decorateResults(folderName, allFolders, imgType)
         log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
     }
 
-    static void exec (String _folderName, String imgType = "ANY") {
-        log.info("Recieved folderName: ${_folderName}")
-        List<Path> allFolders = FolderUtil.listAllSubfolders(_folderName)
+    static void decorateResults(String folderName, List<Path> allFolders, String imgType){
+        List<Map<String, Object>> filteredResults =
+                ImgToPdf.IMG_TO_PDF_RESULTS.findAll { !it.containsKey("0Images") }
+        log.info("Img2Pdf Results: ${IMG_TO_PDF_RESULTS.size()} ")
+        Map<String, Object> latRow = [:]
+        latRow.put("Img2PdfRoot", "${folderName}")
+        latRow.put("imgType", imgType)
+        latRow.put("SubFolderCountTotal", allFolders.size())
+        latRow.put("EmptySubFolders", allFolders.size() - filteredResults.size())
+        latRow.put("NonEmptySubFolders", filteredResults.size())
+        int count = ImgToPdf.IMG_TO_PDF_RESULTS.findAll { it.get("imgPdfPgCountSame") == true }?.size();
+        latRow.put("CountImgPdfPgCountSame", count)
+        filteredResults << latRow;
+
+        filteredResults.eachWithIndex { row, i ->
+            log.info("${i + 1}). ${row}")
+        }
+    }
+    static void exec (List<Path> allFolders, String imgType = "ANY") {
         log.info("""Img2Pdf for : ${allFolders.size()} in ${allFolders}
                 with ImgType: ${imgType} shall start now.""")
-        Map<String, Object> firstRow = [:]
-        firstRow.put("Img2PdfRoot", "${_folderName}")
-        firstRow.put("SubFolderCount", allFolders.size())
-        firstRow.put("imgType", imgType)
-        IMG_TO_PDF_RESULTS << firstRow;
-
-        // Print the results
         for (Path folder : allFolders) {
             File _file = folder.toFile()
             String outputPdfPath = createOutputPdfName(_file.absolutePath)
             if (!outputPdfPath) {
                 log.error("Unable to create a unique PDF file name while processing Folder ${_file.absolutePath}")
+                Map<String, Object> _row = [:]
+                _row.put("outputPdfPathCreationError", "Cannot create ${_file.absolutePath}")
+                IMG_TO_PDF_RESULTS << _row
                 continue;
             }
-
             log.info("""Processing: _file: ${_file.absolutePath}
                 outputPdfPath: ${outputPdfPath}""")
-
             Map<String,Object> resultMap = ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
             GenericUtil.garbageCollectAndPrintMemUsageInfo()
             ImgToPdf.IMG_TO_PDF_RESULTS << resultMap

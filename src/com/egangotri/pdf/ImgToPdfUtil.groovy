@@ -13,12 +13,6 @@ import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.element.Image
 import groovy.util.logging.Slf4j
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.attribute.BasicFileAttributes
-import java.text.SimpleDateFormat
-
 @Slf4j
 class ImgToPdfUtil {
     static Map<String,Object> convertImagesToPdf(File imgFolder, String outputPdf, String imgType = "ANY") {
@@ -30,7 +24,7 @@ class ImgToPdfUtil {
         log.info "Processing: ${imageFiles.length} images into pdf."
         if (imageFiles.length == 0) {
             log.error "No images found in folder: ${imgFolder.absolutePath}"
-            resultsMap.put("success", false);
+            resultsMap.put("0Images", true);
             return resultsMap
         }
         // Create a new PDF document
@@ -73,7 +67,7 @@ class ImgToPdfUtil {
                         println "Error converting image '${file.name}' to PDF: ${e.message}"
                         e.printStackTrace()
                         resultsMap.put("error", e.message)
-                        resultsMap.put("success", false);
+                        resultsMap.put("imgPdfPgCountSame", false);
                         return resultsMap
                     }
                 }
@@ -82,7 +76,7 @@ class ImgToPdfUtil {
             println "Error converting images to PDF: ${e.message}"
             e.printStackTrace()
             resultsMap.put("error", e.message)
-            resultsMap.put("success", false);
+            resultsMap.put("imgPdfPgCountSame", false);
             return
         }
         finally {
@@ -93,7 +87,7 @@ class ImgToPdfUtil {
         }
         int pageCount = PdfUtil.countPages(outputPdf)
         resultsMap.put("pdfPageCount", pageCount as Integer)
-        resultsMap.put("success", (pageCount == imageFiles.length) as Boolean)
+        resultsMap.put("imgPdfPgCountSame", (pageCount == imageFiles.length) as Boolean)
         return resultsMap
     }
 
