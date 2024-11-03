@@ -127,7 +127,7 @@ class PdfMerge {
      * @param files array of input PDF files
      * @param finalPdf path to the final merged PDF
      */
-    static void doMerge(File[] files, String finalPdf) throws IOException {
+    static void doMerge1(File[] files, String finalPdf) throws IOException {
         log.info("doMerge ${files?.length} PDFs into ${finalPdf}")
         File outputFile = new File(finalPdf)
 
@@ -146,6 +146,7 @@ class PdfMerge {
                 merger.merge(sourcePdf, 1, sourcePdf.numberOfPages)
                 sourcePdf.close() // Close source PDF after merging
                 reader.close()
+                GenericUtil.garbageCollectAndPrintMemUsageInfo()
             }
         } catch (IOException e) {
             log.error("Error while merging PDFs: ${e.message}", e)
@@ -153,6 +154,42 @@ class PdfMerge {
             throw e
         } finally {
             pdfDoc.close() // Ensure the output document is closed
+            writer.close()
+        }
+    }
+    static void doMerge(File[] files, String finalPdf) throws IOException {
+        log.info("doMerge ${files?.length} PDFs into ${finalPdf}")
+        File outputFile = new File(finalPdf)
+
+        PdfWriter writer = new PdfWriter(outputFile)
+        PdfDocument pdfDoc = new PdfDocument(writer)
+        PdfMerger merger = new PdfMerger(pdfDoc)
+
+        try {
+            int batchSize = 5; // Adjust this based on your needs
+            for (int i = 0; i < files.length; i += batchSize) {
+                int end = Math.min(i + batchSize, files.length)
+                File[] batch = Arrays.copyOfRange(files, i, end)
+
+                for (File file : batch) {
+                    log.info("Reading ${file.name}")
+                    PdfReader reader = new PdfReader(new FileInputStream(file))
+                    PdfDocument sourcePdf = new PdfDocument(reader)
+
+                    log.info("Merging ${file.name} into ${finalPdf}")
+                    merger.merge(sourcePdf, 1, sourcePdf.numberOfPages)
+                    sourcePdf.close()
+                    reader.close()
+                    GenericUtil.garbageCollectAndPrintMemUsageInfo()
+                }
+                // Force garbage collection after processing each batch
+                System.gc()
+            }
+        } catch (IOException e) {
+            log.error("Error while merging PDFs: ${e.message}", e)
+            throw e
+        } finally {
+            pdfDoc.close()
             writer.close()
         }
     }
