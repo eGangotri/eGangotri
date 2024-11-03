@@ -172,13 +172,28 @@ task tallyPdf(dependsOn: 'classes', type: JavaExec) {
             "E:\\Oct-2019\\ramtek-2_tally"]
 }
 
-//merges small pdfs to large pdf
-task mergePdf(dependsOn: 'classes', type: JavaExec) {
+//merges small pdfs to large pdf. includes tallying of tiff files.
+task mergePdfWithTiffTally(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.EGangotriPDFMerger"
 //    //args = [tifFolder, pdfFolder ]
     //args = [pdfRootFolder, 'mega' ]
-    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
+    args = ["C:\\Users\\egangotri\\Documents\\test"]
+}
+//only merges pdfs
+task mergePdf(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.pdf.PdfMerge"
+      args = [
+    "C:\\Users\\egangotri\\Documents\\test\\sub Folder2, C:\\Users\\egangotri\\Documents\\test\\subFolder ",
+     "MERGE_ALL"]
+    /*
+        args = [
+    "C:\\Users\\egangotri\\Documents\\test\\sub Folder2, C:\\Users\\egangotri\\Documents\\test\\subFolder ",
+     "MERGE_PER_FOLDER"]
+     */
+    //args = ["C:\\Users\\egangotri\\Documents\\test" , "MERGE_PER_FOLDER"]
+    //args = ["C:\\Users\\egangotri\\Documents\\test" , "MERGE_ALL"]
 }
 
 task repairPDF(dependsOn: 'classes', type: JavaExec) {
