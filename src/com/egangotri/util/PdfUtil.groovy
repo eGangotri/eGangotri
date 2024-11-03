@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 
 class PdfUtil {
+    static PDF_RENAME_ATTEMPTS = 5
     static String NMM_PATH = "D:\\NMM\\"
     static String extractTiffFolderName(File pdfFolder){
         String[] _splitBy =  pdfFolder.name.split("_")
@@ -34,4 +35,26 @@ class PdfUtil {
             pdfDoc?.close()
         }
     }
+    static String createOutputPdfName(String dirAbsPath) {
+        String folderName = new File(dirAbsPath).getName()
+        String outputPdfPath = "${dirAbsPath}/${folderName}.pdf"
+        File outputPdfFile = new File(outputPdfPath)
+
+        def baseName = outputPdfFile.getName().replaceAll(/\.pdf$/, "")
+        def outputDir = outputPdfFile.getParent() ?: "."
+        def attempt = 0
+
+        while (outputPdfFile.exists() && attempt < PdfUtil.PDF_RENAME_ATTEMPTS) {
+            attempt++
+            outputPdfFile = new File("${outputDir}/${baseName}_${attempt}.pdf")
+        }
+
+        if (outputPdfFile.exists()) {
+            println "Failed to create a unique file name for output PDF after 5 attempts."
+            return ""
+        }
+        return outputPdfFile.getAbsolutePath()
+    }
 }
+
+

@@ -1,6 +1,6 @@
 //package com.egangotri.pdf
 //
-//import com.itextpdf.kernel.utils.PdfMerger
+//
 //import com.itextpdf.text.Document
 //import com.itextpdf.text.DocumentException
 //import com.itextpdf.text.pdf.PdfCopy
@@ -8,7 +8,7 @@
 //import groovy.util.logging.Slf4j
 //
 //@Slf4j
-//class PdfMergeCoreLogicIText5 {
+//class PdfMergeCoreLogicIText5Old {
 //
 //    /**
 //     * Merge multiple pdf into one pdf

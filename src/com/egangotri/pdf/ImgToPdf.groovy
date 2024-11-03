@@ -2,6 +2,7 @@ package com.egangotri.pdf
 
 import com.egangotri.util.FolderUtil
 import com.egangotri.util.GenericUtil
+import com.egangotri.util.PdfUtil
 import com.egangotri.util.TimeUtil
 import groovy.util.logging.Slf4j
 import java.nio.file.Path
@@ -53,7 +54,7 @@ class ImgToPdf {
                 with ImgType: ${imgType} shall start now.""")
         for (Path folder : allFolders) {
             File _file = folder.toFile()
-            String outputPdfPath = createOutputPdfName(_file.absolutePath)
+            String outputPdfPath = PdfUtil.createOutputPdfName(_file.absolutePath)
             if (!outputPdfPath) {
                 log.error("Unable to create a unique PDF file name while processing Folder ${_file.absolutePath}")
                 Map<String, Object> _row = [:]
@@ -69,26 +70,7 @@ class ImgToPdf {
         }
 
     }
-    static String createOutputPdfName(String imageFolder) {
-        String folderName = new File(imageFolder).getName()
-        String outputPdfPath = "${imageFolder}/${folderName}.pdf"
-        File outputPdfFile = new File(outputPdfPath)
 
-        def baseName = outputPdfFile.getName().replaceAll(/\.pdf$/, "")
-        def outputDir = outputPdfFile.getParent() ?: "."
-        def attempt = 0
-
-        while (outputPdfFile.exists() && attempt < 5) {
-            attempt++
-            outputPdfFile = new File("${outputDir}/${baseName}_${attempt}.pdf")
-        }
-
-        if (outputPdfFile.exists()) {
-            println "Failed to create a unique file name for output PDF after 5 attempts."
-            return ""
-        }
-        return outputPdfFile.getAbsolutePath()
-    }
 }
 
 

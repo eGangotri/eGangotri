@@ -93,7 +93,7 @@ class Tally {
         int tifDirFilesSize = tifDirFiles?.size()?:0
         if(tifDirFilesSize){
             boolean TALLY_RUN_SUCCESS = (tifDirFilesSize == (tallyPojo.MATCHING?.size() ?:0))
-            String successMsg = TALLY_RUN_SUCCESS?"100% Success (${tifDirFilesSize} === ${tallyPojo.MATCHING.size()})":
+            String successMsg = TALLY_RUN_SUCCESS?"100% Success (${tifDirFilesSize} == ${tallyPojo.MATCHING.size()})":
                     "Failure of: ${tifDirFilesSize - tallyPojo.MATCHING.size()} Item(s)"
             String finalReport = """Stats:
                     Pdf Folder: ${pdfFolder}
@@ -118,7 +118,7 @@ class Tally {
                             ${GenericUtil.dualEllipsis(tifSubDirectory.name)} equals 
                             ${GenericUtil.dualEllipsis(pdfFile.name)} 
                             ${pdfPageCount}""");
-        if (pdfPageCount === tifCount) {
+        if (pdfPageCount == tifCount) {
             tallyPojo.MATCHING.push("'${pdfFile}");
             GenericUtil.addReport("""pdf (${pdfPageCount}) 
     ${pdfFile.name} 
@@ -147,7 +147,7 @@ class Tally {
     }
 
     static void printMEGA_TALLY_OBJECT(){
-        MEGA_TALLY_OBJECT.each({ TallyPojo tp ->{
+        MEGA_TALLY_OBJECT?.each({ TallyPojo tp ->{
             if(tp.ERROR_MARGIN !=0 ){
                 log.info("Tally Error Detected*** ${tp.TIF_FOLDER} has ErrorMargin ${tp.ERROR_MARGIN}")
             }

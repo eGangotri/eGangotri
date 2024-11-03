@@ -1,17 +1,13 @@
 package com.egangotri.util
 
-    import java.nio.file.Files
     import java.nio.file.Path
     import java.nio.file.Paths
-    import java.nio.file.DirectoryStream
     import java.nio.file.SimpleFileVisitor
     import java.nio.file.FileVisitResult
     import java.nio.file.Files
     import java.nio.file.attribute.BasicFileAttributes
     import java.nio.file.FileVisitOption
 
-    import java.util.EnumSet
-    import java.util.List
 class FolderUtil {
 
     static class FolderLister extends SimpleFileVisitor<Path> {
@@ -34,6 +30,14 @@ class FolderUtil {
         return folderLister.folders
     }
 
-
-
+    static List<Path> listAllSubFoldersinCSV(String folderName) {
+        List<String> _folders = []
+        if (folderName.contains(",")) {
+            _folders = folderName.split(",") as List<String>
+        } else {
+            _folders = [folderName]
+        }
+        Set<Path> allFolders = _folders.collectMany { listAllSubfolders(it.trim()) } as Set<Path>;
+        return allFolders.toList()
+    }
 }

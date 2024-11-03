@@ -214,7 +214,7 @@ class FileUtil {
         }
         deletables << zipFile
         deletables.each { deletableFile ->
-            if ((deletableFile.isDirectory() && deletableFile.list().size() === 0)) {
+            if ((deletableFile.isDirectory() && deletableFile.list().size() == 0)) {
                 log.info("Deleting File: ${deletableFile.absolutePath} (${deletableFile.delete() ? '' : 'Un'}Successful)")
             }
             //File.delete() doesnt work so have to use this

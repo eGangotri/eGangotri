@@ -22,7 +22,7 @@ class LoginToArchive {
                 String[] range = args0[1].split("=")
                 String[] rangeSplitWithDash = range[1].split("-")
                 def _range = rangeSplitWithDash[0].toInteger()..rangeSplitWithDash[1].toInteger()
-                List emails = _range.collect({ emailTemplate[1] + (it === 1 ?"":it) + "@gmail.com" })
+                List emails = _range.collect({ emailTemplate[1] + (it == 1 ?"":it) + "@gmail.com" })
                 List genProfiles = _range.collect({ "GENPRFL" + it })
                 for(int i = 0; i < emails.size(); i++) {
                     archiveLoginsMetaDataMap.put(genProfiles[i], emails[i])
