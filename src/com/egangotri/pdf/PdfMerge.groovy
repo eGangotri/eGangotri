@@ -18,6 +18,7 @@ class PdfMerge {
         MERGE_ALL,
         MERGE_PER_FOLDER
     }
+    static List<Map<String,Object>> PDF_MERGE_RESULTS = []
 
     static void main(String[] args) {
         String folderName = args[0]
@@ -34,13 +35,27 @@ class PdfMerge {
             mergePerFolder(folderName)
         }
         long endTime = System.currentTimeMillis()
-        //decorateResults(folderName, allFolders, imgType)
+        decorateResults(folderName,mergeType)
         log.info("Time taken to convert images to pdf: ${TimeUtil.formatTime(endTime - startTime)}")
 
+    }
+    static void decorateResults(String folderName, String mergeType){
+        log.info("PDF_MERGE_RESULTS: ${PDF_MERGE_RESULTS.size()} ")
+        Map<String, Object> _row = [:]
+        _row.put("PdfMergeResultRootFolder", "${folderName}")
+        _row.put("mergeType", mergeType)
+        PDF_MERGE_RESULTS << _row;
+
+        PDF_MERGE_RESULTS.eachWithIndex { row, i ->
+            log.info("${i + 1}). ${row}")
+        }
     }
 
     static void mergeAll(String folderName) {
         Set<Path> allFolders = FolderUtil.listAllSubFoldersinCSV(folderName)
+        Map<String, Object> _row = [:]
+        _row.put("folderName", folderName)
+        _row.put("allFoldersCount", allFolders.size())
         try {
             List<File> allPdfs = []
             allFolders.each { folder ->
@@ -50,45 +65,59 @@ class PdfMerge {
             }
             if (allPdfs.size() > 1) {
                 String finalPdf = PdfUtil.createOutputPdfName(allFolders[0].toString())
+                _row.put("finalPdf", finalPdf)
+                _row.put("pdfsCount", allPdfs.size())
                 try {
                     doMerge(allPdfs as File[], finalPdf)
                 } catch (Exception e) {
                     e.printStackTrace()
+                    _row.put("mergeError", e.message)
                     log.error("MergePdfError while working with ${allPdfs?.size()} pdfs causing err:", e );
                 }
             } else {
                 log.info("Only one PDF found in ${folderName}")
+                _row.put("1PdfOnly", true)
             }
         } catch (Exception e) {
-            log.error("ImgToPdfError while working with ${folderName} causing err:\n" +
-                    " ${e.getStackTrace()}");
+            log.error("MergePdfError while working with ${folderName} causing err:", e)
+            _row.put("mergeError", e.message)
         }
+        PDF_MERGE_RESULTS << _row
     }
 
     static void mergePerFolder(String folderName) {
         Set<Path> allFolders = FolderUtil.listAllSubFoldersinCSV(folderName)
+        Map<String, Object> _row = [:]
+        _row.put("folderName", folderName)
         try {
             allFolders.each { folder ->
                 log.info("mergePerFolder: ${folder}")
                 File[] allPdfs = GenericUtil.getPdfsSortedByName(folder.toFile())
                 if (allPdfs.length > 1) {
                     String finalPdf = PdfUtil.createOutputPdfName(folder.toString())
+                    _row.put("finalPdf", finalPdf)
+                    _row.put("pdfsCount", allPdfs.length)
                     try {
                         doMerge(allPdfs, finalPdf)
                     }
                     catch (Exception e) {
-                        log.error("ImgToPdfError while working with ${folder} causing err:\n" +
-                                " ${e.getStackTrace()}");
+                        log.error("MergePdfError while working with ${folder} causing err",e);
+                        e.printStackTrace()
+                        _row.put("mergeError", e.message)
                     }
                 } else {
                     log.info("Only one PDF found in ${folder}")
+                    _row.put("1PdfOnly", true)
                 }
             }
         }
         catch (Exception e) {
-            log.error("ImgToPdfError while working with ${folderName} causing err:\n" +
-                    " ${e.getStackTrace()}");
+            e.printStackTrace()
+            log.error("MergePdfError while working with ${folderName} causing err:",e
+                    );
+            _row.put("mergeError", e.message)
         }
+        PDF_MERGE_RESULTS << _row
     }
 
 
