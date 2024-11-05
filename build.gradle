@@ -185,7 +185,7 @@ task mergePdf(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.PdfMerge"
       args = [
-    "C:\\Users\\egangotri\\Documents\\test\\sub Folder2, C:\\Users\\egangotri\\Documents\\test\\subFolder ",
+    "D:\\_playground\\_common\\Lucknow-2\\unzipped\\26 Oct (2) Manuscripts\\26 Oct (2) Manuscripts",
      "MERGE_ALL"]
     /*
         args = [
@@ -194,6 +194,7 @@ task mergePdf(dependsOn: 'classes', type: JavaExec) {
      */
     //args = ["C:\\Users\\egangotri\\Documents\\test" , "MERGE_PER_FOLDER"]
     //args = ["C:\\Users\\egangotri\\Documents\\test" , "MERGE_ALL"]
+    jvmArgs = ['-Xmx13G']
 }
 
 task repairPDF(dependsOn: 'classes', type: JavaExec) {
