@@ -44,6 +44,9 @@ class ImgToPdf {
         int count = ImgToPdf.IMG_TO_PDF_RESULTS.findAll { it.get("imgPdfPgCountSame") == true }?.size();
         latRow.put("CountImgPdfPgCountSame", count)
         latRow.put("IMG_TO_PDF_SUCCESS", filteredResults.size() == count)
+        if(filteredResults.size() != count){
+            latRow.put("SHORT_BY", "${filteredResults.size() - count} of ${filteredResults.size()}")
+        }
         filteredResults << latRow;
 
         filteredResults.eachWithIndex { row, i ->

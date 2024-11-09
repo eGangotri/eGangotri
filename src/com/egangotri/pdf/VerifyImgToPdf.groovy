@@ -46,6 +46,9 @@ class VerifyImgToPdf {
         int count = VerifyImgToPdf.VERIFY_IMG_TO_PDF_RESULTS.findAll { it.get("imgPdfPgCountSame") == true }?.size();
         latRow.put("CountImgPdfPgCountSame", count)
         latRow.put("VERIFICATION_SUCCESS", filteredResults.size() == count)
+        if(filteredResults.size() != count){
+            latRow.put("SHORT_BY", "${filteredResults.size() - count} of ${filteredResults.size()}")
+        }
         filteredResults << latRow;
 
         filteredResults.eachWithIndex { row, i ->
