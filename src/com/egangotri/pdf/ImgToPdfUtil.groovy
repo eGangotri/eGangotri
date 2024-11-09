@@ -16,6 +16,10 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class ImgToPdfUtil {
     static String IMG_TYPE_ANY = "ANY";
+    static String IMG_TYPE_JPG = "JPG";
+    static String IMG_TYPE_PNG = "PNG";
+    static String IMG_TYPE_TIF = "TIF";
+
     static Map<String,Object> convertImagesToPdf(File imgFolder, String outputPdf, String imgType = IMG_TYPE_ANY) {
         Map<String,Object> resultsMap = [:]
         resultsMap.put("imgFolder", imgFolder.absolutePath)
@@ -95,13 +99,13 @@ class ImgToPdfUtil {
     static getExtraCondition(File file, String imgType) {
         Boolean extraCondition = false;
         switch (imgType) {
-            case "PNG":
+            case IMG_TYPE_PNG:
                 extraCondition = file.name.toLowerCase().endsWith("png");
                 break;
-            case "JPG":
+            case IMG_TYPE_JPG:
                 extraCondition = file.name.toLowerCase().endsWith("jpg") || file.name.toLowerCase().endsWith("jpeg");
                 break;
-            case "TIF":
+            case IMG_TYPE_TIF:
                 extraCondition = file.name.toLowerCase().endsWith("tiff") || file.name.toLowerCase().endsWith("tif");
                 break;
             default:
