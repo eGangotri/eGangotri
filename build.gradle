@@ -118,7 +118,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
 //            "afterHour=0",
 //            "pdfsOnly=true"
 //    ]
-    args = ["paths='C:\\Users\\egangotri\\Documents\\test'", 'pdfsOnly=false' ]
+    args = ["paths='C:\\Users\\chetan\\Documents\\test'", 'pdfsOnly=false' ]
     //args = [ "paths=D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["paths=E:\\eG-tr1-30\\Treasures30"]
 }
@@ -128,9 +128,25 @@ task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     mainClass = "com.egangotri.pdf.ImgToPdf"
 //    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
    // args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "ANY"]
-    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]
+    args = ["C:\\Users\\chetan\\Documents\\test", "ANY"]
   //  args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"] //last optional
   //  args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
+//    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]
+//    args = ["C:\\Users\\egangotri\\Documents\\test", "PNG"]
+    //if this is removed than large PDfs wont work
+    jvmArgs = ['-Xmx13G']
+
+}
+
+
+task verifyImgToPdfSuccess(dependsOn: 'classes', type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = "com.egangotri.pdf.VerifyImgToPdf"
+//    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
+    // args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "ANY"]
+    args = ["C:\\Users\\chetan\\Documents\\test", "JPG"]
+    //  args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"] //last optional
+    //  args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "PNG"]
     //if this is removed than large PDfs wont work

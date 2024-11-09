@@ -15,7 +15,8 @@ import groovy.util.logging.Slf4j
 
 @Slf4j
 class ImgToPdfUtil {
-    static Map<String,Object> convertImagesToPdf(File imgFolder, String outputPdf, String imgType = "ANY") {
+    static String IMG_TYPE_ANY = "ANY";
+    static Map<String,Object> convertImagesToPdf(File imgFolder, String outputPdf, String imgType = IMG_TYPE_ANY) {
         Map<String,Object> resultsMap = [:]
         resultsMap.put("imgFolder", imgFolder.absolutePath)
         resultsMap.put("outputPdf", outputPdf)

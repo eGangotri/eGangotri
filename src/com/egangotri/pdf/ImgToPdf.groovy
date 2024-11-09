@@ -12,7 +12,7 @@ class ImgToPdf {
     static List<Map<String,Object>> IMG_TO_PDF_RESULTS = []
     static void main(String[] args) {
         String folderName = args[0]
-        String imgType = "ANY"
+        String imgType = ImgToPdfUtil.IMG_TYPE_ANY
         if (args.length > 1) {
             imgType = args[1].trim();
         }
@@ -43,30 +43,41 @@ class ImgToPdf {
         latRow.put("NonEmptySubFolders", filteredResults.size())
         int count = ImgToPdf.IMG_TO_PDF_RESULTS.findAll { it.get("imgPdfPgCountSame") == true }?.size();
         latRow.put("CountImgPdfPgCountSame", count)
+        latRow.put("IMG_TO_PDF_SUCCESS", filteredResults.size() == count)
         filteredResults << latRow;
 
         filteredResults.eachWithIndex { row, i ->
             log.info("${i + 1}). ${row}")
         }
     }
-    static void exec (List<Path> allFolders, String imgType = "ANY") {
+    static void exec (List<Path> allFolders, String imgType = ImgToPdfUtil.IMG_TYPE_ANY) {
         log.info("""Img2Pdf for : ${allFolders.size()} in ${allFolders}
                 with ImgType: ${imgType} shall start now.""")
         for (Path folder : allFolders) {
-            File _file = folder.toFile()
-            String outputPdfPath = PdfUtil.createOutputPdfName(_file.absolutePath)
-            if (!outputPdfPath) {
-                log.error("Unable to create a unique PDF file name while processing Folder ${_file.absolutePath}")
-                Map<String, Object> _row = [:]
-                _row.put("outputPdfPathCreationError", "Cannot create ${_file.absolutePath}")
-                IMG_TO_PDF_RESULTS << _row
-                continue;
-            }
-            log.info("""Processing: _file: ${_file.absolutePath}
+            try{
+                File _file = folder.toFile()
+                String outputPdfPath = PdfUtil.createOutputPdfName(_file.absolutePath)
+                if (!outputPdfPath) {
+                    log.error("Unable to create a unique PDF file name while processing Folder ${_file.absolutePath}")
+                    Map<String, Object> _row = [:]
+                    _row.put("outputPdfPathCreationError", "Cannot create ${_file.absolutePath}")
+                    IMG_TO_PDF_RESULTS << _row
+                    continue;
+                }
+                log.info("""Processing: _file: ${_file.absolutePath}
                 outputPdfPath: ${outputPdfPath}""")
-            Map<String,Object> resultMap = ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
-            GenericUtil.garbageCollectAndPrintMemUsageInfo()
-            ImgToPdf.IMG_TO_PDF_RESULTS << resultMap
+                Map<String,Object> resultMap = ImgToPdfUtil.convertImagesToPdf(_file, outputPdfPath, imgType)
+                GenericUtil.garbageCollectAndPrintMemUsageInfo()
+                ImgToPdf.IMG_TO_PDF_RESULTS << resultMap
+            }
+            catch (Exception e){
+                Map<String, Object> _row = [:]
+                _row.put("ImgToPdfError", "Conversion Error ${folder.toString()}")
+                IMG_TO_PDF_RESULTS << _row
+                e.printStackTrace()
+                log.error("ImgToPdfError while working with ${folder} causing err:\n" +
+                        " ${e.getStackTrace()}");
+            }
         }
 
     }

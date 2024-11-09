@@ -23,22 +23,24 @@ class PdfUtil {
         return null
     }
     static int countPages(String pdfPath) {
-        PdfDocument pdfDoc = null
-        try {
-            pdfDoc = new PdfDocument(new PdfReader(pdfPath))
+        try (PdfReader reader = new PdfReader(pdfPath);
+             PdfDocument pdfDoc = new PdfDocument(reader)) {
             return pdfDoc.getNumberOfPages()
         } catch (Exception e) {
             println "Error counting pages in PDF: ${e.message}"
             e.printStackTrace()
             return -1
-        } finally {
-            pdfDoc?.close()
         }
     }
-    static String createOutputPdfName(String dirAbsPath) {
+
+    static File outputPdfFilePerFormat(String dirAbsPath){
         String folderName = new File(dirAbsPath).getName()
         String outputPdfPath = "${dirAbsPath}/${folderName}.pdf"
         File outputPdfFile = new File(outputPdfPath)
+        return outputPdfFile;
+    }
+    static String createOutputPdfName(String dirAbsPath) {
+        File outputPdfFile = outputPdfFilePerFormat(dirAbsPath)
 
         def baseName = outputPdfFile.getName().replaceAll(/\.pdf$/, "")
         def outputDir = outputPdfFile.getParent() ?: "."
