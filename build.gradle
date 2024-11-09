@@ -128,7 +128,7 @@ task imgToPdf(dependsOn: 'classes', type: JavaExec) {
     mainClass = "com.egangotri.pdf.ImgToPdf"
 //    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
    // args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "ANY"]
-    args = ["C:\\Users\\chetan\\Documents\\test", "ANY"]
+    args = ["C:\\Users\\chetan\\Documents\\test", "JPG"]
   //  args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"] //last optional
   //  args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]
@@ -144,7 +144,7 @@ task verifyImgToPdfSuccess(dependsOn: 'classes', type: JavaExec) {
     mainClass = "com.egangotri.pdf.VerifyImgToPdf"
 //    args = ["D:\\_playground\\_common\\LuckMus-Phase-1\\10 Sep (2) Manuscripts Zip\\unzipped\\Ramayan (965 Pages)\\Ramayan (965 Pages)"]
     // args = ["D:\\_playground\\_common\\LuckMus-Phase-1", "ANY"]
-    args = ["C:\\Users\\chetan\\Documents\\test", "ANY"]
+    args = ["C:\\Users\\chetan\\Documents\\test", "JPG"]
     //  args = ["C:\\Users\\egangotri\\Documents\\test", "ANY"] //last optional
     //  args = ["C:\\Users\\egangotri\\Documents\\test", "TIF"]
 //    args = ["C:\\Users\\egangotri\\Documents\\test", "JPG"]

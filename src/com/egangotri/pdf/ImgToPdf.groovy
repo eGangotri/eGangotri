@@ -43,7 +43,7 @@ class ImgToPdf {
         latRow.put("NonEmptySubFolders", filteredResults.size())
         int count = ImgToPdf.IMG_TO_PDF_RESULTS.findAll { it.get("imgPdfPgCountSame") == true }?.size();
         latRow.put("CountImgPdfPgCountSame", count)
-        latRow.put("IMG_TO_PDF_SUCCESS", filteredResults.size() == count)
+        latRow.put("IMG_TO_PDF_SUCCESS", "${filteredResults.size() == count}(${count} of ${filteredResults.size()})")
         if(filteredResults.size() != count){
             latRow.put("SHORT_BY", "${filteredResults.size() - count} of ${filteredResults.size()}")
         }
