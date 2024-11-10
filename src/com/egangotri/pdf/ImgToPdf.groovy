@@ -33,7 +33,7 @@ class ImgToPdf {
 
     static void decorateResults(String folderName, List<Path> allFolders, String imgType){
         List<Map<String, Object>> filteredResults =
-                ImgToPdf.IMG_TO_PDF_RESULTS.findAll { !it.containsKey("0Images") }
+                ImgToPdf.IMG_TO_PDF_RESULTS.findAll { !it.containsKey("0Images") || !it["0Images"]}
         log.info("Img2Pdf Results: ${IMG_TO_PDF_RESULTS.size()} ")
         Map<String, Object> latRow = [:]
         latRow.put("Img2PdfRoot", "${folderName}")

@@ -35,7 +35,9 @@ class VerifyImgToPdf {
 
     static void decorateResults(String folderName, List<Path> allFolders, String imgType) {
         List<Map<String, Object>> filteredResults =
-                VerifyImgToPdf.VERIFY_IMG_TO_PDF_RESULTS.findAll { !it.containsKey("0Images") }
+                VerifyImgToPdf.VERIFY_IMG_TO_PDF_RESULTS.findAll { !it.containsKey("0Images") || !it["0Images"] }
+
+
         log.info("Img2Pdf Results: ${VERIFY_IMG_TO_PDF_RESULTS.size()} ")
         Map<String, Object> latRow = [:]
         latRow.put("Img2PdfRoot", "${folderName}")
@@ -82,11 +84,20 @@ class VerifyImgToPdf {
                 with ImgType: ${imgType} shall start now.""")
         for (Path folder : allFolders) {
             File _file = folder.toFile()
+            Map<String, Object> _row = [:]
+            File[] imageFiles = ImgToPdfUtil.getImageFiles(_file.absolutePath, imgType)
+            _row.put("imgCount", imageFiles.length as Integer)
+            if (imageFiles.length == 0) {
+                _row.put("0Images", true)
+                VERIFY_IMG_TO_PDF_RESULTS << _row
+                continue;
+            }
+
             File outputPdfPath = PdfUtil.outputPdfFilePerFormat(_file.absolutePath)
             if (!outputPdfPath) {
                 log.error("Couldnt find pdf in ${_file.absolutePath}")
-                Map<String, Object> _row = [:]
-                _row.put("NoPDFInFolder", "Cannot create ${_file.absolutePath}")
+                Map<String, Object> _row2 = [:]
+                _row2.put("NoPDFInFolder", "Cannot create ${_file.absolutePath}")
                 VERIFY_IMG_TO_PDF_RESULTS << _row
                 continue;
             }
