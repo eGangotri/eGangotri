@@ -1,6 +1,7 @@
 package com.egangotri.pdf
 
 import com.egangotri.util.FileSizeUtil
+import com.egangotri.util.PdfUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import groovy.util.logging.Slf4j
@@ -96,7 +97,7 @@ class BookTitles {
             log.info("all ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}");
         }
         calculateAfterDate()
-        TOTAL_FILES = calculateTotalFileCount()
+        TOTAL_FILES = PdfUtil.calculateTotalFileCount(ONLY_PDFS, FOLDER_NAMES)
         addToReportAndPrint("Reading files: $FOLDER_NAMES\n",false)
         for (String folder : FOLDER_NAMES) {
             //if only the directory specified
@@ -341,17 +342,6 @@ class BookTitles {
         TOTAL_FILE_SIZE += fileSizeinKB
     }
 
-    static int calculateTotalFileCount() {
-        if (ONLY_PDFS) {
-            int pdfCount = 0
-            for (String folder : FOLDER_NAMES) {
-                File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
-                pdfCount += files?.length
-            }
-            return pdfCount
-        }
-        return FileSizeUtil.getCumulativeFileCount(FOLDER_NAMES)
-    }
 
     static String generateStats(String delimiter = " ") {
         String totalStats = """

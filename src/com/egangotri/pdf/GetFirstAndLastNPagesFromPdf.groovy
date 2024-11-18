@@ -1,70 +1,77 @@
-package com.egangotri.pdf;
+package com.egangotri.pdf
 
+import com.egangotri.util.PdfUtil;
 import com.itextpdf.kernel.pdf.*;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.utils.PdfSplitter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.io.image.ImageDataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Extracts the first and last N pages of PDFs in a folder and subfolders.
  */
-public class GetFirstAndLastNPagesFromPdf {
+class GetFirstAndLastNPagesFromPdf {
     private static final Logger log = LoggerFactory.getLogger(GetFirstAndLastNPagesFromPdf.class);
 
     private static File MAIN_FOLDER = new File("C:\\Users\\chetan\\Documents\\_testPDF");
-    private static final String OUTPUT_FOLDER_NAME = "_output";
+    static File OUTPUT_FOLDER = new File("C:\\Users\\chetan\\Documents\\_output")
     private static final String PDF_EXTENSION = ".pdf";
-    private static final String TRUNCATION_SUFFIX_FOLDER = "_truncated";
 
-    private static int PAGE_LIMIT_FIRST_PART = 10;
-    private static int PAGE_LIMIT_LAST_PART = 10;
+    static int PAGE_LIMIT_FIRST_PART = 10;
+    static int PAGE_LIMIT_LAST_PART = 10;
     private static boolean ONLY_PDFS = true;
-
-    public static void main(String[] args) {
+    static PDF_EXTRACTOR_STATS = [
+            "PDF_PAGE_EXTRACT_FOLDER_INDEX": 0,
+            "PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT": 1,
+        "PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT": 0,
+        "PDF_PAGE_EXTRACT_COUNTER": 0
+    ]
+    static String PDF_EXTRACTOR_REPORT = ""
+    static void main(String[] args) {
         execute(args);
     }
 
-    public static void execute(String[] args) {
-        if (args.length >= 1) {
-            MAIN_FOLDER = new File(args[0]);
-        }
+    static String execute(String[] args) {
         if (args.length >= 2) {
-            PAGE_LIMIT_FIRST_PART = Integer.parseInt(args[1]);
+            MAIN_FOLDER = new File(args[0]);
+            OUTPUT_FOLDER = new File(args[1]);
         }
-        if (args.length == 3) {
-            PAGE_LIMIT_LAST_PART = Integer.parseInt(args[2]);
+        if (args.length >= 3) {
+            PAGE_LIMIT_FIRST_PART = Integer.parseInt(args[2]);
+        }
+        if (args.length == 4) {
+            PAGE_LIMIT_LAST_PART = Integer.parseInt(args[3]);
         }
         if(MAIN_FOLDER.isFile()){
-            log.error("Please provide a folder path, not a file path.(${MAIN_FOLDER.getAbsolutePath()})");
+            log.error("Please provide a folder path for Src, not a file path.(${MAIN_FOLDER.getAbsolutePath()})");
             return;
         }
-        String outputFolderPath = MAIN_FOLDER.getAbsolutePath() + TRUNCATION_SUFFIX_FOLDER;
-        File outputFolder = new File(outputFolderPath);
+        if(OUTPUT_FOLDER.isFile()){
+            log.error("Please provide a folder path for Dest, not a file path.(${OUTPUT_FOLDER.getAbsolutePath()})");
+            return;
+        }
+        String outputFolderPath = MAIN_FOLDER.name
+        File outputFolder = new File(OUTPUT_FOLDER.absolutePath, outputFolderPath);
         if (!outputFolder.exists()) {
             outputFolder.mkdir();
         }
-        log.info("Created output folder: {}", outputFolder.getAbsolutePath());
-
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_INDEX++
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT = PdfUtil.calculateTotalFileCount(true, [MAIN_FOLDER.absolutePath])
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER=0
         processDirectory(MAIN_FOLDER, outputFolder);
+
+        PDF_EXTRACTOR_REPORT = "FINAL_REPORT(extractPages):\n" +
+                "Folder # (${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_INDEX}/${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT}).\n" +
+                "PDF Count ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER} == PDF_PROCESSING_COUNTER ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT} Match ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER == PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT}"
+        log.info(PDF_EXTRACTOR_REPORT)
+        return PDF_EXTRACTOR_REPORT
     }
 
-    private static void processDirectory(File directory, File outputFolder) {
-        log.info("Processing directory: {}", directory.getAbsolutePath());
-
+    static void processDirectory(File directory, File outputFolder) {
+        log.info("Processing directory: ${directory.getAbsolutePath()} --> ${outputFolder.getAbsolutePath()}");
         for (File file : directory.listFiles()) {
             if (file.isDirectory()) {
                 // Recursively process subdirectories
                 processDirectory(file, new File(outputFolder, file.getName()));
-            } else if (file.getName().endsWith(PDF_EXTENSION) && (!ONLY_PDFS || file.getName().endsWith(PDF_EXTENSION))) {
+            } else if (file.getName().toLowerCase().endsWith(PDF_EXTENSION) && (!ONLY_PDFS || file.getName().toLowerCase().endsWith(PDF_EXTENSION))) {
                 try {
                     File outputFile = new File(outputFolder, file.getName());
                     outputFolder.mkdirs();
@@ -78,7 +85,11 @@ public class GetFirstAndLastNPagesFromPdf {
     }
 
     private static void extractFirstAndLastPages(File inputFile, File outputFile) throws IOException {
-        log.info("Extracting first {} and last {} pages from file: {}", PAGE_LIMIT_FIRST_PART, PAGE_LIMIT_LAST_PART, inputFile.getAbsolutePath());
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER++
+
+        String folderStats = "Folder ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_INDEX} of ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT}"
+        String fileStats = "( pdf # ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER} of ${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT})"
+        log.info("(${folderStats} of ${fileStats}). Extracting first {} and last {} pages from file: {}", PAGE_LIMIT_FIRST_PART, PAGE_LIMIT_LAST_PART, inputFile.getAbsolutePath());
         try (PdfReader reader = new PdfReader(inputFile.getAbsolutePath());
              PdfWriter writer = new PdfWriter(new FileOutputStream(outputFile));
              PdfDocument sourcePdf = new PdfDocument(reader);

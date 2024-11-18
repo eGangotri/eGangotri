@@ -57,6 +57,18 @@ class PdfUtil {
         }
         return outputPdfFile.getAbsolutePath()
     }
+
+    static int calculateTotalFileCount(boolean onlyPdfs = false, List<String> folderNames) {
+        if (onlyPdfs) {
+            int pdfCount = 0
+            for (String folder : folderNames) {
+                File[] files = FileSizeUtil.allPdfsInDirAsFileList(folder)
+                pdfCount += files?.length
+            }
+            return pdfCount
+        }
+        return FileSizeUtil.getCumulativeFileCount(folderNames)
+    }
 }
 
 
