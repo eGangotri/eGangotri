@@ -48,14 +48,16 @@ class GetFirstAndLastNPagesFromPdf {
             log.error("Please provide a folder path for Dest, not a file path.(${OUTPUT_FOLDER.getAbsolutePath()})");
             return;
         }
-        String outputFolderPath = MAIN_FOLDER.name
+
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_INDEX++
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT = PdfUtil.calculateTotalFileCount(true, [MAIN_FOLDER.absolutePath])
+        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER=0;
+
+        String outputFolderPath = "${MAIN_FOLDER.name} (${PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT})";
         File outputFolder = new File(OUTPUT_FOLDER.absolutePath, outputFolderPath);
         if (!outputFolder.exists()) {
             outputFolder.mkdir();
         }
-        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_INDEX++
-        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_TOTAL_PDF_COUNT = PdfUtil.calculateTotalFileCount(true, [MAIN_FOLDER.absolutePath])
-        PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_COUNTER=0
         processDirectory(MAIN_FOLDER, outputFolder);
 
         PDF_EXTRACTOR_REPORT = "FINAL_REPORT(extractPages):\n" +
