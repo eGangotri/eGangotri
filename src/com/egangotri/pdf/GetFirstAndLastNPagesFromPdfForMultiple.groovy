@@ -1,6 +1,6 @@
 package com.egangotri.pdf
 
-
+import com.egangotri.util.TimeUtil
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfPage
 import com.itextpdf.kernel.pdf.PdfReader
@@ -28,13 +28,18 @@ import org.slf4j.LoggerFactory
             GetFirstAndLastNPagesFromPdf.OUTPUT_FOLDER = new File(args[1]);
         }
          GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT = folders.size();
+         long startTime = System.currentTimeMillis()
+
          folders.eachWithIndex { folder, index ->
              log.info("GetFirstAndLastNPagesFromPdfForMultiple (${index+1}) of ${GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT}:Processing folder: {}", folder);
-            String _report = GetFirstAndLastNPagesFromPdf.execute(
+             GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_NAME = folder;
+             String _report = GetFirstAndLastNPagesFromPdf.execute(
                     [folder, args[1], args.length>=3 ? args[2] : null, args.length>=4 ? args[3] : null] as String[]
             )
              logReports.add(_report);
         }
-            log.info("GetFirstAndLastNPagesFromPdfForMultiple: All folders processed. Reports:\n{}", logReports.join("\n"));
+         long endTime = System.currentTimeMillis()
+         log.info("Time taken to extract pdf: ${TimeUtil.formatTime(endTime - startTime)}")
+         log.info("GetFirstAndLastNPagesFromPdfForMultiple: All folders processed. Reports:\n{}", logReports.join("\n"));
     }
 }
