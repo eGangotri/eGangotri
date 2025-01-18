@@ -15,7 +15,7 @@ class RestUtil {
 
     static String ITEMS_QUEUED_PATH = "itemsQueued"
     static String ITEMS_USHERED_PATH = "itemsUshered"
-    static String UPLOAD_CYCLE_ROUTE = "uploadCycleRoute"
+    static String UPLOAD_CYCLE_ROUTE = "uploadCycle"
     static String backendServer = SettingsUtil.EGANGOTRI_BACKEND_SERVER
 
 
