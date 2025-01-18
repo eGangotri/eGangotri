@@ -29,17 +29,22 @@ import org.slf4j.LoggerFactory
         }
          GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT = folders.size();
          long startTime = System.currentTimeMillis()
-
+         int sucessCount = 0
          folders.eachWithIndex { folder, index ->
              log.info("GetFirstAndLastNPagesFromPdfForMultiple (${index+1}) of ${GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT}:Processing folder: {}", folder);
              GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_FOLDER_NAME = folder;
              String _report = GetFirstAndLastNPagesFromPdf.execute(
                     [folder, args[1], args.length>=3 ? args[2] : null, args.length>=4 ? args[3] : null] as String[]
             )
+             if(GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_SUCCESS){
+                 sucessCount++
+             }
+
              logReports.add(_report);
         }
          long endTime = System.currentTimeMillis()
-         log.info("Time taken to extract pdf: ${TimeUtil.formatTime(endTime - startTime)}")
-         log.info("GetFirstAndLastNPagesFromPdfForMultiple: All folders processed. Reports:\n{}", logReports.join("\n"));
+         log.info("\n\nTime taken to extract pdf: ${TimeUtil.formatTime(endTime - startTime)}")
+         boolean success = (sucessCount==GetFirstAndLastNPagesFromPdf.PDF_EXTRACTOR_STATS.PDF_PAGE_EXTRACT_TOTAL_FOLDER_COUNT);
+         log.info("\n\nGetFirstAndLastNPagesFromPdfForMultiple(All Succeeded ? ${success}): \nAll folders processed. Reports:\n{}", logReports.join("\n"));
     }
 }

@@ -93,6 +93,7 @@ class UploadRestApiCalls {
                 archiveProfilePath profilePath
                 count uploadables?.size()
                absolutePaths uploadables*.absolutePath
+                deleted false
             }
             return new JsonSlurper().parseText(json.toString())
         }
@@ -136,6 +137,7 @@ class UploadRestApiCalls {
             archiveProfilePath profilePath
             count countOfUploadableItems
             absolutePaths uploadables
+            deleted false
         }
         def profilesAndCount = new JsonSlurper().parseText(json.toString())
         try {
