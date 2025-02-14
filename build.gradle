@@ -183,7 +183,8 @@ task getFirstNPagesFromPdfMultiple(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.pdf.GetFirstAndLastNPagesFromPdfForMultiple"
     //args = [srcFolderAsCSV,destFolder, numberOfPagesFromStart, numberOfPagesFromEnd]
-    args = ["C:\\Users\\egangotri\\Documents\\test\\subFolder, C:\\Users\\egangotri\\Documents\\test\\sub Folder2", "C:\\Users\\egangotri\\Documents\\test\\New folder", 10, 10]
+    args = ["D:\\MASTER_BACKUP\\Treasures72, D:\\MASTER_BACKUP\\Treasures73, D:\\MASTER_BACKUP\\Treasures74", "D:\\reducedPDfs", 10, 10]
+    //args = ["C:\\Users\\egangotri\\Documents\\test\\subFolder, C:\\Users\\egangotri\\Documents\\test\\sub Folder2", "C:\\Users\\egangotri\\Documents\\test\\New folder", 10, 10]
 }
 
 task tallyPdf(dependsOn: 'classes', type: JavaExec) {

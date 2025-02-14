@@ -12,7 +12,7 @@ task startMongoServer(type: Exec) {
         // cmd /C start D:/Projects/WorkSpaces/WorldCleaner/devserver/start.bat
     }
 }
-ArrayList<String> uploadToArchiveArgs = [ "KANGRI"]
+ArrayList<String> uploadToArchiveArgs = [ "DEOBAND"]
 //ArrayList<String> uploadToArchiveArgs = [ "TMP", "subjectDesc=Panini, Patanjali, Skt Vyakarana"]
 //ArrayList<String> uploadToArchiveArgs = [ "MUTHU", "subjectDesc=Pondicherry-MUTHU-2024, Pondicherry-MUTHU"]
 //V_ANON, KANGRI, "KM"
