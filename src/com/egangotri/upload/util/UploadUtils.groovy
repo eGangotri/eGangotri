@@ -330,7 +330,7 @@ class UploadUtils {
     }
 
     static String _removeAmpersandAndFetchTitleOnly(String title) {
-        return stripFilePathAndFileEnding(title.replaceAll(AMPERSAND, ""))
+        return stripFilePathAndFileEnding(title?.replaceAll(AMPERSAND, ""))
     }
 
     /***
