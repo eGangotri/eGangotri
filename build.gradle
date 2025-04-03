@@ -118,7 +118,7 @@ task bookTitles(dependsOn: 'classes', type: JavaExec) {
 //            "afterHour=0",
 //            "pdfsOnly=true"
 //    ]
-    args = ["paths='C:\\Users\\chetan\\Documents\\test'", 'pdfsOnly=false' ]
+    args = ["paths='C:\\Users\\cheta\\Downloads\\test'", 'pdfsOnly=false' ]
     //args = [ "paths=D:\\Treasures28\\smp , D:\\Treasures28\\JNGM ,D:\\ Treasures28\\bdmm",'today-1', 12]
     //args = ["paths=E:\\eG-tr1-30\\Treasures30"]
 }
@@ -295,10 +295,10 @@ dependencies {
 //    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.11.0'
     //  compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '4.11.0'
 
-    implementation 'org.seleniumhq.selenium:selenium-java:4.22.0'
-    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.22.0'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.17.0'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.17.0'
 
-    implementation 'org.seleniumhq.selenium:selenium-devtools-v124:4.22.0'
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v121:4.17.0'
 
     implementation 'org.apache.poi:poi:5.3.0'
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
