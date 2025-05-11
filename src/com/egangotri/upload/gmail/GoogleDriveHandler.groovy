@@ -8,6 +8,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import com.egangotri.upload.util.ChromeDriverConfig
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.*
@@ -33,7 +34,7 @@ class GoogleDriveHandler {
             System.setProperty("webdriver.chrome.driver", "${userHome}${File.separator}eGangotri${File.separator}chromedriver${File.separator}chromedriverDEL.exe")
             // log.info "System.getProperty(\"webdriver.chrome.driver\")" + System.getProperty("webdriver.chrome.driver")
 
-            ChromeDriver driver = new ChromeDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver()
             driver.get("https://accounts.google.com")
             WebElement id = driver.findElement(By.id("identifierId"))
 

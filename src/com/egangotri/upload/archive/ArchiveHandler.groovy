@@ -13,6 +13,7 @@ import org.openqa.selenium.Keys
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+import com.egangotri.upload.util.ChromeDriverConfig
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -32,7 +33,7 @@ class ArchiveHandler {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
         try {
-            ChromeDriver driver = new ChromeDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver()
             String archiveProfile = uploadVos.first().archiveProfile
             List<String> uploadables = uploadVos*.path
             if (!navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
@@ -157,7 +158,7 @@ class ArchiveHandler {
         EGangotriUtil.sleepTimeInSeconds(4)
         try {
 
-            ChromeDriver driver = new ChromeDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver()
             driver.get(archiveUrl)
             def results = []
             if (fileNames) {

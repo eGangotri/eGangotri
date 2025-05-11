@@ -6,6 +6,7 @@ import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
+import com.egangotri.upload.util.ChromeDriverConfig
 
 import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
 
@@ -28,7 +29,7 @@ class EditFilesInArchive {
 
         archiveProfiles.each { String archiveProfile ->
             log.info "Logging for Profile $archiveProfile"
-            ChromeDriver driver = new ChromeDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver()
             if(ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)){
                 getResultsCount(driver, true)
                 UploadUtils.maximizeBrowser(driver)
