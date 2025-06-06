@@ -23,8 +23,14 @@ class EGangotriUtil {
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
 
     static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
+
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
+    static final String LOCAL_FOLDERS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "localFolders2" + PROPERTIES
+    static final List LOCAL_FOLDERS_PROPERTIES_FILES = [LOCAL_FOLDERS_PROPERTIES_FILE, LOCAL_FOLDERS_PROPERTIES_FILE2]
+
     static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    static final String ARCHIVE_METADATA_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    static final List ARCHIVE_METADATA_PROPERTIES_FILES = [ARCHIVE_METADATA_PROPERTIES_FILE, ARCHIVE_METADATA_PROPERTIES_FILE2]
 
     static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_queued"
     static final String ARCHIVE_ITEMS_USHERED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_ushered"

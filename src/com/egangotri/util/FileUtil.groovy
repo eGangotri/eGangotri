@@ -15,16 +15,47 @@ class FileUtil {
     static String DEST_ROOT = "DEST_ROOT"
     static String DEST_OTRO_ROOT = "DEST_OTRO_ROOT"
 
-
     static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
         Properties properties = new Properties()
-        File propertiesFile = new File(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE)
-        if(!propertiesFile.exists()) {
-            log.info("No Local Folder ${EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILE} found")
-            return [:]
+
+        EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES.each { String fileName ->
+            File propertiesFile = new File(fileName)
+            if (propertiesFile.exists()) {
+                println("Loading Local Folder Properties from $fileName")
+                propertiesFile.withInputStream { properties.load(it) }
+            } else {
+                println("Config file not found (this may be normal): $fileName")
+            }
         }
-        propertiesFile.withInputStream {
-            properties.load(it)
+
+        Map<String, String> profileAndFolder = [:]
+        String rootPath = properties.getProperty(root)
+
+        properties.stringPropertyNames().each { key ->
+            if (!key.contains('.') && key != SRC_ROOT && key != DEST_ROOT && key != DEST_OTRO_ROOT) {
+                String path = properties.get(key)?.toString()?.trim()
+                if (path) {
+                    profileAndFolder[key] = path.contains(':') || path.startsWith(File.separator) ?
+                            path :
+                            new File(rootPath, path).path
+                }
+            }
+        }
+
+        return profileAndFolder
+    }
+    static private Map<String, String> getFoldersCorrespondingToProfile2(String root) {
+        Properties properties = new Properties()
+        for(String propertiesFileName : EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES) {
+            File propertiesFile = new File(propertiesFileName)
+            if (propertiesFile.exists()) {
+                log.info("Loading Local Folder Properties from ${propertiesFileName}")
+                propertiesFile.withInputStream {
+                    properties.load(it)
+                }
+            } else {
+                log.info("No Local Folder Properties file found at ${propertiesFileName}")
+            }
         }
 
         Map<String, String> profileAndFolder = [:]

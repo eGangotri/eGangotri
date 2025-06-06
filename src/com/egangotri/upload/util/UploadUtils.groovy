@@ -56,12 +56,48 @@ class UploadUtils {
         return map
     }
 
-    static Hashtable<String, String> getArchiveMetadataKeyValues() {
-        def metaDataMap = loadProperties(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILE)
-        if(DEFAULT_SUBJECT_DESC){
-            return updateMapByAppendingAdditionalSubjectDescription(metaDataMap)
+    static Map<String, String> getArchiveMetadataKeyValues() {
+        // Use interface type (Map) instead of concrete Hashtable unless synchronization is needed
+        Map<String, String> metadataMap = [:]  // Groovy syntax for LinkedHashMap
+
+        // Null check for the properties files array
+        if (!EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES) {
+            log.warn("No archive metadata properties files configured")
+            return metadataMap
         }
-        return metaDataMap;
+
+        EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES.each { fileName ->
+            try {
+                File propsFile = new File(fileName)
+                if (propsFile.exists()) {
+                    log.info("Loading archive metadata from: ${fileName}")
+                    Map<String, String> loadedProps = loadProperties(fileName)
+
+                    // Null check for loaded properties
+                    if (loadedProps) {
+                        metadataMap.putAll(loadedProps)
+                    } else {
+                        log.warn("No properties loaded from file: ${fileName}")
+                    }
+                } else {
+                    log.warn("Archive metadata properties file not found: ${fileName}")
+                }
+            } catch (Exception e) {
+                log.error("Failed to load properties from ${fileName}: ${e.message}")
+            }
+        }
+
+        // Handle default subject description if configured
+        if (DEFAULT_SUBJECT_DESC) {
+            try {
+                return updateMapByAppendingAdditionalSubjectDescription(metadataMap)
+            } catch (Exception e) {
+                log.error("Failed to update map with subject description: ${e.message}")
+                return metadataMap
+            }
+        }
+
+        return metadataMap
     }
 
     static readTextFileAndDumpToList(String fileName) {

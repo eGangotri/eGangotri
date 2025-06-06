@@ -12,14 +12,14 @@ task startMongoServer(type: Exec) {
         // cmd /C start D:/Projects/WorkSpaces/WorldCleaner/devserver/start.bat
     }
 }
-ArrayList<String> uploadToArchiveArgs = [ "MUTHU"]
+ArrayList<String> uploadToArchiveArgs = [ "GANDHI_MEM"]
 //ArrayList<String> uploadToArchiveArgs = [ "TMP", "subjectDesc=Panini, Patanjali, Skt Vyakarana"]
 //ArrayList<String> uploadToArchiveArgs = [ "MUTHU", "subjectDesc=Pondicherry-MUTHU-2024, Pondicherry-MUTHU"]
 //V_ANON, KANGRI, "KM"
 //,"KRI_UR_DHARMA", "KRI_UR"  "SR_VIMAL", "EGB_ASI" ,"EG_URDU
 // "JNGM_MANU","SALIM","MB", "SV_SHASTRI", "KANGRI", "MUTHU"
 // "JNGM" ,  "JNGM_TEL", "JNGM_K", "JNGM_M", "JNGM_BEN", "EGM"*/]
-def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures69"
+def FOLDER_TO_GENERATE_SNAP2HTML_OF = "D:\\_Treasures81"
 
 task uploadToArchive(dependsOn: ['compileGroovy', 'classes'], type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
