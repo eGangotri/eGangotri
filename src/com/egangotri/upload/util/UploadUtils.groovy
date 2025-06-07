@@ -80,7 +80,7 @@ class UploadUtils {
             log.warn("No archive metadata properties files configured")
             return  [:]
         }
-        propFiles.each { fileName ->
+        propFiles.each { String fileName ->
             try {
                 File propsFile = new File(fileName)
                 if (propsFile.exists()) {

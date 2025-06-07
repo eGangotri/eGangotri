@@ -17,15 +17,14 @@ class FileUtil {
     static String DEST_OTRO_ROOT = "DEST_OTRO_ROOT"
 
     static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
-        Properties properties = new Properties()
         Map<String, String> profileAndFolder = UploadUtils.readPropsFromListOfPropFiles(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES)
-        String rootPath = properties.getProperty(root)
+        String rootPath = profileAndFolder.get(root)
 
-        properties.stringPropertyNames().each { key ->
-            if (!key.contains('.') && key != SRC_ROOT && key != DEST_ROOT && key != DEST_OTRO_ROOT) {
-                String path = properties.get(key)?.toString()?.trim()
+        profileAndFolder.each { Map.Entry<String, String> entry ->
+            if (!entry.key.contains('.') && entry.key != SRC_ROOT && entry.key != DEST_ROOT && entry.key != DEST_OTRO_ROOT) {
+                String path = profileAndFolder.get(entry.key)?.toString()?.trim()
                 if (path) {
-                    profileAndFolder[key] = path.contains(':') || path.startsWith(File.separator) ?
+                    profileAndFolder[entry.key] = path.contains(':') || path.startsWith(File.separator) ?
                             path :
                             new File(rootPath, path).path
                 }
