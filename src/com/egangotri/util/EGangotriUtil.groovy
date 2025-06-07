@@ -20,9 +20,10 @@ class EGangotriUtil {
     static final String EGANGOTRI_BASE_DIR = USER_HOME + File.separator + "eGangotri"
 
     static final String ARCHIVE_LOGINS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
-    static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
+    static final String ARCHIVE_LOGINS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins2" + PROPERTIES
+    static final List ARCHIVE_LOGINS_PROPERTIES_FILES = [ARCHIVE_LOGINS_PROPERTIES_FILE,ARCHIVE_LOGINS_PROPERTIES_FILE2]
 
-    static final String GOOGLE_DRIVE_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "googleDriveLogins" + PROPERTIES
+    static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
 
     static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
     static final String LOCAL_FOLDERS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "localFolders2" + PROPERTIES
@@ -111,9 +112,6 @@ class EGangotriUtil {
         return profiles
     }
 
-    static List getAllGoogleDriveProfiles() {
-        return getAllProfiles(GOOGLE_DRIVE_PROPERTIES_FILE)
-    }
 
     static List getAllArchiveProfiles() {
         return getAllProfiles(ARCHIVE_LOGINS_PROPERTIES_FILE)
