@@ -57,16 +57,30 @@ class UploadUtils {
     }
 
     static Map<String, String> getArchiveMetadataKeyValues() {
-        // Use interface type (Map) instead of concrete Hashtable unless synchronization is needed
-        Map<String, String> metadataMap = [:]  // Groovy syntax for LinkedHashMap
+        Map<String, String> metadataMap  = readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES)
 
-        // Null check for the properties files array
-        if (!EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES) {
-            log.warn("No archive metadata properties files configured")
-            return metadataMap
+        // Handle default subject description if configured
+        if (DEFAULT_SUBJECT_DESC) {
+            try {
+                return updateMapByAppendingAdditionalSubjectDescription(metadataMap)
+            } catch (Exception e) {
+                log.error("Failed to update map with subject description: ${e.message}")
+                return metadataMap
+            }
         }
 
-        EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES.each { fileName ->
+        return metadataMap
+    }
+
+
+    static  Map<String, String>  readPropsFromListOfPropFiles(List propFiles) {
+        Map<String, String> metadataMap = [:]
+        // Null check for the properties files array
+        if (!propFiles) {
+            log.warn("No archive metadata properties files configured")
+            return  [:]
+        }
+        propFiles.each { fileName ->
             try {
                 File propsFile = new File(fileName)
                 if (propsFile.exists()) {
@@ -86,18 +100,11 @@ class UploadUtils {
                 log.error("Failed to load properties from ${fileName}: ${e.message}")
             }
         }
-
-        // Handle default subject description if configured
-        if (DEFAULT_SUBJECT_DESC) {
-            try {
-                return updateMapByAppendingAdditionalSubjectDescription(metadataMap)
-            } catch (Exception e) {
-                log.error("Failed to update map with subject description: ${e.message}")
-                return metadataMap
-            }
-        }
-
         return metadataMap
+    }
+
+    static  Map<String, String>  getAllArchiveLogins() {
+        return readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES)
     }
 
     static readTextFileAndDumpToList(String fileName) {
@@ -160,7 +167,7 @@ class UploadUtils {
         boolean success = false
         String username = metaDataMap."${archiveProfile}"
         String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)} file for $archiveProfile"
+        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(","))} file for $archiveProfile"
         if (username?.trim()) {
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
             if (!success) {

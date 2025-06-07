@@ -13,7 +13,7 @@ import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
 class LoginToArchive {
     static void main(String[] args) {
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
-        def archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        def archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
         if (args) {
             log.info "args $args"
             //    args = ["email=indicjournals;range=1-30"]
@@ -49,12 +49,12 @@ class LoginToArchive {
                             UploadUtils.maximizeBrowser(driver)
                         }
                     } else {
-                        log.info "$archiveProfile profile doesnt exist in file ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE}. Cannot proceed."
+                        log.info "$archiveProfile profile doesnt exist in file ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(",")}. Cannot proceed."
                     }
                 }
             }
         } else {
-            log.info "No MetaData Cannot proceed. ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE} is either empty or doesnt exist."
+            log.info "No MetaData Cannot proceed. ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(",")} is either empty or doesnt exist."
         }
         EGangotriUtil.recordProgramEnd()
         System.exit(0)

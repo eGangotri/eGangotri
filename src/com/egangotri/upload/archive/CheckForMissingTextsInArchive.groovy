@@ -21,7 +21,7 @@ class CheckForMissingTextsInArchive {
             archiveProfiles = args.toList()
         }
 
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        Hashtable<String, String> metaDataMap =UploadUtils.getAllArchiveLogins()
         execute(archiveProfiles, metaDataMap)
     }
 

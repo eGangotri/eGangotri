@@ -1,6 +1,7 @@
 package com.egangotri.util
 
 import com.egangotri.mover.ZipMover
+import com.egangotri.upload.util.UploadUtils
 import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
@@ -17,18 +18,7 @@ class FileUtil {
 
     static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
         Properties properties = new Properties()
-
-        EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES.each { String fileName ->
-            File propertiesFile = new File(fileName)
-            if (propertiesFile.exists()) {
-                println("Loading Local Folder Properties from $fileName")
-                propertiesFile.withInputStream { properties.load(it) }
-            } else {
-                println("Config file not found (this may be normal): $fileName")
-            }
-        }
-
-        Map<String, String> profileAndFolder = [:]
+        Map<String, String> profileAndFolder = UploadUtils.readPropsFromListOfPropFiles(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES)
         String rootPath = properties.getProperty(root)
 
         properties.stringPropertyNames().each { key ->

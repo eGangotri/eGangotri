@@ -19,18 +19,18 @@ class EGangotriUtil {
 
     static final String EGANGOTRI_BASE_DIR = USER_HOME + File.separator + "eGangotri"
 
-    static final String ARCHIVE_LOGINS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
-    static final String ARCHIVE_LOGINS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins2" + PROPERTIES
+    protected static final String ARCHIVE_LOGINS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins" + PROPERTIES
+    protected static final String ARCHIVE_LOGINS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveLogins2" + PROPERTIES
     static final List ARCHIVE_LOGINS_PROPERTIES_FILES = [ARCHIVE_LOGINS_PROPERTIES_FILE,ARCHIVE_LOGINS_PROPERTIES_FILE2]
 
     static final String SETTINGS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "settings" + PROPERTIES
 
-    static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
-    static final String LOCAL_FOLDERS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "localFolders2" + PROPERTIES
+    protected static final String LOCAL_FOLDERS_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "localFolders" + PROPERTIES
+    protected static final String LOCAL_FOLDERS_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "localFolders2" + PROPERTIES
     static final List LOCAL_FOLDERS_PROPERTIES_FILES = [LOCAL_FOLDERS_PROPERTIES_FILE, LOCAL_FOLDERS_PROPERTIES_FILE2]
 
-    static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
-    static final String ARCHIVE_METADATA_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    protected static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    protected static final String ARCHIVE_METADATA_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
     static final List ARCHIVE_METADATA_PROPERTIES_FILES = [ARCHIVE_METADATA_PROPERTIES_FILE, ARCHIVE_METADATA_PROPERTIES_FILE2]
 
     static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_queued"
@@ -87,24 +87,13 @@ class EGangotriUtil {
     static final String KUTA_SECOND = "kuta2"
 
     public static List<String> ARCHIVE_PROFILES = getAllArchiveProfiles()
-    static List GOOGLE_PROFILES = getAllGoogleDriveProfiles()
     static int GLOBAL_UPLOADING_COUNTER = 0
 
 
-    static List getAllProfiles(String propertyFileName) {
-        Properties properties = new Properties()
-        File propertiesFile = new File(propertyFileName)
-
-        if (!propertiesFile.exists()) {
-            propertiesFile.createNewFile()
-            log.info("$propertiesFile.name was not found. empty created")
-            return []
-        }
-
+    static List getAllProfiles() {
         List profiles = []
-
-        properties.load(propertiesFile.newDataInputStream())
-        properties.each { key, v ->
+        Hashtable<String, String> metaDataMap = UploadUtils.getAllArchiveLogins()
+        metaDataMap.each { key, v ->
             if (!key.toString().contains(KUTA)) {
                 profiles << key
             }
@@ -114,7 +103,7 @@ class EGangotriUtil {
 
 
     static List getAllArchiveProfiles() {
-        return getAllProfiles(ARCHIVE_LOGINS_PROPERTIES_FILE)
+        return getAllProfiles()
     }
 
     static String hidePassword(String pwd) {

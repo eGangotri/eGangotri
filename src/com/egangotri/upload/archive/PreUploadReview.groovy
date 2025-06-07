@@ -27,7 +27,7 @@ class PreUploadReview {
             log.info "args $args"
             archiveProfiles = args.toList()
         }
-        Hashtable<String, String> metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        Hashtable<String, String> metaDataMap = UploadUtils.getAllArchiveLogins()
         SettingsUtil.applySettings(false)
         Set<String> profilesForUpload = ArchiveUtil.filterInvalidProfiles(archiveProfiles, metaDataMap) as Set
         preview(profilesForUpload)

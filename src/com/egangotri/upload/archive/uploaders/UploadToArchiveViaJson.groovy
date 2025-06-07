@@ -57,7 +57,7 @@ class UploadToArchiveViaJson {
             log.info "Must have 1-2 arg.s Excel Path/range"
             System.exit(0)
         }
-        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
         List<ReuploadVO> uploadablesFromJson = readJsonFile(excelFileName, range)
         log.info("uploadItems(${uploadablesFromJson.size()}) " +
                 "${uploadablesFromJson[0].path}")

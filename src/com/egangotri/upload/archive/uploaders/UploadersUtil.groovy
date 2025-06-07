@@ -42,7 +42,7 @@ class UploadersUtil {
             log.info "args $args"
             UploadersUtil.archiveProfiles = args.toList()
         }
-        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
         SettingsUtil.applySettings()
         UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap) as Set
         checkIfMongoOn(uploadCycleId)
@@ -57,7 +57,7 @@ class UploadersUtil {
 
     static void prelimsWithVOs(String profile, Set<QueuedVO> vos, String uploadCycleId = "") {
         UploadersUtil.archiveProfiles = Collections.singleton(profile);
-        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
         SettingsUtil.applySettings()
         UploadersUtil.archiveProfiles = ArchiveUtil.filterInvalidProfiles(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap) as Set
         checkIfMongoOn(uploadCycleId)

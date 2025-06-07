@@ -20,7 +20,7 @@ class EditFilesInArchive {
             archiveProfiles = args.toList()
         }
         EGangotriUtil.recordProgramStart("eGangotri Archive Logger")
-        def metaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        Map<String, String> metaDataMap  = UploadUtils.getAllArchiveLogins()
         if(archiveProfiles.last().isInteger()){
             MAX_ITEMS_RETRIEVABLE = archiveProfiles.last().toInteger()
             archiveProfiles = archiveProfiles.take(archiveProfiles.size()-1);

@@ -32,7 +32,7 @@ class UploadToArchiveViaExcelV2WithFiveCols {
             log.info "Must have 1-2 arg.s Excel Path/range"
             System.exit(0)
         }
-        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.loadProperties(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILE)
+        UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
         SettingsUtil.applySettings()
 
         List<ReuploadVO> uploadablesFromExcel = readExcelFile(excelFileName, range)
