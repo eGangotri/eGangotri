@@ -285,7 +285,12 @@ class ArchiveHandler {
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
         if (true) {
-            identifier = extendIdentifierByPrepending(identifier)
+            if(SettingsUtil.DONT_EXTEND_IDENTIFIER) {
+                identifier = "" + identifier
+            }
+            else{
+                identifier = extendIdentifierByPrepending(identifier)
+            }
             driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
             WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
             pgUrlInputField.clear()
