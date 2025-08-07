@@ -30,7 +30,7 @@ class EGangotriUtil {
     static final List LOCAL_FOLDERS_PROPERTIES_FILES = [LOCAL_FOLDERS_PROPERTIES_FILE, LOCAL_FOLDERS_PROPERTIES_FILE2]
 
     protected static final String ARCHIVE_METADATA_PROPERTIES_FILE = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
-    protected static final String ARCHIVE_METADATA_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata" + PROPERTIES
+    protected static final String ARCHIVE_METADATA_PROPERTIES_FILE2 = EGANGOTRI_BASE_DIR + File.separator + "archiveMetadata2" + PROPERTIES
     static final List ARCHIVE_METADATA_PROPERTIES_FILES = [ARCHIVE_METADATA_PROPERTIES_FILE, ARCHIVE_METADATA_PROPERTIES_FILE2]
 
     static final String ARCHIVE_ITEMS_QUEUED_FOLDER = EGANGOTRI_BASE_DIR + File.separator + "items_queued"
