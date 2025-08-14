@@ -42,7 +42,7 @@ class UploadUtils {
 
     static String DEFAULT_SUBJECT_DESC = ""
 
-    static Hashtable<String, String> updateMapByAppendingAdditionalSubjectDescription(Hashtable<String, String> map) {
+    static Map<String, String> updateMapByAppendingAdditionalSubjectDescription(Map<String, String> map) {
         map.each { key, value ->
             {
                 if (key.endsWith('.subjects') && DEFAULT_SUBJECT_DESC != "") {
@@ -53,14 +53,15 @@ class UploadUtils {
                 }
             }
         }
+        log.info("Updated map with subject description: ${map}")
         return map
     }
 
     static Map<String, String> getArchiveMetadataKeyValues() {
-        Map<String, String> metadataMap  = readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES)
+        Map<String, String> metadataMap = readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES)
 
         // Handle default subject description if configured
-        if (DEFAULT_SUBJECT_DESC) {
+        if (DEFAULT_SUBJECT_DESC?.length() > 0) {
             try {
                 return updateMapByAppendingAdditionalSubjectDescription(metadataMap)
             } catch (Exception e) {
@@ -119,10 +120,10 @@ class UploadUtils {
         return list
     }
 
-    static Hashtable<String, String> loadProperties(String fileName) {
+    static Map<String, String> loadProperties(String fileName) {
         Properties properties = new Properties()
         File propertiesFile = new File(fileName)
-        Hashtable<String, String> metaDataMap = new Hashtable<String, String>()
+        Map<String, String> metaDataMap = [:]
 
         if (propertiesFile.exists()) {
             propertiesFile.withInputStream {
