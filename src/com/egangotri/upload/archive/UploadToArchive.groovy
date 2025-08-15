@@ -40,25 +40,6 @@ class UploadToArchive {
             log.info('No subjectDesc found in args, setting DEFAULT_SUBJECT_DESC to empty string')
         }
         log.info("DEFAULT_SUBJECT_DESC: ${UploadUtils.DEFAULT_SUBJECT_DESC} argsList ${argsList}")
-        // argsList.find { param ->
-        //     if (param.toLowerCase().startsWith("subjectdesc=")) {
-        //         String subjDesc = param.split("=")[1]
-        //         UploadUtils.DEFAULT_SUBJECT_DESC = subjDesc
-        //         log.info("Found subjectDesc: ${UploadUtils.DEFAULT_SUBJECT_DESC}")
-        //         return true // Stop iterating once the first match is found
-        //     }
-        //     return false // Continue iterating
-        // }
-
-        // if (UploadUtils.DEFAULT_SUBJECT_DESC != null && UploadUtils.DEFAULT_SUBJECT_DESC != "") {
-        //     argsList.removeIf { param -> param.startsWithIgnoreCase("subjectDesc=") } // Remove the element
-        //     args = argsList.toArray(new String[0]) // Convert list back to array if needed
-        // } else {
-        //     UploadUtils.DEFAULT_SUBJECT_DESC = ""
-        // }
-
-        // log.info("subjectDesc: ${UploadUtils.DEFAULT_SUBJECT_DESC} args:${args}")
-
         UploadersUtil.prelims(argsList.toArray(new String[0]))
         execute(UploadersUtil.archiveProfiles, UploadersUtil.archiveLoginsMetaDataMap)
         if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
