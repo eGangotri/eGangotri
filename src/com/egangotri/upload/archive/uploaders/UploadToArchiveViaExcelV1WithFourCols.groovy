@@ -23,6 +23,7 @@ import java.nio.file.Paths
  */
 @Slf4j
 class UploadToArchiveViaExcelV1WithFourCols {
+
     static final int MAX_ROWS = 10000
     static final int MAX_BYTES = 200000000
     static final String REGEX_FOR_INVALID_CHARS = /[#!&]/
@@ -32,17 +33,17 @@ class UploadToArchiveViaExcelV1WithFourCols {
     static void main(String[] args) {
         // Set a higher override value for POI operations
         IOUtils.setByteArrayMaxOverride(MAX_BYTES) // 200 million bytes
-        String archiveProfile = ""
-        String excelFileName = ""
+        String archiveProfile = ''
+        String excelFileName = ''
         String[] range = []
-        String uploadCycleId = ""
+        String uploadCycleId = ''
         log.info "args $args"
 
         if (args && args.length == 1) {
             String jsonString = args[0]
-//            def jsonSlurper = new JsonSlurper()
-//            def map = jsonSlurper.parseText(jsonString)
-//            log.info(map)
+            //            def jsonSlurper = new JsonSlurper()
+            //            def map = jsonSlurper.parseText(jsonString)
+            //            log.info(map)
             log.info("jsonString : ${jsonString}")
             // Create a Gson instance
             Gson gson = new Gson()
@@ -50,9 +51,9 @@ class UploadToArchiveViaExcelV1WithFourCols {
             Map<String, Object> map = gson.fromJson(jsonString, Map)
             archiveProfile = map.profile
             excelFileName = map.excelPath
-                    //System.getProperty("user.home") + "//Downloads//" + map.excelPath
-            if (map?.range?.toString()?.contains("-")) {
-                range = map??.range?.split("-")*.trim()
+            //System.getProperty("user.home") + "//Downloads//" + map.excelPath
+            if (map?.range?.toString()?.contains('-')) {
+                range = map??.range?.split('-')*.trim()
             }
             if (map?.uploadCycleId) {
                 uploadCycleId = map.uploadCycleId
@@ -60,7 +61,7 @@ class UploadToArchiveViaExcelV1WithFourCols {
 
             log.info("archiveProfile:${archiveProfile}" +
                     " excelFileName:${excelFileName} " +
-                    "range:${range} uploadCycleId:${uploadCycleId}");
+                    "range:${range} uploadCycleId:${uploadCycleId}")
         } else {
             log.info """Must have exactly One JSON string as an Argument. Exiting.
              args = ['{"profile":"value1", "excelPath":"value2" , "range":"value2" , "uploadCycleId":"value2"}']"""
@@ -69,14 +70,14 @@ class UploadToArchiveViaExcelV1WithFourCols {
 
         UploadersUtil.prelims(new String[] {archiveProfile}, uploadCycleId)
         Map excelData = readExcelFile(excelFileName, range)
-        if(excelData.success == false){
+        if (excelData.success == false) {
             log.info("Errors in reading excel file ${excelData.errors}")
             System.exit(0)
         }
         List<UploadItemFromExcelVO> uploadItems = excelData.uploadItems
         log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0]?.subject} ${uploadItems[0]?.description} ${uploadItems[0]?.creator} ${uploadItems[0]?.absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems*.absolutePath,"Excel-;${excelFileName}-;${range}")
+        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems*.absolutePath, "Excel-;${excelFileName}-;${range}")
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
@@ -92,7 +93,7 @@ class UploadToArchiveViaExcelV1WithFourCols {
             String report = UploadUtils.generateStats(uploadStats, archiveProfile, vos.size())
             uploadSuccessCheckingMatrix.put(1, report)
         } else {
-            log.info("No Items for upload.")
+            log.info('No Items for upload.')
         }
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, vos.size())
@@ -123,16 +124,16 @@ class UploadToArchiveViaExcelV1WithFourCols {
                 errors << "Invalid end range:${end} against Sheet Size(${sheet.size()})"
             }
         }
-        if(errors?.size()>0) {
+        if (errors?.size() > 0) {
             log.info("returning due to errors in reading excel file ${errors}")
-            return [success:false,errors:errors]
-        };
+            return [success:false, errors:errors]
+        }
 
         for (int i = start; i <= end; i++) {
             Row row = sheet.getRow(i)
             if (row) {
-                String absPath = row.getCell(0)?.stringCellValue?.trim() ?: "";
-                String fileName = ""
+                String absPath = row.getCell(0)?.stringCellValue?.trim() ?: ''
+                String fileName = ''
                 if (absPath) {
                     try {
                         fileName = Paths.get(absPath).fileName.toString()
@@ -145,26 +146,25 @@ class UploadToArchiveViaExcelV1WithFourCols {
                     continue
                 }
                 log.info("row: ${row.toString()}")
-                String subject = row.getCell(1)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS,"") ?: fileName
-                String description = row.getCell(2)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS,"") ?: fileName
-                String creator = row.getCell(3)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS,"") ?: fileName
+                String subject = row.getCell(1)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
+                String description = row.getCell(2)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
+                String creator = row.getCell(3)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
                 Boolean uploadedFlag = false
                 log.info("""absPath:${absPath} subject:${subject}
                  row.getCell(1)?.stringCellValue:${row.getCell(1)?.stringCellValue}
                  fileName:${fileName}
-                 description:${description} 
+                 description:${description}
                  creator:${creator} uploadedFlag:${uploadedFlag}""")
-                break;
-                if(absPath?.length() == 0){
+                if (absPath?.length() == 0) {
                     errors << "Invalid absolute path:${absPath} against Sheet Size(${sheet.size()}), skipping row ${i}"
                     continue
                 }
-                if(row.size() > 4){
+                if (row.size() > 4) {
                     if (row.getCell(4).getCellType() == CellType.BOOLEAN) {
                         uploadedFlag = row.getCell(4).getBooleanCellValue()
                         log.info("readExcelFile uploadedFlag:${uploadedFlag}")
                     } else if (row.getCell(4).getCellType() == CellType.STRING) {
-                        uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase("true")
+                        uploadedFlag = row.getCell(4).getStringCellValue()?.equalsIgnoreCase('true')
                     }
                 }
                 UploadItemFromExcelVO uploadItem = new UploadItemFromExcelVO(absPath, subject, description, creator, uploadedFlag)
@@ -180,5 +180,6 @@ class UploadToArchiveViaExcelV1WithFourCols {
         log.info("readExcelFile items added:${counter} size:${uploadItems.size()}")
         return [success:true, uploadItems:uploadItems]
     }
+
 }
 
