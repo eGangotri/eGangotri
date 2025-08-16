@@ -145,16 +145,10 @@ class UploadToArchiveViaExcelV1WithFourCols {
                     errors << "Empty path at row ${i}"
                     continue
                 }
-                log.info("row: ${row.toString()}")
                 String subject = row.getCell(1)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
-                String description = row.getCell(2)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
-                String creator = row.getCell(3)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName
+                String description = (row.getCell(2)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '')  ?: fileName) + " "
+                String creator = (row.getCell(3)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName) + " "
                 Boolean uploadedFlag = false
-                log.info("""absPath:${absPath} subject:${subject}
-                 row.getCell(1)?.stringCellValue:${row.getCell(1)?.stringCellValue}
-                 fileName:${fileName}
-                 description:${description}
-                 creator:${creator} uploadedFlag:${uploadedFlag}""")
                 if (absPath?.length() == 0) {
                     errors << "Invalid absolute path:${absPath} against Sheet Size(${sheet.size()}), skipping row ${i}"
                     continue
