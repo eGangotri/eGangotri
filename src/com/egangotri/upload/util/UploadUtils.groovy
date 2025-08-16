@@ -283,7 +283,7 @@ class UploadUtils {
             String _fileNameAsDesc = "{0}"
             String _desc = metaDataMap."${archiveProfile}.description"
 
-            String desc_and_file_name = "description=${_desc ? "${_desc}\nFilename: ${_fileNameAsDesc}" : "\nFilename: "+_fileNameAsDesc}"
+            String desc_and_file_name = "description=${_desc ? "${_desc}\n Filename: ${_fileNameAsDesc}" : "\n Filename: "+_fileNameAsDesc}"
             String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 enhancedUrl += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
@@ -328,7 +328,7 @@ class UploadUtils {
         String _creator = "creator=${creator}"
         String _fileNameAsDesc = "{0}"
 
-        String desc_and_file_name = "description=${_desc ? "${_desc}\nFileName: ${_fileNameAsDesc}" : "\nFileName:"+_fileNameAsDesc}"
+        String desc_and_file_name = "description=${_desc ? "${_desc}\n FileName: ${_fileNameAsDesc}" : "\n FileName: "+_fileNameAsDesc}"
         String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
         if (_subjects) {
             if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
