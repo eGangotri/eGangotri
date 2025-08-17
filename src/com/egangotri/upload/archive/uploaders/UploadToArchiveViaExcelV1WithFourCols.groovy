@@ -65,7 +65,6 @@ class UploadToArchiveViaExcelV1WithFourCols {
         } else {
             log.info """Must have exactly One JSON string as an Argument. Exiting.
              args = ['{"profile":"value1", "excelPath":"value2" , "range":"value2" , "uploadCycleId":"value2"}']"""
-            System.exit(0)
         }
 
         UploadersUtil.prelims(new String[] {archiveProfile}, uploadCycleId)
