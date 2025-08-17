@@ -1,6 +1,5 @@
 package com.egangotri.upload.util
 
-
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import org.openqa.selenium.Alert
@@ -17,38 +16,38 @@ import java.awt.Toolkit
 @Slf4j
 class UploadUtils {
 
-    static final String USERNAME_TEXTBOX_NAME = "username"
-    static final String PASSWORD_TEXTBOX_NAME = "password"
-    static final String LOGIN_BUTTON_NAME = "submit-to-login"
-    static final String USER_MENU_ID = "user-menu" // only created when User is Signed In
-    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = "file_button_initial"
-    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON_AS_CLASS = "js-uploader-file-input-initial"
+    static final String USERNAME_TEXTBOX_NAME = 'username'
+    static final String PASSWORD_TEXTBOX_NAME = 'password'
+    static final String LOGIN_BUTTON_NAME = 'submit-to-login'
+    static final String USER_MENU_ID = 'user-menu' // only created when User is Signed In
+    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = 'file_button_initial'
+    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON_AS_CLASS = 'js-uploader-file-input-initial'
 
-    static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = "upload_button"
-    static final String PAGE_URL_ITEM_ID = "item_id"
-    static final String PAGE_URL = "page_url"
-    static final String PAGE_URL_INPUT_FIELD = "input_field"
-    static final String LICENSE_PICKER_DIV = "license_picker_row"
-    static final String LICENSE_PICKER_RADIO_OPTION = "license_radio_CC0"
+    static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = 'upload_button'
+    static final String PAGE_URL_ITEM_ID = 'item_id'
+    static final String PAGE_URL = 'page_url'
+    static final String PAGE_URL_INPUT_FIELD = 'input_field'
+    static final String LICENSE_PICKER_DIV = 'license_picker_row'
+    static final String LICENSE_PICKER_RADIO_OPTION = 'license_radio_CC0'
     static final int DEFAULT_SLEEP_TIME = 1000
-    static final String DATE_TIME_PATTERN = "d-MMM-yyyy_h-mm-a"
+    static final String DATE_TIME_PATTERN = 'd-MMM-yyyy_h-mm-a'
 
     static Map<String, String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static Map<String, List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
-    static final String ARCHIVE_UPLOAD_URL = "https://archive.org/upload?"
-    static final String AMPERSAND = "&"
+    static final String ARCHIVE_UPLOAD_URL = 'https://archive.org/upload?'
+    static final String AMPERSAND = '&'
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
 
-    static String DEFAULT_SUBJECT_DESC = ""
+    static String DEFAULT_SUBJECT_DESC = ''
 
     static Map<String, String> updateMapByAppendingAdditionalSubjectDescription(Map<String, String> map) {
         map.each { key, value ->
             {
-                if (key.endsWith('.subjects') && DEFAULT_SUBJECT_DESC != "") {
+                if (key.endsWith('.subjects') && DEFAULT_SUBJECT_DESC != '') {
                     map[key] = value + "${value}, ${DEFAULT_SUBJECT_DESC}"
                 }
-                if (key.endsWith('.description')  && DEFAULT_SUBJECT_DESC != "") {
+                if (key.endsWith('.description')  && DEFAULT_SUBJECT_DESC != '') {
                     map[key] = value + "${value}, ${DEFAULT_SUBJECT_DESC}"
                 }
             }
@@ -73,12 +72,11 @@ class UploadUtils {
         return metadataMap
     }
 
-
     static  Map<String, String>  readPropsFromListOfPropFiles(List propFiles) {
         Map<String, String> metadataMap = [:]
         // Null check for the properties files array
         if (!propFiles) {
-            log.warn("No archive metadata properties files configured")
+            log.warn('No archive metadata properties files configured')
             return  [:]
         }
         propFiles.each { String fileName ->
@@ -111,7 +109,7 @@ class UploadUtils {
     static readTextFileAndDumpToList(String fileName) {
         List<String> list = []
         File file = new File(fileName)
-        def line = ""
+        def line = ''
         file.withReader { reader ->
             while ((line = reader.readLine()) != null) {
                 list << line
@@ -130,11 +128,10 @@ class UploadUtils {
                 properties.load(it)
             }
 
-
             properties.entrySet().each { entry ->
                 String key = entry.key
-                String val = new String(entry.value.toString().getBytes("ISO-8859-1"), "UTF-8")
-                if (key.endsWith(".description")) {
+                String val = new String(entry.value.toString().getBytes('ISO-8859-1'), 'UTF-8')
+                if (key.endsWith('.description')) {
                     val = encodeString(val)
                 }
                 metaDataMap.put(key.trim(), val.trim())
@@ -142,37 +139,34 @@ class UploadUtils {
 
             metaDataMap.each {
                 String k, String v ->
-                    //log.info "$k $v"
+            //log.info "$k $v"
             }
         }
         return metaDataMap
     }
 
     def static encodeString(def stringToEncode) {
-
         def reservedCharacters = [32: 1, 33: 1, 42: 1, 34: 1, 39: 1, 40: 1, 41: 1, 59: 1, 58: 1, 64: 1, 38: 1, /*61:1,*/ 43: 1, 36: 1, 33: 1, 47: 1, 63: 1, 37: 1, 91: 1, 93: 1, 35: 1]
 
         def encoded = stringToEncode.collect { letter ->
-            reservedCharacters[(int) letter] ? "%" + Integer.toHexString((int) letter).toString().toUpperCase() : letter
+            reservedCharacters[(int) letter] ? '%' + Integer.toHexString((int) letter).toString().toUpperCase() : letter
         }
-        return encoded.join("")
+        return encoded.join('')
     }
-
 
     static void resetGlobalUploadCounter() {
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER = 0
     }
 
-
     static boolean checkIfArchiveProfileHasValidUserName(Map metaDataMap, String archiveProfile, boolean logErrMsg = true) {
         boolean success = false
         String username = metaDataMap."${archiveProfile}"
-        String userNameInvalidMsg = "Invalid/Non-Existent"
-        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(","))} file for $archiveProfile"
+        String userNameInvalidMsg = 'Invalid/Non-Existent'
+        String errMsg2 = " UserName [$username] in ${stripFilePath(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(','))} file for $archiveProfile"
         if (username?.trim()) {
             success = username ==~ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,4}/
             if (!success) {
-                userNameInvalidMsg = "Invalid Email Format of"
+                userNameInvalidMsg = 'Invalid Email Format of'
             }
         }
         if (!success && logErrMsg) {
@@ -180,7 +174,6 @@ class UploadUtils {
         }
         return success
     }
-
 
     static void hitEscapeKey() {
         Robot robot = new Robot()
@@ -198,14 +191,14 @@ class UploadUtils {
         try {
             JavascriptExecutor js = (JavascriptExecutor) driver
             WebElement _hiddenDiv = driver.findElement(By.xpath('//*[@id="file_drop_contents"]/div[2]'))
-            js.executeScript("arguments[0].className='XXXX'", _hiddenDiv);
-            js.executeScript("arguments[0].click()", _hiddenDiv);
-            WebElement uploadElement = driver.findElement(By.id("file_input_initial"))
-            new WebDriverWait(driver,Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("file_input_initial")))
-            uploadElement.sendKeys(fileNameWithPath);
+            js.executeScript("arguments[0].className='XXXX'", _hiddenDiv)
+            js.executeScript('arguments[0].click()', _hiddenDiv)
+            WebElement uploadElement = driver.findElement(By.id('file_input_initial'))
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TIMEOUT_IN_TWO_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id('file_input_initial')))
+            uploadElement.sendKeys(fileNameWithPath)
         }
         catch (Exception e) {
-            log.info("uploadFileUsingSendKeys", e)
+            log.info('uploadFileUsingSendKeys', e)
         }
     }
 
@@ -230,7 +223,7 @@ class UploadUtils {
 
     static void throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit() {
         if (!EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING) {
-            throw new Exception("No Creator. Pls provide Creator in archiveMetadata.properties file")
+            throw new Exception('No Creator. Pls provide Creator in archiveMetadata.properties file')
         }
     }
 
@@ -262,7 +255,7 @@ class UploadUtils {
         return creators
     }
 
-        static String getOrGenerateSupplementaryURL(String archiveProfile) {
+    static String getOrGenerateSupplementaryURL(String archiveProfile) {
         if (!SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP || !SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.containsKey(archiveProfile)) {
             SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP.put(archiveProfile, null)
         }
@@ -271,37 +264,38 @@ class UploadUtils {
             if (!metaDataMap."${archiveProfile}.creator") {
                 throwNoCreatorSpecifiedErrorIfNoRandomCreatorFlagAndQuit()
             }
-            String _creator = "creator=" + metaDataMap."${archiveProfile}.creator"
-            _creator = _creator?.replaceAll(/[#!&]/, "")?.replaceAll("null", " ")
+            String _creator = 'creator=' + metaDataMap."${archiveProfile}.creator"
+            _creator = _creator?.replaceAll(/[#!&]/, '')?.replaceAll('null', ' ')
             String _subjects = metaDataMap."${archiveProfile}.subjects"
-            _subjects = _subjects?.replaceAll(/[#!&]/, "")?.replaceAll("null", " ")
+            _subjects = _subjects?.replaceAll(/[#!&]/, '')?.replaceAll('null', ' ')
             if (!_subjects) {
-                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll("creator=", "") : null
+                _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll('creator=', '') : null
             }
 
             ///String _lang = "language=" + (metaDataMap."${archiveProfile}.language" ?: SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE)
-            String _fileNameAsDesc = "{0}"
+            String _fileNameAsDesc = '{0}'
             String _desc = metaDataMap."${archiveProfile}.description"
 
-            String desc_and_file_name = "description=${_desc ? "${_desc}\n Filename: ${_fileNameAsDesc}" : "\n Filename: "+_fileNameAsDesc}"
+            String filelabelVal = "FileName: ${_fileNameAsDesc}"
+            String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
             String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
-                enhancedUrl += AMPERSAND + "collection=" + metaDataMap."${archiveProfile}.collection"
+                enhancedUrl += AMPERSAND + 'collection=' + metaDataMap."${archiveProfile}.collection"
             }
             if (_subjects) {
-                if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
+                if (_subjects.contains(',') && (_subjects.contains('\"') || _subjects.contains("'"))) {
                     def doubleQuoteRegex = /".*?"/
                     def singleQuoteRegex = /'.*?'/
                     def subjectsInsideSingleQuotes = _subjects.findAll(singleQuoteRegex)
                     def subjectsInsideDoubleQuotes = _subjects.findAll(doubleQuoteRegex)
                     def both = subjectsInsideSingleQuotes + subjectsInsideDoubleQuotes
                     both.each { it ->
-                        _subjects = _subjects.replaceAll(it, "")
+                        _subjects = _subjects.replaceAll(it, '')
                     }
-                    def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
-                    _subjects = allSubjects.join(",")
+                    def allSubjects = both.collect { it -> it.replaceAll(',', ' ') } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
+                    _subjects = allSubjects.join(',')
                 }
-                enhancedUrl += AMPERSAND + "subject=" + _subjects
+                enhancedUrl += AMPERSAND + 'subject=' + _subjects
             }
             if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
                 enhancedUrl += AMPERSAND + _creator
@@ -313,68 +307,67 @@ class UploadUtils {
             String _creator = generateCreatorsForProfileAndPickARandomOne(archiveProfile)
             url += AMPERSAND + _creator
 
-            if (!url.contains("subject=")) {
-                String _subjects = "subject=" + _creator.replaceAll("creator=", "")
+            if (!url.contains('subject=')) {
+                String _subjects = 'subject=' + _creator.replaceAll('creator=', '')
                 url += AMPERSAND + _subjects
             }
         }
         return url
     }
 
-
     static String getOrGenerateSupplementaryURLV2(String _subjects,
                                                  String _desc,
-                                                 String creator = "") {
+                                                 String creator = '') {
         String _creator = "creator=${creator}"
-        String _fileNameAsDesc = "{0}"
-
-        String desc_and_file_name = "description=${_desc ? "${_desc}\n FileName: ${_fileNameAsDesc}" : "\n FileName: "+_fileNameAsDesc}"
+        String _fileNameAsDesc = '{0}'
+        String filelabelVal = "FileName: ${_fileNameAsDesc}"
+        String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
         String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
         if (_subjects) {
-            if (_subjects.contains(",") && (_subjects.contains("\"") || _subjects.contains("'"))) {
+            if (_subjects.contains(',') && (_subjects.contains('\"') || _subjects.contains("'"))) {
                 def doubleQuoteRegex = /".*?"/
                 def singleQuoteRegex = /'.*?'/
                 def subjectsInsideSingleQuotes = _subjects.findAll(singleQuoteRegex)
                 def subjectsInsideDoubleQuotes = _subjects.findAll(doubleQuoteRegex)
                 def both = subjectsInsideSingleQuotes + subjectsInsideDoubleQuotes
                 both.each { it ->
-                    _subjects = _subjects.replaceAll(it, "")
+                    _subjects = _subjects.replaceAll(it, '')
                 }
-                def allSubjects = both.collect { it -> it.replaceAll(",", " ") } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
-                _subjects = allSubjects.join(",")
+                def allSubjects = both.collect { it -> it.replaceAll(',', ' ') } + _subjects.split(/\s*,\s*/)*.trim().findAll { String item -> !item.isEmpty() }
+                _subjects = allSubjects.join(',')
             }
-            enhancedUrl += AMPERSAND + "subject=" + _subjects
+            enhancedUrl += AMPERSAND + 'subject=' + _subjects
         }
         if (!EGangotriUtil.GENERATE_RANDOM_CREATOR) {
             enhancedUrl += AMPERSAND + _creator
         }
         return enhancedUrl
-    }
+                                                 }
 
-    static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = "") {
+    static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = '') {
         String enhancedUrl = getOrGenerateSupplementaryURL(archiveProfile)
         String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
 
         String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
-        return uploadUrl.replaceAll("\"", "'")
+        return uploadUrl.replaceAll('\"', "'")
     }
 
     static String generateUploadUrl(String fileNameToBeUsedAsUniqueDescription,
                                       String _subjects,
                                       String _desc,
-                                      String creator = "") {
+                                      String creator = '') {
         String enhancedUrl = getOrGenerateSupplementaryURLV2(_subjects, _desc, creator)
         String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
         String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
-        return uploadUrl.replaceAll("\"", "'")
-    }
+        return uploadUrl.replaceAll('\"', "'")
+                                      }
 
     static insertDescriptionInUploadUrl(String enhancedUrl, String fileNameToBeUsedAsUniqueDescription) {
         return enhancedUrl.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
     }
 
     static String _removeAmpersandAndFetchTitleOnly(String title) {
-        return stripFilePathAndFileEnding(title?.replaceAll(AMPERSAND, ""))
+        return stripFilePathAndFileEnding(title?.replaceAll(AMPERSAND, ''))
     }
 
     /***
@@ -393,7 +386,7 @@ class UploadUtils {
      */
     static String stripFilePath(String filePath) {
         log.info("filePath: ${filePath}")
-        return filePath ? filePath?.trim()?.drop(filePath?.lastIndexOf(File.separator) + 1) : ""
+        return filePath ? filePath?.trim()?.drop(filePath?.lastIndexOf(File.separator) + 1) : ''
     }
 
     /***
@@ -402,7 +395,7 @@ class UploadUtils {
      * @return C:\books\set-1
      */
     static String stripFileTitle(String filePath) {
-        return filePath ? filePath?.trim()?.take(filePath?.lastIndexOf(File.separator) + 1) : ""
+        return filePath ? filePath?.trim()?.take(filePath?.lastIndexOf(File.separator) + 1) : ''
     }
 
     /***
@@ -411,7 +404,7 @@ class UploadUtils {
      * @return Hamlet by Shakespeare
      */
     static String removeFileEnding(String title) {
-        return title?.contains(".") ? title?.trim()?.tokenize(".")?.dropRight(1)?.join(".") : title
+        return title?.contains('.') ? title?.trim()?.tokenize('.')?.dropRight(1)?.join('.') : title
     }
 
     /***
@@ -420,11 +413,11 @@ class UploadUtils {
      * @return pdf
      */
     static String getFileEnding(String title) {
-        return title?.contains(".") ? title?.trim()?.tokenize(".")?.last() : title
+        return title?.contains('.') ? title?.trim()?.tokenize('.')?.last() : title
     }
 
-    static String getLastPortionOfTitleUsingSeparator(String title, String separator = "-") {
-        return title?.contains(separator) ? title?.split("-")?.last() : title
+    static String getLastPortionOfTitleUsingSeparator(String title, String separator = '-') {
+        return title?.contains(separator) ? title?.split('-')?.last() : title
     }
 
     static boolean switchToLastOpenTab(ChromeDriver driver) {
@@ -446,7 +439,7 @@ class UploadUtils {
             if (sleepTimeInSeconds > 0) {
                 EGangotriUtil.sleepTimeInSeconds(sleepTimeInSeconds)
             }
-            JavascriptExecutor js = (JavascriptExecutor) enhancedUrl;
+            JavascriptExecutor js = (JavascriptExecutor) enhancedUrl
             js.executeScript("window.open('','_blank');");
         }
         catch (Exception _ex) {
@@ -457,9 +450,9 @@ class UploadUtils {
     }
 
     static void maximizeBrowser(ChromeDriver driver) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.blur()");
-        driver.manage().window().maximize();
+        JavascriptExecutor js = (JavascriptExecutor) driver
+        js.executeScript('window.blur()')
+        driver.manage().window().maximize()
     }
 
     static void closeBrowser(ChromeDriver driver) {
@@ -480,7 +473,7 @@ class UploadUtils {
             }
             alertWasDetected = true
         } catch (Exception e) {
-            //log.info("No alert detected")
+        //log.info("No alert detected")
         }
         return alertWasDetected
     }
@@ -495,11 +488,11 @@ class UploadUtils {
 
     static String generateStats(List<List<Integer>> uploadStats, String archiveProfile, Integer countOfUplodableFiles) {
         Integer uplddSum = uploadStats.collect { List<Integer> elem -> elem.first() }.sum() as Integer
-        String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(" + ")
+        String statsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.first() }.join(' + ')
         String countOfUploadedItems = uploadStats.size() > 1 ? "($statsAsPlusSeparatedValues) = $uplddSum" : uploadStats?.first()?.first()
 
         Integer excSum = uploadStats.collect { elem -> elem.last() }.sum() as int
-        String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(" + ")
+        String excpsAsPlusSeparatedValues = uploadStats.collect { elem -> elem.last() }.join(' + ')
         String exceptionCount = uploadStats.size() > 1 ? "($excpsAsPlusSeparatedValues) = $excSum" : uploadStats?.first()?.last()
         log.info("Uploaded $countOfUploadedItems items with (${exceptionCount}) Exceptions for Profile: $archiveProfile")
 
