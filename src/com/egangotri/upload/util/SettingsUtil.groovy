@@ -16,7 +16,7 @@ class SettingsUtil {
     static boolean PREVIEW_FILES = true
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
-    static boolean DONT_EXTEND_IDENTIFIER = false
+    static boolean EXTEND_IDENTIFIER = true
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
@@ -210,10 +210,9 @@ class SettingsUtil {
                 log.info("WRITE_TO_MONGO_DB: ${WRITE_TO_MONGO_DB}");
             }
 
-            if(settingsMetaDataMap.DONT_EXTEND_IDENTIFIER){
-                DONT_EXTEND_IDENTIFIER = settingsMetaDataMap.DONT_EXTEND_IDENTIFIER == "true"
-                log.info("DONT_EXTEND_IDENTIFIER: ${DONT_EXTEND_IDENTIFIER}");
-
+             if(settingsMetaDataMap.EXTEND_IDENTIFIER){
+                EXTEND_IDENTIFIER = settingsMetaDataMap.EXTEND_IDENTIFIER !== 'false'
+                log.info("EXTEND_IDENTIFIER: ${EXTEND_IDENTIFIER}");
             }
             applyMailerSettings()
             applySnap2HtmlSettings()

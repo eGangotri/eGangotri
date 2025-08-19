@@ -2,6 +2,7 @@
 ./target/
 *.log
 build/
+bin/
 .idea
 *.iml
 gradlew
