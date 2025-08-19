@@ -211,7 +211,7 @@ class SettingsUtil {
             }
 
             if(settingsMetaDataMap.DONT_EXTEND_IDENTIFIER){
-                DONT_EXTEND_IDENTIFIER = settingsMetaDataMap.DONT_EXTEND_IDENTIFIER
+                DONT_EXTEND_IDENTIFIER = settingsMetaDataMap.DONT_EXTEND_IDENTIFIER == "true"
                 log.info("DONT_EXTEND_IDENTIFIER: ${DONT_EXTEND_IDENTIFIER}");
 
             }

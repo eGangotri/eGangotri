@@ -284,32 +284,31 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
-        if (true) {
-            if(SettingsUtil.DONT_EXTEND_IDENTIFIER) {
-                identifier = "" + identifier
-            }
-            else{
-                identifier = extendIdentifierByPrepending(identifier)
-            }
-            driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
-            WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
-            pgUrlInputField.clear()
-            pgUrlInputField.sendKeys(identifier)
-            pgUrlInputField.sendKeys(Keys.ENTER)
-            boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
-            //for a strange reason the first tab doesnt have alert
-            //after that have alert. alert text is always nulll
-            if (alertWasDetected) {
-                log.info("alert detected while identifier was being tweaked")
-                pgUrlInputField.click()
-                pgUrlInputField.sendKeys(Keys.ENTER)
-            }
-            WebDriverWait wait3 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-            wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
-            String identifierNowInTextBox = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-            ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
-            identifier = identifierNowInTextBox
+        if(SettingsUtil.DONT_EXTEND_IDENTIFIER) {
+            identifier = "" + identifier
         }
+        else{
+            identifier = extendIdentifierByPrepending(identifier)
+        }
+
+        driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
+        WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
+        pgUrlInputField.clear()
+        pgUrlInputField.sendKeys(identifier)
+        pgUrlInputField.sendKeys(Keys.ENTER)
+        boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
+        //for a strange reason the first tab doesnt have alert
+        //after that have alert. alert text is always nulll
+        if (alertWasDetected) {
+            log.info("alert detected while identifier was being tweaked")
+            pgUrlInputField.click()
+            pgUrlInputField.sendKeys(Keys.ENTER)
+        }
+        WebDriverWait wait3 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+        wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        String identifierNowInTextBox = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+        ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
+        identifier = identifierNowInTextBox
         String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         log.info("\tidentifier: ${identifier}")
         log.info("\tAccess Url: ${accessUrl}")
