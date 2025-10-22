@@ -276,7 +276,7 @@ class UploadUtils {
             String _fileNameAsDesc = '{0}'
             String _desc = metaDataMap."${archiveProfile}.description"
 
-            String filelabelVal = "FileName: ${_fileNameAsDesc}"
+            String filelabelVal = "FileName ${_fileNameAsDesc}"
             String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
             String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
@@ -320,7 +320,7 @@ class UploadUtils {
                                                  String creator = '') {
         String _creator = "creator=${creator}"
         String _fileNameAsDesc = '{0}'
-        String filelabelVal = "FileName: ${_fileNameAsDesc}"
+        String filelabelVal = "FileName ${_fileNameAsDesc}"
         String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
         String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
         if (_subjects) {
