@@ -15,6 +15,7 @@ class CsvToExcel {
 
             // Parse the CSV data and write it to the sheet
             String[] rows = contents.split("\n")
+            int maxColumns = 0
             rows?.tail()?.eachWithIndex { String rowStr, int rowIndex ->
                 //we dont need sep=; line
                 Row row = sheet.createRow(rowIndex)
@@ -23,6 +24,13 @@ class CsvToExcel {
                     Cell cell = row.createCell(colIndex)
                     cell.setCellValue(colStr)
                 }
+                if (columns.length > maxColumns) {
+                    maxColumns = columns.length
+                }
+            }
+            // Auto-size columns to fit content (at least header width)
+            for (int c = 0; c < maxColumns; c++) {
+                sheet.autoSizeColumn(c)
             }
 
             // Save the workbook to an Excel file
@@ -35,4 +43,3 @@ class CsvToExcel {
         }
     }
 }
-
