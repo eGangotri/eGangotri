@@ -82,7 +82,7 @@ class BookTitles {
         'premi': 'Premi',
         'urduDuniya': 'Urdu Duniya',
         '_hn': 'HN',
-        'sps': 'SPS',
+        'sps': 'Srimagar-Libs',
         'sarai': 'Sarai',
         'eg_books': 'EG Books',
         'N_K_Sundaram': 'N K Sundaram',
@@ -108,6 +108,7 @@ class BookTitles {
         'salim_kashmir_treasures': 'Salim Kashmir Treasures',
         'eg_urdu': 'EG Urdu',
         '_sarayu_egm': 'Sarayu EGM',
+        'muthu':'C R Bala'
     ]
 
     static void main(String[] args) {
