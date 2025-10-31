@@ -34,7 +34,7 @@ class UploadUtils {
 
     static Map<String, String> SUPPLEMENTARY_URL_FOR_EACH_PROFILE_MAP = [:]
     static Map<String, List<String>> RANDOM_CREATOR_BY_PROFILE_MAP = [:]
-    static final String ARCHIVE_UPLOAD_URL = 'https://archive.org/upload?'
+    static final String ARCHIVE_UPLOAD_URL = 'https://archive.org/upload/?'
     static final String AMPERSAND = '&'
 
     static int RANDOM_CREATOR_MAX_LIMIT = 50
@@ -272,12 +272,10 @@ class UploadUtils {
                 _subjects = !EGangotriUtil.GENERATE_RANDOM_CREATOR ? _creator.replaceAll('creator=', '') : null
             }
 
-            ///String _lang = "language=" + (metaDataMap."${archiveProfile}.language" ?: SettingsUtil.DEFAULT_LANGUAGE_ISO_CODE)
-            String _fileNameAsDesc = '{0}'
             String _desc = metaDataMap."${archiveProfile}.description"
 
-            String filelabelVal = "FileName ${_fileNameAsDesc}"
-            String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
+            String filelabelVal = '{0}'
+            String desc_and_file_name = "description=${_desc ? "${filelabelVal}, ${_desc}" : "${filelabelVal}"}"
             String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
             if (metaDataMap."${archiveProfile}.collection") {
                 enhancedUrl += AMPERSAND + 'collection=' + metaDataMap."${archiveProfile}.collection"
@@ -319,9 +317,8 @@ class UploadUtils {
                                                  String _desc,
                                                  String creator = '') {
         String _creator = "creator=${creator}"
-        String _fileNameAsDesc = '{0}'
-        String filelabelVal = "FileName ${_fileNameAsDesc}"
-        String desc_and_file_name = "description=${_desc ? "${filelabelVal}, \n${_desc}" : "\n ${filelabelVal}"}"
+        String filelabelVal = '{0}'
+        String desc_and_file_name = "description=${_desc ? "${filelabelVal}, ${_desc}" : "${filelabelVal}"}"
         String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
         if (_subjects) {
             if (_subjects.contains(',') && (_subjects.contains('\"') || _subjects.contains("'"))) {
@@ -345,14 +342,20 @@ class UploadUtils {
                                                  }
 
     static String generateUploadUrl(String archiveProfile, String fileNameToBeUsedAsUniqueDescription = '') {
-        String enhancedUrl = getOrGenerateSupplementaryURL(archiveProfile)
-        String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
+        if (SettingsUtil.BARE_BONES_SUBJECT_DESC_URL) {
+            String uploadUrl = ARCHIVE_UPLOAD_URL + "description=${archiveProfile}&subject=${archiveProfile}&creator=${archiveProfile}"
+            return uploadUrl
+        }
+        else {
+            String enhancedUrl = getOrGenerateSupplementaryURL(archiveProfile)
+            String insertDescription = insertDescriptionInUploadUrl(enhancedUrl, fileNameToBeUsedAsUniqueDescription)
 
-        String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
-        return uploadUrl.replaceAll('\"', "'")
+            String uploadUrl = ARCHIVE_UPLOAD_URL + insertDescription
+            return uploadUrl.replaceAll('\"', "'")
+        }
     }
 
-    static String generateUploadUrl(String fileNameToBeUsedAsUniqueDescription,
+    static String generateUploadUrlV2(String fileNameToBeUsedAsUniqueDescription,
                                       String _subjects,
                                       String _desc,
                                       String creator = '') {

@@ -242,8 +242,8 @@ class ArchiveHandler {
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
 
         def encodedUploadLink = uploadLink.replaceAll("\n", "%0A%0A")
-        println "encodedUploadLink: ${encodedUploadLink}"
-        println "uploadLink: ${uploadLink}"
+        log.info "encodedUploadLink: ${encodedUploadLink}"
+        log.info "uploadLink: ${uploadLink}"
 
         //Go to URL
         driver.navigate().to(encodedUploadLink)
@@ -278,16 +278,20 @@ class ArchiveHandler {
         }
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+        log.info("1")
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
-
+        log.info("2")
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+        log.info("3")
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
+        log.info("4")
+
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
 
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)
         }
-
+        log.info("***identifier: ${identifier}")
         driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
         WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
         pgUrlInputField.clear()

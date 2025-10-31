@@ -16,7 +16,10 @@ class SettingsUtil {
     static boolean PREVIEW_FILES = true
     static boolean MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = false
     static String DEFAULT_LANGUAGE_ISO_CODE = "san"
+
     static boolean EXTEND_IDENTIFIER = true
+    static boolean BARE_BONES_SUBJECT_DESC_URL = false
+
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
     static List<String> IGNORE_FILES_AND_FOLDERS_WITH_KEYWORDS = ["freeze", "upload", "_dont"]
@@ -78,22 +81,22 @@ class SettingsUtil {
                 log.info("MAX_UPLODABLES: " + EGangotriUtil.MAX_UPLODABLES)
             }
 
-            if (settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING) {
+            if (settingsMetaDataMap.containsKey('CREATOR_FROM_DASH_SEPARATED_STRING')) {
                 EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING = settingsMetaDataMap.CREATOR_FROM_DASH_SEPARATED_STRING.toBoolean()
                 log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING)
             }
 
-            if (settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL) {
+            if (settingsMetaDataMap.containsKey('ADD_RANDOM_INTEGER_TO_PAGE_URL')) {
                 EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL = settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean()
                 log.info("ADD_RANDOM_INTEGER_TO_PAGE_URL: " + EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL)
             }
 
-            if (settingsMetaDataMap.GENERATE_ONLY_URLS) {
+            if (settingsMetaDataMap.containsKey('GENERATE_ONLY_URLS')) {
                 EGangotriUtil.GENERATE_ONLY_URLS = settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean()
                 log.info("GENERATE_ONLY_URLS: " + EGangotriUtil.GENERATE_ONLY_URLS)
             }
 
-            if (settingsMetaDataMap.GENERATE_RANDOM_CREATOR) {
+            if (settingsMetaDataMap.containsKey('GENERATE_RANDOM_CREATOR')) {
                 EGangotriUtil.GENERATE_RANDOM_CREATOR = settingsMetaDataMap.GENERATE_RANDOM_CREATOR.toBoolean()
                 log.info("GENERATE_RANDOM_CREATOR: " + EGangotriUtil.GENERATE_RANDOM_CREATOR)
             }
@@ -146,28 +149,28 @@ class SettingsUtil {
             }
 
             if (ArchiveUtil.VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS) {
-                if (settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
+                if (settingsMetaDataMap.containsKey('IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS')) {
                     IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS: " + IGNORE_QUEUED_ITEMS_IN_REUPLOAD_FAILED_ITEMS)
                 }
 
-                if (settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS) {
+                if (settingsMetaDataMap.containsKey('IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS')) {
                     IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS: " + IGNORE_USHERED_ITEMS_IN_REUPLOAD_FAILED_ITEMS)
                 }
 
-                if (settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS) {
+                if (settingsMetaDataMap.containsKey('ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS')) {
                     ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS = settingsMetaDataMap.ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS.toBoolean()
                     log.info("ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS: " + ONLY_GENERATE_STATS_IN_REUPLOAD_FAILED_ITEMS)
                 }
 
-                if (settingsMetaDataMap.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN) {
+                if (settingsMetaDataMap.containsKey('MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN')) {
                     MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN = settingsMetaDataMap.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN.toBoolean()
                     log.info("MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN: " + MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN)
                 }
             }
 
-            if (settingsMetaDataMap.PREVIEW_FILES) {
+            if (settingsMetaDataMap.containsKey('PREVIEW_FILES')) {
                 PREVIEW_FILES = settingsMetaDataMap.PREVIEW_FILES.toBoolean()
                 log.info("PREVIEW_FILES: " + PREVIEW_FILES)
             }
@@ -182,7 +185,7 @@ class SettingsUtil {
                 log.info("REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES: " + REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES)
             }
 
-            if (settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
+            if (settingsMetaDataMap.containsKey('REUPLOAD_OF_FAILED_ITEMS_ON_SETTING')) {
                 REUPLOAD_OF_FAILED_ITEMS_ON_SETTING = settingsMetaDataMap.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING.toBoolean()
                 log.info("REUPLOAD_OF_FAILED_ITEMS_ON_SETTING: " + REUPLOAD_OF_FAILED_ITEMS_ON_SETTING)
             }
@@ -205,14 +208,18 @@ class SettingsUtil {
                 EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD = settingsMetaDataMap.EGANGOTRI_BACKEND_SUPERADMIN_PASSWORD
             }
 
-            if (settingsMetaDataMap.WRITE_TO_MONGO_DB) {
-                WRITE_TO_MONGO_DB = settingsMetaDataMap.WRITE_TO_MONGO_DB;
+            if (settingsMetaDataMap.containsKey('WRITE_TO_MONGO_DB')) {
+                WRITE_TO_MONGO_DB = settingsMetaDataMap.WRITE_TO_MONGO_DB.toBoolean()
                 log.info("WRITE_TO_MONGO_DB: ${WRITE_TO_MONGO_DB}");
             }
 
-             if(settingsMetaDataMap.EXTEND_IDENTIFIER){
-                EXTEND_IDENTIFIER = settingsMetaDataMap.EXTEND_IDENTIFIER !== 'false'
+            if(settingsMetaDataMap.containsKey('EXTEND_IDENTIFIER')){
+                EXTEND_IDENTIFIER = settingsMetaDataMap.EXTEND_IDENTIFIER.toBoolean()
                 log.info("EXTEND_IDENTIFIER: ${EXTEND_IDENTIFIER}");
+            }
+            if(settingsMetaDataMap.containsKey('BARE_BONES_SUBJECT_DESC_URL')){
+                BARE_BONES_SUBJECT_DESC_URL = settingsMetaDataMap.BARE_BONES_SUBJECT_DESC_URL.toBoolean()
+                log.info("BARE_BONES_SUBJECT_DESC_URL: ${BARE_BONES_SUBJECT_DESC_URL}");
             }
             applyMailerSettings()
             applySnap2HtmlSettings()

@@ -159,7 +159,7 @@ class ArchiveUtil {
         String uploadLink = uploadVo.uploadLink
         String fileNameWithPath = uploadVo.path
         String title = UploadUtils.stripFilePath(fileNameWithPath)
-        String _idntfier = _identifier ? (", \"${_identifier}\"") : ""
+        String _idntfier = _identifier ? (", \"${_identifier}\"") : "";
         String appendable = "\"$archiveProfile\", \"$uploadLink\", \"$fileNameWithPath\", \"$title\"${_idntfier}\n"
         return appendable
     }
@@ -333,6 +333,7 @@ class ArchiveUtil {
             randomString += EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
         }
         String enhancedIdentifier = prepend ? "${randomString}_${originalIdentifier}" : "${originalIdentifier}_${randomString}"
+        log.info("identifier: ${originalIdentifier} -> ${enhancedIdentifier}")
         return enhancedIdentifier
     }
 
