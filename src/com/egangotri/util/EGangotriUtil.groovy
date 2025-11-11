@@ -69,8 +69,6 @@ class EGangotriUtil {
     static List IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS = []
     static boolean CREATOR_FROM_DASH_SEPARATED_STRING = false
 
-    static boolean ADD_RANDOM_INTEGER_TO_PAGE_URL = true
-
     //using ("A".."z" ) will introduce non-alpha chars
     static final List ASCII_ALPHA_CHARS = ("a".."z").toList()
     static final def ASCII_CHARS_SIZE = ASCII_ALPHA_CHARS.size()

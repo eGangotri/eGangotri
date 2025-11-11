@@ -86,11 +86,6 @@ class SettingsUtil {
                 log.info("CREATOR_FROM_DASH_SEPARATED_STRING: " + EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING)
             }
 
-            if (settingsMetaDataMap.containsKey('ADD_RANDOM_INTEGER_TO_PAGE_URL')) {
-                EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL = settingsMetaDataMap.ADD_RANDOM_INTEGER_TO_PAGE_URL.toBoolean()
-                log.info("ADD_RANDOM_INTEGER_TO_PAGE_URL: " + EGangotriUtil.ADD_RANDOM_INTEGER_TO_PAGE_URL)
-            }
-
             if (settingsMetaDataMap.containsKey('GENERATE_ONLY_URLS')) {
                 EGangotriUtil.GENERATE_ONLY_URLS = settingsMetaDataMap.GENERATE_ONLY_URLS.toBoolean()
                 log.info("GENERATE_ONLY_URLS: " + EGangotriUtil.GENERATE_ONLY_URLS)
