@@ -7,6 +7,7 @@ git status
 git add src/*
 git add .gitignore
 git add push_to_git.bat 
+git add resources/chromedriver.*
 git add latestJarForUse/*
 git add test/*
 git commit -m %commit_msg%

@@ -1,5 +1,4 @@
 ### Gradle template
-resources/chromedriver.*
 ./target/
 *.log
 build/
