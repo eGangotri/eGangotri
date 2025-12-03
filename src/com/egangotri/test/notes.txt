@@ -1,0 +1,138 @@
+The error Expected condition failed after SUCCESS: Found Shadow Host: <app-root> means the email input is likely inside a nested Shadow DOM (a shadow root inside another shadow root), or the specific input hasn't rendered yet when the script checks.
+
+Archive.org's login often nests components (e.g., <app-root> -> <login-component> -> <input>). Standard Selenium shadowRoot.findElement only looks one level deep.
+
+Here is the "Deep Search" solution. It uses a JavaScript helper that drills down through all layers of Shadow DOMs automatically to find the email and password fields.
+
+Updated Groovy Code (Deep Shadow Support)
+
+Replace your class content with this. It removes the guesswork about how many shadow layers exist.
+
+code
+Groovy
+download
+content_copy
+expand_less
+package com.egangotri.upload.archive
+
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.support.ui.ExpectedCondition
+import org.openqa.selenium.support.ui.WebDriverWait
+import java.time.Duration
+
+class LoginToArchive {
+
+    static void main(String[] args) {
+        System.setProperty("webdriver.http.factory", "jdk-http-client")
+
+        ChromeOptions options = new ChromeOptions()
+        options.addArguments("--start-maximized")
+        options.addArguments("--remote-allow-origins=*") // Critical for Chrome 111+
+
+        WebDriver driver = new ChromeDriver(options)
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30))
+
+        try {
+            println "Navigating to Archive.org Login..."
+            driver.get("https://archive.org/account/login")
+
+            String username = "indiclibrary19@gmail.com"
+            String password = "a@hBmsep123"
+
+            // ---------------------------------------------------------
+            // HELPER: JavaScript to find element through ALL Shadow DOM layers
+            // ---------------------------------------------------------
+            String deepSelectorJS = """
+                function querySelectorDeep(selector, root = document) {
+                    let element = null;
+                    // 1. Check current root
+                    element = root.querySelector(selector);
+                    if (element) return element;
+
+                    // 2. Check inside all child shadow roots
+                    let walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
+                    while(walker.nextNode()) {
+                        let node = walker.currentNode;
+                        if (node.shadowRoot) {
+                            element = querySelectorDeep(selector, node.shadowRoot);
+                            if (element) return element;
+                        }
+                    }
+                    return null;
+                }
+                return querySelectorDeep(arguments[0]);
+            """
+
+            println "Waiting for Email Input (Deep Search)..."
+
+            // 1. Find Email Input
+            WebElement emailInput = wait.until(new ExpectedCondition<WebElement>() {
+                @Override
+                WebElement apply(WebDriver d) {
+                    return (WebElement) ((JavascriptExecutor) d).executeScript(deepSelectorJS, "input[type='email']")
+                }
+            })
+
+            // 2. Find Password Input
+            WebElement passwordInput = wait.until(new ExpectedCondition<WebElement>() {
+                @Override
+                WebElement apply(WebDriver d) {
+                    return (WebElement) ((JavascriptExecutor) d).executeScript(deepSelectorJS, "input[type='password']")
+                }
+            })
+
+            // 3. Find Login Button (Try generic submit selector)
+            WebElement submitButton = wait.until(new ExpectedCondition<WebElement>() {
+                @Override
+                WebElement apply(WebDriver d) {
+                    return (WebElement) ((JavascriptExecutor) d).executeScript(deepSelectorJS, "button[type='submit']")
+                }
+            })
+
+            // ---------------------------------------------------------
+            // PERFORM ACTIONS
+            // ---------------------------------------------------------
+            println "Found elements. Logging in..."
+
+            emailInput.click() // Sometimes helps focus
+            emailInput.clear()
+            emailInput.sendKeys(username)
+
+            passwordInput.click()
+            passwordInput.clear()
+            passwordInput.sendKeys(password)
+
+            // Small pause to ensure UI updates enabled state of button
+            Thread.sleep(1000)
+
+            // Use JS click for reliability inside Shadow DOM
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitButton)
+            println "Login button clicked."
+
+            // ---------------------------------------------------------
+            // VERIFY
+            // ---------------------------------------------------------
+            // Wait for URL to NOT contain 'login'
+            wait.until({ d -> !d.getCurrentUrl().contains("/login") } as ExpectedCondition)
+
+            println "SUCCESS: Login complete. Current URL: " + driver.getCurrentUrl()
+
+        } catch (Exception e) {
+            println "ERROR: " + e.getMessage()
+            // e.printStackTrace()
+        } finally {
+            // driver.quit() // Keep open to verify
+        }
+    }
+}
+Why this works while the previous one failed
+
+Recursion via JavaScript: The deepSelectorJS function defines a crawler that runs inside the browser. It looks at the main document, then finds every element with a shadowRoot, and looks inside that, recursively.
+
+Bypasses getShadowRoot() limitations: Selenium's getShadowRoot() is great for one level, but if Archive.org has <app-root> -> #shadow -> <login-form> -> #shadow -> <input>, you would need to write complex chained code. This script handles infinite nesting depth automatically.
+
+Explicit Wait on JS Result: The wait.until now waits for the JavaScript to return a non-null element, ensuring the script pauses until the slow-loading nested component actually appears.
