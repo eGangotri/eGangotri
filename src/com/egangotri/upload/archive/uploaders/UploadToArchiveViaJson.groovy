@@ -3,6 +3,7 @@ package com.egangotri.upload.archive.uploaders
 import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.UploadUtils
+import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
 import groovy.json.JsonSlurper
@@ -43,18 +44,18 @@ Go TO MongoDB ItemsUshered.
  */
 @Slf4j
 class UploadToArchiveViaJson {
+
     static void main(String[] args) {
-        String excelFileName = ""
+        String excelFileName = ''
         String[] range = []
         if (args && args.length >= 1) {
             log.info "args $args"
             excelFileName = args[0]
             if (args.length == 2) {
-                range = args[1].split("-")*.trim()
+                range = args[1].split('-')*.trim()
             }
-
         } else {
-            log.info "Must have 1-2 arg.s Excel Path/range"
+            log.info 'Must have 1-2 arg.s Excel Path/range'
             System.exit(0)
         }
         UploadersUtil.archiveLoginsMetaDataMap = UploadUtils.getAllArchiveLogins()
@@ -63,8 +64,8 @@ class UploadToArchiveViaJson {
                 "${uploadablesFromJson[0].path}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         Map<String, List<ReuploadVO>> vosGrouped = uploadablesFromJson.groupBy { ReuploadVO item -> item.archiveProfile }
-        int attemptedItemsTotal = 0;
-       /// SettingsUtil.applySettings();
+        int attemptedItemsTotal = 0
+        SettingsUtil.applySettings()
        // Util.addToUploadCycleWithMode(vosGrouped.entrySet()*.key, "Json-(${range})");
 
         vosGrouped.eachWithIndex { entry, index ->
@@ -87,7 +88,6 @@ class UploadToArchiveViaJson {
             }
             EGangotriUtil.sleepTimeInSeconds(5, true)
         }
-
 
         EGangotriUtil.recordProgramEnd()
         ArchiveUtil.printFinalReport(uploadSuccessCheckingMatrix, attemptedItemsTotal, true)
@@ -136,8 +136,7 @@ class UploadToArchiveViaJson {
             }
         }
         log.info("readJsonFile items added:${counter} size:${uploadItems.size()}")
-        return uploadItems;
+        return uploadItems
     }
 
 }
-
