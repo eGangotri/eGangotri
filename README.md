@@ -100,3 +100,8 @@ Explanation: https://www.howtogeek.com/254830/why-your-photos-dont-always-appear
 ###Gradle Version: gradle-4.10.X
 Watermarking:
 https://batchwatermark.com/en
+
+Extensions:
+In order to run this in VS Code based IDEs make sure to get extensions:
+Extension Pack for Java by vscjava
+and Easy Groovy
