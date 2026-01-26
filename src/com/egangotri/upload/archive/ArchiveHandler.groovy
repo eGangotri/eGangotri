@@ -65,6 +65,11 @@ class ArchiveHandler {
                 if (uploadables.size() > 1) {
                     int tabIndex = 1
                     for (uploadVo in uploadVos.drop(1)) {
+
+                        if(SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS > 0){
+                            log.info("Delaying upload by ${SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS} seconds")
+                            Thread.sleep(SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS * 1000)
+                        }
                         if (uploadFailureCount > EGangotriUtil.UPLOAD_FAILURE_THRESHOLD) {
                             String errMsg = "Too many upload Exceptions More than ${EGangotriUtil.UPLOAD_FAILURE_THRESHOLD}. Quittimg"
                             log.info(errMsg)
