@@ -35,6 +35,8 @@ class SettingsUtil {
     static String ENV_DEV = "dev"
     static String ENV_TYPE = ENV_DEV
 
+    static int DELAY_EACH_UPLOAD_BY_X_SECONDS = 0
+    
     static void applySettings(boolean createVOSavingFiles = true) {
         UploadUtils.resetGlobalUploadCounter()
         if (createVOSavingFiles) {
@@ -79,6 +81,19 @@ class SettingsUtil {
                     log.info("MAX_UPLODABLES is not a valid Integer. will not be considered")
                 }
                 log.info("MAX_UPLODABLES: " + EGangotriUtil.MAX_UPLODABLES)
+            }
+
+            if (settingsMetaDataMap.DELAY_EACH_UPLOAD_BY_X_SECONDS) {
+                try {
+                    int delayEachUploadByXSeconds = Integer.parseInt(settingsMetaDataMap.DELAY_EACH_UPLOAD_BY_X_SECONDS)
+                    if (delayEachUploadByXSeconds >= 0) {
+                        DELAY_EACH_UPLOAD_BY_X_SECONDS = delayEachUploadByXSeconds
+                    }
+                }
+                catch (Exception e) {
+                    log.info("DELAY_EACH_UPLOAD_BY_X_SECONDS is not a valid Integer. will not be considered")
+                }
+                log.info("DELAY_EACH_UPLOAD_BY_X_SECONDS: " + DELAY_EACH_UPLOAD_BY_X_SECONDS)
             }
 
             if (settingsMetaDataMap.containsKey('CREATOR_FROM_DASH_SEPARATED_STRING')) {
