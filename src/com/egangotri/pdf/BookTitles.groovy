@@ -113,7 +113,9 @@ class BookTitles {
         'salim_kashmir_treasures': 'Salim Kashmir Treasures',
         'eg_urdu': 'EG Urdu',
         '_sarayu_egm': 'Sarayu EGM',
-        'muthu':'C R Bala'
+        'muthu':'C R Bala',
+        'janardan':'Janardan Bhattarai,Nagarjuna, Kathmandu',
+        'regmi':'Dilli Raman Regmi Library, Kathmandu'
     ]
 
     static void main(String[] args) {

@@ -448,7 +448,7 @@ class ArchiveUtil {
     static String extendIdentifier(String originalIdentifier, Boolean prepend = true) {
         //identifier length shouldnt be more that 101 chars
         if (originalIdentifier.length() > 95) {
-            originalIdentifier = originalIdentifier.substring(0, 95)
+            originalIdentifier = originalIdentifier.substring(0, 95).replaceAll(/[-_]+$/, "")
         }
         Random _rndm = new Random()
         String randomString = EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
