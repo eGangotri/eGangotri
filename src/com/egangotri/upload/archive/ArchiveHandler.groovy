@@ -288,7 +288,7 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
 
         String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-
+        if
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)
         }
