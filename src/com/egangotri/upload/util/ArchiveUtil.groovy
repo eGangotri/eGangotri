@@ -511,4 +511,15 @@ class ArchiveUtil {
             SettingsUtil.IGNORE_EXTENSIONS = []
         }
     }
+
+    static String generateArchiveIdentifier( String title) {
+        String slug = title
+                .toLowerCase()
+                .replaceAll(/\s+/, "-")         // spaces to hyphens
+                .replaceAll(/[^a-z0-9\-_]/, "") // remove anything that is not a-z, 0-9, -, or _
+                .replaceAll(/^-+|-+$/, "")      // remove leading/trailing hyphens
+                .take(90)                        // cap length to allow space for timestamp
+
+        return slug
+    }
 }

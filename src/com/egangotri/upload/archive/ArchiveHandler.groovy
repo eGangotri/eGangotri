@@ -2,6 +2,7 @@ package com.egangotri.upload.archive
 
 
 import com.egangotri.rest.UploadRestApiCalls
+import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.upload.vo.QueuedVO
@@ -250,6 +251,14 @@ class ArchiveHandler {
         log.info "encodedUploadLink: ${encodedUploadLink}"
         log.info "uploadLink: ${uploadLink}"
 
+        String identifier = ""
+        if(SettingsUtil.GENERATE_IDENTIFIER){
+            identifier = "${generateArchiveIdentifier(uploadVO.title)}"
+            String encodedTitle = URLEncoder.encode(uploadVO.title, "UTF-8")
+            encodedUploadLink += "&title=${encodedTitle}&identifier=${identifier}"
+        }
+        log.info "encodedUploadLink: ${encodedUploadLink}"
+
         //Go to URL
         driver.navigate().to(encodedUploadLink)
         driver.get(encodedUploadLink)
@@ -286,9 +295,9 @@ class ArchiveHandler {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
-
-        String identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
-        if
+        if(!SettingsUtil.GENERATE_IDENTIFIER) {
+            identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+        }
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)
         }
