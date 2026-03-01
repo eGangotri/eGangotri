@@ -253,7 +253,7 @@ class ArchiveHandler {
 
         String identifier = ""
         if(SettingsUtil.GENERATE_IDENTIFIER){
-            identifier = "${generateArchiveIdentifier(uploadVO.title)}"
+            identifier = generateArchiveIdentifier(uploadVO.title);
             String encodedTitle = URLEncoder.encode(uploadVO.title, "UTF-8")
             encodedUploadLink += "&title=${encodedTitle}&identifier=${identifier}"
         }
