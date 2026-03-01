@@ -19,6 +19,7 @@ class SettingsUtil {
 
     static boolean EXTEND_IDENTIFIER = true
     static boolean BARE_BONES_SUBJECT_DESC_URL = false
+    static boolean GENERATE_IDENTIFIER = false
 
     static List<String> IGNORE_EXTENSIONS = ["jpg", "gif", "bmp", "png", "tif", "tiff", "exe", "jpeg", "msi", "ini", "bat", "jar", "chm", "db"]
     static List<String> ALLOWED_EXTENSIONS = []
@@ -231,6 +232,12 @@ class SettingsUtil {
                 BARE_BONES_SUBJECT_DESC_URL = settingsMetaDataMap.BARE_BONES_SUBJECT_DESC_URL.toBoolean()
                 log.info("BARE_BONES_SUBJECT_DESC_URL: ${BARE_BONES_SUBJECT_DESC_URL}");
             }
+
+            if(settingsMetaDataMap.containsKey('GENERATE_IDENTIFIER')){
+                GENERATE_IDENTIFIER = settingsMetaDataMap.GENERATE_IDENTIFIER.toBoolean()
+                log.info("GENERATE_IDENTIFIER: ${GENERATE_IDENTIFIER}");
+            }
+
             applyMailerSettings()
             applySnap2HtmlSettings()
         }
