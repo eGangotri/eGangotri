@@ -129,7 +129,7 @@ class UploadRestApiCalls {
         Map<String, Object> result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
         int countOfUploadableItems = uploadables.size();
-        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${countOfUploadableItems}");
+        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION(${profile})  ${countOfUploadableItems}");
         def json = new JsonBuilder()
         String profilePath = FileUtil.ALL_FOLDERS.get(profile)
         def root = json {

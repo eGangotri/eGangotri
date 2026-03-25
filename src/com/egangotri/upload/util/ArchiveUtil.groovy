@@ -116,6 +116,10 @@ class ArchiveUtil {
         return vos
     }
 
+    static Set<QueuedVO> generateUploadVoForAllUploadableItems(String profile) {
+        return generateUploadVoForAllUploadableItems([profile])
+    }
+
     static void storeArchiveIdentifierInFile(UploadVO uploadVo, String _identifier) {
         String appendableFilePath = VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS ?
                 EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE :
@@ -465,6 +469,9 @@ class ArchiveUtil {
         return getAllUploadables(profiles).size()
     }
 
+    static int getGrandTotalOfAllUploadables(String profile) {
+        return getAllUploadables([profile]).size()
+    }
     /**
      *
      * @param profiles
