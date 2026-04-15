@@ -85,7 +85,7 @@ class BookTitles {
         'premi': 'Premi',
         'urduDuniya': 'Urdu Duniya',
         '_hn': 'HN',
-        'sps': 'Srimagar-Libs',
+        'sps': 'Srinagar-Libs',
         'sarai': 'Sarai',
         'eg_books': 'EG Books',
         'N_K_Sundaram': 'N K Sundaram',
@@ -115,7 +115,12 @@ class BookTitles {
         '_sarayu_egm': 'Sarayu EGM',
         'muthu':'C R Bala',
         'janardan':'Janardan Bhattarai,Nagarjuna, Kathmandu',
-        'regmi':'Dilli Raman Regmi Library, Kathmandu'
+        'regmi':'Dilli Raman Regmi Library, Kathmandu',
+        'csu_srngari': 'CSU Sringeri',
+        'eg_punjabi': 'EG Punjabi',
+        'satisar': 'Satisar',
+        'bhattarai':'Bhattarai',
+        'csu_srngri':'CSU Sringeri'
     ]
 
     static void main(String[] args) {
@@ -366,7 +371,7 @@ class BookTitles {
             String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${csvFolderName}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception?CSV_SEPARATOR+'*****' + exception:''}"
             addToCSVReport(csvReport)
             incrementFileCount()
-            }
+        }
         catch (com.itextpdf.kernel.exceptions.BadPasswordException bpe) {
             addToErrors(file.absolutePath, true)
             String _report = "${INCLUDE_INDEX ? index + ').' : ''} *****${file.name} is password-protected"
@@ -381,7 +386,7 @@ class BookTitles {
             addToCSVReport(_report.split(/\s/, 2).join(CSV_SEPARATOR))
             log.error("Error in reading file page-count/size/ for ${file.absolutePath}", e)
         }
-        }
+    }
 
     static void incrementFileCount() {
         TOTAL_FILES_SUCCESSFULLY_READ++
@@ -462,4 +467,4 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
     """)
     }
 
-    }
+}
