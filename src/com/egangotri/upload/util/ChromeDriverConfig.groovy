@@ -6,7 +6,7 @@ import org.openqa.selenium.PageLoadStrategy
 import java.time.Duration
 
 class ChromeDriverConfig {
-    static ChromeDriver createDriver() {
+    static ChromeDriver createDriver(int debugPort=9222) {
         ChromeOptions options = new ChromeOptions()
         
         // Add options to handle version mismatch and connection issues
@@ -16,6 +16,7 @@ class ChromeDriverConfig {
             '--disable-dev-shm-usage',
             '--start-maximized',
             '--disable-infobars',
+            "--remote-debugging-port=${debugPort}",   // dynamic port
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
         ])
         // Use NORMAL to ensure SPA JS bundles fully load before proceeding

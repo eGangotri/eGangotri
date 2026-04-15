@@ -28,13 +28,13 @@ import static com.egangotri.upload.util.ArchiveUtil.*
 
 @Slf4j
 class ArchiveHandler {
-
+    static int DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT=9222
     static List<Integer> uploadAllItemsToArchiveByProfile(
             Map metaDataMap, Set<QueuedVO> uploadVos, boolean reupload = false) {
         int countOfUploadedItems = 0
         int uploadFailureCount = 0
         try {
-            ChromeDriver driver = ChromeDriverConfig.createDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver(DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT++)
             String archiveProfile = uploadVos.first().archiveProfile
             List<String> uploadables = uploadVos*.path
             if (!navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
@@ -164,7 +164,7 @@ class ArchiveHandler {
         EGangotriUtil.sleepTimeInSeconds(4)
         try {
 
-            ChromeDriver driver = ChromeDriverConfig.createDriver()
+            ChromeDriver driver = ChromeDriverConfig.createDriver(++DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT)
             driver.get(archiveUrl)
             def results = []
             if (fileNames) {

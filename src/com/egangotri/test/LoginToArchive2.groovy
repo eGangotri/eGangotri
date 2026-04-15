@@ -1,5 +1,6 @@
 package com.egangotri.test
 
+import com.egangotri.upload.archive.ArchiveHandler
 import com.egangotri.upload.util.UploadUtils
 import com.egangotri.util.EGangotriUtil
 import groovy.util.logging.Slf4j
@@ -21,7 +22,7 @@ class LoginToArchive2 {
         ChromeOptions options = new ChromeOptions()
         options.addArguments("--start-maximized")
         options.addArguments("--remote-allow-origins=*")
-
+        options.addArguments("--remote-debugging-port=${ArchiveHandler.DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT++}")
         WebDriver driver = new ChromeDriver(options)
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30))
         List<String> archiveProfiles = EGangotriUtil.ARCHIVE_PROFILES
