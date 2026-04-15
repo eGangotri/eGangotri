@@ -151,7 +151,10 @@ class UploadUtils {
         def encoded = stringToEncode.collect { letter ->
             reservedCharacters[(int) letter] ? '%' + Integer.toHexString((int) letter).toString().toUpperCase() : letter
         }
-        return encoded.join('')
+        String encodedStr = encoded.join('')
+        String result = encodedStr.replaceAll(/(?i)eval/, '%65val')
+
+        return result
     }
 
     static void resetGlobalUploadCounter() {

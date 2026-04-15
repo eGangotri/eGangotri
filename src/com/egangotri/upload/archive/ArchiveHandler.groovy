@@ -1,6 +1,5 @@
 package com.egangotri.upload.archive
 
-
 import com.egangotri.rest.UploadRestApiCalls
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.SettingsUtil
@@ -23,12 +22,12 @@ import java.net.URLEncoder
 
 import java.time.Duration
 
-
 import static com.egangotri.upload.util.ArchiveUtil.*
 
 @Slf4j
 class ArchiveHandler {
-    static int DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT=9222
+
+    static int DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT = 9222
     static List<Integer> uploadAllItemsToArchiveByProfile(
             Map metaDataMap, Set<QueuedVO> uploadVos, boolean reupload = false) {
         int countOfUploadedItems = 0
@@ -38,7 +37,7 @@ class ArchiveHandler {
             String archiveProfile = uploadVos.first().archiveProfile
             List<String> uploadables = uploadVos*.path
             if (!navigateLoginLogic(driver, metaDataMap, archiveProfile)) {
-                log.info("cant continue. Login Failed")
+                log.info('cant continue. Login Failed')
                 return [countOfUploadedItems, uploadFailureCount]
             }
             if (uploadVos) {
@@ -48,14 +47,14 @@ class ArchiveHandler {
                 EGangotriUtil.sleepTimeInSeconds(0.2)
                 getResultsCount(driver, true)
                 try {
-                    if(reupload){
-                            log.info("Reuploading ${uploadVos.first().path}")
-                            String archiveItemId = uploadVos.first().archiveItemId
-                            uploadOneItemV2(driver, uploadVos.first(), archiveItemId)
-                        }
+                    if (reupload) {
+                        log.info("Reuploading ${uploadVos.first().path}")
+                        String archiveItemId = uploadVos.first().archiveItemId
+                        uploadOneItemV2(driver, uploadVos.first(), archiveItemId)
+                    }
                     else {
-                            uploadOneItem(driver, uploadVos.first())
-                        }
+                        uploadOneItem(driver, uploadVos.first())
+                    }
                     countOfUploadedItems++
                 }
                 catch (Exception e) {
@@ -66,8 +65,7 @@ class ArchiveHandler {
                 if (uploadables.size() > 1) {
                     int tabIndex = 1
                     for (uploadVo in uploadVos.drop(1)) {
-
-                        if(SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS > 0){
+                        if (SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS > 0) {
                             log.info("Delaying upload by ${SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS} seconds")
                             Thread.sleep(SettingsUtil.DELAY_EACH_UPLOAD_BY_X_SECONDS * 1000)
                         }
@@ -96,7 +94,7 @@ class ArchiveHandler {
 
                         //Start Upload
                         try {
-                            if(reupload){
+                            if (reupload) {
                                 log.info("Reuploading ${uploadVo.path}")
                                 String archiveItemId = uploadVo.archiveItemId
                                 uploadOneItemV2(driver, uploadVo, archiveItemId)
@@ -104,7 +102,6 @@ class ArchiveHandler {
                             else {
                                 uploadOneItem(driver, uploadVo)
                             }
-
                         }
                         catch (UnhandledAlertException uae) {
                             log.error("UnhandledAlertException while uploading(${uploadVo.title}.")
@@ -119,7 +116,7 @@ class ArchiveHandler {
                                 tabIndex++
                                 boolean tabSwitched = UploadUtils.switchToLastOpenTab(driver)
                                 if (!tabSwitched) {
-                                    log.error("tab not switched. contiuing to next")
+                                    log.error('tab not switched. contiuing to next')
                                     continue
                                 }
                                 uploadOneItem(driver, uploadVo)
@@ -157,13 +154,12 @@ class ArchiveHandler {
         }
 
         return [countOfUploadedItems, uploadFailureCount]
-    }
+            }
 
     static int checkForMissingUploadsInArchive(String archiveUrl, List<String> fileNames) {
         int countOfUploadedItems = 0
         EGangotriUtil.sleepTimeInSeconds(4)
         try {
-
             ChromeDriver driver = ChromeDriverConfig.createDriver(++DEFAULT_PORT_FOR_CHROME_REMOTE_DEBUGGING_PORT)
             driver.get(archiveUrl)
             def results = []
@@ -173,19 +169,17 @@ class ArchiveHandler {
                     //Go to URL
                     driver.get(archiveUrl)
 
-                    WebElement searchList = driver.findElement(By.className("searchlist"))
+                    WebElement searchList = driver.findElement(By.className('searchlist'))
                     searchList.sendKeys(fileName)
                     searchList.submit()
 
-                    String numOfUploads = driver.findElement(By.cssSelector("h3.co-top-row")).text
+                    String numOfUploads = driver.findElement(By.cssSelector('h3.co-top-row')).text
                     log.info "$numOfUploads $fileName"
                     results << [numOfUploads, fileName]
                 }
-
             } else {
-                log.info "No Filenames"
+                log.info 'No Filenames'
             }
-
         }
         catch (Exception e) {
             e.printStackTrace()
@@ -193,7 +187,6 @@ class ArchiveHandler {
 
         return countOfUploadedItems
     }
-
 
     static void generateAllUrls(String archiveProfile, List<String> uploadables) {
         uploadables.eachWithIndex { fileName, tabIndex ->
@@ -215,13 +208,12 @@ class ArchiveHandler {
                 uploadStatsList << uploadStats
             }
         } else {
-            log.info("No partitioning")
+            log.info('No partitioning')
             List<Integer> uploadStats = uploadAllItemsToArchiveByProfile(metaDataMap, uploadVos as Set<QueuedVO>, reupload)
             uploadStatsList << uploadStats
         }
         uploadStatsList
     }
-
 
     static <T extends UploadVO> String uploadOneItem(ChromeDriver driver, T uploadVO) {
         String fileNameWithPath = uploadVO.path
@@ -231,30 +223,30 @@ class ArchiveHandler {
         if (EGangotriUtil.CREATOR_FROM_DASH_SEPARATED_STRING && !EGangotriUtil.GENERATE_RANDOM_CREATOR && !EGangotriUtil.IGNORE_CREATOR_SETTINGS_FOR_ACCOUNTS.contains(archiveProfile)) {
             String fileNameOnly = UploadUtils.stripFilePathAndFileEnding(fileNameWithPath)
             String strAfterDash = UploadUtils.getLastPortionOfTitleUsingSeparator(fileNameOnly).trim()
-            if (fileNameOnly.contains("-")) {
-                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/,"")
-                uploadLink = uploadLink.contains("creator=") ? uploadLink.split("creator=").first() + "creator=" + _strAfterDash  : uploadLink
+            if (fileNameOnly.contains('-')) {
+                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/, '')
+                uploadLink = uploadLink.contains('creator=') ? uploadLink.split('creator=').first() + 'creator=' + _strAfterDash  : uploadLink
             }
-            if (uploadLink.contains("subject=null")) {
-                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/,"")
-                String _fileNameOnly = fileNameOnly?.replaceAll(/[#!&]/,'')
-                uploadLink = uploadLink.replaceAll("subject=null", "subject=${_strAfterDash ?: _fileNameOnly}")
+            if (uploadLink.contains('subject=null')) {
+                String _strAfterDash = strAfterDash?.replaceAll(/[#!&]/, '')
+                String _fileNameOnly = fileNameOnly?.replaceAll(/[#!&]/, '')
+                uploadLink = uploadLink.replaceAll('subject=null', "subject=${_strAfterDash ?: _fileNameOnly}")
             }
         }
 
-        uploadLink = uploadLink.replaceAll(/[#!]/, "").replaceAll("null", " ")
-        //uploadLink += "&uploader=info@archive.org" 
+        uploadLink = uploadLink.replaceAll(/[#!]/, '').replaceAll('null', ' ')
+        //uploadLink += "&uploader=info@archive.org"
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
 
-        def encodedUploadLink = uploadLink.replaceAll("\n", "%0A%0A")
+        def encodedUploadLink = uploadLink.replaceAll('\n', '%0A%0A')
         log.info "encodedUploadLink: ${encodedUploadLink}"
         log.info "uploadLink: ${uploadLink}"
 
-        String identifier = ""
-        if(SettingsUtil.GENERATE_IDENTIFIER){
-            identifier = generateArchiveIdentifier(uploadVO.title);
-            String encodedTitle = URLEncoder.encode(uploadVO.title, "UTF-8")
+        String identifier = ''
+        if (SettingsUtil.GENERATE_IDENTIFIER) {
+            identifier = generateArchiveIdentifier(uploadVO.title)
+            String encodedTitle = URLEncoder.encode(uploadVO.title, 'UTF-8')
             encodedUploadLink += "&title=${encodedTitle}&identifier=${identifier}"
         }
         log.info "encodedUploadLink: ${encodedUploadLink}"
@@ -270,9 +262,9 @@ class ArchiveHandler {
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
-            log.info("\tCannot find Upload Button. " +
-                    "\tHence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
-            throw new Exception("Cant click Choose-Files-To-Upload Button")
+            log.info('\tCannot find Upload Button. ' +
+                    '\tHence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n' + webDriverException.message)
+            throw new Exception('Cant click Choose-Files-To-Upload Button')
         }
 
         UploadUtils.uploadFileUsingSendKeys(driver, fileNameWithPath)
@@ -283,27 +275,27 @@ class ArchiveHandler {
         licPicker.click()
         WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()
-        if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
-            WebElement collectionSpan = driver.findElement(By.id("collection"))
-            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+        if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains('collection=')) {
+            WebElement collectionSpan = driver.findElement(By.id('collection'))
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id('collection')))
             collectionSpan.click()
-            Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
-            collDropDown.selectByValue("data:opensource_media")
+            Select collDropDown = new Select(driver.findElement(By.name('mediatypecollection')))
+            collDropDown.selectByValue('data:opensource_media')
         }
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
-        if(!SettingsUtil.GENERATE_IDENTIFIER) {
+        if (!SettingsUtil.GENERATE_IDENTIFIER) {
             identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
         }
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)
         }
-        log.info("***identifier: ${identifier}");
-        driver.findElement(By.id(UploadUtils.PAGE_URL)).click();
-        WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD));
+        log.info("***identifier: ${identifier}")
+        driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
+        WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
         pgUrlInputField.clear()
         pgUrlInputField.sendKeys(identifier)
         pgUrlInputField.sendKeys(Keys.ENTER)
@@ -311,7 +303,7 @@ class ArchiveHandler {
         //for a strange reason the first tab doesnt have alert
         //after that have alert. alert text is always nulll
         if (alertWasDetected) {
-            log.info("alert detected while identifier was being tweaked")
+            log.info('alert detected while identifier was being tweaked')
             pgUrlInputField.click()
             pgUrlInputField.sendKeys(Keys.ENTER)
         }
@@ -338,11 +330,11 @@ class ArchiveHandler {
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         if (SettingsUtil.WRITE_TO_MONGO_DB) {
             try {
-                UploadRestApiCalls.addToQueue(uploadVO, EGangotriUtil.UPLOAD_CYCLE_ID, "X");
-                UploadRestApiCalls.addToUshered(uploadVO, EGangotriUtil.UPLOAD_CYCLE_ID, "X", identifier);
+                UploadRestApiCalls.addToQueue(uploadVO, EGangotriUtil.UPLOAD_CYCLE_ID, 'X')
+                UploadRestApiCalls.addToUshered(uploadVO, EGangotriUtil.UPLOAD_CYCLE_ID, 'X', identifier)
             }
             catch (Exception e) {
-                log.info("Exception calling addToUshered", e)
+                log.info('Exception calling addToUshered', e)
             }
         }
         return identifier
@@ -365,9 +357,9 @@ class ArchiveHandler {
         }
         catch (WebDriverException webDriverException) {
             UploadUtils.hitEscapeKey()
-            log.info("\tCannot find Upload Button. " +
-                    "\tHence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n" + webDriverException.message)
-            throw new Exception("Cant click Choose-Files-To-Upload Button")
+            log.info('\tCannot find Upload Button. ' +
+                    '\tHence quitting by clicking escape key so that tabbing can resume and other uploads can continue. This one has failed though\n' + webDriverException.message)
+            throw new Exception('Cant click Choose-Files-To-Upload Button')
         }
 
         UploadUtils.uploadFileUsingSendKeys(driver, fileNameWithPath)
@@ -378,12 +370,12 @@ class ArchiveHandler {
         licPicker.click()
         WebElement radioBtn = driver.findElement(By.id(UploadUtils.LICENSE_PICKER_RADIO_OPTION))
         radioBtn.click()
-        if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains("collection=")) {
-            WebElement collectionSpan = driver.findElement(By.id("collection"))
-            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("collection")))
+        if (!fileNameWithPath.endsWith(EGangotriUtil.PDF) && !uploadLink.contains('collection=')) {
+            WebElement collectionSpan = driver.findElement(By.id('collection'))
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id('collection')))
             collectionSpan.click()
-            Select collDropDown = new Select(driver.findElement(By.name("mediatypecollection")))
-            collDropDown.selectByValue("data:opensource_media")
+            Select collDropDown = new Select(driver.findElement(By.name('mediatypecollection')))
+            collDropDown.selectByValue('data:opensource_media')
         }
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
@@ -400,7 +392,7 @@ class ArchiveHandler {
         //for a strange reason the first tab doesnt have alert
         //after that have alert. alert text is always nulll
         if (alertWasDetected) {
-            log.info("alert detected while identifier was being tweaked")
+            log.info('alert detected while identifier was being tweaked')
             pgUrlInputField.click()
             pgUrlInputField.sendKeys(Keys.ENTER)
         }
@@ -417,4 +409,5 @@ class ArchiveHandler {
         log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return archiveItemId
     }
+
 }
