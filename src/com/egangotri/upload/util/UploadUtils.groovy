@@ -153,7 +153,7 @@ class UploadUtils {
         }
         String encodedStr = encoded.join('')
         String result = encodedStr.replaceAll(/(?i)eval/, '%65val')
-
+        log.info("**** Encoded string: ${result}")
         return result
     }
 
