@@ -515,8 +515,8 @@ class UploadUtils {
      eval/time/select/make  are existing in the description
      making the archive server think that this is a injection attack
      */
-    static String fixEvalIssueInString(String stringWhichCouldHaveEval) {
-        String result = stringWhichCouldHaveEval.replaceAll(/(?i)eval/, '%65val')
+    static String fixEvalIssueInString(String description) {
+        String result = description.replaceAll(/(?i)eval/, '%65val')
         result = result.replaceAll(/(?i)time/, '%74ime')
         result = result.replaceAll(/(?i)select/, '%73elect')
         result = result.replaceAll(/(?i)make/, '%6dake')
