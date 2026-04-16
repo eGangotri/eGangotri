@@ -151,10 +151,8 @@ class UploadUtils {
         def encoded = stringToEncode.collect { letter ->
             reservedCharacters[(int) letter] ? '%' + Integer.toHexString((int) letter).toString().toUpperCase() : letter
         }
-        String encodedStr = encoded.join('')
-        String result = encodedStr.replaceAll(/(?i)eval/, '%65val')
-        log.info("**** Encoded string: ${result}")
-        return result
+        return encoded.join('')
+
     }
 
     static void resetGlobalUploadCounter() {
@@ -279,7 +277,8 @@ class UploadUtils {
 
             String filelabelVal = '{0}'
             String desc_and_file_name = "description=${_desc ? "${filelabelVal}, ${_desc}" : "${filelabelVal}"}"
-            String enhancedUrl = desc_and_file_name //+ AMPERSAND + _lang
+            desc_and_file_name = fixEvalIssueInString(desc_and_file_name)
+            String enhancedUrl = desc_and_file_name
             if (metaDataMap."${archiveProfile}.collection") {
                 enhancedUrl += AMPERSAND + 'collection=' + metaDataMap."${archiveProfile}.collection"
             }
@@ -508,8 +507,14 @@ class UploadUtils {
         log.info(report)
         return report
     }
-
+    static String fixEvalIssueInString(String stringWhichCouldHaveEval) {
+        String result = stringWhichCouldHaveEval.replaceAll(/(?i)eval/, '%65val')
+        println("**** Encoded string: ${result}")
+        return result
+    }
 }
+
+
 
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent

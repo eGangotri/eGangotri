@@ -150,6 +150,8 @@ class UploadToArchiveViaExcelV1WithFourCols {
                 }
                 String subject = row.getCell(1)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName;
                 String description = row.getCell(2)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '')  ?: fileName;
+                description = fixEvalIssueInString(description)
+
                 String creator = row.getCell(3)?.stringCellValue?.trim()?.replaceAll(REGEX_FOR_INVALID_CHARS, '') ?: fileName;
                 Boolean uploadedFlag = false
                 if (absPath?.length() == 0) {
