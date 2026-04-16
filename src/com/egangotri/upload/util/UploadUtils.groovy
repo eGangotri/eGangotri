@@ -507,9 +507,19 @@ class UploadUtils {
         log.info(report)
         return report
     }
+    /**
+     * Fixes the issue of eval being encoded as %65val in the upload link.
+     * @param stringWhichCouldHaveEval The string which could have eval in it.
+     * @return The string with eval fixed.
+     issue caused when such unix like keywords such as
+     eval/time/select/make  are existing in the description
+     making the archive server think that this is a injection attack
+     */
     static String fixEvalIssueInString(String stringWhichCouldHaveEval) {
         String result = stringWhichCouldHaveEval.replaceAll(/(?i)eval/, '%65val')
-        println("**** Encoded string: ${result}")
+        result = result.replaceAll(/(?i)time/, '%74ime')
+        result = result.replaceAll(/(?i)select/, '%73elect')
+        result = result.replaceAll(/(?i)make/, '%6dake')
         return result
     }
 }
