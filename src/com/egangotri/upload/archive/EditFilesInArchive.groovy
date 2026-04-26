@@ -31,8 +31,7 @@ class EditFilesInArchive {
             log.info "Logging for Profile $archiveProfile"
             ChromeDriver driver = ChromeDriverConfig.createDriver()
             if(ArchiveUtil.navigateLoginLogic(driver, metaDataMap, archiveProfile)){
-                getResultsCount(driver, true)
-                UploadUtils.maximizeBrowser(driver)
+                ArchiveUtil.openArchiveProfileHomePage(driver, archiveProfile)
                 def attributeList =
                         driver.findElements(By.xpath("//div[@class='item-ia hov']"))
                                 *.getAttribute("data-id")

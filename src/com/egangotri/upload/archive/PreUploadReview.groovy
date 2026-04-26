@@ -36,12 +36,12 @@ class PreUploadReview {
 
     static boolean preview(Set<String> profiles) {
 
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION = ArchiveUtil.getGrandTotalOfAllUploadables(profiles)
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadables(profiles)
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal totalSize = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
         log.info("test only Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
 
         statsForUploadables(profiles)
 
@@ -70,7 +70,7 @@ class PreUploadReview {
                 if (GRAND_TOTAL_OF_PDF_PAGES > 0) {
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
-                log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+                log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}")
                 log.info(" Total File Size ${FileSizeUtil.formatFileSize(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
             }
             return profileAndInvalidNames.size() == 0
@@ -79,12 +79,12 @@ class PreUploadReview {
 
     static boolean previewUsingVos(String profile, Set<QueuedVO> vos) {
 
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = vos.size();
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION = vos.size();
         ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = ArchiveUtil.getGrandTotalOfFileSizeOfAllUploadableVOs(vos)
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} items")
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} items")
         BigDecimal totalSize = ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB
         log.info("test only Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
-        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} " +
+        log.info("This Execution will target ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} " +
                 "Files of Cumulative Size ${FileSizeUtil.formatFileSize(totalSize)}")
 
         statsForUploadablesForVOs(profile,vos)
@@ -114,7 +114,7 @@ class PreUploadReview {
                 if (GRAND_TOTAL_OF_PDF_PAGES > 0) {
                     log.info("Total Count of Pages[pdf only]: " + GRAND_TOTAL_OF_PDF_PAGES)
                 }
-                log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}")
+                log.info("Total Count of Items ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}")
                 log.info(" Total File Size ${FileSizeUtil.formatFileSize(ArchiveUtil.GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB)}")
             }
             return profileAndInvalidNames.size() == 0

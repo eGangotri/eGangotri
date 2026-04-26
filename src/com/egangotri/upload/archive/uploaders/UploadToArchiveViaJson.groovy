@@ -73,7 +73,7 @@ class UploadToArchiveViaJson {
             Set<ReuploadVO> vos = entry.value as Set
             log.info "${index + 1}). " +
                     "Starting upload in archive.org for Profile $archiveProfile. " +
-                    "Total Uplodables: ${vos.size()}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+                    "Total Uplodables: ${vos.size()}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}"
             if (vos) {
                 log.info("uploadItems ${vos[0].path}")
                 log.info("uploadItems ${vos[-1].path}")

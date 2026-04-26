@@ -13,14 +13,18 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import java.awt.Robot
 import java.awt.Toolkit
 
+import java.awt.datatransfer.StringSelection
+import java.awt.event.KeyEvent
+
+import java.text.SimpleDateFormat
+import java.time.Duration
+
 @Slf4j
 class UploadUtils {
 
     static final String USERNAME_TEXTBOX_NAME = 'username'
     static final String PASSWORD_TEXTBOX_NAME = 'password'
     static final String LOGIN_BUTTON_NAME = 'submit-to-login'
-    static final String USER_MENU_ID = 'user-menu' // only created when User is Signed In
-    static final String CHOOSE_FILES_TO_UPLOAD_BUTTON = 'file_button_initial'
     static final String CHOOSE_FILES_TO_UPLOAD_BUTTON_AS_CLASS = 'js-uploader-file-input-initial'
 
     static final String UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON = 'upload_button'
@@ -60,7 +64,7 @@ class UploadUtils {
         Map<String, String> metadataMap = readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES)
 
         // Handle default subject description if configured
-        if (DEFAULT_SUBJECT_DESC?.length() > 0) {
+        if (DEFAULT_SUBJECT_DESC?.size() > 0) {
             try {
                 return updateMapByAppendingAdditionalSubjectDescription(metadataMap)
             } catch (Exception e) {
@@ -72,6 +76,61 @@ class UploadUtils {
         return metadataMap
     }
 
+    /**
+     * Splits each CSV value in loadedProps into its first two comma-separated tokens,
+     * populating loadedProps2 (first token) and loadedProps3 (second token).
+     */
+    static void splitPropsOnFirstTwoCSVValues(Map<String, String> loadedProps,
+                                                      Map<String, String> loadedProps2,
+                                                      Map<String, String> loadedProps3) {
+        loadedProps.each { String key, String value ->
+            if (value.contains(',')) {
+                String[] valueArray = value.split(',')
+                if (valueArray[0]?.trim()?.size() > 0) {
+                    loadedProps2.put(key, valueArray[0]?.trim())
+                }
+                if (valueArray.length > 1 && valueArray[1]?.trim()?.length() > 0) {
+                    loadedProps3.put(key, valueArray[1]?.trim())
+                }
+            }
+            else {
+                loadedProps2.put(key, value)
+                loadedProps3.put(key, '')
+            }
+        }
+                                                      }
+
+    static List<Map<String, String>> readPropsFromListOfPropFilesForCSVValues(List propFiles) {
+        Map<String, String> metadataMap = [:]
+        Map<String, String> metadataMap2 = [:]
+        if (!propFiles) {
+            log.warn('No archive metadata properties files configured')
+            return [[:], [:]]
+        }
+        propFiles.each { String fileName ->
+            try {
+                File propsFile = new File(fileName)
+                if (propsFile.exists()) {
+                    log.info("Loading archive metadata from: ${fileName}")
+                    Map<String, String> loadedProps = loadProperties(fileName)
+                    if (loadedProps) {
+                        Map<String, String> loadedProps2 = [:]
+                        Map<String, String> loadedProps3 = [:]
+                        splitPropsOnFirstTwoCSVValues(loadedProps, loadedProps2, loadedProps3)
+                        metadataMap.putAll(loadedProps2)
+                        metadataMap2.putAll(loadedProps3)
+                    } else {
+                        log.warn("No properties loaded from file: ${fileName}")
+                    }
+                } else {
+                    log.warn("Archive metadata properties file not found: ${fileName}")
+                }
+            } catch (Exception e) {
+                log.error("Failed to load properties from ${fileName}: ${e.message}")
+            }
+        }
+        return [metadataMap, metadataMap2]
+    }
     static  Map<String, String>  readPropsFromListOfPropFiles(List propFiles) {
         Map<String, String> metadataMap = [:]
         // Null check for the properties files array
@@ -102,10 +161,30 @@ class UploadUtils {
         return metadataMap
     }
 
-    static  Map<String, String>  getAllArchiveLogins() {
-        return readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES)
+    static List<Map<String, String>> ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST = new ArrayList()
+
+    static  List<Map<String, String>>  getAllArchiveLoginsAndProfiles() {
+        if (ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST.isEmpty()) {
+            ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST = readPropsFromListOfPropFilesForCSVValues(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES)
+        }
+        return ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST
     }
 
+    static Map<String, String> getAllArchiveLogins() {
+        List<Map<String, String>> loginProfiles = getAllArchiveLoginsAndProfiles()
+        log.info('archive logins.' + loginProfiles.get(0))
+        return loginProfiles.size() > 0 ? loginProfiles[0] : [:]
+    }
+
+    static Map<String, String> getAllArchiveLoginProfileNames() {
+        List<Map<String, String>> loginProfiles = getAllArchiveLoginsAndProfiles()
+        return loginProfiles.size() > 1 ? loginProfiles[1] : [:]
+    }
+
+    static String getArchiveLoginProfileName(String archiveProfileKey) {
+        String value = getAllArchiveLoginProfileNames()?.get(archiveProfileKey).trim()
+        return ((!value || value == '*') ? '' : value)
+    }
     static readTextFileAndDumpToList(String fileName) {
         List<String> list = []
         File file = new File(fileName)
@@ -152,7 +231,6 @@ class UploadUtils {
             reservedCharacters[(int) letter] ? '%' + Integer.toHexString((int) letter).toString().toUpperCase() : letter
         }
         return encoded.join('')
-
     }
 
     static void resetGlobalUploadCounter() {
@@ -277,7 +355,6 @@ class UploadUtils {
 
             String filelabelVal = '{0}'
             String desc_and_file_name = "description=${_desc ? "${filelabelVal}, ${_desc}" : "${filelabelVal}"}"
-            desc_and_file_name = fixEvalIssueInString(desc_and_file_name)
             String enhancedUrl = desc_and_file_name
             if (metaDataMap."${archiveProfile}.collection") {
                 enhancedUrl += AMPERSAND + 'collection=' + metaDataMap."${archiveProfile}.collection"
@@ -368,7 +445,9 @@ class UploadUtils {
                                       }
 
     static insertDescriptionInUploadUrl(String enhancedUrl, String fileNameToBeUsedAsUniqueDescription) {
-        return enhancedUrl.replace('{0}', "'${_removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)}'")
+        String desc = _removeAmpersandAndFetchTitleOnly(fileNameToBeUsedAsUniqueDescription)
+        desc = fixEvalIssueInString(desc)
+        return enhancedUrl.replace('{0}', "'${desc}'")
     }
 
     static String _removeAmpersandAndFetchTitleOnly(String title) {
@@ -515,28 +594,16 @@ class UploadUtils {
      eval/time/select/make  are existing in the description
      making the archive server think that this is a injection attack
      */
-    static String fixEvalIssueInStringDoesntWork(String description) {
-        String result = description.replaceAll(/(?i)eval/, '%65val')
-        result = result.replaceAll(/(?i)time/, '%74ime')
-        result = result.replaceAll(/(?i)select/, '%73elect')
-        result = result.replaceAll(/(?i)make/, '%6dake')
+    static String fixEvalIssueInString(String textToAlter) {
+        String result = maintainCase(textToAlter,/(?i)eval/, 'eval.')
+        result = maintainCase(result,/(?i)time/, '.')
+        result = maintainCase(result,/(?i)select/, '.')
+        result = maintainCase(result,/(?i)make/, '.')
+        return URLEncoder.encode(result, "UTF-8")
+    }
+
+    static String maintainCase(String textToAlter, String regex, String replacement) {
+        String result = textToAlter.replaceAll(regex) { match -> match + replacement }
         return result
     }
-    
-    static String fixEvalIssueInString(String description) {
-    String result = description.replaceAll(/(?i)eval/, 'ev<b></b>al')
-    result = result.replaceAll(/(?i)time/, 'ti<b></b>me')
-    result = result.replaceAll(/(?i)select/, 'sel<b></b>ect')
-    result = result.replaceAll(/(?i)make/, 'ma<b></b>ke')
-    return result
 }
-
-}
-
-
-
-import java.awt.datatransfer.StringSelection
-import java.awt.event.KeyEvent
-
-import java.text.SimpleDateFormat
-import java.time.Duration

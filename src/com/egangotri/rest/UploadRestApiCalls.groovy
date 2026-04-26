@@ -1,6 +1,6 @@
 package com.egangotri.rest
 
-import com.egangotri.upload.archive.uploaders.UploadItemFromExcelVO
+
 import com.egangotri.upload.util.ArchiveUtil
 import com.egangotri.upload.util.FileRetrieverUtil
 import com.egangotri.upload.util.UploadUtils
@@ -79,7 +79,7 @@ class UploadRestApiCalls {
                                                 String mode = "") {
         Map<String, Object> result = [:]
         String restApiRoute = "/${RestUtil.UPLOAD_CYCLE_ROUTE}/add"
-        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}");
+        log.info("ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION  ${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}");
         log.info("ArchiveUtil.getGrandTotalOfAllUploadables  ${ArchiveUtil.getGrandTotalOfAllUploadables(profiles)}");
 
         def profilesAndCount = profiles.collect { String profile ->

@@ -18,7 +18,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.UnhandledAlertException
-import java.net.URLEncoder
 
 import java.time.Duration
 
@@ -45,7 +44,7 @@ class ArchiveHandler {
                 //Start Upload of First File in Root Tab
                 log.info "Uploading: ${uploadVos.first().title}"
                 EGangotriUtil.sleepTimeInSeconds(0.2)
-                getResultsCount(driver, true)
+                openArchiveProfileHomePage(driver,archiveProfile,false)
                 try {
                     if (reupload) {
                         log.info("Reuploading ${uploadVos.first().path}")
@@ -143,8 +142,7 @@ class ArchiveHandler {
                         countOfUploadedItems++
                     }
                 }
-                getResultsCount(driver, false)
-                UploadUtils.maximizeBrowser(driver)
+                ArchiveUtil.openArchiveProfileHomePage(driver, archiveProfile)
             } else {
                 log.info "No File uploadable for profile $archiveProfile"
             }
@@ -247,6 +245,7 @@ class ArchiveHandler {
         if (SettingsUtil.GENERATE_IDENTIFIER) {
             identifier = generateArchiveIdentifier(uploadVO.title)
             String encodedTitle = URLEncoder.encode(uploadVO.title, 'UTF-8')
+            encodedTitle=UploadUtils.fixEvalIssueInString(encodedTitle)
             encodedUploadLink += "&title=${encodedTitle}&identifier=${identifier}"
         }
         log.info "encodedUploadLink: ${encodedUploadLink}"
@@ -327,7 +326,7 @@ class ArchiveHandler {
         uploadButton.click()
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
         garbageCollectAndPrintMemUsageInfoOnEvery100thUpload()
-        log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
+        log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         if (SettingsUtil.WRITE_TO_MONGO_DB) {
             try {
                 UploadRestApiCalls.addToQueue(uploadVO, EGangotriUtil.UPLOAD_CYCLE_ID, 'X')
@@ -406,7 +405,7 @@ class ArchiveHandler {
         uploadButton.click()
         EGangotriUtil.GLOBAL_UPLOADING_COUNTER++
         garbageCollectAndPrintMemUsageInfoOnEvery100thUpload()
-        log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
+        log.info("\tDocument # ${EGangotriUtil.GLOBAL_UPLOADING_COUNTER}/${GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} sent for upload @ ${UploadUtils.getFormattedDateString()}")
         return archiveItemId
     }
 

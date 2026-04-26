@@ -1,5 +1,6 @@
 package com.egangotri.upload.vo
 
+import com.egangotri.upload.util.UploadUtils
 import groovy.transform.EqualsAndHashCode
 
 import static com.egangotri.upload.util.UploadUtils.generateUploadUrl
@@ -32,7 +33,7 @@ class UploadVO {
              String _desc,
              String creator = "") {
         archiveProfile = _archiveProfile
-        uploadLink = generateUploadUrlV2(_path, _subjects, _desc, creator)
+        uploadLink = UploadUtils.generateUploadUrlV2(_path, _subjects, _desc, creator)
         path = _path
         title = stripFilePath(removeFileEnding(path))
     }

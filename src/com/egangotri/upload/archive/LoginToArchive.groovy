@@ -7,8 +7,6 @@ import groovy.util.logging.Slf4j
 import org.openqa.selenium.chrome.ChromeDriver
 import com.egangotri.upload.util.ChromeDriverConfig
 
-import static com.egangotri.upload.util.ArchiveUtil.getResultsCount
-
 @Slf4j
 class LoginToArchive {
     static void main(String[] args) {
@@ -45,8 +43,7 @@ class LoginToArchive {
                         log.info "Logging for Profile $archiveProfile"
                         ChromeDriver driver = ChromeDriverConfig.createDriver()
                         if (ArchiveUtil.navigateLoginLogic(driver, archiveLoginsMetaDataMap, archiveProfile)) {
-                            getResultsCount(driver, true)
-                            UploadUtils.maximizeBrowser(driver)
+                            ArchiveUtil.openArchiveProfileHomePage(driver, archiveProfile)
                         }
                     } else {
                         log.info "$archiveProfile profile doesnt exist in file ${EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES.join(",")}. Cannot proceed."

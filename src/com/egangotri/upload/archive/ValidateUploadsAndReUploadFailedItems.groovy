@@ -219,7 +219,7 @@ class ValidateUploadsAndReUploadFailedItems {
     }
 
     static void startReuploadOfFailedItems() {
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION = ALL_FAILED_ITEMS.size()
         if(SettingsUtil.MOVE_FILES_DUE_TO_CODE_503_SLOW_DOWN){
             move503SlowDownFilesToSpecialFolder()
             return
@@ -229,7 +229,7 @@ class ValidateUploadsAndReUploadFailedItems {
             return
         }
         if(!ALL_FAILED_ITEMS){
-            ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
+            ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION = 0
             log.info("Rejoice !!! There is no Failed Item. So quitting")
             return
         }
@@ -251,7 +251,7 @@ class ValidateUploadsAndReUploadFailedItems {
             Set<? extends UploadVO> failedVOsForProfile = ALL_FAILED_ITEMS.findAll {def vo -> vo.archiveProfile == archiveProfile } as Set<? extends UploadVO>
             int countOfUploadableItems = failedVOsForProfile.size()
 
-            log.info "${index + 1}). Starting Validation upload(s) in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+            log.info "${index + 1}). Starting Validation upload(s) in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}"
             if (countOfUploadableItems) {
                 List<List<Integer>> uploadStats = ArchiveHandler.performPartitioningAndUploadToArchive(metaDataMap, failedVOsForProfile)
                 String report = UploadUtils.generateStats(uploadStats, archiveProfile, countOfUploadableItems)

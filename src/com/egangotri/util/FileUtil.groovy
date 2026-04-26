@@ -33,40 +33,6 @@ class FileUtil {
 
         return profileAndFolder
     }
-    static private Map<String, String> getFoldersCorrespondingToProfile2(String root) {
-        Properties properties = new Properties()
-        for(String propertiesFileName : EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES) {
-            File propertiesFile = new File(propertiesFileName)
-            if (propertiesFile.exists()) {
-                log.info("Loading Local Folder Properties from ${propertiesFileName}")
-                propertiesFile.withInputStream {
-                    properties.load(it)
-                }
-            } else {
-                log.info("No Local Folder Properties file found at ${propertiesFileName}")
-            }
-        }
-
-        Map<String, String> profileAndFolder = [:]
-        String rootPath = properties.getProperty(root)
-        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
-            String key = (String) e.nextElement()
-            String path = new String(properties.get(key).toString().getBytes("ISO-8859-1"), "UTF-8")?.trim()
-            if (!key.contains(".") && key != SRC_ROOT && key != DEST_ROOT && key != DEST_OTRO_ROOT) {
-                //If the path provided is a Full path such as
-                // C:// in Windows or /home/dir then don't make it relative to the SRC_ROOT
-                if(path.contains(":") || path.startsWith(File.separator)){
-                    profileAndFolder.put(key, path)
-                }
-                else {
-                    String fullPath = "${rootPath}${File.separator}" + path
-                    profileAndFolder.put(key, fullPath)
-                }
-            }
-        }
-        return profileAndFolder
-    }
-
 
     static Map<String, String> getSrcFoldersCorrespondingToProfile() {
         return getFoldersCorrespondingToProfile(SRC_ROOT)

@@ -20,33 +20,34 @@ import java.time.Duration
 
 @Slf4j
 class ArchiveUtil {
-    static String ARCHIVE_LOGIN_URL = "https://archive.org/account/login.php"
-    static final String ARCHIVE_DOCUMENT_DETAIL_URL = "https://archive.org/details"
-    static final String ARCHIVE_HOME = "https://archive.org/account/index.php"
+
+    static String ARCHIVE_LOGIN_URL = 'https://archive.org/account/login.php'
+    static final String ARCHIVE_DOCUMENT_DETAIL_URL = 'https://archive.org/details'
+    static final String ARCHIVE_HOME = 'https://archive.org'
     static String ARCHIVE_USER_ACCOUNT_URL = "${ARCHIVE_DOCUMENT_DETAIL_URL}/@ACCOUNT_NAME"
-    static String ARCHIVE_USER_NAME = ""
-    static int GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION = 0
+    static int GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION = 0
     static BigDecimal GRAND_TOTAL_OF_FILE_SIZE_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION_IN_MB = 0
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
-    private static DecimalFormat df = new DecimalFormat("0.00");
+    private static DecimalFormat df = new DecimalFormat('0.00')
     static List<String> ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
 
-    static void getResultsCount(ChromeDriver driver, Boolean resultsCountAtStartTime = true) {
+    static void openArchiveProfileHomePage(ChromeDriver driver, String archiveProfile = '', inNewTab = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
         try {
-            if (resultsCountAtStartTime) {
-                println("going to $ARCHIVE_HOME")
-                driver.get(ARCHIVE_HOME)
-                println("reached $ARCHIVE_HOME")
-                return;
-            }
-            String archiveUserAccountUrl = ARCHIVE_USER_ACCOUNT_URL.replace("ACCOUNT_NAME", ARCHIVE_USER_NAME)
-            if (!resultsCountAtStartTime) {
+            String profileName = UploadUtils.getArchiveLoginProfileName(archiveProfile)
+            String landingUrl = profileName ? 
+                    ARCHIVE_USER_ACCOUNT_URL.replace('ACCOUNT_NAME', profileName) : 
+                    ARCHIVE_HOME
+            if (inNewTab) {
                 UploadUtils.openNewTab(driver)
                 UploadUtils.switchToLastOpenTab(driver)
-                driver.navigate().to(archiveUserAccountUrl)
+                driver.navigate().to(landingUrl)
+                driver.get(landingUrl)
+                UploadUtils.maximizeBrowser(driver)
             }
-            driver.get(archiveUserAccountUrl)
+            else {
+                driver.get(landingUrl)
+            }
         }
         catch (Exception e) {
             e.printStackTrace()
@@ -70,17 +71,16 @@ class ArchiveUtil {
                 loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
                 if (!loginSuccess) {
                     log.info("Login with Second Password ${archiveProfile}. will give it one more shot")
-                    //loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
+                //loginSuccess = logInToArchiveOrg(driver, metaDataMap, archiveProfile, kuta.last())
                 }
             }
         }
         if (!loginSuccess) {
             log.info("Login failed for Second Time for ${archiveProfile}. will now quit")
-            //throw new Exception("Not Continuing because of Login Failure twice")
+        //throw new Exception("Not Continuing because of Login Failure twice")
         }
         return loginSuccess
     }
-
 
     //create QueuedVO
     static Set<QueuedVO> generateVOsFromFileNames(String archiveProfile, List<String> uploadables) {
@@ -95,7 +95,7 @@ class ArchiveUtil {
         Set<QueuedVO> vos = [] as Set
         uploadItemFromExcel.each { UploadItemFromExcelVO uploadable ->
             {
-                if( !uploadable.uploadFlag){
+                if (!uploadable.uploadFlag) {
                     vos << new QueuedVO(archiveProfile, uploadable.absolutePath,
                             uploadable.subject, uploadable.description,
                             uploadable.creator)
@@ -127,7 +127,6 @@ class ArchiveUtil {
         File appendableFile = new File(appendableFilePath)
         String appendable = voToCSVString(uploadVo, _identifier)
         appendableFile.append(appendable)
-
     }
 
     static void storeAllUplodableItemsInFile(Set<? extends UploadVO> vos) {
@@ -136,7 +135,7 @@ class ArchiveUtil {
         File appendableFile = new File(appendableFilePath)
         //check if it has entries. if yes make sure there is no duplication
         Set<QueuedVO> alreadyIn = ValidateUtil.csvToQueuedVO(appendableFile)
-        String appendable = ""
+        String appendable = ''
         if (alreadyIn) {
             log.info("${alreadyIn.size()} already exist in ($appendableFilePath) queue record. ${vos.size()} will be added minus duplicates")
             int counter = 0
@@ -171,7 +170,7 @@ class ArchiveUtil {
     }
 
     static String vosToCSVString(Set<UploadVO> uploadVos) {
-        String appendable = ""
+        String appendable = ''
         uploadVos.each { vo ->
             appendable += voToCSVString(vo)
         }
@@ -190,17 +189,16 @@ class ArchiveUtil {
     static void createAllUploadableVOFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_FOLDER)
         EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE =
-                EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE.replace("{0}", UploadUtils.getFormattedDateString())
+                EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE.replace('{0}', UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_QUEUED_ITEMS_FILE)
     }
 
     static String createUsheredFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_USHERED_FOLDER)
         EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE =
-                EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE.replace("{0}", UploadUtils.getFormattedDateString())
+                EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE.replace('{0}', UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_USHERED_ITEMS_FILE)
     }
-
 
     static void createValidationFiles() {
         generateFolder(EGangotriUtil.ARCHIVE_ITEMS_POST_VALIDATIONS_FOLDER)
@@ -210,13 +208,13 @@ class ArchiveUtil {
 
     static void createValidationUsheredFiles() {
         EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE =
-                EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE.replace("{0}", UploadUtils.getFormattedDateString())
+                EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE.replace('{0}', UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
     }
 
     static void createValidationAllUplodableFiles() {
         EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE =
-                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE.replace("{0}", UploadUtils.getFormattedDateString())
+                EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE.replace('{0}', UploadUtils.getFormattedDateString())
         generateFile(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE)
     }
 
@@ -239,11 +237,11 @@ class ArchiveUtil {
             ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE.eachWithIndex { String accessUrl, int counter ->
                 log.info("(${counter+1}). ${accessUrl}")
             }
-            log.info "Final Report:\n"
+            log.info 'Final Report:\n'
             uploadSuccessCheckingMatrix.each { k, v ->
                 log.info "$k) $v"
             }
-            if(!reupload){
+            if (!reupload) {
                 if (VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS) {
                     compareQueuedWithUsheredStats(EGangotriUtil.ARCHIVE_ITEMS_QUEUED_POST_VALIDATION_FILE, EGangotriUtil.ARCHIVE_ITEMS_USHERED_POST_VALIDATION_FILE)
                 } else {
@@ -251,12 +249,12 @@ class ArchiveUtil {
                 }
             }
             long totalTime = EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS - EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS
-            log.info("Start Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)))
-            log.info("End Time: " + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)))
+            log.info('Start Time: ' + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_START_TIME_IN_MILLISECONDS)))
+            log.info('End Time: ' + UploadUtils.getFormattedDateString(new Date(EGangotriUtil.PROGRAM_END_TIME_IN_MILLISECONDS)))
 
             log.info("Total Time Taken: ${df.format(totalTime / (60 * 1000))} minutes(s) [ ${df.format(totalTime / (60 * 60 * 1000))} hour(s)]")
             log.info("Total Items attempted: $attemptedItemsTotal")
-            log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION")
+            log.info("Grand Total of all Items meant for upload: $GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION")
             log.info("Average Upload Time/Item: ${df.format((totalTime / (60 * 1000)) / attemptedItemsTotal)} minute(s)/item")
             log.info("Average Item Uploaded per minute: ${df.format(attemptedItemsTotal / (totalTime / (60 * 1000)))} item/minute")
         }
@@ -265,12 +263,12 @@ class ArchiveUtil {
     static void compareQueuedWithUsheredStats(String queuedFile, String usheredFile) {
         Tuple statsForQueued = ValidateUtil.statsForItemsVO(queuedFile)
         Tuple statsForUshered = ValidateUtil.statsForUsheredItemsVO(usheredFile)
-        String equality = (statsForQueued[0] == statsForUshered[0]) ? "Yes" : "\nNo. Short by ${Math.abs(statsForUshered[0] - statsForQueued[0])} item(s)"
+        String equality = (statsForQueued[0] == statsForUshered[0]) ? 'Yes' : "\nNo. Short by ${Math.abs(statsForUshered[0] - statsForQueued[0])} item(s)"
         log.info("Are No of Queued Items ( [${statsForQueued[1]}] = ${statsForQueued[0]}) equal to ( [${statsForUshered[1]}] = ${statsForUshered[0]}) Upload-Ushered Items? " +
                 equality)
     }
 
-    static boolean logInToArchiveOrg2(ChromeDriver driver, def metaDataMap, String archiveProfile, String kuta = "") {
+    static boolean logInToArchiveOrg2(ChromeDriver driver, def metaDataMap, String archiveProfile, String kuta = '') {
         boolean loginSucess = false
         try {
             driver.get(ArchiveUtil.ARCHIVE_LOGIN_URL)
@@ -281,8 +279,8 @@ class ArchiveUtil {
             WebElement loginButton = driver.findElement(By.name(UploadUtils.LOGIN_BUTTON_NAME))
 
             String username = metaDataMap."${archiveProfile}"
-            if(!username){
-                log.error("Username is empty. Cannot proceed")
+            if (!username) {
+                log.error('Username is empty. Cannot proceed')
                 return false
             }
             id.sendKeys(username)
@@ -290,18 +288,20 @@ class ArchiveUtil {
                 kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             }
             if (!kuta) {
-                log.error("No Password. Cannot proceed")
+                log.error('No Password. Cannot proceed')
                 return false
             }
-                pass.sendKeys(kuta)
+            pass.sendKeys(kuta)
             loginButton.submit()
             EGangotriUtil.sleepTimeInSeconds(0.2)
             WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
             ExpectedCondition e = new ExpectedCondition<Boolean>() {
+
                 Boolean apply(WebDriver _driver) {
-                    return (_driver.getCurrentUrl() == 'https://archive.org/');
+                    return (_driver.getCurrentUrl() == 'https://archive.org/')
                 }
-            };
+
+            }
             webDriverWait.until(e)
             loginSucess = true
         }
@@ -312,31 +312,31 @@ class ArchiveUtil {
         return loginSucess
     }
 
-    static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile, String kuta = ""){
+    static boolean logInToArchiveOrg(ChromeDriver driver, def metaDataMap, String archiveProfile, String kuta = '') {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30))
         boolean loginSuccess = false
 
         try {
-            println "Navigating to Archive.org Login..."
-            driver.get("https://archive.org/account/login")
+            println 'Navigating to Archive.org Login...'
+            driver.get('https://archive.org/account/login')
 
             String username = metaDataMap."${archiveProfile}"
-            if(!username){
-                log.error("Username is empty. Cannot proceed")
+            if (!username) {
+                log.error('Username is empty. Cannot proceed')
                 return false
             }
             if (!kuta) {
                 kuta = metaDataMap."${archiveProfile}.${EGangotriUtil.KUTA}" ?: metaDataMap."${EGangotriUtil.KUTA}"
             }
             if (!kuta) {
-                log.error("No Password. Cannot proceed")
+                log.error('No Password. Cannot proceed')
                 return false
             }
 
             // ---------------------------------------------------------
             // HELPER 1: Deep Search for Shadow DOM
             // ---------------------------------------------------------
-            String deepSelectorJS = """
+            String deepSelectorJS = '''
                 function querySelectorDeep(selector, root = document) {
                     let element = null;
                     element = root.querySelector(selector);
@@ -352,7 +352,7 @@ class ArchiveUtil {
                     return null;
                 }
                 return querySelectorDeep(arguments[0]);
-            """
+            '''
 
             // ---------------------------------------------------------
             // HELPER 2: Force Input Event (Crucial for modern frameworks)
@@ -362,17 +362,19 @@ class ArchiveUtil {
                 arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
             """
 
-            println "Waiting for elements..."
+            println 'Waiting for elements...'
 
             // 1. Find and Fill Email
             WebElement emailInput = wait.until(new ExpectedCondition<WebElement>() {
+
                 @Override
                 WebElement apply(WebDriver d) {
                     return (WebElement) ((JavascriptExecutor) d).executeScript(deepSelectorJS, "input[type='email']")
                 }
+
             })
 
-            println "Entering Email..."
+            println 'Entering Email...'
             emailInput.clear()
             emailInput.sendKeys(username)
             // Trigger the event so the page 'sees' the text
@@ -380,13 +382,15 @@ class ArchiveUtil {
 
             // 2. Find and Fill Password
             WebElement passwordInput = wait.until(new ExpectedCondition<WebElement>() {
+
                 @Override
                 WebElement apply(WebDriver d) {
                     return (WebElement) ((JavascriptExecutor) d).executeScript(deepSelectorJS, "input[type='password']")
                 }
+
             })
 
-            println "Entering Password..."
+            println 'Entering Password...'
             passwordInput.clear()
             passwordInput.sendKeys(kuta)
             ((JavascriptExecutor) driver).executeScript(triggerEventJS, passwordInput)
@@ -394,41 +398,40 @@ class ArchiveUtil {
             // ---------------------------------------------------------
             // PERFORM LOGIN (The "Double Tap" Strategy)
             // ---------------------------------------------------------
-            println "Attempting Login..."
+            println 'Attempting Login...'
 
             // Method A: Press ENTER on the password field (Most reliable)
             passwordInput.sendKeys(Keys.ENTER)
-            println "Sent ENTER key to password field."
+            println 'Sent ENTER key to password field.'
 
             Thread.sleep(1000) // Give it a second to process
 
             // Method B: Find and click the button explicitly if Enter didn't work
             // We check if we are still on the login page before trying to click
-            if (driver.getCurrentUrl().contains("login")) {
+            if (driver.getCurrentUrl().contains('login')) {
                 try {
                     WebElement submitButton = (WebElement) ((JavascriptExecutor) driver).executeScript(deepSelectorJS, "button[type='submit']")
                     if (submitButton != null) {
-                        println "Clicking Submit Button via JS..."
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitButton)
+                        println 'Clicking Submit Button via JS...'
+                        ((JavascriptExecutor) driver).executeScript('arguments[0].click();', submitButton)
                     }
                 } catch (Exception ignore) {
-                    println "Could not find/click button, relying on Enter key."
+                    println 'Could not find/click button, relying on Enter key.'
                 }
             }
 
             // ---------------------------------------------------------
             // VERIFY
             // ---------------------------------------------------------
-            println "Waiting for redirection..."
-            wait.until({ d -> !d.getCurrentUrl().contains("/login") } as ExpectedCondition)
+            println 'Waiting for redirection...'
+            wait.until({ d -> !d.getCurrentUrl().contains('/login') } as ExpectedCondition)
             loginSuccess = true
-            println "SUCCESS: Login complete!"
-            println "Current URL: " + driver.getCurrentUrl()
-
+            println 'SUCCESS: Login complete!'
+            println 'Current URL: ' + driver.getCurrentUrl()
         }
         catch (Exception e) {
-            println "ERROR: " + e.getMessage()
-            // e.printStackTrace()
+            println 'ERROR: ' + e.getMessage()
+        // e.printStackTrace()
         }
 
         return loginSuccess
@@ -440,13 +443,12 @@ class ArchiveUtil {
         }
     }
 
-
     static String extendIdentifierByPrepending(String originalIdentifier) {
         return extendIdentifier(originalIdentifier)
     }
 
     static String extendIdentifierByAppending(String originalIdentifier) {
-        return extendIdentifier(originalIdentifier, false);
+        return extendIdentifier(originalIdentifier, false)
     }
 
     static String extendIdentifier(String originalIdentifier, Boolean prepend = true) {
@@ -519,14 +521,15 @@ class ArchiveUtil {
         }
     }
 
-    static String generateArchiveIdentifier( String title) {
+    static String generateArchiveIdentifier(String title) {
         String slug = title
                 .toLowerCase()
-                .replaceAll(/\s+/, "-")         // spaces to hyphens
-                .replaceAll(/[^a-z0-9\-_]/, "") // remove anything that is not a-z, 0-9, -, or _
-                .replaceAll(/^-+|-+$/, "")      // remove leading/trailing hyphens
+                .replaceAll(/\s+/, '-')         // spaces to hyphens
+                .replaceAll(/[^a-z0-9\-_]/, '') // remove anything that is not a-z, 0-9, -, or _
+                .replaceAll(/^-+|-+$/, '')      // remove leading/trailing hyphens
                 .take(90)                        // cap length to allow space for timestamp
-
+        slug = UploadUtils.fixEvalIssueInString(slug)
         return slug
     }
+
 }

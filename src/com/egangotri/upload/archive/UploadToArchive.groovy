@@ -32,7 +32,7 @@ class UploadToArchive {
         profiles.eachWithIndex { String archiveProfile, Integer index ->
             UploadersUtil.setProfileForUpload(archiveProfile)
             executeUploadingToArchive(archiveProfile, index+1, profiles.size())
-            if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0
+            if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION > 0
                     && SettingsUtil.REUPLOAD_OF_FAILED_ITEMS_ON_SETTING) {
                 reuploadPostValidationFailureCode()
             }
@@ -49,12 +49,12 @@ class UploadToArchive {
         int attemptedItemsTotal = 0
         Set<QueuedVO> allUploadablesAsVO = ArchiveUtil.generateUploadVoForAllUploadableItems(archiveProfile)
         ArchiveUtil.storeAllUplodableItemsInFile(allUploadablesAsVO)
-        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION =
+        ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION =
                 ArchiveUtil.getGrandTotalOfAllUploadables(archiveProfile)
         UploadersUtil.addToUploadCycleWithMode(archiveProfile, 'Regular')
 
         Integer countOfUploadableItems = FileRetrieverUtil.getCountOfUploadableItemsForProfile(archiveProfile)
-        log.info "${idx}/${size}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION}"
+        log.info "${idx}/${size}). Starting upload in archive.org for Profile $archiveProfile. Total Uplodables: ${countOfUploadableItems}/${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION}"
         if (countOfUploadableItems) {
             if (EGangotriUtil.GENERATE_ONLY_URLS) {
                 List<String> uploadables = FileRetrieverUtil.getUploadablesForProfile(archiveProfile)
@@ -83,16 +83,16 @@ class UploadToArchive {
         Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES * 1000 * 60)
         log.info('Will now reupload any missed item...\n')
         ValidateUploadsAndReUploadFailedItems.execute(new String[0])
-        if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION > 0) {
+        if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION > 0) {
             log.info("Second Sleep Session started for ${SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES}.....@${UploadUtils.getFormattedDateString()}\n")
             //Wait for some time and check Links also
             Thread.sleep(SettingsUtil.REUPLOAD_FAILED_ITEMS_WAIT_PERIOD_IN_MINUTES * 1000 * 60)
             log.info('Second check/reupload started...\n')
             CopyPostValidationFoldersToQueuedAndUsheredFolders.execute(new String[0])
-            if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION == 0) {
+            if (ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION == 0) {
                 log.info('All missed files were uploaded succesfully. `Aum Shanti`\n')
             } else {
-                log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLODABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status manually\n")
+                log.info("${ArchiveUtil.GRAND_TOTAL_OF_ALL_UPLOADABLES_IN_CURRENT_EXECUTION} item(s) had to be reuploaded. Must check there upload status manually\n")
             }
         }
     }
