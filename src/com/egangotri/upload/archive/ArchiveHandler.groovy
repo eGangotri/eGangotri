@@ -287,7 +287,8 @@ class ArchiveHandler {
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         if (!SettingsUtil.GENERATE_IDENTIFIER) {
-            identifier = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            String idFromArchiveOrg = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            identifier = keepIdentifierWithinMaxPermittedLength(idFromArchiveOrg)
         }
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)

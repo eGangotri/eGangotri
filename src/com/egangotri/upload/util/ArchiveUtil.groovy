@@ -30,7 +30,7 @@ class ArchiveUtil {
     public static boolean VALIDATE_UPLOAD_AND_REUPLOAD_FAILED_ITEMS = false
     private static DecimalFormat df = new DecimalFormat('0.00')
     static List<String> ALL_ACCESS_URLS_GENERATED_IN_UPLOAD_CYCLE = []
-
+    static int MAX_IDENTIFIER_LENGTH = 50
     static void openArchiveProfileHomePage(ChromeDriver driver, String archiveProfile = '', inNewTab = true) {
         EGangotriUtil.sleepTimeInSeconds(2, true)
         try {
@@ -447,14 +447,17 @@ class ArchiveUtil {
         return extendIdentifier(originalIdentifier)
     }
 
+    static String keepIdentifierWithinMaxPermittedLength(String originalIdentifier) {
+        return originalIdentifier.substring(0, MAX_IDENTIFIER_LENGTH)
+    }
     static String extendIdentifierByAppending(String originalIdentifier) {
         return extendIdentifier(originalIdentifier, false)
     }
 
     static String extendIdentifier(String originalIdentifier, Boolean prepend = true) {
         //identifier length shouldnt be more that 101 chars
-        if (originalIdentifier.length() > 75) {
-            originalIdentifier = originalIdentifier.substring(0, 75)
+        if (originalIdentifier.length() > MAX_IDENTIFIER_LENGTH) {
+            originalIdentifier = extendIdentifierByAppending(originalIdentifier)
         }
         Random _rndm = new Random()
         String randomString = EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
@@ -462,7 +465,7 @@ class ArchiveUtil {
         3.times {
             randomString += EGangotriUtil.ASCII_ALPHA_CHARS[_rndm.nextInt(EGangotriUtil.ASCII_CHARS_SIZE)]
         }
-        String enhancedIdentifier = prepend ? "${randomString}_${originalIdentifier}" : "${originalIdentifier}_${randomString}"
+        String enhancedIdentifier = prepend ? "${randomString}-${originalIdentifier}" : "${originalIdentifier}-${randomString}"
         log.info("identifier: ${originalIdentifier} -> ${enhancedIdentifier}")
         return enhancedIdentifier
     }
@@ -527,7 +530,7 @@ class ArchiveUtil {
                 .replaceAll(/\s+/, '-')         // spaces to hyphens
                 .replaceAll(/[^a-z0-9\-_]/, '') // remove anything that is not a-z, 0-9, -, or _
                 .replaceAll(/^-+|-+$/, '')      // remove leading/trailing hyphens
-                .take(90)                        // cap length to allow space for timestamp
+        slug = keepIdentifierWithinMaxPermittedLength(slug)
         slug = UploadUtils.fixEvalIssueInString(slug)
         return slug
     }
