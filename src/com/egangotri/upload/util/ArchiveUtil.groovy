@@ -455,7 +455,7 @@ class ArchiveUtil {
     }
 
     static String extendIdentifier(String originalIdentifier, Boolean prepend = true) {
-        //identifier length shouldnt be more that 101 chars
+        //identifier length shouldn't be more that MAX_IDENTIFIER_LENGTH chars
         if (originalIdentifier.length() > MAX_IDENTIFIER_LENGTH) {
             originalIdentifier = extendIdentifierByAppending(originalIdentifier)
         }

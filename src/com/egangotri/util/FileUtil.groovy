@@ -16,22 +16,29 @@ class FileUtil {
     static String DEST_ROOT = "DEST_ROOT"
     static String DEST_OTRO_ROOT = "DEST_OTRO_ROOT"
 
-    static private Map<String, String> getFoldersCorrespondingToProfile(String root) {
+    static private Map<String, String> getFoldersCorrespondingToProfile(String root, boolean isDest = false) {
         Map<String, String> profileAndFolder = UploadUtils.readPropsFromListOfPropFiles(EGangotriUtil.LOCAL_FOLDERS_PROPERTIES_FILES)
         String rootPath = profileAndFolder.get(root)
+        Map<String, String> resolvedProfileAndFolder = [:]
+        Map<String, String> duplicateProfileAndFolder = [:]
 
         profileAndFolder.each { Map.Entry<String, String> entry ->
             if (!entry.key.contains('.') && entry.key != SRC_ROOT && entry.key != DEST_ROOT && entry.key != DEST_OTRO_ROOT) {
                 String path = profileAndFolder.get(entry.key)?.toString()?.trim()
                 if (path) {
-                    profileAndFolder[entry.key] = path.contains(':') || path.startsWith(File.separator) ?
+                    String resolvedPath = path.contains(':') || path.startsWith(File.separator) ?
                             path :
                             new File(rootPath, path).path
+                    resolvedProfileAndFolder[entry.key] = resolvedPath
+                    duplicateProfileAndFolder["${entry.key}2"] = "${resolvedPath}${isDest ? "" : "2"}"
                 }
+            } else {
+                resolvedProfileAndFolder[entry.key] = entry.value
             }
         }
 
-        return profileAndFolder
+        resolvedProfileAndFolder.putAll(duplicateProfileAndFolder)
+        return resolvedProfileAndFolder
     }
 
     static Map<String, String> getSrcFoldersCorrespondingToProfile() {
@@ -39,7 +46,7 @@ class FileUtil {
     }
 
     static Map<String, String> getDestFoldersCorrespondingToProfile() {
-        return getFoldersCorrespondingToProfile(DEST_ROOT)
+        return getFoldersCorrespondingToProfile(DEST_ROOT, true)
     }
 
     static final Map<String, String> ALL_FOLDERS = getSrcFoldersCorrespondingToProfile()

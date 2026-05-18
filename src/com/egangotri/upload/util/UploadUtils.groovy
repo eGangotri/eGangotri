@@ -60,8 +60,27 @@ class UploadUtils {
         return map
     }
 
+    static Map<String, String> duplicateArchiveMetadataProfiles(Map<String, String> map) {
+        Map<String, String> updatedMap = [:]
+        Map<String, String> duplicateMap = [:]
+
+        map.each { String key, String value ->
+            updatedMap[key] = value
+            int dotIndex = key.indexOf('.')
+            if (dotIndex > 0) {
+                String profile = key.substring(0, dotIndex)
+                String metadataKey = key.substring(dotIndex)
+                duplicateMap["${profile}2${metadataKey}"] = value
+            }
+        }
+
+        updatedMap.putAll(duplicateMap)
+        return updatedMap
+    }
+
     static Map<String, String> getArchiveMetadataKeyValues() {
         Map<String, String> metadataMap = readPropsFromListOfPropFiles(EGangotriUtil.ARCHIVE_METADATA_PROPERTIES_FILES)
+        metadataMap = duplicateArchiveMetadataProfiles(metadataMap)
 
         // Handle default subject description if configured
         if (DEFAULT_SUBJECT_DESC?.size() > 0) {
@@ -166,6 +185,16 @@ class UploadUtils {
     static  List<Map<String, String>>  getAllArchiveLoginsAndProfiles() {
         if (ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST.isEmpty()) {
             ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST = readPropsFromListOfPropFilesForCSVValues(EGangotriUtil.ARCHIVE_LOGINS_PROPERTIES_FILES)
+            ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST.each { Map<String, String> archiveLoginOrProfileMap ->
+                Map<String, String> entriesToAdd = [:]
+                archiveLoginOrProfileMap.each { String key, String value ->
+                    String duplicateKey = key + '2'
+                    if (!archiveLoginOrProfileMap.containsKey(duplicateKey)) {
+                        entriesToAdd.put(duplicateKey, value)
+                    }
+                }
+                archiveLoginOrProfileMap.putAll(entriesToAdd)
+            }
         }
         return ALL_ARCHIVE_LOGIN_AND_PROFILES_LIST
     }
