@@ -6,7 +6,8 @@ import org.apache.poi.xssf.usermodel.*
 
 @Slf4j
 class CsvToExcel {
-    static void csvtoXls(File csvFile) {
+    static File csvtoXls(File csvFile) {
+        File excelFile = null
         if (csvFile.exists()) {
             // Create an Excel workbook and sheet
             Workbook workbook = new XSSFWorkbook()
@@ -35,11 +36,13 @@ class CsvToExcel {
 
             // Save the workbook to an Excel file
             String excelName = csvFile.absolutePath.replace(".csv", "") + ".xlsx"
-            FileOutputStream fileOut = new FileOutputStream(excelName)
+            excelFile = new File(excelName)
+            FileOutputStream fileOut = new FileOutputStream(excelFile)
             workbook.write(fileOut)
             fileOut.close()
             workbook.close()
             log.info("CSV to Excel : ${excelName} ")
         }
+        return excelFile
     }
 }

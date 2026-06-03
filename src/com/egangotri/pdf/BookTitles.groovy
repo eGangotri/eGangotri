@@ -24,6 +24,7 @@ class BookTitles {
     // static String DUMP_DIRECTORY = "${System.getProperty("user.home")}\\_bookTitles"
     static String DUMP_DIRECTORY = 'C:\\_catalogWork\\_collation\\local'
     static boolean ONLY_PDFS = true
+    static boolean WITH_ADDITIONAL_COPY = false
 
     static boolean generateCSVAlso = true
     static boolean generateExcelAlso = true
@@ -169,7 +170,11 @@ class BookTitles {
                 log.info("pdfsOnly ${argsOneAsMap?.pdfsOnly}")
                 ONLY_PDFS = argsOneAsMap?.pdfsOnly != 'false'
             }
-            log.info("all ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}")
+            if(argsOneAsMap.containsKey('withAdditionalCopy')){
+                log.info("withAdditionalCopy ${argsOneAsMap?.withAdditionalCopy}")
+                WITH_ADDITIONAL_COPY = argsOneAsMap?.withAdditionalCopy != 'false'
+            }
+            log.info("all ${FOLDER_NAMES} ${afterDate} ${afterHour} ${ONLY_PDFS}, ${WITH_ADDITIONAL_COPY}")
         }
         calculateAfterDate()
         TOTAL_FILES = PdfUtil.calculateTotalFileCount(ONLY_PDFS, FOLDER_NAMES)
@@ -244,6 +249,8 @@ class BookTitles {
         textWriter.close()
 
         log.info("written Logs to file: ${writeableFile.getAbsolutePath()} ")
+        List<File> filesToClone = [writeableFile]
+
         if (generateCSVAlso) {
             File writeableCSVFile = new File(directoryName, "${_fileName}.csv")
             def csvWriter = writeableCSVFile.newWriter('UTF-8')
@@ -251,8 +258,28 @@ class BookTitles {
             csvWriter << CSV_MEGA_REPORT
             csvWriter.close()
             log.info("written CSV to file: ${writeableCSVFile.getAbsolutePath()} ")
+            filesToClone << writeableCSVFile
             if (generateExcelAlso) {
-                CsvToExcel.csvtoXls(writeableCSVFile)
+                File excelFile = CsvToExcel.csvtoXls(writeableCSVFile)
+                if(excelFile){
+                    filesToClone << excelFile
+                }
+            }
+        }
+
+       if (WITH_ADDITIONAL_COPY && FOLDER_NAMES) {
+            String rootDir = FOLDER_NAMES[0]
+            File rootFolder = new File(rootDir)
+            if (rootFolder.exists() && rootFolder.isDirectory()) {
+                filesToClone.findAll { it != null }.each { File sourceFile ->
+                    File destFile = new File(rootFolder, sourceFile.name)
+                    sourceFile.withInputStream { input ->
+                        destFile << input
+                    }
+                    log.info("Cloned file to: ${destFile.absolutePath}")
+                }
+            } else {
+                log.warn("Cannot clone - root folder not found: ${rootDir}")
             }
         }
     }
