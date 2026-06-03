@@ -66,6 +66,11 @@ class BookTitles {
         'karma': 'Karma Lekshey Ling Shedra',
         'ramesh': 'Ramesh Namboodiri Kuttichad Collection',
         'ag-lucknowMuseum': 'AG Lucknow Museum',
+        'shringeri_shop':'Shop In Sringeri' ,
+        'vagbhav':'Amrit Vagbhav',
+        'vasant':'Vasant Bhatt, Gujarat',
+        'jayatu_sanskritam':'Jayatu Sanskritam',
+        'balmeeki':'',
         'pondi': 'Auro-Pondi',
         'pondi_manu': 'Pondi Manu',
         'pondi_glass': 'Pondi Glass',
@@ -120,7 +125,9 @@ class BookTitles {
         'eg_punjabi': 'EG Punjabi',
         'satisar': 'Satisar',
         'bhattarai':'Bhattarai',
-        'csu_srngri':'CSU Sringeri'
+        'csu_srngri':'CSU Sringeri',
+        'thrissur':'CSU Thrissur',
+        'urmila':'Urmila Sharma Coll. Varanasi'
     ]
 
     static void main(String[] args) {
