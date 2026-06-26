@@ -414,21 +414,57 @@ class ArchiveUtil {
 
             Thread.sleep(2000)
 
-            // Method B: Find and click the button explicitly if Enter didn't work
+            // Method B: Submit the form or click the button explicitly if Enter didn't work
             if (driver.getCurrentUrl().contains('login')) {
                 try {
-                    WebElement submitButton = (WebElement) ((JavascriptExecutor) driver).executeScript(deepSelectorJS, "button[type='submit']")
-                    if (submitButton != null) {
-                        println 'Clicking Submit Button...'
-                        ((JavascriptExecutor) driver).executeScript('arguments[0].scrollIntoView({block: "center"});', submitButton)
-                        try {
-                            submitButton.click()
-                        } catch (Exception _clickException) {
-                            ((JavascriptExecutor) driver).executeScript('arguments[0].click();', submitButton)
+                    String submitResult = (String) ((JavascriptExecutor) driver).executeScript('''
+                        function submitLoginForm(input) {
+                            const root = input.getRootNode();
+                            let el = input;
+                            while (el && el !== root) {
+                                if (el.tagName === 'FORM') {
+                                    if (el.requestSubmit) {
+                                        el.requestSubmit();
+                                        return 'form-requestSubmit';
+                                    }
+                                    el.dispatchEvent(new Event('submit', { bubbles: true, composed: true, cancelable: true }));
+                                    return 'form-submit-event';
+                                }
+                                el = el.parentElement;
+                            }
+                            function querySelectorDeep(selector, root) {
+                                let element = root.querySelector(selector);
+                                if (element) return element;
+                                let walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
+                                while (walker.nextNode()) {
+                                    let node = walker.currentNode;
+                                    if (node.shadowRoot) {
+                                        element = querySelectorDeep(selector, node.shadowRoot);
+                                        if (element) return element;
+                                    }
+                                }
+                                return null;
+                            }
+                            const btn = querySelectorDeep("button[type='submit']", document);
+                            if (!btn) return 'no-button';
+                            const rect = btn.getBoundingClientRect();
+                            const x = rect.left + rect.width / 2;
+                            const y = rect.top + rect.height / 2;
+                            const opts = { bubbles: true, composed: true, cancelable: true, view: window, button: 0, clientX: x, clientY: y };
+                            btn.dispatchEvent(new MouseEvent('mouseover', opts));
+                            btn.dispatchEvent(new MouseEvent('mouseenter', opts));
+                            btn.dispatchEvent(new MouseEvent('mousedown', opts));
+                            btn.dispatchEvent(new FocusEvent('focus', { bubbles: true, composed: true }));
+                            btn.dispatchEvent(new MouseEvent('mouseup', opts));
+                            btn.dispatchEvent(new MouseEvent('click', opts));
+                            btn.click();
+                            return 'button-realistic-click';
                         }
-                    }
-                } catch (Exception ignore) {
-                    println 'Could not find/click button, relying on Enter key.'
+                        return submitLoginForm(arguments[0]);
+                    ''', passwordInput)
+                    println "Submit fallback result: ${submitResult}"
+                } catch (Exception submitException) {
+                    println 'Submit fallback failed: ' + submitException.message
                 }
             }
 
