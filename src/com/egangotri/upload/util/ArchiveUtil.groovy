@@ -358,8 +358,14 @@ class ArchiveUtil {
             // HELPER 2: Force Input Event (Crucial for modern frameworks)
             // ---------------------------------------------------------
             String triggerEventJS = """
-                arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
-                arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
+                arguments[0].focus();
+                arguments[0].dispatchEvent(new FocusEvent('focus', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new KeyboardEvent('keypress', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+                arguments[0].dispatchEvent(new FocusEvent('blur', { bubbles: true, composed: true }));
             """
 
             println 'Waiting for elements...'
@@ -375,6 +381,7 @@ class ArchiveUtil {
             })
 
             println 'Entering Email...'
+            emailInput.click()
             emailInput.clear()
             emailInput.sendKeys(username)
             // Trigger the event so the page 'sees' the text
@@ -391,29 +398,34 @@ class ArchiveUtil {
             })
 
             println 'Entering Password...'
+            passwordInput.click()
             passwordInput.clear()
             passwordInput.sendKeys(kuta)
             ((JavascriptExecutor) driver).executeScript(triggerEventJS, passwordInput)
 
             // ---------------------------------------------------------
-            // PERFORM LOGIN (The "Double Tap" Strategy)
+            // PERFORM LOGIN
             // ---------------------------------------------------------
             println 'Attempting Login...'
 
-            // Method A: Press ENTER on the password field (Most reliable)
+            // Method A: Press ENTER on the password field
             passwordInput.sendKeys(Keys.ENTER)
             println 'Sent ENTER key to password field.'
 
-            Thread.sleep(1000) // Give it a second to process
+            Thread.sleep(2000)
 
             // Method B: Find and click the button explicitly if Enter didn't work
-            // We check if we are still on the login page before trying to click
             if (driver.getCurrentUrl().contains('login')) {
                 try {
                     WebElement submitButton = (WebElement) ((JavascriptExecutor) driver).executeScript(deepSelectorJS, "button[type='submit']")
                     if (submitButton != null) {
-                        println 'Clicking Submit Button via JS...'
-                        ((JavascriptExecutor) driver).executeScript('arguments[0].click();', submitButton)
+                        println 'Clicking Submit Button...'
+                        ((JavascriptExecutor) driver).executeScript('arguments[0].scrollIntoView({block: "center"});', submitButton)
+                        try {
+                            submitButton.click()
+                        } catch (Exception _clickException) {
+                            ((JavascriptExecutor) driver).executeScript('arguments[0].click();', submitButton)
+                        }
                     }
                 } catch (Exception ignore) {
                     println 'Could not find/click button, relying on Enter key.'
@@ -430,8 +442,9 @@ class ArchiveUtil {
             println 'Current URL: ' + driver.getCurrentUrl()
         }
         catch (Exception e) {
-            println 'ERROR: ' + e.getMessage()
-        // e.printStackTrace()
+            log.info 'ERROR: ' + e.getMessage()
+            log.info("Current URL after login timeout: ${driver.getCurrentUrl()}")
+            log.info("exception is \n" + e.getStackTrace())
         }
 
         return loginSuccess
