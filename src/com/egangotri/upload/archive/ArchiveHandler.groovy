@@ -295,6 +295,8 @@ class ArchiveHandler {
         }
         log.info("***identifier: ${identifier}")
         driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
+        new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className(UploadUtils.PAGE_URL_INPUT_FIELD)))
         WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
         pgUrlInputField.clear()
         pgUrlInputField.sendKeys(identifier)
