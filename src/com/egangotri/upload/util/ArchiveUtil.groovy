@@ -497,7 +497,7 @@ class ArchiveUtil {
     }
 
     static String keepIdentifierWithinMaxPermittedLength(String originalIdentifier) {
-        return originalIdentifier.substring(0, MAX_IDENTIFIER_LENGTH)
+        return (originalIdentifier.length() > MAX_IDENTIFIER_LENGTH) ? originalIdentifier?.substring(0, MAX_IDENTIFIER_LENGTH):originalIdentifier
     }
     static String extendIdentifierByAppending(String originalIdentifier) {
         return extendIdentifier(originalIdentifier, false)

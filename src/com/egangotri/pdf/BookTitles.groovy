@@ -71,7 +71,7 @@ class BookTitles {
         'vagbhav':'Amrit Vagbhav',
         'vasant':'Vasant Bhatt, Gujarat',
         'jayatu_sanskritam':'Jayatu Sanskritam',
-        'balmeeki':'',
+        'balmeeki':'Balmeeki Campus, NSU',
         'pondi': 'Auro-Pondi',
         'pondi_manu': 'Pondi Manu',
         'pondi_glass': 'Pondi Glass',

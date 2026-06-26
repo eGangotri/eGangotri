@@ -619,15 +619,15 @@ class UploadUtils {
      * Fixes the issue of eval being encoded as %65val in the upload link.
      * @param stringWhichCouldHaveEval The string which could have eval in it.
      * @return The string with eval fixed.
-     issue caused when such unix like keywords such as
+     issue caused when such unix like reserved keywords such as
      eval/time/select/make  are existing in the description
      making the archive server think that this is a injection attack
      */
     static String fixEvalIssueInString(String textToAlter) {
-        String result = maintainCase(textToAlter,/(?i)eval/, 'eval.')
-        result = maintainCase(result,/(?i)time/, '.')
-        result = maintainCase(result,/(?i)select/, '.')
-        result = maintainCase(result,/(?i)make/, '.')
+        String result = maintainCase(textToAlter,/(?i)eval/, 'eva-l')
+        result = maintainCase(result,/(?i)tim-e/, '.')
+        result = maintainCase(result,/(?i)selec-t/, '.')
+        result = maintainCase(result,/(?i)mak-e/, '.')
         return URLEncoder.encode(result, "UTF-8")
     }
 
