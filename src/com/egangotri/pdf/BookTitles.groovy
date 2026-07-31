@@ -96,8 +96,8 @@ class BookTitles {
         'eg_books': 'EG Books',
         'N_K_Sundaram': 'N K Sundaram',
         'eg_manu': 'EG Manu',
-        'kirti': 'Kirti',
-        '_daikoo': 'Daikoo',
+        'kirti': 'Kirtikant Sharma, Najafgarh, New Delhi',
+        '_daikoo': 'Manzoor Daikoo, Srinagar',
         'jngm_manu': 'JNGM Manu',
         'jngm_palm': 'JNGM Palm',
         'jngm_books': 'JNGM Books',
@@ -128,7 +128,16 @@ class BookTitles {
         'bhattarai':'Bhattarai',
         'csu_srngri':'CSU Sringeri',
         'thrissur':'CSU Thrissur',
-        'urmila':'Urmila Sharma Coll. Varanasi'
+        'urmila':'Urmila Sharma Coll. Varanasi',
+        'vivek':'Dr. Vivek Arya Vedic Library, Delhi',
+        'arya\\bvb':'Arya Samaj Charitable Foundation Digitizations(BVB)',
+        'hhfa\\jaipur':'Central Sanskrit University, Jaipur',
+        'hhfa\\main':'HHFA-CSU-Jaipur',
+        'iks\\bvt':'Bhuvan Vani Trust',
+        'iks\\iat':'Ishwar Ashram Trust, Srinagar',
+        'sufi\\pir_hyd':'Haadi-e-Deccan, Hyderabad',
+        'sufi\\showkat':'Nakshbandi',
+        'bdmm': 'Bharat Dharma Maha Mandal, Vns'
     ]
 
     static void main(String[] args) {
