@@ -201,7 +201,6 @@ class UploadUtils {
 
     static Map<String, String> getAllArchiveLogins() {
         List<Map<String, String>> loginProfiles = getAllArchiveLoginsAndProfiles()
-        log.info('archive logins.' + loginProfiles.get(0))
         return loginProfiles.size() > 0 ? loginProfiles[0] : [:]
     }
 

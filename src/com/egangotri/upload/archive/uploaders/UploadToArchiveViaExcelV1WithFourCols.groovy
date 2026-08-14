@@ -78,9 +78,12 @@ class UploadToArchiveViaExcelV1WithFourCols {
             System.exit(0)
         }
         List<UploadItemFromExcelVO> uploadItems = excelData.uploadItems
-        log.info("uploadItems(${uploadItems.size()}) ${uploadItems[0]?.subject} ${uploadItems[0]?.description} ${uploadItems[0]?.creator} ${uploadItems[0]?.absolutePath}")
+        String mode = "Excel-v1-4Col-${range}"
+        log.info("mode" + mode +
+                " uploadItems(${uploadItems.size()}) ${uploadItems[0]?.subject} ${uploadItems[0]?.description} ${uploadItems[0]?.creator} ${uploadItems[0]?.absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
-        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems*.absolutePath, "Excel-v1-4Col-${range}")
+        UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems*.absolutePath, mode
+        )
 
         Set<QueuedVO> vos = ArchiveUtil.generateVOsFromSuppliedData(archiveProfile, uploadItems)
         if (uploadItems) {
