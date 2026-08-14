@@ -12,7 +12,7 @@ task startMongoServer(type: Exec) {
         // cmd /C start D:/Projects/WorkSpaces/WorldCleaner/devserver/start.bat
     }
 }
-ArrayList<String> uploadToArchiveArgs = [ "TMP"]
+ArrayList<String> uploadToArchiveArgs = [ "TEST_Y"]
 //ArrayList<String> uploadToArchiveArgs = [ "TMP", "subjectDesc=Panini, Patanjali, Skt Vyakarana"]
 //ArrayList<String> uploadToArchiveArgs = [ "MUTHU", "subjectDesc=Pondicherry-MUTHU-2024, Pondicherry-MUTHU"]
 //V_ANON, KANGRI, "KM"
@@ -62,7 +62,7 @@ task uploadToArchiveViaExcelV1WithFourCols(dependsOn: [/*'snap2htmlCronJob',*/ '
     /** For Single Profile args = ["PRFL1"] For Multiple Profiles args The Following are the files that will be uploaded= ["PRFL1","PRFL2"]  */
     // "KRI_UR_DHARMA", "KRI_UR","VN1", "VN2", "JNGM"
   //  args=['{"profile":"FIP","excelPath":"reupload-missed-in-upload-cycle-id-fc1326f0-94c6-4470-b826-cad170525672-184-of-475-11-May-2024-13-12.xlsx","uploadCycleId":"fc1326f0-94c6-4470-b826-cad170525672"}']
-  //gradle uploadToArchiveExcel -PjsonArgs="{'profile': '','excelPath':'','uploadCycleId': '2-4'}"
+  //gradle uploadToArchiveExcel -PjsonArgs="{'profile': 'TMP','excelPath':'', uploadCycleId: 'e8d36f85-cd19-47f9-8971-abfea7dd52aa','range': '2-4'}"
     args = [project.hasProperty('jsonArgs') ? project.getProperty('jsonArgs') : '{"profile":"SR-BH","excelPath":"excelV1Metadata-Aug.xlsx"}']
 }
 
