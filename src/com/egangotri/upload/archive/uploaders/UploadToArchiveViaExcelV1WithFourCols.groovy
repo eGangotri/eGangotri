@@ -55,6 +55,9 @@ class UploadToArchiveViaExcelV1WithFourCols {
             if (map?.range?.toString()?.contains('-')) {
                 range = map??.range?.split('-')*.trim()
             }
+            else{
+                range=''
+            }
             if (map?.uploadCycleId) {
                 uploadCycleId = map.uploadCycleId
             }
@@ -79,7 +82,7 @@ class UploadToArchiveViaExcelV1WithFourCols {
         }
         List<UploadItemFromExcelVO> uploadItems = excelData.uploadItems
         String mode = "Excel-v1-4Col-${range}"
-        log.info("mode" + mode +
+        log.info("mode:" + mode +
                 " uploadItems(${uploadItems.size()}) ${uploadItems[0]?.subject} ${uploadItems[0]?.description} ${uploadItems[0]?.creator} ${uploadItems[0]?.absolutePath}")
         Map<Integer, String> uploadSuccessCheckingMatrix = [:]
         UploadersUtil.addToUploadCycleWithModeV2(archiveProfile, uploadItems*.absolutePath, mode
