@@ -31,7 +31,7 @@ class UploadToArchiveSelective {
                 log.info("Some Filenames dont have an extension ${validation}")
                 return
             }
-            if (args.length == 3) {
+            if (args.length >= 3) {
                 EGangotriUtil.UPLOAD_CYCLE_ID = args[2]
             }
             if (args.length == 4) {
