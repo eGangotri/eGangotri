@@ -69,7 +69,7 @@ class UploadToArchiveViaExcelV1WithFourCols {
             log.info """Must have exactly One JSON string as an Argument. Exiting.
              args = ['{"profile":"value1", "excelPath":"value2" , "range":"value2" , "uploadCycleId":"value2"}']"""
         }
-        List<String> argsList = args.toList()
+        List<String> argsList = [archiveProfile]
 
         UploadersUtil.prelims()
         Set<String> profiles = UploadersUtil.orderProfiles(argsList)
