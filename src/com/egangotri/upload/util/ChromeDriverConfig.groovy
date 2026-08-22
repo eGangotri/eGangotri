@@ -43,8 +43,9 @@ class ChromeDriverConfig {
             "--remote-debugging-port=${debugPort}",   // dynamic port
             '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
         ])
-        // Use NORMAL to ensure SPA JS bundles fully load before proceeding
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL)
+        // Use EAGER (DOMContentLoaded) - archive.org keeps connections open so the
+        // 'load' event may never fire; explicit WebDriverWaits handle element readiness
+        options.setPageLoadStrategy(PageLoadStrategy.EAGER)
 
         // Hide webdriver flag
         options.setExperimentalOption('excludeSwitches', ['enable-automation'])
