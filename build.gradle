@@ -47,7 +47,7 @@ task loginToArchive(dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "com.egangotri.upload.archive.LoginToArchive"
     jvmArgs = applicationDefaultJvmArgs
-    args = ["AGAMNIGAM"]
+    args = ["GB" ,"JG", "SKT_AUTHOR_SERIES" ,"VN2", "KHEM", "REGMI", ]
 }
 
 task loginToArchive2(dependsOn: 'classes', type: JavaExec) {
