@@ -58,86 +58,94 @@ class BookTitles {
 
     static String CSV_SEPARATOR = ';'
     static final Map<String, String> CENTER_MAP = [
-        'sv_shastri': 'SV-Shastri (DAV-Lahore Coll.)',
-        'kangri'    : 'Gurukul Kangri Collection',
-        'jngm'      : 'Jangamwadi Varanasi',
-        'agamnigam': 'Agam Nigam',
-        'gandhiMem': 'Gandhi Memorial, Jammu',
-        'ayurveda': ' All India Ayurvedic Congress',
-        'karma': 'Karma Lekshey Ling Shedra',
-        'ramesh': 'Ramesh Namboodiri Kuttichad Collection',
-        'ag-lucknowMuseum': 'AG Lucknow Museum',
-        'shringeri_shop':'Shop In Sringeri' ,
-        'vagbhav':'Amrit Vagbhav',
-        'vasant':'Vasant Bhatt, Gujarat',
-        'jayatu_sanskritam':'Jayatu Sanskritam',
-        'balmeeki':'Balmeeki Campus, NSU',
-        'pondi': 'Auro-Pondi',
-        'pondi_manu': 'Pondi Manu',
-        'pondi_glass': 'Pondi Glass',
-        'kashi_maharani': 'Kashi Maharani, Vns',
-        'raj_guru': 'Raj Guru, Vns',
-        'css_pondi': 'CSS Pondi',
-        'nepalSktAcademy': 'Nepal Sanskrit Academy',
-        'SktAcademyHyd': 'Sanskrit Academy Hyderabad',
-        'ganeshVarniJain': 'Ganesh Varni Jain, Varanasi',
-        'devavani': 'Devavani Parishad, Delhi',
-        'ag-bvb': 'AG-BVB-Delhi',
-        '_sgData': 'SG Data',
-        'catalogs': 'Catalogs',
-        'ananadamayee': 'Anandamayee',
-        'anon': 'Misc',
-        'otro': 'Otro',
-        'premi': 'Premi',
-        'urduDuniya': 'Urdu Duniya',
-        '_hn': 'HN',
-        'sps': 'Srinagar-Libs',
-        'sarai': 'Sarai',
-        'eg_books': 'EG Books',
-        'N_K_Sundaram': 'N K Sundaram',
-        'eg_manu': 'EG Manu',
-        'kirti': 'Kirtikant Sharma, Najafgarh, New Delhi',
-        '_daikoo': 'Manzoor Daikoo, Srinagar',
-        'jngm_manu': 'JNGM Manu',
-        'jngm_palm': 'JNGM Palm',
-        'jngm_books': 'JNGM Books',
-        'jngm_kan': 'JNGM Kan',
-        'jngm_marathi': 'JNGM Marathi',
-        'jngm_telugu': 'JNGM Telugu',
-        'jngm_ben': 'JNGM Ben',
-        'jngm_tamil': 'JNGM Tamil',
-        'pz': 'PZ',
-        'ram_shaiva': 'Ram Shaiva',
-        'madhav': 'Madhav ji Nepal',
-        'Rabi': 'Rabi Acharya, Nepal',
-        'Anish': 'Anish Bhatta, Changu Narayan',
-        'dogrisanstha': 'Dogri Sanstha',
-        '_sarayu_Lucknow-BVT': 'Sarayu Lucknow BVT',
-        '_sarayu_lucknowMuseum2': 'Sarayu Lucknow Museum 2',
-        'pahari': 'Pahari',
-        'kashmiri_academy': 'Kashmiri Academy',
-        'salim_kashmir_treasures': 'Salim Kashmir Treasures',
-        'eg_urdu': 'EG Urdu',
-        '_sarayu_egm': 'Sarayu EGM',
-        'muthu':'C R Bala',
-        'janardan':'Janardan Bhattarai,Nagarjuna, Kathmandu',
-        'regmi':'Dilli Raman Regmi Library, Kathmandu',
-        'csu_srngari': 'CSU Sringeri',
-        'eg_punjabi': 'EG Punjabi',
-        'satisar': 'Satisar',
-        'bhattarai':'Bhattarai',
-        'csu_srngri':'CSU Sringeri',
-        'thrissur':'CSU Thrissur',
-        'urmila':'Urmila Sharma Coll. Varanasi',
-        'vivek':'Dr. Vivek Arya Vedic Library, Delhi',
-        'arya\\bvb':'Arya Samaj Charitable Foundation Digitizations(BVB)',
-        'hhfa\\jaipur':'Central Sanskrit University, Jaipur',
-        'hhfa\\main':'HHFA-CSU-Jaipur',
-        'iks\\bvt':'Bhuvan Vani Trust',
-        'iks\\iat':'Ishwar Ashram Trust, Srinagar',
-        'sufi\\pir_hyd':'Haadi-e-Deccan, Hyderabad',
-        'sufi\\showkat':'Nakshbandi',
-        'bdmm': 'Bharat Dharma Maha Mandal, Vns'
+            'sv_shastri'             : 'SV-Shastri (DAV-Lahore Coll.)',
+            'kangri'                 : 'Gurukul Kangri Collection',
+            'jngm'                   : 'Jangamwadi Varanasi',
+            'agamnigam'              : 'Agam Nigam',
+            'gandhiMem'              : 'Gandhi Memorial, Jammu',
+            'ayurveda'               : ' All India Ayurvedic Congress',
+            'karma'                  : 'Karma Lekshey Ling Shedra',
+            'ramesh'                 : 'Ramesh Namboodiri Kuttichad Collection',
+            'ag-lucknowMuseum'       : 'AG Lucknow Museum',
+            'shringeri_shop'         : 'Shop In Sringeri',
+            'vagbhav'                : 'Amrit Vagbhav',
+            'vasant'                 : 'Vasant Bhatt, Gujarat',
+            'jayatu_sanskritam'      : 'Jayatu Sanskritam',
+            'balmeeki'               : 'Balmeeki Campus, NSU',
+            'pondi'                  : 'Auro-Pondi',
+            'pondi_manu'             : 'Pondi Manu',
+            'pondi_glass'            : 'Pondi Glass',
+            'kashi_maharani'         : 'Kashi Maharani, Vns',
+            'raj_guru'               : 'Raj Guru, Vns',
+            'css_pondi'              : 'CSS Pondi',
+            'nepalSktAcademy'        : 'Nepal Sanskrit Academy',
+            'SktAcademyHyd'          : 'Sanskrit Academy Hyderabad',
+            'ganeshVarniJain'        : 'Ganesh Varni Jain, Varanasi',
+            'devavani'               : 'Devavani Parishad, Delhi',
+            'ag-bvb'                 : 'AG-BVB-Delhi',
+            '_sgData'                : 'SG Data',
+            'catalogs'               : 'Catalogs',
+            'ananadamayee'           : 'Anandamayee',
+            'anon'                   : 'Misc',
+            'otro'                   : 'Otro',
+            'premi'                  : 'Premi',
+            'urduDuniya'             : 'Urdu Duniya',
+            '_hn'                    : 'HN',
+            'sps'                    : 'Srinagar-Libs',
+            'sarai'                  : 'Sarai',
+            'eg_books'               : 'EG Books',
+            'N_K_Sundaram'           : 'N K Sundaram',
+            'eg_manu'                : 'EG Manu',
+            'kirti'                  : 'Kirtikant Sharma, Najafgarh, New Delhi',
+            '_daikoo'                : 'Manzoor Daikoo, Srinagar',
+            'jngm_manu'              : 'JNGM Manu',
+            'jngm_palm'              : 'JNGM Palm',
+            'jngm_books'             : 'JNGM Books',
+            'jngm_kan'               : 'JNGM Kan',
+            'jngm_marathi'           : 'JNGM Marathi',
+            'jngm_telugu'            : 'JNGM Telugu',
+            'jngm_ben'               : 'JNGM Ben',
+            'jngm_tamil'             : 'JNGM Tamil',
+            'pz'                     : 'PZ',
+            'ram_shaiva'             : 'Ram Shaiva',
+            'madhav'                 : 'Madhav ji Nepal',
+            'Rabi'                   : 'Rabi Acharya, Nepal',
+            'Anish'                  : 'Anish Bhatta, Changu Narayan',
+            'dogrisanstha'           : 'Dogri Sanstha',
+            '_sarayu_Lucknow-BVT'    : 'Sarayu Lucknow BVT',
+            '_sarayu_lucknowMuseum2' : 'Sarayu Lucknow Museum 2',
+            'pahari'                 : 'Pahari',
+            'kashmiri_academy'       : 'Kashmiri Academy',
+            'salim_kashmir_treasures': 'Salim Kashmir Treasures',
+            'eg_urdu'                : 'EG Urdu',
+            '_sarayu_egm'            : 'Sarayu EGM',
+            'muthu'                  : 'C R Bala',
+            'janardan'               : 'Janardan Bhattarai,Nagarjuna, Kathmandu',
+            'regmi'                  : 'Dilli Raman Regmi Library, Kathmandu',
+            'csu_srngari'            : 'CSU Sringeri',
+            'eg_punjabi'             : 'EG Punjabi',
+            'satisar'                : 'Satisar',
+            'bhattarai'              : 'Bhattarai',
+            'csu_srngri'             : 'CSU Sringeri',
+            'thrissur'               : 'CSU Thrissur',
+            'urmila'                 : 'Urmila Sharma Coll. Varanasi',
+            'vivek'                  : 'Dr. Vivek Arya Vedic Library, Delhi',
+            'arya\\bvb'              : 'Arya Samaj Charitable Foundation Digitizations(BVB)',
+            'hhfa\\jaipur'           : 'Central Sanskrit University, Jaipur',
+            'hhfa\\main'             : 'HHFA-CSU-Jaipur',
+            'iks\\bvt'               : 'Bhuvan Vani Trust',
+            'iks\\iat'               : 'Ishwar Ashram Trust, Srinagar',
+            'sufi\\pir_hyd'          : 'Haadi-e-Deccan, Hyderabad',
+            'sufi\\showkat'          : 'Nakshbandi',
+            'bdmm'                   : 'Bharat Dharma Maha Mandal, Vns',
+            'aais'                   : "AAIS",
+            'arya\\vidya'            : "Arya Samaj Chennai",
+            'barakat'                : "Barakat",
+            'skt_author_series'      : "Skt-Authors",
+            'cuddalore'              : "Cuddalore, TN",
+            'eg-south'               : "South-Team",
+            'nazki'                  : "Nazki Sahib, Srinagar",
+            'renzu'                  : "Renzu Shah"
     ]
 
     static void main(String[] args) {
@@ -150,15 +158,16 @@ class BookTitles {
         if (args?.size() > 0) {
             Map argsOneAsMap = [:]
             args.each {
-                String it -> {
-                    Object[] kv = it.split('=')*.trim()
-                    if (kv.length % 2 !== 0) {
-                        log.error("Invalid argument Must have 2 set of values separated by = ${it}. example path='C:\\tmp, D:\\test'")
-                        return
+                String it ->
+                    {
+                        Object[] kv = it.split('=')*.trim()
+                        if (kv.length % 2 !== 0) {
+                            log.error("Invalid argument Must have 2 set of values separated by = ${it}. example path='C:\\tmp, D:\\test'")
+                            return
+                        }
+                        log.info("kv ${kv} ${kv.length}")
+                        argsOneAsMap.put(kv[0]?.toString(), kv[1])
                     }
-                    log.info("kv ${kv} ${kv.length}")
-                    argsOneAsMap.put(kv[0]?.toString(), kv[1])
-                }
             }
             String _folderNames = argsOneAsMap?.paths?.replace("'", '')?.replace('\"', '')
             FOLDER_NAMES = _folderNames.split(',')*.trim().findAll { it.length() > 1 }.toList()
@@ -179,7 +188,7 @@ class BookTitles {
                 log.info("pdfsOnly ${argsOneAsMap?.pdfsOnly}")
                 ONLY_PDFS = argsOneAsMap?.pdfsOnly != 'false'
             }
-            if(argsOneAsMap.containsKey('withAdditionalCopy')){
+            if (argsOneAsMap.containsKey('withAdditionalCopy')) {
                 log.info("withAdditionalCopy ${argsOneAsMap?.withAdditionalCopy}")
                 WITH_ADDITIONAL_COPY = argsOneAsMap?.withAdditionalCopy != 'false'
             }
@@ -270,13 +279,13 @@ class BookTitles {
             filesToClone << writeableCSVFile
             if (generateExcelAlso) {
                 File excelFile = CsvToExcel.csvtoXls(writeableCSVFile)
-                if(excelFile){
+                if (excelFile) {
                     filesToClone << excelFile
                 }
             }
         }
 
-       if (WITH_ADDITIONAL_COPY && FOLDER_NAMES) {
+        if (WITH_ADDITIONAL_COPY && FOLDER_NAMES) {
             String rootDir = FOLDER_NAMES[0]
             File rootFolder = new File(rootDir)
             if (rootFolder.exists() && rootFolder.isDirectory()) {
@@ -344,7 +353,7 @@ class BookTitles {
                 catch (Exception e) {
                     log.info('Error reading file. will continue' + e)
                 }
-                    }
+            }
         }
     }
 
@@ -395,7 +404,8 @@ class BookTitles {
                     addToErrors(file.absolutePath)
                     exception = "Error in reading file page-count/size/ for ${file.absolutePath}" + e.message
                     log.error("Error in reading file page-count/size/ for ${file.absolutePath}", e)
-                }            }
+                }
+            }
             if (INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF)) {
                 incrementTotalFileSize(FileSizeUtil.fileSizeInKB(file))
             }
@@ -403,7 +413,7 @@ class BookTitles {
             String folderName = "${INCLUDE_FOLDER_NAME ? ', ' + folderNameToCenterName(file.parent) : ''}"
             String pageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? ', ' + numberOfPages + ' Pages' : ''}"
             String fileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? ', ' + sizeInfo : ''}"
-            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${folderName} ${pageCountLogic} ${fileSizeLogic} ${exception?'*****' + exception:''}"
+            String _report = "${INCLUDE_INDEX ? index + ').' : ''} ${file.name} ${folderName} ${pageCountLogic} ${fileSizeLogic} ${exception ? '*****' + exception : ''}"
             addToReportAndPrint(_report, false, true)
             String csvFolderName = "${INCLUDE_FOLDER_NAME ? CSV_SEPARATOR + folderNameToCenterName(file.parent) : ''}"
             String csvPageCountLogic = "${INCLUDE_NUMBER_OF_PAGES && file.name.endsWithIgnoreCase(PDF) ? CSV_SEPARATOR + numberOfPages : ''}"
@@ -411,7 +421,7 @@ class BookTitles {
             String csvRawSizeInfo = FileSizeUtil.fileSizeInKB(file)
             String csvFileSizeLogic = "${INCLUDE_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvSizeInfo : ''}"
             String csvTotalFileSizeLogic = "${INCLUDE_TOTAL_FILE_SIZE && file.name.endsWithIgnoreCase(PDF) ? csvRawSizeInfo : ''}"
-            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${csvFolderName}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception?CSV_SEPARATOR+'*****' + exception:''}"
+            String csvReport = "${INCLUDE_INDEX ? index + "${CSV_SEPARATOR}" : ''}${file.name}${csvFolderName}${csvPageCountLogic}${CSV_SEPARATOR}${csvFileSizeLogic}${CSV_SEPARATOR}${csvTotalFileSizeLogic}${exception ? CSV_SEPARATOR + '*****' + exception : ''}"
             addToCSVReport(csvReport)
             incrementFileCount()
         }
@@ -485,7 +495,7 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         return folderName
     }
 
-    static void resetCounters () {
+    static void resetCounters() {
         START_INDEX = 0
         TOTAL_FILES = 0
         TOTAL_FILE_SIZE = 0
@@ -498,7 +508,7 @@ Total Pages:${delimiter}${formatInteger(TOTAL_NUM_PAGES)}"""
         CSV_MEGA_REPORT = new StringBuilder('')
     }
 
-    static String counterStats () {
+    static String counterStats() {
         log.info("""
         TOTAL_FILES: ${TOTAL_FILES}
         TOTAL_FILE_SIZE: ${TOTAL_FILE_SIZE}
