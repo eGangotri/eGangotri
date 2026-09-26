@@ -668,6 +668,27 @@ class UploadUtils {
     ]
 
     /**
+     * Applies fixReservedKeywords to each query-param VALUE only - the base path and
+     * param names are left untouched (e.g. 'description=' must never become 'descrip-tion=').
+     */
+    static String fixReservedKeywordsInUrl(String url) {
+        int qIdx = url?.indexOf('?') ?: -1
+        if (qIdx < 0) {
+            return fixReservedKeywords(url)
+        }
+        String base = url.substring(0, qIdx)
+        String query = url.substring(qIdx + 1)
+        String fixedQuery = query.split('&', -1).collect { String pair ->
+            int eq = pair.indexOf('=')
+            if (eq < 0) {
+                return fixReservedKeywords(pair)
+            }
+            return pair.substring(0, eq + 1) + fixReservedKeywords(pair.substring(eq + 1))
+        }.join('&')
+        return "${base}?${fixedQuery}"
+    }
+
+    /**
      * Inserts a hyphen inside unix-like reserved keywords (eval/time/select/make)
      * e.g. "The Study of Time" -> "The Study of Tim-e", "Evaluation" -> "Eva-luation"
      * so archive.org's injection filter does not flag them.
