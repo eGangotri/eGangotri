@@ -302,7 +302,7 @@ class ArchiveHandler {
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         if (!SettingsUtil.GENERATE_IDENTIFIER) {
-            String idFromArchiveOrg = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*?.getText()?.find { it?.trim() } ?: ''
+            String idFromArchiveOrg = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*.getText()?.find { it?.trim() } ?: ''
             if (!idFromArchiveOrg?.trim()) {
                 // archive.org's auto Page URL generation also fails on reserved keywords
                 // (e.g. 'time' in the title) - generate the identifier locally instead
@@ -338,7 +338,7 @@ class ArchiveHandler {
         catch (WebDriverException ignored) {
             log.info('\tPage URL element still not visible after entering identifier - keeping locally generated identifier.')
         }
-        String identifierNowInTextBox = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*?.getText()?.find { it?.trim() } ?: pgUrlInputField.getAttribute('value')
+        String identifierNowInTextBox = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*.getText()?.find { it?.trim() } ?: pgUrlInputField.getAttribute('value')
         ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
         identifier = identifierNowInTextBox?.trim() ? identifierNowInTextBox : identifier
         String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
