@@ -623,11 +623,20 @@ class UploadUtils {
      making the archive server think that this is a injection attack
      */
     static String fixEvalIssueInString(String textToAlter) {
-        String result = maintainCase(textToAlter,/(?i)eval/, 'eva-l')
-        result = maintainCase(result,/(?i)tim-e/, '.')
-        result = maintainCase(result,/(?i)selec-t/, '.')
-        result = maintainCase(result,/(?i)mak-e/, '.')
-        return URLEncoder.encode(result, "UTF-8")
+        return URLEncoder.encode(fixReservedKeywords(textToAlter), "UTF-8")
+    }
+
+    /**
+     * Inserts a hyphen inside unix-like reserved keywords (eval/time/select/make)
+     * e.g. "The Study of Time" -> "The Study of Tim-e", "Evaluation" -> "Eva-luation"
+     * so archive.org's injection filter does not flag them.
+     */
+    static String fixReservedKeywords(String textToAlter) {
+        String result = maintainCase(textToAlter,/(?i)eva(?=l)/, '-')
+        result = maintainCase(result,/(?i)tim(?=e)/, '-')
+        result = maintainCase(result,/(?i)selec(?=t)/, '-')
+        result = maintainCase(result,/(?i)mak(?=e)/, '-')
+        return result
     }
 
     static String maintainCase(String textToAlter, String regex, String replacement) {

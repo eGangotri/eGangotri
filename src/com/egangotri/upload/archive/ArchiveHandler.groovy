@@ -233,6 +233,7 @@ class ArchiveHandler {
         }
 
         uploadLink = uploadLink.replaceAll(/[#!]/, '').replaceAll('null', ' ')
+        uploadLink = UploadUtils.fixReservedKeywords(uploadLink)
         //uploadLink += "&uploader=info@archive.org"
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
@@ -344,7 +345,7 @@ class ArchiveHandler {
 
     static <T extends UploadVO> String uploadOneItemV2(ChromeDriver driver, T uploadVO, String archiveItemId) {
         String fileNameWithPath = uploadVO.path
-        String uploadLink = uploadVO.uploadLink
+        String uploadLink = UploadUtils.fixReservedKeywords(uploadVO.uploadLink)
 
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
