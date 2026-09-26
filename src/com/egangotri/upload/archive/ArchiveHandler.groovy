@@ -249,6 +249,13 @@ class ArchiveHandler {
             encodedTitle=UploadUtils.fixEvalIssueInString(encodedTitle)
             encodedUploadLink += "&title=${encodedTitle}&identifier=${identifier}"
         }
+        else if (!encodedUploadLink.contains('title=') && uploadVO.title?.trim()) {
+            // archive.org populates Item Title from the filename, so its identifierAvailable
+            // call still sees the raw title and 400s on reserved keywords ('time').
+            // Prefill a sanitized title so Page URL auto-generation succeeds.
+            String sanitizedTitle = UploadUtils.fixReservedKeywords(uploadVO.title)
+            encodedUploadLink += "&title=${URLEncoder.encode(sanitizedTitle, 'UTF-8')}"
+        }
         log.info "encodedUploadLink: ${encodedUploadLink}"
 
         //Go to URL
@@ -284,11 +291,18 @@ class ArchiveHandler {
         }
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            // identifierAvailable call fails (400) when title has reserved keywords like 'time' -
+            // Page URL stays on "Finding an available URL..." forever; identifier generated locally below
+            log.info('\tPage URL element did not appear - archive.org identifier generation likely failed. Will generate identifier locally.')
+        }
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         if (!SettingsUtil.GENERATE_IDENTIFIER) {
-            String idFromArchiveOrg = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            String idFromArchiveOrg = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*?.getText()?.find { it?.trim() } ?: ''
             if (!idFromArchiveOrg?.trim()) {
                 // archive.org's auto Page URL generation also fails on reserved keywords
                 // (e.g. 'time' in the title) - generate the identifier locally instead
@@ -318,10 +332,15 @@ class ArchiveHandler {
             pgUrlInputField.sendKeys(Keys.ENTER)
         }
         WebDriverWait wait3 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
-        String identifierNowInTextBox = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+        try {
+            wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            log.info('\tPage URL element still not visible after entering identifier - keeping locally generated identifier.')
+        }
+        String identifierNowInTextBox = driver.findElements(By.id(UploadUtils.PAGE_URL_ITEM_ID))*?.getText()?.find { it?.trim() } ?: pgUrlInputField.getAttribute('value')
         ///log.info("Is our tweaked identifier ->${identifier}<- == ->${identifierNowInTextBox}<- [identifier in text Box Now] (${identifier == identifierNowInTextBox })")
-        identifier = identifierNowInTextBox
+        identifier = identifierNowInTextBox?.trim() ? identifierNowInTextBox : identifier
         String accessUrl = "${ARCHIVE_DOCUMENT_DETAIL_URL}/${identifier}"
         log.info("\tidentifier: ${identifier}")
         log.info("\tAccess Url: ${accessUrl}")
@@ -330,8 +349,13 @@ class ArchiveHandler {
         """.toString()
         storeArchiveIdentifierInFile(uploadVO, identifier)
 
-        WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+                    .until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            log.info('\tPage URL element not clickable - proceeding to Upload anyway with entered identifier.')
+        }
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
@@ -353,6 +377,11 @@ class ArchiveHandler {
     static <T extends UploadVO> String uploadOneItemV2(ChromeDriver driver, T uploadVO, String archiveItemId) {
         String fileNameWithPath = uploadVO.path
         String uploadLink = UploadUtils.fixReservedKeywordsInUrl(uploadVO.uploadLink)
+        if (!uploadLink.contains('title=') && uploadVO.title?.trim()) {
+            // sanitized title prefill so archive.org's identifierAvailable does not 400
+            String sanitizedTitle = UploadUtils.fixReservedKeywords(uploadVO.title)
+            uploadLink += "&title=${URLEncoder.encode(sanitizedTitle, 'UTF-8')}"
+        }
 
         log.info("\tURL for upload: \n${uploadLink}")
         log.info("\tfileNameWithPath:'${UploadUtils.stripFilePath(fileNameWithPath)}' ready for upload")
@@ -388,15 +417,20 @@ class ArchiveHandler {
             collDropDown.selectByValue('data:opensource_media')
         }
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            log.info('\tPage URL element did not appear - proceeding with supplied archiveItemId.')
+        }
 
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         driver.findElement(By.id(UploadUtils.PAGE_URL)).click()
         WebElement pgUrlInputField = driver.findElement(By.className(UploadUtils.PAGE_URL_INPUT_FIELD))
         pgUrlInputField.clear()
-        pgUrlInputField.sendKeys(archiveItemId)
+        pgUrlInputField.sendKeys(UploadUtils.fixReservedKeywords(archiveItemId))
         pgUrlInputField.sendKeys(Keys.ENTER)
         boolean alertWasDetected = UploadUtils.checkAlert(driver, false)
         //for a strange reason the first tab doesnt have alert
@@ -406,11 +440,21 @@ class ArchiveHandler {
             pgUrlInputField.click()
             pgUrlInputField.sendKeys(Keys.ENTER)
         }
-        WebDriverWait wait3 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait3.until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            log.info('\tPage URL element still not visible - proceeding to Upload.')
+        }
 
-        WebDriverWait wait4 = new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
-        wait4.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(EGangotriUtil.TEN_TIMES_TIMEOUT_IN_SECONDS))
+                    .until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.PAGE_URL_ITEM_ID)))
+        }
+        catch (WebDriverException ignored) {
+            log.info('\tPage URL element not clickable - proceeding to Upload anyway.')
+        }
 
         WebElement uploadButton = driver.findElement(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON))
         uploadButton.click()
