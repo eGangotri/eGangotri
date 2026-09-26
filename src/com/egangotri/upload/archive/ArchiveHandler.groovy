@@ -289,8 +289,15 @@ class ArchiveHandler {
         wait2.until(ExpectedConditions.elementToBeClickable(By.id(UploadUtils.UPLOAD_AND_CREATE_YOUR_ITEM_BUTTON)))
         if (!SettingsUtil.GENERATE_IDENTIFIER) {
             String idFromArchiveOrg = driver.findElement(By.id(UploadUtils.PAGE_URL_ITEM_ID)).getText()
+            if (!idFromArchiveOrg?.trim()) {
+                // archive.org's auto Page URL generation also fails on reserved keywords
+                // (e.g. 'time' in the title) - generate the identifier locally instead
+                idFromArchiveOrg = generateArchiveIdentifier(uploadVO.title ?: fileNameWithPath)
+                log.info("\tarchive.org could not auto-generate Page URL; using generated identifier: ${idFromArchiveOrg}")
+            }
             identifier = keepIdentifierWithinMaxPermittedLength(idFromArchiveOrg)
         }
+        identifier = UploadUtils.fixReservedKeywords(identifier)
         if (SettingsUtil.EXTEND_IDENTIFIER) {
             identifier = extendIdentifierByPrepending(identifier)
         }
