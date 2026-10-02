@@ -638,33 +638,33 @@ class UploadUtils {
     // book titles. Speculative: prune freely, or add a pattern when an upload is rejected
     // and its description/subject/creator contains a suspect word.
     static final List<String> EXTRA_RESERVED_KEYWORD_PATTERNS = [
-            /(?i)unio(?=n)/,    // union   (SQL)
-            /(?i)orde(?=r)/,    // order   (SQL)
-            /(?i)updat(?=e)/,   // update  (SQL)
-            /(?i)inser(?=t)/,   // insert  (SQL)
-            /(?i)delet(?=e)/,   // delete  (SQL)
-            /(?i)dro(?=p)/,     // drop    (SQL)
-            /(?i)creat(?=e)/,   // create  (SQL)
-            /(?i)joi(?=n)/,     // join    (SQL)
-            /(?i)grou(?=p)/,    // group   (SQL)
-            /(?i)wher(?=e)/,    // where   (SQL)
-            /(?i)scrip(?=t)/,   // script  (XSS; hits "Manuscript"!)
-            /(?i)exe(?=c)/,     // exec    (Executive)
-            /(?i)slee(?=p)/,    // sleep   (MySQL SLEEP(); Sleep/Asleep)
-            /(?i)kil(?=l)/,     // kill    (Kill/Killing/Skill)
-            /(?i)touc(?=h)/,    // touch
-            /(?i)moun(?=t)/,    // mount   (Mount/Mountain)
-            /(?i)exi(?=t)/,     // exit
-            /(?i)ech(?=o)/,     // echo
-            /(?i)fin(?=d)/,     // find    (Finding)
-            /(?i)histor(?=y)/,  // history (shell builtin; very common in titles)
-            /(?i)roo(?=t)/,     // root    (Roots)
-            /(?i)syste(?=m)/,   // system
-            /(?i)shel(?=l)/,    // shell
-            /(?i)comman(?=d)/,  // command (Commander)
-            /(?i)prin(?=t)/,    // print   (Blueprint)
-            /(?i)tes(?=t)/,     // test    (Latest/Protest)
-            /(?i)instal(?=l)/,  // install
+            // /(?i)unio(?=n)/,    // union   (SQL)
+            // /(?i)orde(?=r)/,    // order   (SQL)
+            // /(?i)updat(?=e)/,   // update  (SQL)
+            // /(?i)inser(?=t)/,   // insert  (SQL)
+            // /(?i)delet(?=e)/,   // delete  (SQL)
+            // /(?i)dro(?=p)/,     // drop    (SQL)
+            // /(?i)creat(?=e)/,   // create  (SQL)
+            // /(?i)joi(?=n)/,     // join    (SQL)
+            // /(?i)grou(?=p)/,    // group   (SQL)
+            // /(?i)wher(?=e)/,    // where   (SQL)
+            // /(?i)scrip(?=t)/,   // script  (XSS; hits "Manuscript"!)
+            // /(?i)exe(?=c)/,     // exec    (Executive)
+            // /(?i)slee(?=p)/,    // sleep   (MySQL SLEEP(); Sleep/Asleep)
+            // /(?i)kil(?=l)/,     // kill    (Kill/Killing/Skill)
+            // /(?i)touc(?=h)/,    // touch
+            // /(?i)moun(?=t)/,    // mount   (Mount/Mountain)
+            // /(?i)exi(?=t)/,     // exit
+            // /(?i)ech(?=o)/,     // echo
+            // /(?i)fin(?=d)/,     // find    (Finding)
+            // /(?i)histor(?=y)/,  // history (shell builtin; very common in titles)
+            // /(?i)roo(?=t)/,     // root    (Roots)
+            // /(?i)syste(?=m)/,   // system
+            // /(?i)shel(?=l)/,    // shell
+            // /(?i)comman(?=d)/,  // command (Commander)
+            // /(?i)prin(?=t)/,    // print   (Blueprint)
+            // /(?i)tes(?=t)/,     // test    (Latest/Protest)
+            // /(?i)instal(?=l)/,  // install
     ]
 
     /**
