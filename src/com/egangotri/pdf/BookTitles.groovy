@@ -138,14 +138,19 @@ class BookTitles {
             'sufi\\pir_hyd'          : 'Haadi-e-Deccan, Hyderabad',
             'sufi\\showkat'          : 'Nakshbandi',
             'bdmm'                   : 'Bharat Dharma Maha Mandal, Vns',
-            'aais'                   : "AAIS",
-            'arya\\vidya'            : "Arya Samaj Chennai",
-            'barakat'                : "Barakat",
-            'skt_author_series'      : "Skt-Authors",
-            'cuddalore'              : "Cuddalore, TN",
-            'eg-south'               : "South-Team",
-            'nazki'                  : "Nazki Sahib, Srinagar",
-            'renzu'                  : "Renzu Shah"
+            'aais'                   : 'AAIS',
+            'arya\\vidya'            : 'Arya Samaj Chennai',
+            'barakat'                : 'Barakat',
+            'skt_author_series'      : 'Skt-Authors',
+            'cuddalore'              : 'Cuddalore, TN',
+            'eg-south'               : 'South-Team',
+            'nazki'                  : 'Nazki Sahib, Srinagar',
+            'renzu'                  : 'Renzu Shah',
+            'orl'                    : 'Otro (ORL)',
+            'prabhakar'              : 'Renzu Shah',
+            'aalami'                 : 'Aalami Urdu Conf (Renzu Shah)',
+            'otro'                   : 'Otro',
+            'shafi'                  : 'Shafi Shauq',
     ]
 
     static void main(String[] args) {
@@ -353,7 +358,7 @@ class BookTitles {
                 catch (Exception e) {
                     log.info('Error reading file. will continue' + e)
                 }
-            }
+                    }
         }
     }
 
