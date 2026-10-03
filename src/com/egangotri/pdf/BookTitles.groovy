@@ -149,7 +149,7 @@ class BookTitles {
             'orl'                    : 'Otro (ORL)',
             'prabhakar'              : 'Renzu Shah',
             'aalami'                 : 'Aalami Urdu Conf (Renzu Shah)',
-            'otro'                   : 'Otro',
+            '_otro'                  : 'Otro',
             'shafi'                  : 'Shafi Shauq',
     ]
 
